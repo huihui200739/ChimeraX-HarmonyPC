@@ -6,6 +6,8 @@
 
 详见 [11 月 17 日设备运行验证](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/device-runtime-2026-11-17.md)。
 
+同时给出应用内嵌可用的结构性修复：`with-libffi-linked` 配置把扩展模块重链接为自带 `NEEDED libpython3.11.so.1.0` + `$ORIGIN/../../lib`，跳过启动器预载后设备上 8 项断言仍全过。
+
 ## 上一结论（2026-11-09）
 
 **已在独立增强配置中补齐 libffi / `_ctypes`，鸿蒙 ARM64 的 CPython 3.11.18 私有运行环境现含 54 个通用扩展。89 项本地测试及重复归档核验通过，原 53 扩展基线完整保留。尚未进行该运行环境的设备测试，也未完成完整应用安装、鸿蒙启动或界面验收。**

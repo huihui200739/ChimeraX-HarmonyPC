@@ -120,10 +120,14 @@ def validate_runtime_directory(runtime: Path, manifest: dict) -> None:
         raise RuntimeError('Preserving unrecorded or missing files in the staged runtime')
 
 
+PROFILES = ('baseline', 'with-libffi', 'with-libffi-linked')
+
+
 def profile_directory(profile: str) -> str:
-    if profile not in ('baseline', 'with-libffi'):
+    if profile not in PROFILES:
         raise ValueError('Unknown private runtime profile')
-    suffix = '' if profile == 'baseline' else '-with-libffi'
+    suffix = {'baseline': '', 'with-libffi': '-with-libffi',
+              'with-libffi-linked': '-with-libffi-linked'}[profile]
     return f'build/cpython-{VERSION}/ohos-aarch64{suffix}'
 
 
@@ -253,7 +257,7 @@ class Builder:
                         LDFLAGS='-Wl,-z,relro,-z,now',
                         ac_cv_file__dev_ptmx='no', ac_cv_file__dev_ptc='no',
                         CX_CPYTHON_BUILD_JOBS=str(self.jobs))
-        if self.profile == 'with-libffi':
+        if self.profile in ('with-libffi', 'with-libffi-linked'):
             from build_libffi_harmony import validate_prefix
             if any(c.isspace() for c in str(self.libffi_prefix)):
                 raise RuntimeError('Dependency cross-build paths must not contain whitespace')
@@ -284,6 +288,15 @@ class Builder:
             self.report['native_gettext'] = 'disabled_after_SDK_declaration_compile_check_failed'
         else:
             self.report['native_gettext'] = 'SDK_declarations_compile_checked_not_target_tested'
+        if self.profile == 'with-libffi-linked':
+            # HarmonyOS resolves extension symbols only through their own dependency
+            # chain, so the extensions are re-linked against the private libpython
+            # after the shared library exists (see relink_extensions()).
+            self.report['extension_linkage'] = {
+                'strategy': 'second pass re-links extension modules against the private libpython',
+                'reason': 'target loader does not resolve CPython symbols for extensions loaded '
+                          'after a dlopen(RTLD_GLOBAL) of the shared library',
+                'target_executed': False}
         options = [str(self.source / 'configure'), f'--build={build_triple}',
                    '--host=aarch64-unknown-linux-ohos', f'--with-build-python={self.host_python}',
                    '--prefix=/data/storage/el2/base/files/cx-generic-runtime',
@@ -294,6 +307,7 @@ class Builder:
                        'compiler_sha256': sha256(self.compiler),
                        'environment': {k: self.env[k] for k in ('CC', 'CXX', 'AR', 'RANLIB',
                            'READELF', 'CFLAGS', 'LDFLAGS', 'ac_cv_file__dev_ptmx', 'ac_cv_file__dev_ptc', 'CX_CPYTHON_BUILD_JOBS')},
+                       'ldshared': self.env.get('LDSHARED', ''),
                        'libintl_header_override': self.env.get('ac_cv_header_libintl_h')}
         if self.libffi_manifest is not None:
             fingerprint['private_libffi'] = self.report['private_libffi']
@@ -319,6 +333,10 @@ class Builder:
             'make_jobs': self.jobs, 'target_executed': False}
         built = self.run('make', ['/usr/bin/make', f'-j{self.jobs}', 'all'], cwd=self.objects, timeout=1800)
         self.report['extension_build_summary'] = parse_build_summary(built)
+        if self.profile == 'with-libffi-linked':
+            if self.report['commands'][-1]['returncode'] != 0:
+                raise RuntimeError('make failed before the extension re-link pass')
+            self.relink_extensions()
 
     def inspect_elf(self, path: Path, label: str) -> dict:
         text = self.run('elf-' + label, [str(self.readelf), '--file-header', '--dynamic',
@@ -331,6 +349,35 @@ class Builder:
                     raise RuntimeError(f'Runtime export is missing: {symbol}')
         return {'path': str(path), 'bytes': path.stat().st_size, 'sha256': sha256(path),
                 'needed_libraries': needed_libraries(text)}
+
+    def relink_extensions(self) -> None:
+        """Re-link extension modules against the private libpython.
+
+        The shared library uses the same linker variable as extension modules, so
+        the extra flag cannot be set during the first pass. Once libpython exists,
+        the extension outputs are removed and re-linked with a relocatable rpath.
+        """
+        if self.profile != 'with-libffi-linked':
+            return
+        makefile = self.objects / 'Makefile'
+        text = makefile.read_text()
+        marker = '\nBLDSHARED='
+        start = text.index(marker) + 1
+        end = text.index('\n', start)
+        line = text[start:end]
+        if 'libpython3.11.so.1.0' not in line and '-lpython3.11' not in line:
+            # $$ORIGIN survives make's own expansion so the linker records $ORIGIN.
+            patched = line + f' -L{self.objects} -l:libpython3.11.so.1.0 -Wl,-rpath,$$ORIGIN/../../lib'
+            makefile.write_text(text[:start] + patched + text[end:])
+        extension_dir = self.objects / 'build'
+        removed = []
+        for candidate in sorted(extension_dir.glob('lib.*/**.so')):
+            candidate.unlink()
+            removed.append(candidate.name)
+        self.report['extension_relink_removed'] = sorted(removed)
+        self.run('make-relink-extensions', ['/usr/bin/make', f'-j{self.jobs}', 'all'], cwd=self.objects, timeout=1800)
+        if self.report['commands'][-1]['returncode'] != 0:
+            raise RuntimeError('Re-linking extension modules failed')
 
     def stage_runtime(self) -> None:
         library = self.objects / 'libpython3.11.so.1.0'
@@ -347,7 +394,7 @@ class Builder:
                     if not p.name.startswith(('xxlimited.', 'xxlimited_35.', '_test', '_xxtest'))]
         extension_names = [p.name.split('.')[0] for p in compiled]
         required = {'_socket', '_struct', '_json', 'unicodedata', 'select', 'math', 'zlib'}
-        if self.profile == 'with-libffi':
+        if self.profile in ('with-libffi', 'with-libffi-linked'):
             required.add('_ctypes')
         if missing := required - set(extension_names):
             raise RuntimeError(f'Required generic runtime extensions did not build: {sorted(missing)}')
@@ -424,7 +471,7 @@ class Builder:
                 write_json(staging / 'runtime-manifest.json', manifest)
                 validate_runtime_directory(staging, manifest)
                 staging.rename(self.runtime)
-        if self.profile == 'with-libffi':
+        if self.profile in ('with-libffi', 'with-libffi-linked'):
             ctypes_files = list((self.runtime / 'lib/python3.11/lib-dynload').glob('_ctypes.*.so'))
             if len(ctypes_files) != 1:
                 raise RuntimeError('Exactly one staged _ctypes extension is required')
@@ -456,12 +503,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--sdk', type=Path, default=DEFAULT_SDK)
     parser.add_argument('--build-python', type=Path, default=ROOT / 'build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11')
     parser.add_argument('--jobs', type=int, choices=(1, 2), default=2)
-    parser.add_argument('--profile', choices=('baseline', 'with-libffi'), default='baseline')
+    parser.add_argument('--profile', choices=PROFILES, default='baseline')
     parser.add_argument('--libffi-prefix', type=Path)
     day = datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
     parser.add_argument('--report', type=Path)
     args = parser.parse_args(argv)
-    suffix = '' if args.profile == 'baseline' else '-with-libffi'
+    suffix = {'baseline': '', 'with-libffi': '-with-libffi',
+              'with-libffi-linked': '-with-libffi-linked'}[args.profile]
     if args.report is None:
         args.report = ROOT / f'reports/cpython-local{suffix}-{day}.json'
     report = {'schema_version': 1, 'created_at_utc': datetime.now(timezone.utc).isoformat(),

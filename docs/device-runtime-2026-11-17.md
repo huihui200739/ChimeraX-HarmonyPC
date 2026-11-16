@@ -43,3 +43,16 @@
 - 未包含 Qt、PyQt 绑定、`chimerax.*` 应用模块或科研数据；启动器默认入口 `-m chimerax.core` 仍会因缺少应用模块而报 `ModuleNotFoundError`，这是预期行为而非缺陷。
 - 未生成 HAP、未签名、未上架。
 - 该设备验证只覆盖通用运行环境；窗口、Qt 界面、文件对话框、键鼠与剪贴板等仍待验证。
+
+## 补充：扩展模块自带依赖（with-libffi-linked）
+
+上面的启动器预载修复能跑通，但依赖"环境变量在进程启动前设置"。鸿蒙应用（HAP）里没有这个机会，因此补做了结构性修复：
+
+- 新增 `with-libffi-linked` 构建配置：在第一遍 `make` 成功、`libpython3.11.so` 已生成后，删除 56 个扩展 `.so`，修改 Makefile 的链接变量（`-L<build> -l:libpython3.11.so.1.0 -Wl,-rpath,$$ORIGIN/../../lib`）后第二遍重链接。
+- 结果：每个扩展模块的 ELF 现在带 `NEEDED libpython3.11.so.1.0` 与 `RUNPATH $ORIGIN/../../lib`，与 Android 上 Python 扩展的标准做法一致。
+- 设备验证：用 `CX_HARMONY_PRELOADED=1` **跳过启动器预载**运行同一套 8 项断言，仍全部通过（`reports/device-runtime-linked-2026-11-17.json`）。这证明扩展现在靠自己声明的依赖就能解析 CPython 符号，应用内嵌场景不再依赖环境变量。
+
+产物：`build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime` 与
+`build/runtime-payload/cx-generic-runtime-3.11.18-with-libffi-linked-aarch64-ohos.tar.gz`。
+
+两个修复都保留：预载路径作为无链接改动的兜底，链接路径作为应用内嵌的主路径。

@@ -53,10 +53,14 @@ def main() -> int:
     parser.add_argument('--payload', type=Path,
                         default=ROOT / 'build/runtime-payload/cx-generic-runtime-3.11.18-with-libffi-aarch64-ohos.tar.gz')
     parser.add_argument('--report', type=Path, default=None)
+    parser.add_argument('--skip-launcher-preload', action='store_true',
+                        help='set CX_HARMONY_PRELOADED so the launcher does not preload libpython; '
+                             'extension modules must then resolve through their own NEEDED entries')
     args = parser.parse_args()
     day = datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
     report_path = args.report or ROOT / f'reports/device-runtime-{day}.json'
     hdc = [str(args.hdc), '-t', args.target]
+    env_prefix = 'CX_HARMONY_PRELOADED=1 ' if args.skip_launcher_preload else ''
     report: dict = {
         'schema_version': 1,
         'created_at_utc': datetime.now(timezone.utc).isoformat(),
@@ -88,7 +92,7 @@ def main() -> int:
         listing = run(hdc + ['shell', f'ls {root_path}'])
         record('Runtime extracted on the target', 'bin' in listing.stdout, listing.stdout.strip())
 
-        check = run(hdc + ['shell', f'cd {root_path} && ./bin/ChimeraX --cx-runtime-root {root_path} --cx-runtime-check'])
+        check = run(hdc + ['shell', f'cd {root_path} && {env_prefix}./bin/ChimeraX --cx-runtime-root {root_path} --cx-runtime-check'])
         report['runtime_check_raw'] = check.stdout.strip()
         payload = {}
         for line in check.stdout.strip().splitlines():
@@ -110,7 +114,7 @@ def main() -> int:
         local_probe.write_text(PROBE)
         run(hdc + ['shell', f'mkdir -p {root_path}/lib/python3.11/chimerax/core'])
         run(hdc + ['file', 'send', str(local_probe), target_main])
-        probe = run(hdc + ['shell', f'cd {root_path} && ./bin/ChimeraX --cx-runtime-root {root_path}'])
+        probe = run(hdc + ['shell', f'cd {root_path} && {env_prefix}./bin/ChimeraX --cx-runtime-root {root_path}'])
         report['probe_raw'] = probe.stdout.strip()[-800:]
         probe_payload = {}
         for line in probe.stdout.strip().splitlines():
