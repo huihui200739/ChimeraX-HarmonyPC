@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17）
+## 当前结论（2026-11-17 应用入口）
+
+**鸿蒙应用入口已跑通：HAP 安装启动后，应用沙箱内初始化私有 CPython 3.11.18，页面读回解释器版本、`math.sqrt(16)=4.0`、`_ctypes` 经 libffi 调 `libc.strlen=19`、`hashlib.sha256` 前 8 位 `2c1179ae`，设备断言 7/7 通过。** 仍未包含 Qt 与 ChimeraX 应用模块。
+
+详见 [11 月 17 日应用入口](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/app-entry-2026-11-17.md)。
+
+## 上一结论（2026-11-17 运行环境）
 
 **私有 CPython 3.11.18 运行环境已在鸿蒙 PC 模拟器上真实运行：解释器自报 cpython 3.11.18、隔离与 UTF-8 模式为真，54 个原生扩展可导入，`_ctypes` 经 libffi 调用 `libc.so` 正确返回，设备检查 8 项断言全过。** 同时修复了设备上暴露的扩展符号可见性缺陷（启动器自我重新执行并预载私有 libpython）。仍未包含 Qt、应用模块与可安装 HAP。
 

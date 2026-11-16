@@ -1,0 +1,6 @@
+{
+  "string": [
+    { "name": "module_desc", "value": "ChimeraX Harmony runtime entry" },
+    { "name": "app_name", "value": "ChimeraX" }
+  ]
+}
