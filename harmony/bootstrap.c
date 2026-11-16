@@ -207,6 +207,31 @@ static int default_root(char *root, size_t capacity) {
     return 1;
 }
 
+
+/* HarmonyOS resolves extension modules with the loader's global scope only, so a
+ * dlopen'ed libpython stays invisible to later extension loads. Re-executing once
+ * with the private libpython preloaded puts CPython into that global scope using
+ * the loader's own mechanism; nothing is installed system-wide. */
+static int preload_reexec(const char *root, char **argv) {
+    if (getenv("CX_HARMONY_PRELOADED")) { return 0; }
+    char python[PATH_MAX], libs[PATH_MAX];
+    if (!join_path(python, sizeof(python), root, "lib/libpython3.11.so.1.0")) { return 0; }
+    if (access(python, R_OK) != 0) { return 0; }
+    if (!join_path(libs, sizeof(libs), root, "lib")) { return 0; }
+    const char *previous_paths = getenv("LD_LIBRARY_PATH");
+    size_t length = strlen(libs) + (previous_paths ? strlen(previous_paths) + 2 : 1);
+    char *paths = malloc(length);
+    if (!paths) { return 0; }
+    snprintf(paths, length, "%s%s%s", libs, previous_paths && *previous_paths ? ":" : "",
+             previous_paths && *previous_paths ? previous_paths : "");
+    setenv("LD_PRELOAD", python, 1);
+    setenv("LD_LIBRARY_PATH", paths, 1);
+    setenv("CX_HARMONY_PRELOADED", "1", 1);
+    free(paths);
+    execv(argv[0], argv);
+    return 0; /* Fall through: the dlopen path still works without preloading. */
+}
+
 int main(int argc, char **argv) {
     const char *root = NULL;
     int runtime_check = 0, index = 1;
@@ -229,6 +254,7 @@ int main(int argc, char **argv) {
         if (!default_root(inferred, sizeof(inferred))) { return fail("RUNTIME_ROOT", "cannot derive private runtime; specify --cx-runtime-root"); }
         root = inferred;
     }
+    preload_reexec(root, argv);
     int application_argc = 1 + argc - index;
     char **application_argv = calloc((size_t)application_argc + 1, sizeof(*application_argv));
     if (!application_argv) { return fail("MEMORY", "argument allocation failed"); }

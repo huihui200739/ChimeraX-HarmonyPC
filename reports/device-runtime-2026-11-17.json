@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-16T19:23:07.299181+00:00",
+  "scope": "generic_runtime_device_check_no_application",
+  "target": "127.0.0.1:5555",
+  "payload": {
+    "path": "build/runtime-payload/cx-generic-runtime-3.11.18-with-libffi-v2-aarch64-ohos.tar.gz",
+    "bytes": 17190461,
+    "sha256": "67c3f9cbc539cf2a2e134aaf977c3dbb7cc773adae27d49255a1c7594395ca79"
+  },
+  "checks": [
+    {
+      "name": "Runtime payload transferred",
+      "passed": true,
+      "detail": "FileTransfer finish, Size:17190461, File count = 1, time:154ms rate:111626.37kB/s"
+    },
+    {
+      "name": "Runtime extracted on the target",
+      "passed": true,
+      "detail": "LICENSE-CPython.txt\nLICENSE-libffi.txt\nbin\nlib\nruntime-manifest.json"
+    },
+    {
+      "name": "Launcher runtime check reports CPython",
+      "passed": true,
+      "detail": "{'check': 'cx_harmony_runtime', 'implementation': 'cpython', 'version': '3.11.18 (main, Nov  9 2026, 21:48:32) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]', 'prefix': '/data/local/tmp/cx-runtime-check/cx-generic-runtime', 'executable': '/data/local/tmp/cx-runtime-check/cx-generic-runtime/bin/ChimeraX', 'isolated': True, 'utf8': True}"
+    },
+    {
+      "name": "Runtime reports isolated UTF-8 mode",
+      "passed": true,
+      "detail": "{'check': 'cx_harmony_runtime', 'implementation': 'cpython', 'version': '3.11.18 (main, Nov  9 2026, 21:48:32) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]', 'prefix': '/data"
+    },
+    {
+      "name": "Native extensions import on the target",
+      "passed": true,
+      "detail": "{'python': '3.11.18', 'platform': 'linux', 'ctypes_module': '_ctypes.cpython-311-aarch64-linux-ohos.so', 'ctypes_ffi_call': True, 'libc_strlen': 19, 'stdlib_probe': [4.0, 8, 12, '2c1179ae', '0102']}"
+    },
+    {
+      "name": "_ctypes calls into libc through libffi",
+      "passed": true,
+      "detail": "19"
+    },
+    {
+      "name": "Standard library probe returns expected values",
+      "passed": true,
+      "detail": "[4.0, 8, 12, '2c1179ae', '0102']"
+    },
+    {
+      "name": "Probe module removed after the check",
+      "passed": true,
+      "detail": "ls: /data/local/tmp/cx-runtime-check/cx-generic-runtime/lib/python3.11/chimerax: No such file or directory"
+    }
+  ],
+  "commands": [
+    "FileTransfer finish, Size:17190461, File count = 1, time:154ms rate:111626.37kB/s"
+  ],
+  "device": {
+    "model": "emulator",
+    "system": "24",
+    "cpu": "arm64-v8a",
+    "uname": "Linux localhost 5.10.210 #1 SMP Fri May 15 16:49:19 CST 2026 aarch64 Toybox"
+  },
+  "extract": "tar: settime 0 cx-generic-runtime/lib/libpython3.11.so: Permission denied\ntar: had errors",
+  "runtime_check_raw": "{\"check\": \"cx_harmony_runtime\", \"implementation\": \"cpython\", \"version\": \"3.11.18 (main, Nov  9 2026, 21:48:32) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]\", \"prefix\": \"/data/local/tmp/cx-runtime-check/cx-generic-runtime\", \"executable\": \"/data/local/tmp/cx-runtime-check/cx-generic-runtime/bin/ChimeraX\", \"isolated\": true, \"utf8\": true}",
+  "runtime_check": {
+    "check": "cx_harmony_runtime",
+    "implementation": "cpython",
+    "version": "3.11.18 (main, Nov  9 2026, 21:48:32) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]",
+    "prefix": "/data/local/tmp/cx-runtime-check/cx-generic-runtime",
+    "executable": "/data/local/tmp/cx-runtime-check/cx-generic-runtime/bin/ChimeraX",
+    "isolated": true,
+    "utf8": true
+  },
+  "probe_raw": "{\"python\": \"3.11.18\", \"platform\": \"linux\", \"ctypes_module\": \"_ctypes.cpython-311-aarch64-linux-ohos.so\", \"ctypes_ffi_call\": true, \"libc_strlen\": 19, \"stdlib_probe\": [4.0, 8, 12, \"2c1179ae\", \"0102\"]}",
+  "probe": {
+    "python": "3.11.18",
+    "platform": "linux",
+    "ctypes_module": "_ctypes.cpython-311-aarch64-linux-ohos.so",
+    "ctypes_ffi_call": true,
+    "libc_strlen": 19,
+    "stdlib_probe": [
+      4.0,
+      8,
+      12,
+      "2c1179ae",
+      "0102"
+    ]
+  },
+  "result": {
+    "passed": 8,
+    "failed": 0
+  },
+  "status": "device_runtime_verified"
+}

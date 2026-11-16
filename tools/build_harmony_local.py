@@ -26,6 +26,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--sdk', type=Path, default=DEFAULT_SDK)
     day = datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
     parser.add_argument('--report', type=Path, default=ROOT / f'reports/local-build-{day}.json')
+    parser.add_argument('--python-lib-dir', type=Path,
+                        help='private runtime lib directory; links the launcher against libpython so '
+                             'extension modules resolve CPython symbols on the target')
     args = parser.parse_args(argv)
     sdk = args.sdk.resolve()
     compiler = sdk / 'llvm/bin/clang'
@@ -44,7 +47,17 @@ def main(argv: list[str] | None = None) -> int:
                   '-std=c11', '-Wall', '-Wextra', '-Werror', '-O2', '-fPIC',
                   '-fvisibility=hidden', '-fstack-protector-strong',
                   '-Wl,-z,relro,-z,now', '-Wl,--no-undefined', str(ROOT / 'harmony/bootstrap.c'), '-ldl']
-        artifacts = [('ChimeraX', ['-Wl,-rpath,$ORIGIN/../lib']),
+        launcher_flags = ['-Wl,-rpath,$ORIGIN/../lib']
+        python_scope = None
+        if args.python_lib_dir:
+            lib_dir = args.python_lib_dir.resolve()
+            candidates = sorted(lib_dir.glob('libpython3.11.so.*'))
+            if not candidates:
+                raise RuntimeError('private libpython shared object is missing from --python-lib-dir')
+            python_scope = candidates[-1].name
+            launcher_flags += ['-Wl,--no-as-needed', f'-L{lib_dir}', f'-l:{python_scope}',
+                               '-Wl,--no-undefined']
+        artifacts = [('ChimeraX', launcher_flags),
                      ('libcx_harmony_bootstrap.so', ['-shared', '-DCX_BOOTSTRAP_LIBRARY',
                       '-Wl,-soname,libcx_harmony_bootstrap.so', '-Wl,-rpath,$ORIGIN'])]
         for name, flags in artifacts:
@@ -60,6 +73,8 @@ def main(argv: list[str] | None = None) -> int:
                 raise RuntimeError(f'Not a verified AArch64 ELF artifact: {name}')
             if name.endswith('.so') and 'cx_harmony_bootstrap' not in inspect['stdout']:
                 raise RuntimeError('Shared bootstrap API was not exported')
+            if name == 'ChimeraX' and python_scope and python_scope not in inspect['stdout']:
+                raise RuntimeError('The launcher was not linked against the private libpython')
             temporary.replace(destination)
             report['artifacts'].append({'path': str(destination), 'bytes': destination.stat().st_size,
                         'sha256': hashlib.sha256(destination.read_bytes()).hexdigest(),
