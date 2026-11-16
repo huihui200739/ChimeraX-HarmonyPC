@@ -1,0 +1,17 @@
+{
+  "audit_date": "2026-11-09",
+  "created_at_utc": "2026-11-09T13:52:01.404744+00:00",
+  "scope": "local_baseline_preservation_and_generic_archive_repeat_checks_only",
+  "baseline_runtime_manifest_matches_prior_report": true,
+  "baseline_libpython_matches_prior_report": true,
+  "baseline_archive_matches_prior_report": true,
+  "baseline_archive_sha256": "57668296daa2d09578bfbb8b5d4084d6173e476a91ddf5197eca6cb6eabcb38e",
+  "both_prepared_cpython_source_trees_verified": true,
+  "enhanced_archive_repeat_identical": true,
+  "enhanced_archive_sha256": "9c1d61293846bb3153853037e56abb3731f7927239aaee002419c7eab6ae2271",
+  "device_contacted": false,
+  "target_executed": false,
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "status": "local_preservation_and_repeat_checks_passed"
+}

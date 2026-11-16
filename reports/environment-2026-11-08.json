@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "collected_at_utc": "2026-11-08T12:19:23.966377+00:00",
+  "purpose": "generic_install_launch_ui_compatibility_only",
+  "host": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "python_version": "3.14.6",
+    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+    "qt_bindings_on_python_path": {
+      "PySide6": false,
+      "PyQt6": false
+    }
+  },
+  "device": {
+    "status": "collected",
+    "target": "127.0.0.1:5555",
+    "listing": {
+      "returncode": 0,
+      "stdout": "127.0.0.1:5555",
+      "stderr": "",
+      "error": null
+    },
+    "commands": {
+      "kernel": {
+        "returncode": 0,
+        "stdout": "Linux",
+        "stderr": "",
+        "error": null
+      },
+      "architecture": {
+        "returncode": 0,
+        "stdout": "aarch64",
+        "stderr": "",
+        "error": null
+      },
+      "device_type": {
+        "returncode": 0,
+        "stdout": "2in1",
+        "stderr": "",
+        "error": null
+      },
+      "model": {
+        "returncode": 0,
+        "stdout": "emulator",
+        "stderr": "",
+        "error": null
+      },
+      "api_version": {
+        "returncode": 0,
+        "stdout": "24",
+        "stderr": "",
+        "error": null
+      },
+      "system_version": {
+        "returncode": 0,
+        "stdout": "OpenHarmony-6.1.1.125",
+        "stderr": "",
+        "error": null
+      },
+      "python_on_path": {
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "error": null
+      }
+    },
+    "assessment": {
+      "observed": {
+        "kernel": "Linux",
+        "architecture": "aarch64",
+        "device_type": "2in1",
+        "model": "emulator",
+        "api_version": "24",
+        "system_version": "OpenHarmony-6.1.1.125",
+        "python_on_path": null
+      },
+      "harmony_family_identified": true,
+      "native_binary_compatibility": "not_tested",
+      "python_runtime": "not_observed_on_path",
+      "qt_runtime": "not_tested",
+      "physical_pc_confirmed": false,
+      "upstream_app_launched": false,
+      "port_validated": false,
+      "notes": [
+        "A Linux kernel or aarch64 CPU does not establish desktop Linux ABI compatibility.",
+        "The 2in1 device type does not confirm a physical HarmonyOS PC.",
+        "A PATH lookup cannot detect private application runtimes."
+      ]
+    }
+  },
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "sdk": {
+    "path": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/oh-uni-package.json",
+    "api_version": "24",
+    "version": "6.1.1.125",
+    "status": "read"
+  }
+}

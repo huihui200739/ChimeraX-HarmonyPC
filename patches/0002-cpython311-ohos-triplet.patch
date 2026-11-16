@@ -1,0 +1,99 @@
+--- a/config.sub
++++ b/config.sub
+@@ -1718,7 +1718,7 @@
+ 	# Now accept the basic system types.
+ 	# The portable systems comes first.
+ 	# Each alternative MUST end in a * to match a version number.
+-	gnu* | android* | bsd* | mach* | minix* | genix* | ultrix* | irix* \
++	gnu* | android* | ohos* | bsd* | mach* | minix* | genix* | ultrix* | irix* \
+ 	     | *vms* | esix* | aix* | cnk* | sunos | sunos[34]* \
+ 	     | hpux* | unos* | osf* | luna* | dgux* | auroraux* | solaris* \
+ 	     | sym* |  plan9* | psp* | sim* | xray* | os68k* | v88r* \
+@@ -1766,7 +1766,7 @@
+ # (given a valid OS), if there is a kernel.
+ case $kernel-$os in
+ 	linux-gnu* | linux-dietlibc* | linux-android* | linux-newlib* \
+-		   | linux-musl* | linux-relibc* | linux-uclibc* )
++		   | linux-musl* | linux-ohos* | linux-relibc* | linux-uclibc* )
+ 		;;
+ 	uclinux-uclibc* )
+ 		;;
+--- a/configure
++++ b/configure
+@@ -6047,6 +6047,12 @@
+ #undef unix
+ #if defined(__ANDROID__)
+     # Android is not a multiarch system.
++#elif defined(__OHOS__)
++# if defined(__aarch64__) && defined(__AARCH64EL__) && defined(__LP64__)
++        aarch64-linux-ohos
++# else
++#  error This local OHOS adapter supports only little-endian AArch64 LP64
++# endif
+ #elif defined(__linux__)
+ # if defined(__x86_64__) && defined(__LP64__)
+         x86_64-linux-gnu
+@@ -14840,6 +14846,7 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+  /* CAN_RAW_FD_FRAMES available check */
++#include <sys/socket.h>
+ #include <linux/can/raw.h>
+ int
+ main ()
+@@ -14876,6 +14883,7 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
++#include <sys/socket.h>
+ #include <linux/can/raw.h>
+ int
+ main ()
+--- a/configure.ac
++++ b/configure.ac
+@@ -939,6 +939,12 @@
+ #undef unix
+ #if defined(__ANDROID__)
+     # Android is not a multiarch system.
++#elif defined(__OHOS__)
++# if defined(__aarch64__) && defined(__AARCH64EL__) && defined(__LP64__)
++        aarch64-linux-ohos
++# else
++#  error This local OHOS adapter supports only little-endian AArch64 LP64
++# endif
+ #elif defined(__linux__)
+ # if defined(__x86_64__) && defined(__LP64__)
+         x86_64-linux-gnu
+@@ -4385,6 +4391,7 @@
+ 
+ AC_CACHE_CHECK([CAN_RAW_FD_FRAMES], [ac_cv_can_raw_fd_frames], [
+ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ /* CAN_RAW_FD_FRAMES available check */
++#include <sys/socket.h>
+ #include <linux/can/raw.h>]],
+ [[int can_raw_fd_frames = CAN_RAW_FD_FRAMES;]])],
+ [ac_cv_can_raw_fd_frames=yes],
+@@ -4396,6 +4403,7 @@
+ 
+ AC_CACHE_CHECK([for CAN_RAW_JOIN_FILTERS], [ac_cv_can_raw_join_filters], [
+ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++#include <sys/socket.h>
+ #include <linux/can/raw.h>]],
+ [[int can_raw_join_filters = CAN_RAW_JOIN_FILTERS;]])],
+ [ac_cv_can_raw_join_filters=yes],
+--- a/setup.py
++++ b/setup.py
+@@ -307,7 +307,13 @@
+         self.failed_on_import = []
+         self.missing = []
+         self.disabled_configure = []
+-        if '-j' in os.environ.get('MAKEFLAGS', ''):
++        if CROSS_COMPILING and 'CX_CPYTHON_BUILD_JOBS' in os.environ:
++            # A make jobserver does not bound distutils' own thread pool.
++            jobs = int(os.environ['CX_CPYTHON_BUILD_JOBS'])
++            if jobs not in (1, 2):
++                raise ValueError('CX_CPYTHON_BUILD_JOBS must be 1 or 2')
++            self.parallel = jobs
++        elif '-j' in os.environ.get('MAKEFLAGS', ''):
+             self.parallel = True
+ 
+     def add(self, ext):

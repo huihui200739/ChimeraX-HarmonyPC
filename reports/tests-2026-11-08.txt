@@ -1,0 +1,35 @@
+test_auto_refuses_ambiguity (test_tools.InventoryTests.test_auto_refuses_ambiguity) ... ok
+test_auto_selects_only_target (test_tools.InventoryTests.test_auto_selects_only_target) ... ok
+test_collection_is_only_fixed_read_queries (test_tools.InventoryTests.test_collection_is_only_fixed_read_queries) ... ok
+test_error_not_valid_value (test_tools.InventoryTests.test_error_not_valid_value) ... ok
+test_explicit_target (test_tools.InventoryTests.test_explicit_target) ... ok
+test_harmony_not_assumed_linux_binary_compatible (test_tools.InventoryTests.test_harmony_not_assumed_linux_binary_compatible) ... ok
+test_host_only_does_not_contact_device (test_tools.InventoryTests.test_host_only_does_not_contact_device) ... Inventory saved: /private/var/folders/30/m2_9v5cx4qj17vzs1vfzn0cc0000gn/T/tmpfkzi1wy3/host.json
+This is an inventory, not proof of installation, launch, or UI compatibility.
+ok
+test_json_roundtrip (test_tools.InventoryTests.test_json_roundtrip) ... ok
+test_linux_not_assumed_harmony (test_tools.InventoryTests.test_linux_not_assumed_harmony) ... ok
+test_missing_executable (test_tools.InventoryTests.test_missing_executable) ... ok
+test_parse_banners_and_duplicates (test_tools.InventoryTests.test_parse_banners_and_duplicates) ... ok
+test_parse_empty (test_tools.InventoryTests.test_parse_empty) ... ok
+test_python_path_not_validated_runtime (test_tools.InventoryTests.test_python_path_not_validated_runtime) ... ok
+test_qt_missing_runtime_writes_blocked_report (test_tools.InventoryTests.test_qt_missing_runtime_writes_blocked_report) ... Qt runtime unavailable: synthetic missing binding
+ok
+test_subprocess_timeout (test_tools.InventoryTests.test_subprocess_timeout) ... ok
+test_unavailable_device_does_not_issue_shell_commands (test_tools.InventoryTests.test_unavailable_device_does_not_issue_shell_commands) ... ok
+test_compile_failure_does_not_upload (test_tools.NativeRunnerTests.test_compile_failure_does_not_upload) ... ok
+test_exit_zero_without_cleanup_confirmation_is_not_success (test_tools.NativeRunnerTests.test_exit_zero_without_cleanup_confirmation_is_not_success) ... Native probe report: /private/var/folders/30/m2_9v5cx4qj17vzs1vfzn0cc0000gn/T/tmp46fxi180/report.json
+Probe: native_probe_executed; temporary file: failed; application port: not validated
+ok
+test_invalid_json_still_cleans (test_tools.NativeRunnerTests.test_invalid_json_still_cleans) ... Native probe report: /private/var/folders/30/m2_9v5cx4qj17vzs1vfzn0cc0000gn/T/tmph7uilwd6/report.json
+Probe: blocked_invalid_probe_output; temporary file: removed; application port: not validated
+ok
+test_success_requires_parseable_probe_and_verified_cleanup (test_tools.NativeRunnerTests.test_success_requires_parseable_probe_and_verified_cleanup) ... Native probe report: /private/var/folders/30/m2_9v5cx4qj17vzs1vfzn0cc0000gn/T/tmpeh5f6vx3/report.json
+Probe: native_probe_executed; temporary file: removed; application port: not validated
+ok
+test_unknown_target_does_not_compile_or_upload (test_tools.NativeRunnerTests.test_unknown_target_does_not_compile_or_upload) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.008s
+
+OK

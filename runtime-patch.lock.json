@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "scope": "generic_CPython_OHOS_identification_feature_detection_and_bounded_cross_build_only",
+  "source_commit": "26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "patch": "patches/0002-cpython311-ohos-triplet.patch",
+  "patch_sha256": "32b82968d6f3ffa1eed0b586637d9c47049b71a8bc1d84a217e0a46d5f78d165",
+  "original_files": {
+    "config.sub": "d611751fba98e807c9684d253bb02aa73d6825fe0e0b9ae3cbf258a59171c9b0",
+    "configure": "71bec42b7943f25c58a8051396e0e08746f39faf40b3065e9c7a4e79905857c1",
+    "configure.ac": "123d955f3d8f914323f4141e2b00a5f324eb05321b5664119ee772fb863614eb",
+    "setup.py": "686d6a104e3664a3c3ff8d42b801efb2b962c57bce38cdd4f22b7f6c9684bd00"
+  },
+  "patched_files": {
+    "config.sub": "0eb7ea5402d7b9e8e07c70efa6de23b4e80db8d1834f3b62d330363d6064a40b",
+    "configure": "90947b4fec5843c84fb4eb390da22a69167b4479feb2a8130c5feb23a5d9d3b1",
+    "configure.ac": "4ae4a6f64acdc6e4aeedfc83a42eccb807267bc69fb55d211681dc1ec7613895",
+    "setup.py": "4d20c3842b92d5ecffd811492b1e70dbe0b16a97b7ddc353ed0bae4ea45a9188"
+  },
+  "limitations": [
+    "Not an upstream-supported target",
+    "Does not assert Linux or glibc ABI compatibility",
+    "No target execution or scientific code"
+  ]
+}

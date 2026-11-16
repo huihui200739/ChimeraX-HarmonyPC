@@ -1,0 +1,14 @@
+{
+  "source_commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "scope": "generic_platform_detection_and_cross_build_metadata_only",
+  "original_files": {
+    "mk/detectOS.make": "d793a6c1275b1d24fc57a08c4093bc3511c60a5b1855e4b2277ddb8f530a23e1",
+    "mk/os.make": "269124c9a0aa9f42d270f2571fda4984c0c61879efb302bf707f6673691be329",
+    "mk/config.make": "03751d1dff7625894a78678fbda6a338b06411c911ef7090eb5d833d2f48f013"
+  },
+  "new_files": [
+    "mk/harmony.make"
+  ],
+  "patch": "patches/0001-harmony-platform.patch",
+  "patch_sha256": "95b8592ab0f8bcf7c71efe1c5ad30d5effa4c7cc0e8a2e260b244a474a969f79"
+}

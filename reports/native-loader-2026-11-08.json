@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "purpose": "generic_native_runtime_only",
+  "status": "native_probe_executed",
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "cleanup": "removed",
+  "inventory_status": "collected",
+  "compile": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "",
+    "error": null
+  },
+  "target": "127.0.0.1:5555",
+  "target_architecture": "aarch64",
+  "remote_temporary_file": "/data/local/tmp/cx-generic-compat-7e429cb5d81e4649b7f340a1b5276e91",
+  "upload": {
+    "returncode": 0,
+    "stdout": "FileTransfer finish, Size:16352, File count = 1, time:5ms rate:3270.40kB/s",
+    "stderr": "",
+    "error": null
+  },
+  "execution": {
+    "returncode": 0,
+    "stdout": "{\"schema_version\":1,\"purpose\":\"generic_native_loader_probe\",\"upstream_app_launched\":false,\"port_validated\":false,\"kernel\":\"Linux\",\"architecture\":\"aarch64\",\"libraries\":[{\"name\":\"libc.so.6\",\"loaded\":true,\"error\":null},{\"name\":\"libEGL.so\",\"loaded\":true,\"error\":null},{\"name\":\"libGLESv3.so\",\"loaded\":true,\"error\":null},{\"name\":\"libGL.so.1\",\"loaded\":false,\"error\":\"Error loading shared library libGL.so.1: No such file or directory\"},{\"name\":\"libpython3.11.so\",\"loaded\":false,\"error\":\"Error loading shared library libpython3.11.so: No such file or directory\"},{\"name\":\"libpython3.11.so.1.0\",\"loaded\":false,\"error\":\"Error loading shared library libpython3.11.so.1.0: No such file or directory\"},{\"name\":\"libQt6Core.so\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Core.so: No such file or directory\"},{\"name\":\"libQt6Core.so.6\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Core.so.6: No such file or directory\"},{\"name\":\"libQt6Gui.so\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Gui.so: No such file or directory\"},{\"name\":\"libQt6Gui.so.6\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Gui.so.6: No such file or directory\"},{\"name\":\"libQt6Widgets.so\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Widgets.so: No such file or directory\"},{\"name\":\"libQt6Widgets.so.6\",\"loaded\":false,\"error\":\"Error loading shared library libQt6Widgets.so.6: No such file or directory\"},{\"name\":\"libQt6WebEngineCore.so\",\"loaded\":false,\"error\":\"Error loading shared library libQt6WebEngineCore.so: No such file or directory\"},{\"name\":\"libQt6WebEngineCore.so.6\",\"loaded\":false,\"error\":\"Error loading shared library libQt6WebEngineCore.so.6: No such file or directory\"}],\"scope_note\":\"Default loader namespace only; private app runtimes are not inspected. EGL/GLES loading is not desktop OpenGL or window validation.\"}",
+    "stderr": "",
+    "error": null
+  },
+  "probe": {
+    "schema_version": 1,
+    "purpose": "generic_native_loader_probe",
+    "upstream_app_launched": false,
+    "port_validated": false,
+    "kernel": "Linux",
+    "architecture": "aarch64",
+    "libraries": [
+      {
+        "name": "libc.so.6",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "name": "libEGL.so",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "name": "libGLESv3.so",
+        "loaded": true,
+        "error": null
+      },
+      {
+        "name": "libGL.so.1",
+        "loaded": false,
+        "error": "Error loading shared library libGL.so.1: No such file or directory"
+      },
+      {
+        "name": "libpython3.11.so",
+        "loaded": false,
+        "error": "Error loading shared library libpython3.11.so: No such file or directory"
+      },
+      {
+        "name": "libpython3.11.so.1.0",
+        "loaded": false,
+        "error": "Error loading shared library libpython3.11.so.1.0: No such file or directory"
+      },
+      {
+        "name": "libQt6Core.so",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Core.so: No such file or directory"
+      },
+      {
+        "name": "libQt6Core.so.6",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Core.so.6: No such file or directory"
+      },
+      {
+        "name": "libQt6Gui.so",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Gui.so: No such file or directory"
+      },
+      {
+        "name": "libQt6Gui.so.6",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Gui.so.6: No such file or directory"
+      },
+      {
+        "name": "libQt6Widgets.so",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Widgets.so: No such file or directory"
+      },
+      {
+        "name": "libQt6Widgets.so.6",
+        "loaded": false,
+        "error": "Error loading shared library libQt6Widgets.so.6: No such file or directory"
+      },
+      {
+        "name": "libQt6WebEngineCore.so",
+        "loaded": false,
+        "error": "Error loading shared library libQt6WebEngineCore.so: No such file or directory"
+      },
+      {
+        "name": "libQt6WebEngineCore.so.6",
+        "loaded": false,
+        "error": "Error loading shared library libQt6WebEngineCore.so.6: No such file or directory"
+      }
+    ],
+    "scope_note": "Default loader namespace only; private app runtimes are not inspected. EGL/GLES loading is not desktop OpenGL or window validation."
+  },
+  "cleanup_command": {
+    "returncode": 0,
+    "stdout": "CX_CLEANUP_OK",
+    "stderr": "",
+    "error": null
+  }
+}

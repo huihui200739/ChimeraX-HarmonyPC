@@ -1,0 +1,12 @@
+# Build outputs and downloaded toolchains are reproducible from the locks.
+/build/
+/build/downloads/
+/build/cpython-3.11.18/
+/build/host-python/
+/build/libffi-3.8.0/
+/build/runtime-payload/
+build/**/*.tar.gz
+build/**/*.tar.xz
+.DS_Store
+__pycache__/
+*.pyc
