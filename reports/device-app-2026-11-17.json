@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T04:34:42.657781+00:00",
+  "created_at_utc": "2026-11-17T08:11:56.895391+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 32266337,
-    "sha256": "399865cd7a3d459a5178160347ce89a976795fbab626adcd37c4c236e5329da0"
+    "bytes": 32345619,
+    "sha256": "771822a5ab19e2bccb6d1c43a1c342b4138ada33314aa25abd627d155aab095d"
   },
   "checks": [
     {
@@ -50,6 +50,11 @@
       "detail": "v1.11.1"
     },
     {
+      "name": "ChimeraX trigger dispatch runs in the app",
+      "passed": true,
+      "detail": "cx_app_probe|fired"
+    },
+    {
       "name": "ChimeraX core modules import in the app",
       "passed": true,
       "detail": "chimerax.core.errors|UserError|Logger"
@@ -67,6 +72,7 @@
     "cx-stdlib": "2c1179ae",
     "cx-chimerax": "v1.11.1",
     "cx-core": "chimerax.core.errors|UserError|Logger",
+    "cx-trigger": "cx_app_probe|fired",
     "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-store-v4/cx-generic-runtime|has_version=True|first=LICENSE.txt,__future__.py,__hello__.py",
     "containerModalButtonRowId": "",
     "EnhanceMaximizeBtn": "",
@@ -75,7 +81,7 @@
   },
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 9,
+    "passed": 10,
     "failed": 0
   },
   "status": "app_runtime_verified"

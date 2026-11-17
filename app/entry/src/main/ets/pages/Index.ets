@@ -22,6 +22,7 @@ struct Index {
   @State chimeraxVersion: string = '';
   @State chimeraxCore: string = '';
   @State diagnostic: string = '';
+  @State triggerResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -77,6 +78,13 @@ struct Index {
       const stdlib: ExpressionReport = native.runExpression(
         '__import__("hashlib").sha256(b"cx").hexdigest()[:8]');
       this.stdlibResult = stdlib.ok ? stdlib.value : stdlib.error;
+      const trigger: ExpressionReport = native.runExpression(
+        '(lambda ts: (ts.add_trigger("cx_app_probe"),' +
+        ' ts.add_handler("cx_app_probe", lambda *a: None),' +
+        ' ts.activate_trigger("cx_app_probe", "payload"),' +
+        ' "%s|fired" % list(ts.trigger_names())[0])[3])(' +
+        '__import__("chimerax.core.triggerset", fromlist=["x"]).TriggerSet())');
+      this.triggerResult = trigger.ok ? trigger.value : trigger.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -137,6 +145,11 @@ struct Index {
         Text('core').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.chimeraxCore.length > 0 ? this.chimeraxCore : '—').id('cx-core')
           .fontSize(12).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row() {
+        Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.triggerResult.length > 0 ? this.triggerResult : '—').id('cx-trigger')
+          .fontSize(11).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       Row() {
         Text('诊断').fontSize(13).fontColor('#C9D6E5').width(80)

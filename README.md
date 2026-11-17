@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 ChimeraX 包）
+## 当前结论（2026-11-17 ChimeraX core 触发器）
+
+**在鸿蒙 HAP 内，真实 ChimeraX v1.11.1 的 `TriggerSet` 完成"添加触发器 → 注册 handler → 激活"全链路，读回 `cx_app_probe|fired`；`sortedcontainers` 依赖已随包分发；设备断言 10/10。** numpy 交叉编译已尝试但未成功（distutils 忽略 clang 交叉目标），命令解释器尚未跑通。
+
+详见 [11 月 17 日 core 运行时](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-core-runtime-2026-11-17.md)。
+
+## 上一结论（2026-11-17 ChimeraX 包）
 
 **真实 ChimeraX v1.11.1 Python 包已在鸿蒙应用中运行：`chimerax.version` 读回 `v1.11.1`，`chimerax.core.errors`/`logger` 导入成功，设备断言 9/9。** 仍未包含 Qt/PyQt 与 GUI 相关模块。
 

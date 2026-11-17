@@ -83,6 +83,9 @@ def main() -> int:
         record('Genuine ChimeraX version module loads',
                values.get('cx-chimerax', '').startswith('v1.'), values.get('cx-chimerax', ''))
         core = values.get('cx-core', '')
+        record('ChimeraX trigger dispatch runs in the app',
+               'cx_app_probe' in values.get('cx-trigger', '') and 'fired' in values.get('cx-trigger', ''),
+               values.get('cx-trigger', ''))
         record('ChimeraX core modules import in the app',
                core.startswith('chimerax.core.errors|UserError|Logger'), core)
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
