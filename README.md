@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 EGL/GLES 上下文打通）
+## 当前结论（2026-11-18 atomic 层在应用内可用）
+
+**应用内 `import chimerax.atomic` 成功（`chimerax.atomic|Atom|AtomicStructure`），设备断言 22/22。Qt 侧另有重大进展：Qt 6.12 LTS 官方带 HarmonyOS 目标，上游 QPA 就在 qtbase 主干。**
+
+详见 [11 月 18 日 atomic 层](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/atomic-in-app-2026-11-18.md) 与 [Qt 落地方案](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/qt-ohos-plan-2026-11-18.md)。
+
+## 上一结论（2026-11-18 EGL/GLES 上下文打通）
 
 **应用内用 XComponent 拿到原生窗口，建立 EGL + OpenGL ES 3.0 上下文并完成首帧清屏（`ready:OpenGL ES 3.0 ... Mali-G77:2014x285`），设备断言 21/21。CLI 进程里 EGL 一律拿不到显示，渲染必须走 HAP 内的表面。**
 

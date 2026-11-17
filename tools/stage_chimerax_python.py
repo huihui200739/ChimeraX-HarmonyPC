@@ -55,7 +55,7 @@ def main() -> int:
     # Additional core bundles whose Python packages the runtime needs: array
     # marshalling and the graphics layer (their C++ modules are built separately
     # by tools/build_graphics_ext_harmony.py).
-    for bundle in ('arrays', 'graphics'):
+    for bundle in ('arrays', 'graphics', 'geometry', 'atomic_lib', 'atomic', 'pdb_lib'):
         source_bundle = args.source / 'src/bundles' / bundle / 'src'
         if source_bundle.is_dir():
             shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)

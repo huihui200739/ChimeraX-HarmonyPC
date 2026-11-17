@@ -85,6 +85,7 @@ struct Index {
   @State builtinResult: string = '';
   @State graphicsResult: string = '';
   @State glStatus: string = '';
+  @State atomicResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -187,6 +188,11 @@ struct Index {
         ' str(g.count_value(n.array([1, 2, 5, 5, 5, 9], dtype="uint8"), 5))))(' +
         '__import__("chimerax.graphics._graphics", fromlist=["x"]), __import__("numpy"))');
       this.graphicsResult = graphics.ok ? graphics.value : graphics.error;
+      const atomic: ExpressionReport = native.runExpression(
+        '"%s|%s|%s" % (__import__("chimerax.atomic", fromlist=["x"]).__name__,' +
+        ' __import__("chimerax.atomic", fromlist=["x"]).Atom.__name__,' +
+        ' __import__("chimerax.atomic", fromlist=["x"]).AtomicStructure.__name__)');
+      this.atomicResult = atomic.ok ? atomic.value : atomic.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -296,6 +302,11 @@ struct Index {
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('atomic').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.atomicResult.length > 0 ? this.atomicResult : '—').id('cx-atomic')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {

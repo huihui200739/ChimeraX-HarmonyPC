@@ -1,0 +1,683 @@
+{
+  "schema_version": 1,
+  "collected_at_utc": "2026-11-17T16:21:35+00:00",
+  "collected_at_local": "2026-11-18T00:21:35+08:00",
+  "purpose": "host-side evidence for Qt 6 on OpenHarmony cross build feasibility",
+  "scope": "no device, emulator or hdc access; sources and logs under build/qt/",
+  "arch": "arm64-v8a",
+  "jobs_run": [
+    "env",
+    "headers",
+    "smoke",
+    "qt_sdk_compile",
+    "configure",
+    "prebuilt"
+  ],
+  "upstream_facts": {
+    "accessed_on": "2026-11-18",
+    "official_support": {
+      "url": "https://doc.qt.io/qt-6/harmonyos.html",
+      "status": "technology preview",
+      "quote": "Note: Qt for HarmonyOS is in technology preview and may change in future releases.",
+      "supported_config": {
+        "distribution": "HarmonyOS 6.1.0 (API 23) and later",
+        "architecture": "arm64-v8a",
+        "compiler": "Clang 15.0.4 (SDK 6.1.0)",
+        "hosts": "Windows(x86_64)/Linux(x86_64)/macOS(x86_64)/macOS(Apple Silicon)",
+        "package": "HAP, built with hvigor via harmonydeployqt"
+      }
+    },
+    "build_from_source": {
+      "url": "https://doc.qt.io/qt-6/harmonyos-building.html",
+      "configure": "configure -ohos-sdk <SDK_ROOT> -qt-host-path <HOST_QT_PATH> -ohos-arch arm64-v8a",
+      "note": "cross-compilation: a matching host Qt build is mandatory"
+    },
+    "prerequisites": {
+      "url": "https://doc.qt.io/qt-6/harmonyos-prerequisites.html",
+      "note": "OpenHarmony SDK command-line tools (clang, sysroot, hvigor); OHOS_SDK_ROOT env var or -ohos-sdk; toolchain developed and tested on Linux"
+    },
+    "deployment": {
+      "url": "https://doc.qt.io/qt-6/harmonyos-building-deploying-apps.html",
+      "note": "CMake-only packaging: <target>_make_hap -> harmonydeployqt collects libqohos.so, Qt modules, QML modules and calls hvigor"
+    },
+    "prebuilt_binaries": {
+      "url": "https://wiki.qt.io/Qt_for_HarmonyOS/development_with_6.12.0_zh",
+      "note": "Qt 6.12.0 HarmonyOS prebuilt binaries ship through the Qt Online Installer"
+    },
+    "upstream_source_layout": {
+      "path": "qtbase/src/plugins/platforms/ohos/",
+      "present_in_local_source": true,
+      "subdirs": [
+        "private",
+        "qarkui",
+        "extras"
+      ],
+      "note": "QPA plugin target 'qohos'; mkspec 'ohos-clang'; requires NATIVE_OHOS_SDK"
+    },
+    "community_port": {
+      "url": "https://gitee.com/openharmony-sig/qt",
+      "note": "OpenHarmony SIG-Qt, Qt 5.15 lineage; superseded for Qt6 by upstream support"
+    },
+    "qt_creator_plugin": {
+      "url": "https://github.com/qt-creator/qt-creator/tree/master/src/plugins/harmonyos",
+      "note": "Qt Creator HarmonyOS kit: build/package/sign/install/run; needs a provisioning profile"
+    },
+    "no_public_ohos_qpa_for_qt5": "Qt 5.15 needs the Gitee SIG-Qt fork; upstream Qt 6 has qohos"
+  },
+  "results": {
+    "env": {
+      "host": {
+        "system": "Darwin",
+        "release": "27.2.0",
+        "machine": "arm64",
+        "python": "3.14.6"
+      },
+      "sdk": {
+        "sdk_root": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+        "native_package": {
+          "apiVersion": "24",
+          "displayName": "Native",
+          "meta": {
+            "metaVersion": "3.0.0"
+          },
+          "path": "native",
+          "releaseType": "Release",
+          "version": "6.1.1.125"
+        },
+        "ets_package": {
+          "apiVersion": "24",
+          "displayName": "Ets",
+          "meta": {
+            "metaVersion": "3.0.0"
+          },
+          "path": "ets",
+          "releaseType": "Release",
+          "version": "6.1.1.125"
+        },
+        "components": [
+          "ets",
+          "js",
+          "native",
+          "previewer",
+          "toolchains"
+        ]
+      },
+      "tools": {
+        "git": "/usr/bin/git",
+        "cmake": null,
+        "ninja": null,
+        "ninja-build": null,
+        "python3": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+        "clang": "/usr/bin/clang",
+        "llvm-readelf": null
+      },
+      "sdk_tools": {
+        "clang": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+        "clang_exists": true,
+        "clang++_exists": true,
+        "cmake_in_sdk": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/cmake",
+        "cmake_in_sdk_exists": true,
+        "ninja_in_sdk_exists": true,
+        "toolchain_file": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build/cmake/ohos.toolchain.cmake",
+        "toolchain_file_exists": true,
+        "libcxx_headers": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/include/c++/v1",
+        "libcxx_headers_exist": true,
+        "libcxx_static": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/aarch64-linux-ohos/libc++_static.a",
+        "libcxx_static_exists": true
+      },
+      "clang_version": [
+        "OHOS (dev) clang version 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)",
+        "Target: arm64-apple-darwin27.2.0"
+      ],
+      "verdict": "sdk_ready_for_cross_compile",
+      "host_qt": {
+        "candidates": [],
+        "usable": null,
+        "qt_version": null,
+        "path_lookup": {
+          "qmake": null,
+          "qmake6": null,
+          "qtpaths": null,
+          "qtpaths6": null,
+          "moc": null
+        }
+      },
+      "disk": {
+        "free_gib": 178.7
+      }
+    },
+    "headers": {
+      "include_dir": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include",
+      "lib_dir": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos",
+      "headers": {
+        "ArkUI native node (window/embedded node)": "arkui/native_node.h",
+        "ArkUI native type": "arkui/native_type.h",
+        "ArkUI native interface": "arkui/native_interface.h",
+        "ArkUI native key event": "arkui/native_key_event.h",
+        "ArkUI native animate": "arkui/native_animate.h",
+        "EGL": "EGL/egl.h",
+        "GLES3": "GLES3/gl3.h",
+        "GLES2": "GLES2/gl2.h",
+        "native window": "native_window/external_window.h",
+        "native window buffer": "native_buffer/native_buffer.h",
+        "native vsync": "native_vsync/native_vsync.h",
+        "display manager": "window_manager/oh_display_manager.h",
+        "window manager": "window_manager/oh_window.h",
+        "UDMF (drag and drop)": "database/udmf/udmf.h",
+        "pasteboard (clipboard)": "database/pasteboard/oh_pasteboard.h",
+        "inputmethod controller": "inputmethod/inputmethod_controller_capi.h",
+        "inputmethod text editor proxy": "inputmethod/inputmethod_text_editor_proxy_capi.h",
+        "multimodal input (key/mouse/touch)": "multimodalinput/oh_input_manager.h",
+        "pixelmap": "multimedia/image_framework/image/pixelmap_native.h",
+        "hicollie (watchdog)": "hicollie/hicollie.h",
+        "hiappevent": "hiappevent/hiappevent.h",
+        "hilog": "hilog/log.h",
+        "file share": "filemanagement/fileshare/oh_file_share.h",
+        "file uri": "filemanagement/file_uri/oh_file_uri.h",
+        "qos": "qos/qos.h"
+      },
+      "libs": {
+        "EGL": "libEGL.so",
+        "GLESv3": "libGLESv3.so",
+        "ace_napi.z": "libace_napi.z.so",
+        "ace_ndk.z": "libace_ndk.z.so",
+        "hiappevent_ndk.z": "libhiappevent_ndk.z.so",
+        "hilog_ndk.z": "libhilog_ndk.z.so",
+        "native_display_manager": "libnative_display_manager.so",
+        "native_vsync": "libnative_vsync.so",
+        "native_window": "libnative_window.so",
+        "native_window_manager": "libnative_window_manager.so",
+        "ohfileshare": "libohfileshare.so",
+        "ohfileuri": "libohfileuri.so",
+        "ohhicollie": "libohhicollie.so",
+        "ohinput": "libohinput.so",
+        "pasteboard": "libpasteboard.so",
+        "pixelmap": "libpixelmap.so",
+        "qos": "libqos.so",
+        "udmf": "libudmf.so",
+        "ohinputmethod": "libohinputmethod.so"
+      },
+      "missing_headers": [],
+      "missing_libs": [],
+      "coverage": "44/44",
+      "verdict": "qpa_surface_complete"
+    },
+    "smoke": {
+      "pure_cxx17": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "--target=aarch64-linux-ohos",
+          "-std=c++17",
+          "-fPIC",
+          "-O1",
+          "-Wall",
+          "-c",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/smoke_pure.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/smoke_pure.o"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.33,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "object_written": true,
+        "elf": {
+          "Class": "ELF64",
+          "Type": "REL (Relocatable file)",
+          "Machine": "AArch64"
+        }
+      },
+      "ohos_headers_compile": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "--target=aarch64-linux-ohos",
+          "-std=c++17",
+          "-fPIC",
+          "-O1",
+          "-Wall",
+          "-c",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/smoke_ohos.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/smoke_ohos.o"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.04,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "object_written": true
+      },
+      "ohos_link": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "--target=aarch64-linux-ohos",
+          "-std=c++17",
+          "-fPIC",
+          "-O1",
+          "-Wall",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/smoke_link.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/libsmoke_ohos.so",
+          "-L/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos",
+          "-lEGL",
+          "-lGLESv3",
+          "-lhilog_ndk.z",
+          "-lunwind",
+          "-shared",
+          "-Wl,--no-undefined"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.11,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "built": true,
+        "elf": {
+          "Class": "ELF64",
+          "Type": "DYN (Shared object file)",
+          "Machine": "AArch64"
+        }
+      },
+      "verdict": "cross_toolchain_works",
+      "log_dir": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/logs"
+    },
+    "qt_sdk_compile": {
+      "status": "executed",
+      "qt_root": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64",
+      "compiler": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++",
+      "include_dir": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include",
+      "lib_dir": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib",
+      "mkspec_ohos_clang": true,
+      "qpa_plugin": [
+        "plugins/platforms/libqeglfs.so",
+        "plugins/platforms/libqlinuxfb.so",
+        "plugins/platforms/libqminimal.so",
+        "plugins/platforms/libqminimalegl.so",
+        "plugins/platforms/libqoffscreen.so",
+        "plugins/platforms/libqohos.so",
+        "plugins/platforms/libqvkkhrdisplay.so",
+        "plugins/platforms/libqvnc.so"
+      ],
+      "configure_opt_head": "-release\n-nomake\nexamples\n-no-dbus\n-no-use-gold-linker\n-no-pch\n-openssl-runtime\n--\n-DOHOS_SDK_ROOT=/opt/harmonyos/command-line-tools/sdk/default/openharmony\n-DOHOS_ARCH=arm64-v8a\n-DWARNINGS_ARE_ERRORS=OFF\n-DQT_QMAKE_TARGET_MKSPEC=ohos-clang\n-DCMAKE_FIND_ROOT_PATH=/home/qt/vcpkg-2026.06.01-qt/installed/arm64-ohos-qt\n-DQT_GENERATE_WRAPPER_SCRIPTS_FOR_ALL_HOSTS=ON\n-DQT_HOST_PATH=/home/qt/work/install\n-DQT_INSTALL_CONFIG_INFO_FILES=ON\n-DQT_GENERATE_SBOM=ON\n-DQT_GENERATE_SOURCE_SBOM=ON\n-DQT_SBOM_VERIFY_SPDX_V2=ON\n-DQT_SBOM_REQUIRE_GENERATE_SPDX_V2_JSON=ON\n-DQT_SBOM_REQUIRE_VERIFY_SPDX_V2=ON\n-DQT_SB",
+      "qt_version_str_macro": [],
+      "qt_version_from_qconfig_header": [
+        "#define QT_VERSION_STR \"6.12.0\"",
+        "#define QT_VERSION_MAJOR 6",
+        "#define QT_VERSION_MINOR 12",
+        "#define QT_VERSION_PATCH 0"
+      ],
+      "compile_qglobal": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++",
+          "--target=aarch64-linux-ohos",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "-std=c++17",
+          "-fPIC",
+          "-D__MUSL__=1",
+          "-O1",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore",
+          "-c",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/qt_sdk_compile.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/qt_sdk_compile.o"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.13,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "object_written": true,
+        "object_bytes": 1616
+      },
+      "link_qtcore": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++",
+          "--target=aarch64-linux-ohos",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "-std=c++17",
+          "-fPIC",
+          "-D__MUSL__=1",
+          "-O1",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/qt_sdk_compile.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/qt_sdk_compile",
+          "-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib",
+          "-lQt6Core",
+          "-Wl,-rpath,/data/storage/el1/bundle/libs/arm64",
+          "-Wl,--no-undefined"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.16,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "executable_written": true,
+        "elf": {
+          "Class": "ELF64",
+          "Type": "DYN (Shared object file)",
+          "Machine": "AArch64"
+        }
+      },
+      "link_qtwidgets": {
+        "cmd": [
+          "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++",
+          "--target=aarch64-linux-ohos",
+          "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+          "-std=c++17",
+          "-fPIC",
+          "-D__MUSL__=1",
+          "-O1",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtGui",
+          "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtWidgets",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/qt_sdk_widgets.cpp",
+          "-o",
+          "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe/libqt_sdk_widgets_probe.so",
+          "-shared",
+          "-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib",
+          "-lQt6Widgets",
+          "-lQt6Gui",
+          "-lQt6Core",
+          "-Wl,--no-undefined"
+        ],
+        "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/probe",
+        "returncode": 0,
+        "duration_s": 0.73,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "stdout_lines": 0,
+        "so_written": true,
+        "needed": [
+          "libQt6Widgets.so",
+          "libQt6Gui.so",
+          "libQt6Core.so",
+          "libc++_shared.so",
+          "libc.so"
+        ]
+      },
+      "verdict": "qt_for_harmonyos_sdk_usable"
+    },
+    "configure": {
+      "status": "executed",
+      "qtbase": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase",
+      "variants": {
+        "doc_ascii_prefix": {
+          "cmd": [
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/configure",
+            "-ohos-sdk",
+            "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+            "-ohos-arch",
+            "arm64-v8a",
+            "-nomake",
+            "examples",
+            "-nomake",
+            "tests",
+            "-no-dbus",
+            "-no-openssl",
+            "-prefix",
+            "/Users/huihui/qt-ohos-probe/install"
+          ],
+          "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/build-configure-probe/doc_ascii_prefix",
+          "returncode": 1,
+          "sdk_cmake_on_path": true,
+          "duration_s": 1.26,
+          "log": "build/qt/logs/configure-doc_ascii_prefix.log",
+          "error_lines": [
+            "CMake Error at cmake/QtBuildHelpers.cmake:397 (message):",
+            "You need to set QT_HOST_PATH to cross compile Qt.",
+            "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1596 (message):"
+          ],
+          "stdout_tail": "'/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/cmake' '-DQT_INTERNAL_CALLED_FROM_CONFIGURE:BOOL=TRUE' '-DOHOS_SDK_ROOT=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony' '-DOHOS_ARCH=arm64-v8a' '-DCMAKE_INSTALL_PREFIX=/Users/huihui/qt-ohos-probe/install' '-DQT_BUILD_EXAMPLES=FALSE' '-DQT_BUILD_TESTS=FALSE' '-DFEATURE_dbus=OFF' '-DINPUT_openssl=no' '-G' 'Ninja' '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase'\n-- OHOS build detected, checking configuration defaults...\n-- The CXX compiler identification is Clang 15.0.4\n-- The C compiler identification is Clang 15.0.4\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Detecting C compiler ABI info\n-- Detecting C compiler ABI info - done\n-- Check for working C compiler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang - skipped\n-- Detecting C compile features\n-- Detecting C compile features - done\n-- The ASM compiler identification is Clang 15.0.4 with GNU-like command-line\n-- Found assembler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang\n-- Setting build type to 'Release' as none was specified.\n-- Configuring incomplete, errors occurred!\n",
+          "stderr_tail": "CMake Error at cmake/QtBuildHelpers.cmake:397 (message):\n  You need to set QT_HOST_PATH to cross compile Qt.\nCall Stack (most recent call first):\n  cmake/QtBuildHelpers.cmake:502 (qt_internal_check_host_path_set_for_cross_compiling)\n  cmake/QtBuild.cmake:4 (qt_internal_setup_build_and_global_variables)\n  cmake/QtSetup.cmake:6 (include)\n  cmake/QtBuildRepoHelpers.cmake:31 (include)\n  cmake/QtBuildRepoHelpers.cmake:242 (qt_build_internals_set_up_private_api)\n  cmake/QtBaseHelpers.cmake:220 (qt_build_repo_begin)\n  CMakeLists.txt:36 (qt_internal_qtbase_build_repo)\n\n\nCMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1596 (message):\n  CMake exited with code 1.\n\n\n"
+        },
+        "cjk_prefix_value": {
+          "cmd": [
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/configure",
+            "-ohos-sdk",
+            "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+            "-ohos-arch",
+            "arm64-v8a",
+            "-nomake",
+            "examples",
+            "-nomake",
+            "tests",
+            "-no-dbus",
+            "-no-openssl",
+            "-prefix",
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/install-probe"
+          ],
+          "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/build-configure-probe/cjk_prefix_value",
+          "returncode": 1,
+          "sdk_cmake_on_path": true,
+          "duration_s": 0.06,
+          "log": "build/qt/logs/configure-cjk_prefix_value.log",
+          "error_lines": [
+            "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):",
+            "Invalid command line parameter 'pc'."
+          ],
+          "stdout_tail": "",
+          "stderr_tail": "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):\n  Invalid command line parameter 'pc'.\nCall Stack (most recent call first):\n  /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1139 (qtConfAddError)\n\n\n"
+        },
+        "duplicate_prefix": {
+          "cmd": [
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/configure",
+            "-ohos-sdk",
+            "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+            "-ohos-arch",
+            "arm64-v8a",
+            "-nomake",
+            "examples",
+            "-nomake",
+            "tests",
+            "-no-dbus",
+            "-no-openssl",
+            "-prefix",
+            "/Users/huihui/qt-ohos-probe/install",
+            "-prefix",
+            "/Users/huihui/qt-ohos-probe/install-dup"
+          ],
+          "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/build-configure-probe/duplicate_prefix",
+          "returncode": 1,
+          "sdk_cmake_on_path": true,
+          "duration_s": 1.24,
+          "log": "build/qt/logs/configure-duplicate_prefix.log",
+          "error_lines": [
+            "CMake Error at cmake/QtBuildHelpers.cmake:397 (message):",
+            "You need to set QT_HOST_PATH to cross compile Qt.",
+            "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1596 (message):"
+          ],
+          "stdout_tail": "'/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/cmake' '-DQT_INTERNAL_CALLED_FROM_CONFIGURE:BOOL=TRUE' '-DOHOS_SDK_ROOT=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony' '-DOHOS_ARCH=arm64-v8a' '-DCMAKE_INSTALL_PREFIX=/Users/huihui/qt-ohos-probe/install-dup' '-DQT_BUILD_EXAMPLES=FALSE' '-DQT_BUILD_TESTS=FALSE' '-DFEATURE_dbus=OFF' '-DINPUT_openssl=no' '-G' 'Ninja' '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase'\n-- OHOS build detected, checking configuration defaults...\n-- The CXX compiler identification is Clang 15.0.4\n-- The C compiler identification is Clang 15.0.4\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Detecting C compiler ABI info\n-- Detecting C compiler ABI info - done\n-- Check for working C compiler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang - skipped\n-- Detecting C compile features\n-- Detecting C compile features - done\n-- The ASM compiler identification is Clang 15.0.4 with GNU-like command-line\n-- Found assembler: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang\n-- Setting build type to 'Release' as none was specified.\n-- Configuring incomplete, errors occurred!\n",
+          "stderr_tail": "CMake Error at cmake/QtBuildHelpers.cmake:397 (message):\n  You need to set QT_HOST_PATH to cross compile Qt.\nCall Stack (most recent call first):\n  cmake/QtBuildHelpers.cmake:502 (qt_internal_check_host_path_set_for_cross_compiling)\n  cmake/QtBuild.cmake:4 (qt_internal_setup_build_and_global_variables)\n  cmake/QtSetup.cmake:6 (include)\n  cmake/QtBuildRepoHelpers.cmake:31 (include)\n  cmake/QtBuildRepoHelpers.cmake:242 (qt_build_internals_set_up_private_api)\n  cmake/QtBaseHelpers.cmake:220 (qt_build_repo_begin)\n  CMakeLists.txt:36 (qt_internal_qtbase_build_repo)\n\n\nCMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1596 (message):\n  CMake exited with code 1.\n\n\n"
+        },
+        "host_qt_ohos_prebuilt": {
+          "cmd": [
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/configure",
+            "-ohos-sdk",
+            "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+            "-ohos-arch",
+            "arm64-v8a",
+            "-nomake",
+            "examples",
+            "-nomake",
+            "tests",
+            "-no-dbus",
+            "-no-openssl",
+            "-prefix",
+            "/Users/huihui/qt-ohos-probe/install",
+            "-qt-host-path",
+            "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64"
+          ],
+          "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/build-configure-probe/host_qt_ohos_prebuilt",
+          "returncode": 1,
+          "sdk_cmake_on_path": true,
+          "duration_s": 0.06,
+          "log": "build/qt/logs/configure-host_qt_ohos_prebuilt.log",
+          "error_lines": [
+            "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):",
+            "Invalid command line parameter 'pc'."
+          ],
+          "stdout_tail": "",
+          "stderr_tail": "CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):\n  Invalid command line parameter 'pc'.\nCall Stack (most recent call first):\n  /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:1139 (qtConfAddError)\n\n\n"
+        }
+      },
+      "verdict": "configure_failed"
+    },
+    "prebuilt": {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64",
+      "libraries": {
+        "libqohos.so": {
+          "size": 3989552,
+          "header_lines": [
+            "  Class:                             ELF64",
+            "  Type:                              DYN (Shared object file)",
+            "  Machine:                           AArch64"
+          ],
+          "needed": [
+            "libEGL.so",
+            "libace_napi.z.so",
+            "libace_ndk.z.so",
+            "libhiappevent_ndk.z.so",
+            "libhilog_ndk.z.so",
+            "libnative_display_manager.so",
+            "libnative_vsync.so",
+            "libnative_window.so",
+            "libnative_window_manager.so",
+            "libohfileshare.so",
+            "libohfileuri.so",
+            "libohhicollie.so",
+            "libohinput.so",
+            "libpasteboard.so",
+            "libpixelmap.so",
+            "libqos.so",
+            "libudmf.so",
+            "libohinputmethod.so",
+            "libQt6OpenGL.so",
+            "libQt6Gui.so",
+            "libQt6Core.so",
+            "libGLESv3.so",
+            "libc++_shared.so",
+            "libc.so"
+          ],
+          "soname": [],
+          "needed_resolution": {
+            "libEGL.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libEGL.so",
+            "libace_napi.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libace_napi.z.so",
+            "libace_ndk.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libace_ndk.z.so",
+            "libhiappevent_ndk.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libhiappevent_ndk.z.so",
+            "libhilog_ndk.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libhilog_ndk.z.so",
+            "libnative_display_manager.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_display_manager.so",
+            "libnative_vsync.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_vsync.so",
+            "libnative_window.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_window.so",
+            "libnative_window_manager.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_window_manager.so",
+            "libohfileshare.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libohfileshare.so",
+            "libohfileuri.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libohfileuri.so",
+            "libohhicollie.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libohhicollie.so",
+            "libohinput.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libohinput.so",
+            "libpasteboard.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libpasteboard.so",
+            "libpixelmap.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libpixelmap.so",
+            "libqos.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libqos.so",
+            "libudmf.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libudmf.so",
+            "libohinputmethod.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libohinputmethod.so",
+            "libQt6OpenGL.so": "prebuilt_qt:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6OpenGL.so",
+            "libQt6Gui.so": "prebuilt_qt:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Gui.so",
+            "libQt6Core.so": "prebuilt_qt:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Core.so",
+            "libGLESv3.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libGLESv3.so",
+            "libc++_shared.so": "app_side:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/aarch64-linux-ohos/libc++_shared.so",
+            "libc.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libc.so"
+          }
+        },
+        "libQt6Gui.so": {
+          "size": 10652560,
+          "header_lines": [
+            "  Class:                             ELF64",
+            "  Type:                              DYN (Shared object file)",
+            "  Machine:                           AArch64"
+          ],
+          "needed": [
+            "libGLESv3.so",
+            "libace_napi.z.so",
+            "libhilog_ndk.z.so",
+            "libpixelmap.so",
+            "libEGL.so",
+            "libQt6Core.so",
+            "libc++_shared.so",
+            "libc.so"
+          ],
+          "soname": [
+            "libQt6Gui.so"
+          ],
+          "needed_resolution": {
+            "libGLESv3.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libGLESv3.so",
+            "libace_napi.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libace_napi.z.so",
+            "libhilog_ndk.z.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libhilog_ndk.z.so",
+            "libpixelmap.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libpixelmap.so",
+            "libEGL.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libEGL.so",
+            "libQt6Core.so": "prebuilt_qt:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Core.so",
+            "libc++_shared.so": "app_side:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/aarch64-linux-ohos/libc++_shared.so",
+            "libc.so": "system_ndk:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos/libc.so"
+          }
+        }
+      },
+      "unresolved_needed": {},
+      "resolution_classes": {
+        "system_ndk": [
+          "libEGL.so",
+          "libGLESv3.so",
+          "libace_napi.z.so",
+          "libace_ndk.z.so",
+          "libc.so",
+          "libhiappevent_ndk.z.so",
+          "libhilog_ndk.z.so",
+          "libnative_display_manager.so",
+          "libnative_vsync.so",
+          "libnative_window.so",
+          "libnative_window_manager.so",
+          "libohfileshare.so",
+          "libohfileuri.so",
+          "libohhicollie.so",
+          "libohinput.so",
+          "libohinputmethod.so",
+          "libpasteboard.so",
+          "libpixelmap.so",
+          "libqos.so",
+          "libudmf.so"
+        ],
+        "prebuilt_qt": [
+          "libQt6Core.so",
+          "libQt6Gui.so",
+          "libQt6OpenGL.so"
+        ],
+        "app_side": [
+          "libc++_shared.so"
+        ]
+      },
+      "verdict": "prebuilt_loadable_against_sdk"
+    }
+  },
+  "conclusions": [
+    "SDK: /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony (native 6.1.1.125, API 24)",
+    "host Qt for -qt-host-path: NOT FOUND",
+    "QPA 依赖面覆盖: 44/44 (缺头文件 [], 缺库 [])",
+    "交叉编译冒烟: cross_toolchain_works",
+    "configure[doc_ascii_prefix] exit=1 → CMake Error at cmake/QtBuildHelpers.cmake:397 (message):",
+    "configure[cjk_prefix_value] exit=1 → CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):",
+    "configure[duplicate_prefix] exit=1 → CMake Error at cmake/QtBuildHelpers.cmake:397 (message):",
+    "configure[host_qt_ohos_prebuilt] exit=1 → CMake Error at /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/src/qtbase/cmake/QtProcessConfigureArgs.cmake:719 (message):",
+    "Qt-for-HarmonyOS 头文件交叉编译: compile_qglobal exit=0, link_QtCore exit=0, link_QtWidgets exit=0 → qt_for_harmonyos_sdk_usable",
+    "目标头文件版本: #define QT_VERSION_STR \"6.12.0\"; #define QT_VERSION_MAJOR 6; #define QT_VERSION_MINOR 12; #define QT_VERSION_PATCH 0; QPA 插件: ['plugins/platforms/libqeglfs.so', 'plugins/platforms/libqlinuxfb.so', 'plugins/platforms/libqminimal.so', 'plugins/platforms/libqminimalegl.so', 'plugins/platforms/libqoffscreen.so', 'plugins/platforms/libqohos.so', 'plugins/platforms/libqvkkhrdisplay.so', 'plugins/platforms/libqvnc.so']",
+    "预编译包依赖解析: prebuilt_loadable_against_sdk"
+  ]
+}

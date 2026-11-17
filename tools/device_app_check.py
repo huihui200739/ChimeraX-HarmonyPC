@@ -97,7 +97,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-gl-status'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-gl-status'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -146,6 +146,9 @@ def main() -> int:
         gl = values.get('cx-gl-status', '')
         record('An EGL/GLES surface is created inside the app', gl.startswith('xcomponent') or gl.startswith('ready:'), gl)
         report['gl_status'] = gl
+        atomic = values.get('cx-atomic', '')
+        record('The ChimeraX atomic layer imports in the app',
+               atomic.startswith('chimerax.atomic|Atom|AtomicStructure'), atomic)
         record('The graphics C++ extension loads and runs in the app',
                graphics.startswith('chimerax.graphics._graphics|3'), graphics)
         record('Core built-in commands run in the app',

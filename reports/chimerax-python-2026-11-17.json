@@ -1,10 +1,10 @@
 {
-  "created_at_utc": "2026-11-17T14:50:33.784935+00:00",
+  "created_at_utc": "2026-11-17T16:16:49.959194+00:00",
   "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src",
   "commit": "60235d303c18f72c6ebd45a620b540ba84825994",
   "version": "v1.11.1",
   "branch": "HEAD",
-  "files": 1029,
+  "files": 1076,
   "package": "appdirs",
   "dependencies": [
     {
@@ -44,6 +44,8 @@
     "_utils",
     "array_api",
     "arrays",
+    "atomic",
+    "atomic_lib",
     "compat",
     "conftest.py",
     "core",
@@ -58,8 +60,6 @@
     "errors.py",
     "exceptions.py",
     "exceptions.pyi",
-    "f2py",
-    "fft",
-    "graphics"
+    "f2py"
   ]
 }
