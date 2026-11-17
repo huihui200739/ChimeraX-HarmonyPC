@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 交互式命令通道）
+## 当前结论（2026-11-17 命令语法输入）
+
+**输入框直接吃 ChimeraX 命令语法：`cxprobe ui-command` → `cxprobe:ui-command`；Python 示例按钮 → `ChimeraX 16`；设备断言 17/17。**
+
+详见 [11 月 17 日命令语法输入](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/app-command-syntax-2026-11-17.md)。
+
+## 上一结论（2026-11-17 交互式命令通道）
 
 **应用内已有命令输入框：点"执行"后页面输出 `ChimeraX 16`（持久 Session 的 app_name 与触发器数），设备断言 16/16。**
 

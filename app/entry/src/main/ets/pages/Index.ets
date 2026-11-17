@@ -57,7 +57,7 @@ struct Index {
   @State commandsProbe: string = '';
   @State sessionProbe: string = '';
   @State commandResult: string = '';
-  @State commandText: string = 'print(session.app_name, len(session.triggers.trigger_names()))';
+  @State commandText: string = 'cxprobe ui-command';
   @State commandOutput: string = '';
   @State failed: string = '';
 
@@ -70,7 +70,13 @@ struct Index {
   }
 
   private executeCommand(): void {
-    const report: ScriptReport = native.runScript(this.commandText);
+    const report: ScriptReport = native.runChimeraCommand(this.commandText);
+    this.commandOutput = (report.ok ? report.output : report.error).trim();
+  }
+
+  private executePythonSample(): void {
+    const report: ScriptReport = native.runScript(
+      'print(session.app_name, len(session.triggers.trigger_names()))');
     this.commandOutput = (report.ok ? report.output : report.error).trim();
   }
 
@@ -220,12 +226,14 @@ struct Index {
           .fontSize(10).fontColor('#B9C8D8').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row({ space: 6 }) {
-        TextInput({ text: this.commandText, placeholder: '输入 Python 或 ChimeraX 命令…' })
+        TextInput({ text: this.commandText, placeholder: '输入 ChimeraX 命令，例如 cxprobe ui-command' })
           .id('cx-cmd-input').height(32).fontSize(11).layoutWeight(1)
           .onChange((value: string) => { this.commandText = value; })
           .onSubmit(() => this.executeCommand())
-        Button('执行').id('cx-cmd-run').height(32).fontSize(11)
+        Button('执行命令').id('cx-cmd-run').height(32).fontSize(11)
           .onClick(() => this.executeCommand())
+        Button('Python').id('cx-cmd-py').height(32).fontSize(11)
+          .onClick(() => this.executePythonSample())
       }.width('100%')
       Text(this.commandOutput.length > 0 ? this.commandOutput : '（输出）')
         .id('cx-cmd-output').fontSize(11).fontColor('#D7E3F0').width('100%').maxLines(4)

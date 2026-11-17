@@ -444,7 +444,104 @@ napi_value ExtractArchive(napi_env env, napi_callback_info info) {
 
 // Runs a multi-line Python script inside the private runtime and returns whatever
 // it printed; the app uses this for real ChimeraX command execution.
+
+// Quotes a string so it can be embedded in generated Python source.
+std::string PyLiteral(const std::string& value) {
+  std::string out = "'";
+  for (char c : value) {
+    if (c == '\\' || c == '\'') {
+      out.push_back('\\');
+    }
+    if (c == '\n') {
+      continue;
+    }
+    out.push_back(c);
+  }
+  out.push_back('\'');
+  return out;
+}
+
+struct ScriptOutcome {
+  bool ok = false;
+  std::string output;
+};
+
+// Runs code in __main__ with stdout captured; shared by the script and command
+// entry points so both behave the same way.
+ScriptOutcome ExecuteScript(const std::string& code) {
+  ScriptOutcome outcome;
+  if (!g_initialized || code.empty()) {
+    outcome.output = g_initialized ? "script is required" : "runtime is not initialized";
+    return outcome;
+  }
+  PyGILState_STATE gil = PyGILState_Ensure();
+  PyObject* main = PyImport_AddModule("__main__");
+  PyObject* globals = main ? PyModule_GetDict(main) : nullptr;
+  if (globals) {
+    PyRun_SimpleString("import io as _cx_io, sys as _cx_sys\n"
+                       "_cx_buf = _cx_io.StringIO()\n"
+                       "_cx_real_stdout = _cx_sys.stdout\n"
+                       "_cx_sys.stdout = _cx_buf\n");
+    PyObject* result = PyRun_String(code.c_str(), Py_file_input, globals, globals);
+    PyRun_SimpleString("_cx_sys.stdout = _cx_real_stdout\n");
+    PyObject* buffer = PyDict_GetItemString(globals, "_cx_buf");
+    if (buffer) {
+      PyObject* text = PyObject_CallMethod(buffer, "getvalue", nullptr);
+      if (text) {
+        const char* value = PyUnicode_AsUTF8(text);
+        if (value) {
+          outcome.output = value;
+        }
+        Py_DECREF(text);
+      }
+    }
+    if (result) {
+      Py_DECREF(result);
+      outcome.ok = true;
+    } else {
+      PyObject *type = nullptr, *value = nullptr, *trace = nullptr;
+      PyErr_Fetch(&type, &value, &trace);
+      if (value) {
+        PyObject* text = PyObject_Str(value);
+        if (text) {
+          const char* message = PyUnicode_AsUTF8(text);
+          if (message) {
+            outcome.output += std::string("\n") + message;
+          }
+          Py_DECREF(text);
+        }
+      }
+      Py_XDECREF(type); Py_XDECREF(value); Py_XDECREF(trace);
+    }
+  }
+  PyGILState_Release(gil);
+  return outcome;
+}
+
 napi_value RunScript(napi_env env, napi_callback_info info) {
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  size_t argc = 1;
+  napi_value argv[1] = {nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  auto setBool = [&](const char* key, bool value) {
+    napi_value flag = nullptr;
+    napi_get_boolean(env, value, &flag);
+    napi_set_named_property(env, out, key, flag);
+  };
+  auto setText = [&](const char* key, const std::string& value) {
+    napi_set_named_property(env, out, key, MakeString(env, value));
+  };
+  const std::string code = argc >= 1 ? ReadString(env, argv[0]) : std::string();
+  const ScriptOutcome outcome = ExecuteScript(code);
+  setBool("ok", outcome.ok);
+  setText("output", outcome.output);
+  setText("error", outcome.ok ? std::string() : outcome.output);
+  return out;
+}
+
+// Executes ChimeraX command syntax through the real command interpreter.
+napi_value RunChimeraCommand(napi_env env, napi_callback_info info) {
   napi_value out = nullptr;
   napi_create_object(env, &out);
   size_t argc = 1;
@@ -463,57 +560,18 @@ napi_value RunScript(napi_env env, napi_callback_info info) {
     setText("error", "runtime is not initialized");
     return out;
   }
-  const std::string code = argc >= 1 ? ReadString(env, argv[0]) : std::string();
-  if (code.empty()) {
+  const std::string text = argc >= 1 ? ReadString(env, argv[0]) : std::string();
+  if (text.empty()) {
     setBool("ok", false);
-    setText("error", "script is required");
+    setText("error", "command is required");
     return out;
   }
-  PyGILState_STATE gil = PyGILState_Ensure();
-  std::string output;
-  bool ok = false;
-  PyObject* main = PyImport_AddModule("__main__");
-  PyObject* globals = main ? PyModule_GetDict(main) : nullptr;
-  if (globals) {
-    PyRun_SimpleString("import io as _cx_io, sys as _cx_sys\n"
-                       "_cx_buf = _cx_io.StringIO()\n"
-                       "_cx_real_stdout = _cx_sys.stdout\n"
-                       "_cx_sys.stdout = _cx_buf\n");
-    PyObject* result = PyRun_String(code.c_str(), Py_file_input, globals, globals);
-    PyRun_SimpleString("_cx_sys.stdout = _cx_real_stdout\n");
-    PyObject* buffer = PyDict_GetItemString(globals, "_cx_buf");
-    if (buffer) {
-      PyObject* text = PyObject_CallMethod(buffer, "getvalue", nullptr);
-      if (text) {
-        const char* value = PyUnicode_AsUTF8(text);
-        if (value) {
-          output = value;
-        }
-        Py_DECREF(text);
-      }
-    }
-    if (result) {
-      Py_DECREF(result);
-      ok = true;
-    } else {
-      PyObject *type = nullptr, *value = nullptr, *trace = nullptr;
-      PyErr_Fetch(&type, &value, &trace);
-      if (value) {
-        PyObject* text = PyObject_Str(value);
-        if (text) {
-          const char* message = PyUnicode_AsUTF8(text);
-          if (message) {
-            output += std::string("\n") + message;
-          }
-          Py_DECREF(text);
-        }
-      }
-      Py_XDECREF(type); Py_XDECREF(value); Py_XDECREF(trace);
-    }
-  }
-  PyGILState_Release(gil);
-  setBool("ok", ok);
-  setText("output", output);
+  const std::string code = "print(__import__('chimerax.core.commands', fromlist=['run']).run(session, "
+      + PyLiteral(text) + "))";
+  const ScriptOutcome outcome = ExecuteScript(code);
+  setBool("ok", outcome.ok);
+  setText("output", outcome.output);
+  setText("error", outcome.ok ? std::string() : outcome.output);
   return out;
 }
 
@@ -524,6 +582,7 @@ napi_value Init(napi_env env, napi_value exports) {
       {"finalizeRuntime", nullptr, Finalize, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"extractArchive", nullptr, ExtractArchive, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"runScript", nullptr, RunScript, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"runChimeraCommand", nullptr, RunChimeraCommand, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports, sizeof(descriptors) / sizeof(descriptors[0]), descriptors);
   return exports;

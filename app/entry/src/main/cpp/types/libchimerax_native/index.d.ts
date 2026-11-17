@@ -26,3 +26,4 @@ export interface ScriptReport {
   error: string;
 }
 export const runScript: (code: string) => ScriptReport;
+export const runChimeraCommand: (command: string) => ScriptReport;

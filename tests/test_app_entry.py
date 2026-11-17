@@ -39,6 +39,15 @@ class AppEntryTests(unittest.TestCase):
         self.assertIn('session-ready', native)
         self.assertIn('_NullUI', native)
 
+    def test_command_syntax_entry_exists(self):
+        native = (ROOT / 'app/entry/src/main/cpp/chimerax_native.cpp').read_text()
+        self.assertIn('RunChimeraCommand', native)
+        self.assertIn('ExecuteScript', native)
+        self.assertIn('PyLiteral', native)
+        page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
+        self.assertIn('runChimeraCommand', page)
+        self.assertIn('cx-cmd-py', page)
+
     def test_device_check_clicks_the_run_button(self):
         checker = (ROOT / 'tools/device_app_check.py').read_text()
         self.assertIn("uitest', 'uiInput', 'click'", checker)

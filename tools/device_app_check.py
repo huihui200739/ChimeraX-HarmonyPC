@@ -119,19 +119,29 @@ def main() -> int:
                values.get('cx-trigger', ''))
         record('ChimeraX core modules import in the app',
                core.startswith('chimerax.core.errors|UserError|Logger'), core)
-        # Interactive command channel: press 执行 and read the produced output.
+        # Interactive command channel: press the command button, then the Python sample.
         dump()
-        box = _rect_from_dump('cx-cmd-run')
-        if box:
-            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(box[0]), str(box[1])])
+        command_box = _rect_from_dump('cx-cmd-run')
+        python_box = _rect_from_dump('cx-cmd-py')
+        output = ''
+        if command_box:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(command_box[0]), str(command_box[1])])
             time.sleep(4)
             values = dump()[1]
             output = values.get('cx-cmd-output', '')
-            record('The command input executes through the UI',
-                   'ChimeraX' in output and any(ch.isdigit() for ch in output), output)
-            report['command_output'] = output
+        record('ChimeraX command syntax runs from the UI',
+               'cxprobe:ui-command' in output, output)
+        report['command_output'] = output
+        if python_box:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(python_box[0]), str(python_box[1])])
+            time.sleep(4)
+            values = dump()[1]
+            python_output = values.get('cx-cmd-output', '')
         else:
-            record('The command input executes through the UI', False, 'run button not found')
+            python_output = ''
+        record('The Python sample runs from the UI',
+               'ChimeraX' in python_output and any(ch.isdigit() for ch in python_output), python_output)
+        report['python_output'] = python_output
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
         if screenshot.returncode == 0:
             args.report.parent.mkdir(parents=True, exist_ok=True)
