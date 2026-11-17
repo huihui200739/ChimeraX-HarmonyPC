@@ -52,6 +52,13 @@ def main() -> int:
     (package / 'version.py').write_text(buildinfo)
     (package / 'core/buildinfo.py').write_text(buildinfo)
     shutil.copytree(core / 'src', package / 'core', dirs_exist_ok=True)
+    # Additional core bundles whose Python packages the runtime needs: array
+    # marshalling and the graphics layer (their C++ modules are built separately
+    # by tools/build_graphics_ext_harmony.py).
+    for bundle in ('arrays', 'graphics'):
+        source_bundle = args.source / 'src/bundles' / bundle / 'src'
+        if source_bundle.is_dir():
+            shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)
     for junk in ('tests', '__pycache__'):
         target = package / 'core' / junk
         if target.exists():

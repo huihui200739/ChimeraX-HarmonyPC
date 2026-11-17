@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 两个内置命令通过）
+## 当前结论（2026-11-17 图形层扩展 + 原版图标）
+
+**`chimerax.arrays._arrays` 与 `chimerax.graphics._graphics` 已交叉编译并在应用内运行（`chimerax.graphics._graphics|3`），设备断言 20/20；应用图标换成 ChimeraX 原版图标。**
+
+详见 [11 月 17 日图形层扩展](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/graphics-ext-2026-11-17.md)。
+
+## 上一结论（2026-11-17 两个内置命令通过）
 
 **`toolshed list` 与 `devel dump` 在应用内均可执行，设备断言 19/19。上一轮 `session.tools` 的矛盾已查明：是页面命令脚本覆盖了全局 `session`，改为复用持久会话后解决。**
 

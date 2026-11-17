@@ -32,6 +32,17 @@ class ChimeraXDependencyTests(unittest.TestCase):
         source = (ROOT / 'tools/package_app_runtime.py').read_text()
         self.assertIn("module.relative_to(numpy_package).parent", source)
 
+    def test_graphics_extension_build_is_reproducible(self):
+        source = (ROOT / 'tools/build_graphics_ext_harmony.py').read_text()
+        for needle in ('aarch64-linux-ohos', '_graphics', '_arrays', 'set_linux_swap_interval',
+                       'pythonarray.cpp', 'rcarray.cpp'):
+            self.assertIn(needle, source, needle)
+
+    def test_app_ships_the_upstream_icon(self):
+        icon = ROOT / 'app/AppScope/resources/base/media/app_icon.png'
+        self.assertTrue(icon.is_file())
+        self.assertGreater(icon.stat().st_size, 10000, 'the upstream 512px icon is larger than a placeholder')
+
     def test_command_script_does_not_shadow_the_session(self):
         page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
         self.assertIn('try:\n    session\nexcept NameError:', page,

@@ -83,6 +83,7 @@ struct Index {
   @State commandText: string = 'cxprobe ui-command';
   @State commandOutput: string = '';
   @State builtinResult: string = '';
+  @State graphicsResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -180,6 +181,11 @@ struct Index {
       this.commandResult = command.ok ? command.output.trim() : command.error;
       const builtin: ScriptReport = native.runScript(BUILTIN_SCRIPT);
       this.builtinResult = (builtin.ok ? builtin.output : builtin.error).trim();
+      const graphics: ExpressionReport = native.runExpression(
+        '(lambda g, n: "%s|%s" % (g.__name__,' +
+        ' str(g.count_value(n.array([1, 2, 5, 5, 5, 9], dtype="uint8"), 5))))(' +
+        '__import__("chimerax.graphics._graphics", fromlist=["x"]), __import__("numpy"))');
+      this.graphicsResult = graphics.ok ? graphics.value : graphics.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -266,6 +272,11 @@ struct Index {
       Row() {
         Text('命令执行').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('graphics').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.graphicsResult.length > 0 ? this.graphicsResult : '—').id('cx-graphics')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {

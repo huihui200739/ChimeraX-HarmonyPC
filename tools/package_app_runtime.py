@@ -57,6 +57,15 @@ def main() -> int:
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(module, destination)
             numpy_files += 1
+    # Every compiled extension shipped with the staged packages must live in the
+    # app native library directory as well (data-dir ELF objects cannot be loaded).
+    package_modules = 0
+    for module in chimerax_python.rglob('*.so'):
+        relative = module.relative_to(chimerax_python)
+        destination = libs / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(module, destination)
+        package_modules += 1
     dynload = args.runtime / 'lib/python3.11/lib-dynload'
     staged = 0
     for extension in sorted(dynload.glob('*.so')):
@@ -87,6 +96,7 @@ def main() -> int:
               'extensions_in_libs': staged,
               'chimerax_python': str(chimerax_python),
               'numpy_files_in_libs': numpy_files,
+              'package_modules_in_libs': package_modules,
               'libpython': str(libs / library.name),
               'libpython_sha256': hashlib.sha256((libs / library.name).read_bytes()).hexdigest()}
     report_path.parent.mkdir(parents=True, exist_ok=True)

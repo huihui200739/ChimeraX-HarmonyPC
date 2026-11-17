@@ -130,6 +130,9 @@ def main() -> int:
             values = dump()[1]
             output = values.get('cx-cmd-output', '')
         builtin = values.get('cx-builtin', '')
+        graphics = values.get('cx-graphics', '')
+        record('The graphics C++ extension loads and runs in the app',
+               graphics.startswith('chimerax.graphics._graphics|3'), graphics)
         record('Core built-in commands run in the app',
                builtin.startswith('toolshed-list:ok') and 'devel-dump:Missing or invalid' in builtin,
                builtin)
