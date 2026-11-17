@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 执行 ChimeraX 命令）
+## 当前结论（2026-11-17 交互式命令通道）
+
+**应用内已有命令输入框：点"执行"后页面输出 `ChimeraX 16`（持久 Session 的 app_name 与触发器数），设备断言 16/16。**
+
+详见 [11 月 17 日交互式命令通道](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/app-command-channel-2026-11-17.md)。
+
+## 上一结论（2026-11-17 执行 ChimeraX 命令）
 
 **应用内成功执行真实 ChimeraX 命令：注册 `cxprobe` → `commands.run(session, "cxprobe hello-harmony")` → 返回 `cxprobe:hello-harmony|1|hello-harmony`；设备断言 15/15。**
 

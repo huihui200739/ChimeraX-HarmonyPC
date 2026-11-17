@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T11:46:55.989652+00:00",
+  "created_at_utc": "2026-11-17T12:07:39.814071+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 62222222,
-    "sha256": "c00ed544194ffce6728fed279dc69e293f29690c8995ed040eb14d60c3dfb66b"
+    "bytes": 62229223,
+    "sha256": "8685f1c78ea2af3b0cea3307ce6db837c0b7ac75eb2b67d7adc2b81227060320"
   },
   "checks": [
     {
@@ -83,6 +83,11 @@
       "name": "ChimeraX core modules import in the app",
       "passed": true,
       "detail": "chimerax.core.errors|UserError|Logger"
+    },
+    {
+      "name": "The command input executes through the UI",
+      "passed": true,
+      "detail": "ChimeraX 16"
     }
   ],
   "ui": {
@@ -99,6 +104,9 @@
     "cx-core": "chimerax.core.errors|UserError|Logger",
     "cx-numpy": "1.26.4|4.0|10",
     "cx-numpyc": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so",
+    "cx-cmd-input": "print(session.app_name, len(session.triggers.trigger_names()))",
+    "cx-cmd-run": "执行",
+    "cx-cmd-output": "（输出）",
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
     "cx-session": "Session|True|16",
     "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands",
@@ -109,9 +117,10 @@
     "EnhanceMinimizeBtn": "",
     "EnhanceCloseBtn": ""
   },
+  "command_output": "ChimeraX 16",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 15,
+    "passed": 16,
     "failed": 0
   },
   "status": "app_runtime_verified"

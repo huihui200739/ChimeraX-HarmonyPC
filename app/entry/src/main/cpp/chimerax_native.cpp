@@ -320,6 +320,34 @@ napi_value Initialize(napi_env env, napi_callback_info info) {
       + "        return None\n"
       + "sys.meta_path.insert(0, _CxNativeFinder)\n";
   PyRun_SimpleString(bootstrap.c_str());
+  // A persistent minimal Session and a registered probe command make the app a
+  // usable command channel: user input runs against the same interpreter state.
+  PyRun_SimpleString(R"PY(
+import sys
+try:
+    from chimerax.core.session import Session
+    from chimerax.core.commands import CmdDesc, StringArg, register
+
+    class _NullUI:
+        is_gui = False
+        def __getattr__(self, name):
+            return lambda *args, **kwargs: None
+
+    session = Session("ChimeraX", silent=True, minimal=True)
+    session.ui = _NullUI()
+    _cx_calls = []
+
+    def _cx_probe(session, value):
+        _cx_calls.append(value)
+        return "cxprobe:" + value
+
+    if "cxprobe" not in __import__("chimerax.core.commands", fromlist=["x"]).registered_commands():
+        register("cxprobe", CmdDesc(required=[("value", StringArg)],
+                                    synopsis="harmony adaptation probe command"), _cx_probe)
+    _cx_state = "session-ready"
+except Exception as _cx_error:
+    _cx_state = "session-error:" + str(_cx_error)[:200]
+)PY");
   g_initialized = true;
   setBool("initialized", true);
   setText("version", std::string(Py_GetVersion()));

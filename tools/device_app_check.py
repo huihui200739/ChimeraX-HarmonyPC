@@ -45,6 +45,21 @@ def main() -> int:
     def record(name: str, passed: bool, detail: str = '') -> None:
         report['checks'].append({'name': name, 'passed': bool(passed), 'detail': str(detail)[:600]})
 
+    def _rect_from_dump(node_id: str):
+        text = Path('/tmp/cx-app-layout.json').read_text(errors='replace') if Path('/tmp/cx-app-layout.json').is_file() else ''
+        match = re.search(r'\{[^{}]*"id":"' + node_id + r'"[^{}]*\}', text)
+        if not match:
+            return None
+        bounds = re.search(r'"(?:bounds|rect)":"?\[?(\d+),(\d+)\]\[?(\d+),(\d+)\]', match.group(0))
+        if not bounds:
+            numbers = re.findall(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', match.group(0))
+            if numbers:
+                x1, y1, x2, y2 = (int(v) for v in numbers[0])
+                return ((x1 + x2) // 2, (y1 + y2) // 2)
+            return None
+        x1, y1, x2, y2 = (int(v) for v in bounds.groups())
+        return ((x1 + x2) // 2, (y1 + y2) // 2)
+
     def dump() -> tuple[str, dict[str, str]]:
         remote = '/data/local/tmp/cx-app-layout.json'
         run(hdc + ['shell', 'uitest', 'dumpLayout', '-b', BUNDLE, '-p', remote, '-a'])
@@ -104,6 +119,19 @@ def main() -> int:
                values.get('cx-trigger', ''))
         record('ChimeraX core modules import in the app',
                core.startswith('chimerax.core.errors|UserError|Logger'), core)
+        # Interactive command channel: press 执行 and read the produced output.
+        dump()
+        box = _rect_from_dump('cx-cmd-run')
+        if box:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(box[0]), str(box[1])])
+            time.sleep(4)
+            values = dump()[1]
+            output = values.get('cx-cmd-output', '')
+            record('The command input executes through the UI',
+                   'ChimeraX' in output and any(ch.isdigit() for ch in output), output)
+            report['command_output'] = output
+        else:
+            record('The command input executes through the UI', False, 'run button not found')
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
         if screenshot.returncode == 0:
             args.report.parent.mkdir(parents=True, exist_ok=True)

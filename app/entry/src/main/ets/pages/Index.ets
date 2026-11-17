@@ -57,6 +57,8 @@ struct Index {
   @State commandsProbe: string = '';
   @State sessionProbe: string = '';
   @State commandResult: string = '';
+  @State commandText: string = 'print(session.app_name, len(session.triggers.trigger_names()))';
+  @State commandOutput: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -65,6 +67,11 @@ struct Index {
 
   private filesDir(): string {
     return AppStorage.get<string>('cxFilesDir') ?? '';
+  }
+
+  private executeCommand(): void {
+    const report: ScriptReport = native.runScript(this.commandText);
+    this.commandOutput = (report.ok ? report.output : report.error).trim();
   }
 
   private async bootstrap(): Promise<void> {
@@ -212,6 +219,16 @@ struct Index {
         Text(this.numpyCore.length > 0 ? this.numpyCore : '—').id('cx-numpyc')
           .fontSize(10).fontColor('#B9C8D8').layoutWeight(1).maxLines(3)
       }.width('100%')
+      Row({ space: 6 }) {
+        TextInput({ text: this.commandText, placeholder: '输入 Python 或 ChimeraX 命令…' })
+          .id('cx-cmd-input').height(32).fontSize(11).layoutWeight(1)
+          .onChange((value: string) => { this.commandText = value; })
+          .onSubmit(() => this.executeCommand())
+        Button('执行').id('cx-cmd-run').height(32).fontSize(11)
+          .onClick(() => this.executeCommand())
+      }.width('100%')
+      Text(this.commandOutput.length > 0 ? this.commandOutput : '（输出）')
+        .id('cx-cmd-output').fontSize(11).fontColor('#D7E3F0').width('100%').maxLines(4)
       Row() {
         Text('命令执行').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')

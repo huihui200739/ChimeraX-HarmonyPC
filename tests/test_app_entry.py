@@ -31,6 +31,19 @@ class AppEntryTests(unittest.TestCase):
         self.assertIn('/tmp', source)
         self.assertIn('assembleHap', source)
 
+    def test_command_channel_ui_is_wired(self):
+        page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
+        for needle in ('cx-cmd-input', 'cx-cmd-run', 'cx-cmd-output', 'runScript'):
+            self.assertIn(needle, page, needle)
+        native = (ROOT / 'app/entry/src/main/cpp/chimerax_native.cpp').read_text()
+        self.assertIn('session-ready', native)
+        self.assertIn('_NullUI', native)
+
+    def test_device_check_clicks_the_run_button(self):
+        checker = (ROOT / 'tools/device_app_check.py').read_text()
+        self.assertIn("uitest', 'uiInput', 'click'", checker)
+        self.assertIn('cx-cmd-output', checker)
+
     def test_device_check_reads_the_ui(self):
         source = (ROOT / 'tools/device_app_check.py').read_text()
         for node in ('cx-status', 'cx-version', 'cx-math', 'cx-ctypes', 'cx-stdlib'):
