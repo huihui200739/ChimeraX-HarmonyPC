@@ -130,7 +130,7 @@ def main() -> int:
             values = dump()[1]
             output = values.get('cx-cmd-output', '')
         builtin = values.get('cx-builtin', '')
-        record('A core ChimeraX built-in validates its arguments in the app',
+        record('Core built-in commands run in the app',
                'devel-dump:Missing or invalid' in builtin, builtin)
         a = 'cx-builtin'
         report[a] = builtin

@@ -351,6 +351,8 @@ try:
     session = Session("ChimeraX", silent=True, minimal=True)
     session.ui = _NullUI()
     core_settings.init(session)
+    from chimerax.core.tools import Tools
+    session.tools = Tools(session)
     from chimerax.core import toolshed as _cx_toolshed
     _cx_toolshed.init(session.logger, check_remote=False, check_available=False, session=session)
     session.toolshed = _cx_toolshed.get_toolshed()
@@ -362,9 +364,11 @@ try:
         _cx_calls.append(value)
         return "cxprobe:" + value
 
-    if "cxprobe" not in __import__("chimerax.core.commands", fromlist=["x"]).registered_commands():
+    try:
         register("cxprobe", CmdDesc(required=[("value", StringArg)],
                                     synopsis="harmony adaptation probe command"), _cx_probe)
+    except Exception:
+        pass  # already registered in this interpreter
     _cx_state = "session-ready"
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]

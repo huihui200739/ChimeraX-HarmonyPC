@@ -55,7 +55,8 @@ try:
     summary.append("devel-dump:no-error")
 except Exception as error:
     summary.append("devel-dump:" + str(error).split(":")[0])
-print("|".join(summary))
+print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s" % (
+    hasattr(session, "tools"), hasattr(session, "toolshed"), globals().get("_cx_state", "?")))
 `;
 
 @Entry
