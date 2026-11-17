@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 atomic 层在应用内可用）
+## 当前结论（2026-11-18 PyOpenGL + graphics 层可用）
+
+**应用内 `OpenGL 3.1.10`、`chimerax.graphics.opengl`、`chimerax.core.models` 均可导入（`PYOPENGL_PLATFORM=egl`），配合已建立的 EGL/GLES 3.0 表面；设备断言 22/22。**
+
+详见 [11 月 18 日 PyOpenGL 与 graphics 层](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/pyopengl-graphics-2026-11-18.md)。
+
+## 上一结论（2026-11-18 atomic 层在应用内可用）
 
 **应用内 `import chimerax.atomic` 成功（`chimerax.atomic|Atom|AtomicStructure`），设备断言 22/22。Qt 侧另有重大进展：Qt 6.12 LTS 官方带 HarmonyOS 目标，上游 QPA 就在 qtbase 主干。**
 

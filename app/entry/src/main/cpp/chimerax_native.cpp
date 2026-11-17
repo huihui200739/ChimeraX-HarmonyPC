@@ -309,6 +309,8 @@ napi_value Initialize(napi_env env, napi_callback_info info) {
       + "sys.path = [p for p in sys.path if not p.endswith('lib-dynload')]\n"
       + "sys.path.insert(0, " + PyReprString(lib_dir) + ")\n"
       + "os.environ['CX_NATIVE_LIB_DIR'] = " + PyReprString(lib_dir) + "\n"
+      // PyOpenGL defaults to GLX/X11 on Linux; HarmonyOS exposes EGL + GLES only.
+      + "os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')\n"
       + "class _CxNativeFinder:\n"
       + "    _dir = " + PyReprString(lib_dir) + "\n"
       + "    @classmethod\n"

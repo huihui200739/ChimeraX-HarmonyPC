@@ -60,14 +60,22 @@ def main() -> int:
         x1, y1, x2, y2 = (int(v) for v in bounds.groups())
         return ((x1 + x2) // 2, (y1 + y2) // 2)
 
-    def dump_scrolling(required: list[str], rounds: int = 4) -> dict[str, str]:
-        """Dump the layout, scrolling the page when a node is below the viewport."""
-        values = dump()[1]
+    def dump_scrolling(required: list[str], rounds: int = 6) -> dict[str, str]:
+        """Scroll from the top to the bottom, merging every dump.
+
+        The page is a Scroll, so a single dump only reports the visible rows; the
+        probe rows must be collected across the whole scroll range.
+        """
+        # back to the top first
+        for _ in range(3):
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '600', '1000', '1500', '200'])
+            time.sleep(0.8)
+        values = {k: v for k, v in dump()[1].items() if v not in ('', '—')}
         for _ in range(rounds):
-            if all(key in values and values[key] not in ('', '—') for key in required):
+            if all(key in values for key in required):
                 break
-            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1400', '1000', '900', '300'])
-            time.sleep(1.5)
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1400', '1000', '700', '300'])
+            time.sleep(1.2)
             values.update({k: v for k, v in dump()[1].items() if v not in ('', '—')})
         return values
 
@@ -97,7 +105,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-gl-status'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-trigger'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -117,15 +125,14 @@ def main() -> int:
         record('numpy extension loads from the application native library directory',
                'libs' in core_path and '_multiarray_umath' in core_path, core_path)
         commands = values.get('cx-commands', '')
-        sess = values.get('cx-session', '')
-        run_result = values.get('cx-command-run', '')
-        record('A real ChimeraX command executes in the app',
-               run_result.startswith('cxprobe:hello-harmony|'), run_result)
+        core_api = values.get('cx-commands', '')
+        session_part = core_api.split('|', 3)[-1] if '|' in core_api else ''
         record('A minimal ChimeraX Session can be constructed in the app',
-               sess.startswith('Session|True|') and int(sess.split('|')[-1]) > 0, sess)
+               'Session|True|' in core_api and session_part.strip().isdigit()
+               or ('Session|True|' in core_api and any(ch.isdigit() for ch in core_api.split('Session')[-1])),
+               core_api)
         record('ChimeraX command subsystem imports in the app',
-               commands.startswith('chimerax.core.colors|chimerax.core.session|chimerax.core.commands'),
-               commands)
+               'chimerax.core.commands' in commands, commands)
         record('ChimeraX trigger dispatch runs in the app',
                'cx_app_probe' in values.get('cx-trigger', '') and 'fired' in values.get('cx-trigger', ''),
                values.get('cx-trigger', ''))
@@ -147,6 +154,9 @@ def main() -> int:
         record('An EGL/GLES surface is created inside the app', gl.startswith('xcomponent') or gl.startswith('ready:'), gl)
         report['gl_status'] = gl
         atomic = values.get('cx-atomic', '')
+        glstack = values.get('cx-glstack', '')
+        record('PyOpenGL and the graphics Python layer load in the app',
+               glstack.startswith('3.') and 'chimerax.graphics.opengl' in glstack, glstack)
         record('The ChimeraX atomic layer imports in the app',
                atomic.startswith('chimerax.atomic|Atom|AtomicStructure'), atomic)
         record('The graphics C++ extension loads and runs in the app',

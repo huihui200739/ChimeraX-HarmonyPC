@@ -1,0 +1,6 @@
+{
+  "wheel": "pyopengl-3.1.10-py3-none-any.whl",
+  "sha256": "794a943daced39300879e4e47bd94525280685f42dbb5a998d336cfff151d74f",
+  "modules": 2877,
+  "purpose": "OpenGL bindings used by chimerax.graphics"
+}

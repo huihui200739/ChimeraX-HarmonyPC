@@ -86,6 +86,7 @@ struct Index {
   @State graphicsResult: string = '';
   @State glStatus: string = '';
   @State atomicResult: string = '';
+  @State glStackResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -193,6 +194,11 @@ struct Index {
         ' __import__("chimerax.atomic", fromlist=["x"]).Atom.__name__,' +
         ' __import__("chimerax.atomic", fromlist=["x"]).AtomicStructure.__name__)');
       this.atomicResult = atomic.ok ? atomic.value : atomic.error;
+      const glStack: ExpressionReport = native.runExpression(
+        '"%s|%s|%s" % (__import__("OpenGL").__version__,' +
+        ' __import__("chimerax.graphics.opengl", fromlist=["x"]).__name__,' +
+        ' str(hasattr(__import__("chimerax.core.models", fromlist=["x"]), "Model")))');
+      this.glStackResult = glStack.ok ? glStack.value : glStack.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -239,6 +245,11 @@ struct Index {
       Row() {
         Text('状态').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.status).id('cx-status').fontSize(13).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row() {
+        Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.triggerResult.length > 0 ? this.triggerResult : '—').id('cx-trigger')
+          .fontSize(11).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       Row() {
         Text('Python').fontSize(13).fontColor('#C9D6E5').width(80)
@@ -305,6 +316,11 @@ struct Index {
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
+        Text('GL 栈').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.glStackResult.length > 0 ? this.glStackResult : '—').id('cx-glstack')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
         Text('atomic').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.atomicResult.length > 0 ? this.atomicResult : '—').id('cx-atomic')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
@@ -320,24 +336,10 @@ struct Index {
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
-        Text('session').fontSize(13).fontColor('#C9D6E5').width(80)
-        Text(this.sessionProbe.length > 0 ? this.sessionProbe : '—').id('cx-session')
-          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(4)
-      }.width('100%')
-      Row() {
-        Text('commands').fontSize(13).fontColor('#C9D6E5').width(80)
-        Text(this.commandsProbe.length > 0 ? this.commandsProbe : '—').id('cx-commands')
-          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
-      }.width('100%')
-      Row() {
-        Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)
-        Text(this.triggerResult.length > 0 ? this.triggerResult : '—').id('cx-trigger')
-          .fontSize(11).fontColor('#FFFFFF').layoutWeight(1)
-      }.width('100%')
-      Row() {
-        Text('诊断').fontSize(13).fontColor('#C9D6E5').width(80)
-        Text(this.diagnostic.length > 0 ? this.diagnostic : '—').id('cx-diag')
-          .fontSize(10).fontColor('#B9C8D8').layoutWeight(1)
+        Text('core API').fontSize(12).fontColor('#C9D6E5').width(80)
+        Text((this.commandsProbe.length > 0 ? this.commandsProbe : '—') + ' | ' +
+             (this.sessionProbe.length > 0 ? this.sessionProbe : '—')).id('cx-commands')
+          .fontSize(9).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       if (this.failed.length > 0) {
         Text(this.failed).id('cx-error').fontSize(12).fontColor('#FFB4A2').width('100%')
