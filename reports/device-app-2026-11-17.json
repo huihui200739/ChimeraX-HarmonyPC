@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T12:35:10.368945+00:00",
+  "created_at_utc": "2026-11-17T12:48:18.297090+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 62232779,
-    "sha256": "f78c72cb713caf80589d0077f922b2bff00d82edaa4b19da1e49cf9e9ead20ac"
+    "bytes": 62411959,
+    "sha256": "5624d4a40d13c60ff23009d92050fc40fe5300021dfa31deb06000d1c57e22ca"
   },
   "checks": [
     {
@@ -117,7 +117,7 @@
     "cx-session": "Session|True|16",
     "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands",
     "cx-trigger": "cx_app_probe|fired",
-    "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-23845062/cx-generic-runtime|has_version=True|first=LICENSE.txt,__future__.py,__hello__.py",
+    "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-24024242/cx-generic-runtime|has_version=True|first=LICENSE.txt,__future__.py,__hello__.py",
     "containerModalButtonRowId": "",
     "EnhanceMaximizeBtn": "",
     "EnhanceMinimizeBtn": "",

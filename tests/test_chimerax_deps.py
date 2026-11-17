@@ -6,9 +6,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ChimeraXDependencyTests(unittest.TestCase):
-    def test_staging_vendors_sortedcontainers(self):
+    def test_staging_vendors_the_python_dependencies(self):
         source = (ROOT / 'tools/stage_chimerax_python.py').read_text()
-        self.assertIn('sortedcontainers', source)
+        for package in ('sortedcontainers', 'packaging', 'appdirs'):
+            self.assertIn(package, source, package)
         self.assertIn('zipfile', source)
 
     def test_numpy_build_pins_the_sdist(self):

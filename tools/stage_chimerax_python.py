@@ -58,24 +58,29 @@ def main() -> int:
             shutil.rmtree(target)
     (package / 'core/buildinfo.py').write_text(buildinfo)
     # Pure-Python runtime dependencies of chimerax.core (colors/commands).
-    wheels = sorted((ROOT / 'build/downloads').glob('sortedcontainers-*.whl'))
-    dependency = None
-    if wheels:
+    dependencies = []
+    for pattern, package in (('sortedcontainers-*.whl', 'sortedcontainers'),
+                             ('packaging-*.whl', 'packaging'),
+                             ('appdirs-*.whl', 'appdirs')):
+        wheels = sorted((ROOT / 'build/downloads').glob(pattern))
+        if not wheels:
+            continue
         wheel = wheels[-1]
         with zipfile.ZipFile(wheel) as bundle:
             for name in bundle.namelist():
-                if name.startswith('sortedcontainers/') and name.endswith('.py'):
+                if (name.startswith(package + '/') and name.endswith('.py')) or name == 'appdirs.py':
                     destination = args.output / name
                     destination.parent.mkdir(parents=True, exist_ok=True)
                     destination.write_bytes(bundle.read(name))
-        dependency = {'wheel': wheel.name,
-                      'sha256': hashlib.sha256(wheel.read_bytes()).hexdigest()}
+        dependencies.append({'wheel': wheel.name,
+                             'sha256': hashlib.sha256(wheel.read_bytes()).hexdigest()})
+    dependency = dependencies[0] if dependencies else None
     files = {str(p.relative_to(args.output)): hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted(args.output.rglob('*')) if p.is_file()}
     record = {'created_at_utc': datetime.now(timezone.utc).isoformat(),
               'source': str(args.source), 'commit': commit, 'version': version,
               'branch': branch, 'files': len(files), 'package': str(package),
-              'dependencies': [dependency] if dependency else [],
+              'dependencies': dependencies,
               'modules': sorted({p.split('/')[1] for p in files if p.count('/') >= 1})[:40]}
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n')

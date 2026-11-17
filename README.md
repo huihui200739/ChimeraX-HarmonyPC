@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 命令语法输入）
+## 当前结论（2026-11-17 内置命令依赖链）
+
+**实测出核心内置命令（`debug`/`devel`/`pip`/`toolshed`）的依赖链：执行需要 `session.toolshed` → `chimerax.app_dirs`（appdirs）→ `core_settings.settings`；`packaging` 与 `appdirs` 已纳入暂存，内置命令执行仍待补齐。**
+
+详见 [11 月 17 日内置命令依赖链](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-builtin-commands-2026-11-17.md)。
+
+## 上一结论（2026-11-17 命令语法输入）
 
 **输入框直接吃 ChimeraX 命令语法：`cxprobe ui-command` → `cxprobe:ui-command`；Python 示例按钮 → `ChimeraX 16`；设备断言 17/17。**
 
