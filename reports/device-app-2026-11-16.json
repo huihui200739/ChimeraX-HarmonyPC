@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-16T22:37:43.976197+00:00",
+  "created_at_utc": "2026-11-16T23:51:25.131548+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 31973476,
-    "sha256": "57ac0ee784a8dc0a0e0515b7f0da68d47325aaaee2b3729b93df97adcec6702f"
+    "bytes": 32259811,
+    "sha256": "f2e99d0e46eb1e7adf1e06926244e2987948f71d0c26fe0d08d42643b3fbe2b5"
   },
   "checks": [
     {
@@ -43,6 +43,16 @@
       "name": "Standard library probe matches",
       "passed": true,
       "detail": "2c1179ae"
+    },
+    {
+      "name": "Genuine ChimeraX version module loads",
+      "passed": false,
+      "detail": "No module named 'chimerax'"
+    },
+    {
+      "name": "ChimeraX core modules import in the app",
+      "passed": false,
+      "detail": "No module named 'chimerax'"
     }
   ],
   "ui": {
@@ -55,6 +65,9 @@
     "cx-math": "4.0",
     "cx-ctypes": "19",
     "cx-stdlib": "2c1179ae",
+    "cx-chimerax": "No module named 'chimerax'",
+    "cx-core": "No module named 'chimerax'",
+    "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-store-v2/cx-generic-runtime|has_version=False|first=LICENSE.txt,__future__.py,__hello__.py",
     "containerModalButtonRowId": "",
     "EnhanceMaximizeBtn": "",
     "EnhanceMinimizeBtn": "",
@@ -63,7 +76,7 @@
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
     "passed": 7,
-    "failed": 0
+    "failed": 2
   },
-  "status": "app_runtime_verified"
+  "status": "app_runtime_incomplete"
 }

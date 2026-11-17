@@ -46,9 +46,17 @@ def main() -> int:
     for extension in sorted(dynload.glob('*.so')):
         shutil.copy2(extension, libs / extension.name)
         staged += 1
+    import os
+    chimerax_python = Path(os.environ.get('CX_CHIMERAX_PYTHON', ROOT / 'build/chimerax-python'))
     archive = raw / 'cx-runtime.zip'
     count = 0
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as bundle:
+        if chimerax_python.is_dir():
+            for path in sorted(chimerax_python.rglob('*')):
+                if path.is_file():
+                    relative = path.relative_to(chimerax_python)
+                    bundle.write(path, 'cx-generic-runtime/lib/python3.11/' + str(relative))
+                    count += 1
         for path in sorted(args.runtime.rglob('*')):
             relative = path.relative_to(args.runtime)
             # libpython ships twice on purpose: as an app native library for the
@@ -63,6 +71,7 @@ def main() -> int:
               'archive': str(archive), 'archive_bytes': archive.stat().st_size,
               'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest(),
               'extensions_in_libs': staged,
+              'chimerax_python': str(chimerax_python),
               'libpython': str(libs / library.name),
               'libpython_sha256': hashlib.sha256((libs / library.name).read_bytes()).hexdigest()}
     report_path.parent.mkdir(parents=True, exist_ok=True)

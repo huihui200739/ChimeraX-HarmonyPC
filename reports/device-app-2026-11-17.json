@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-17T04:34:42.657781+00:00",
+  "scope": "harmony_app_entry_with_embedded_runtime",
+  "target": "127.0.0.1:5555",
+  "hap": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
+    "bytes": 32266337,
+    "sha256": "399865cd7a3d459a5178160347ce89a976795fbab626adcd37c4c236e5329da0"
+  },
+  "checks": [
+    {
+      "name": "HAP installs",
+      "passed": true,
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
+    },
+    {
+      "name": "Application starts",
+      "passed": true,
+      "detail": "start ability successfully.\n"
+    },
+    {
+      "name": "Runtime reports a ready state",
+      "passed": true,
+      "detail": "运行环境就绪"
+    },
+    {
+      "name": "Embedded CPython reports its version",
+      "passed": true,
+      "detail": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]"
+    },
+    {
+      "name": "math.sqrt evaluates inside the app",
+      "passed": true,
+      "detail": "4.0"
+    },
+    {
+      "name": "ctypes reaches libc through libffi",
+      "passed": true,
+      "detail": "19"
+    },
+    {
+      "name": "Standard library probe matches",
+      "passed": true,
+      "detail": "2c1179ae"
+    },
+    {
+      "name": "Genuine ChimeraX version module loads",
+      "passed": true,
+      "detail": "v1.11.1"
+    },
+    {
+      "name": "ChimeraX core modules import in the app",
+      "passed": true,
+      "detail": "chimerax.core.errors|UserError|Logger"
+    }
+  ],
+  "ui": {
+    "ContainerModalTitleRow": "",
+    "enhanceAppIcon": "",
+    "enhanceAppLabel": "ChimeraX",
+    "ContainerModalStack": "",
+    "cx-status": "运行环境就绪",
+    "cx-version": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]",
+    "cx-math": "4.0",
+    "cx-ctypes": "19",
+    "cx-stdlib": "2c1179ae",
+    "cx-chimerax": "v1.11.1",
+    "cx-core": "chimerax.core.errors|UserError|Logger",
+    "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-store-v4/cx-generic-runtime|has_version=True|first=LICENSE.txt,__future__.py,__hello__.py",
+    "containerModalButtonRowId": "",
+    "EnhanceMaximizeBtn": "",
+    "EnhanceMinimizeBtn": "",
+    "EnhanceCloseBtn": ""
+  },
+  "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
+  "result": {
+    "passed": 9,
+    "failed": 0
+  },
+  "status": "app_runtime_verified"
+}

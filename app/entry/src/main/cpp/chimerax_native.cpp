@@ -5,6 +5,10 @@
 #include <Python.h>
 
 #include <dlfcn.h>
+#include <zlib.h>
+#include <sys/stat.h>
+#include <cstdio>
+#include <cstring>
 
 #include <string>
 #include <vector>
@@ -47,6 +51,158 @@ std::string ReadString(napi_env env, napi_value value) {
     return {};
   }
   return std::string(buffer.data(), length);
+}
+
+
+// --- Minimal ZIP extractor ---------------------------------------------------
+// @ohos.zlib.decompressFile did not place every entry of the runtime archive on
+// the target, so the archive is unpacked here with zlib only: local headers are
+// walked through the central directory, deflate streams are inflated and the
+// files are written with POSIX calls inside the app sandbox.
+
+namespace {
+
+uint32_t ReadLE32(const unsigned char* p) {
+  return static_cast<uint32_t>(p[0]) | (static_cast<uint32_t>(p[1]) << 8) |
+         (static_cast<uint32_t>(p[2]) << 16) | (static_cast<uint32_t>(p[3]) << 24);
+}
+uint16_t ReadLE16(const unsigned char* p) {
+  return static_cast<uint16_t>(p[0] | (p[1] << 8));
+}
+
+bool MakeDirs(const std::string& path) {
+  std::string current;
+  for (size_t i = 0; i < path.size(); ++i) {
+    current.push_back(path[i]);
+    if (path[i] == '/' && current.size() > 1) {
+      ::mkdir(current.c_str(), 0755);
+    }
+  }
+  if (!current.empty() && current.back() != '/') {
+    ::mkdir(current.c_str(), 0755);
+  }
+  return true;
+}
+
+std::string ReadFile(const std::string& path, bool* ok) {
+  std::FILE* file = std::fopen(path.c_str(), "rb");
+  if (!file) {
+    *ok = false;
+    return {};
+  }
+  std::fseek(file, 0, SEEK_END);
+  const long size = std::ftell(file);
+  std::fseek(file, 0, SEEK_SET);
+  std::string data(static_cast<size_t>(size), '\0');
+  const size_t read = std::fread(data.data(), 1, data.size(), file);
+  std::fclose(file);
+  *ok = read == data.size();
+  return data;
+}
+
+}  // namespace
+
+struct ExtractSummary {
+  bool ok = false;
+  int files = 0;
+  int skipped = 0;
+  std::string error;
+};
+
+ExtractSummary ExtractZip(const std::string& archive, const std::string& destination) {
+  ExtractSummary summary;
+  bool read_ok = false;
+  const std::string blob = ReadFile(archive, &read_ok);
+  if (!read_ok || blob.size() < 22) {
+    summary.error = "archive is not readable";
+    return summary;
+  }
+  const auto* bytes = reinterpret_cast<const unsigned char*>(blob.data());
+  long eocd = -1;
+  for (long i = static_cast<long>(blob.size()) - 22; i >= 0; --i) {
+    if (ReadLE32(bytes + i) == 0x06054b50) {
+      eocd = i;
+      break;
+    }
+  }
+  if (eocd < 0) {
+    summary.error = "end of central directory not found";
+    return summary;
+  }
+  const uint32_t count = ReadLE16(bytes + eocd + 10);
+  const uint32_t directory_offset = ReadLE32(bytes + eocd + 16);
+  size_t cursor = directory_offset;
+  MakeDirs(destination + "/x");
+  for (uint32_t index = 0; index < count; ++index) {
+    if (cursor + 46 > blob.size() || ReadLE32(bytes + cursor) != 0x02014b50) {
+      summary.error = "central directory entry is invalid";
+      return summary;
+    }
+    const uint16_t method = ReadLE16(bytes + cursor + 10);
+    const uint32_t compressed = ReadLE32(bytes + cursor + 20);
+    const uint32_t uncompressed = ReadLE32(bytes + cursor + 24);
+    const uint16_t name_length = ReadLE16(bytes + cursor + 28);
+    const uint16_t extra_length = ReadLE16(bytes + cursor + 30);
+    const uint16_t comment_length = ReadLE16(bytes + cursor + 32);
+    const uint32_t local_offset = ReadLE32(bytes + cursor + 42);
+    const std::string name(blob.data() + cursor + 46, name_length);
+    cursor += 46 + name_length + extra_length + comment_length;
+    if (name.empty() || name.back() == '/') {
+      MakeDirs(destination + "/" + name);
+      continue;
+    }
+    if (local_offset + 30 > blob.size() || ReadLE32(bytes + local_offset) != 0x04034b50) {
+      summary.error = "local header is invalid for " + name;
+      return summary;
+    }
+    const uint16_t local_name = ReadLE16(bytes + local_offset + 26);
+    const uint16_t local_extra = ReadLE16(bytes + local_offset + 28);
+    const size_t data_start = local_offset + 30 + local_name + local_extra;
+    if (data_start + compressed > blob.size()) {
+      summary.error = "truncated data for " + name;
+      return summary;
+    }
+    const std::string target = destination + "/" + name;
+    const auto slash = target.rfind('/');
+    if (slash != std::string::npos) {
+      MakeDirs(target.substr(0, slash));
+    }
+    std::string output;
+    if (method == 0) {
+      output.assign(blob.data() + data_start, compressed);
+    } else if (method == 8) {
+      output.assign(uncompressed, '\0');
+      z_stream stream{};
+      stream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(blob.data() + data_start));
+      stream.avail_in = compressed;
+      stream.next_out = reinterpret_cast<Bytef*>(output.data());
+      stream.avail_out = uncompressed;
+      if (inflateInit2(&stream, -MAX_WBITS) != Z_OK) {
+        summary.error = "inflateInit failed";
+        return summary;
+      }
+      const int status = inflate(&stream, Z_FINISH);
+      inflateEnd(&stream);
+      if (status != Z_STREAM_END) {
+        summary.error = "inflate failed for " + name;
+        return summary;
+      }
+      output.resize(stream.total_out);
+    } else {
+      ++summary.skipped;
+      continue;
+    }
+    std::FILE* file = std::fopen(target.c_str(), "wb");
+    if (!file) {
+      summary.error = "cannot write " + target;
+      return summary;
+    }
+    std::fwrite(output.data(), 1, output.size(), file);
+    std::fclose(file);
+    ++summary.files;
+  }
+  summary.ok = true;
+  return summary;
 }
 
 struct EvaluationResult {
@@ -208,11 +364,46 @@ napi_value Finalize(napi_env env, napi_callback_info info) {
   return out;
 }
 
+
+napi_value ExtractArchive(napi_env env, napi_callback_info info) {
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  size_t argc = 2;
+  napi_value argv[2] = {nullptr, nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  auto setBool = [&](const char* key, bool value) {
+    napi_value flag = nullptr;
+    napi_get_boolean(env, value, &flag);
+    napi_set_named_property(env, out, key, flag);
+  };
+  auto setNumber = [&](const char* key, int value) {
+    napi_value number = nullptr;
+    napi_create_int32(env, value, &number);
+    napi_set_named_property(env, out, key, number);
+  };
+  auto setText = [&](const char* key, const std::string& value) {
+    napi_set_named_property(env, out, key, MakeString(env, value));
+  };
+  const std::string archive = argc >= 1 ? ReadString(env, argv[0]) : std::string();
+  const std::string destination = argc >= 2 ? ReadString(env, argv[1]) : std::string();
+  if (archive.empty() || destination.empty()) {
+    setBool("ok", false);
+    setText("error", "archive and destination are required");
+    return out;
+  }
+  const ExtractSummary summary = ExtractZip(archive, destination);
+  setBool("ok", summary.ok);
+  setNumber("files", summary.files);
+  setNumber("skipped", summary.skipped);
+  setText("error", summary.error);
+  return out;
+}
 napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor descriptors[] = {
       {"initializeRuntime", nullptr, Initialize, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"runExpression", nullptr, EvaluateExpression, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"finalizeRuntime", nullptr, Finalize, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"extractArchive", nullptr, ExtractArchive, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports, sizeof(descriptors) / sizeof(descriptors[0]), descriptors);
   return exports;

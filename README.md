@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 应用入口）
+## 当前结论（2026-11-17 ChimeraX 包）
+
+**真实 ChimeraX v1.11.1 Python 包已在鸿蒙应用中运行：`chimerax.version` 读回 `v1.11.1`，`chimerax.core.errors`/`logger` 导入成功，设备断言 9/9。** 仍未包含 Qt/PyQt 与 GUI 相关模块。
+
+详见 [11 月 17 日 ChimeraX 包运行](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-package-2026-11-17.md)。
+
+## 上一结论（2026-11-17 应用入口）
 
 **鸿蒙应用入口已跑通：HAP 安装启动后，应用沙箱内初始化私有 CPython 3.11.18，页面读回解释器版本、`math.sqrt(16)=4.0`、`_ctypes` 经 libffi 调 `libc.strlen=19`、`hashlib.sha256` 前 8 位 `2c1179ae`，设备断言 7/7 通过。** 仍未包含 Qt 与 ChimeraX 应用模块。
 

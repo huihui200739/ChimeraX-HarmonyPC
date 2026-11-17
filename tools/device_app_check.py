@@ -80,6 +80,11 @@ def main() -> int:
         record('ctypes reaches libc through libffi', values.get('cx-ctypes') == '19', values.get('cx-ctypes', ''))
         stdlib = values.get('cx-stdlib', '')
         record('Standard library probe matches', '2c1179ae' in stdlib, stdlib)
+        record('Genuine ChimeraX version module loads',
+               values.get('cx-chimerax', '').startswith('v1.'), values.get('cx-chimerax', ''))
+        core = values.get('cx-core', '')
+        record('ChimeraX core modules import in the app',
+               core.startswith('chimerax.core.errors|UserError|Logger'), core)
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
         if screenshot.returncode == 0:
             args.report.parent.mkdir(parents=True, exist_ok=True)
