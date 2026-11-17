@@ -25,6 +25,8 @@ struct Index {
   @State triggerResult: string = '';
   @State numpyResult: string = '';
   @State numpyCore: string = '';
+  @State commandsProbe: string = '';
+  @State sessionProbe: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -97,6 +99,16 @@ struct Index {
       const numpyCore: ExpressionReport = native.runExpression(
         '__import__("numpy.core._multiarray_umath", fromlist=["x"]).__file__');
       this.numpyCore = numpyCore.ok ? numpyCore.value : numpyCore.error;
+      const session: ExpressionReport = native.runExpression(
+        '(lambda s: "%s|%s|%s" % (type(s).__name__, str(s.logger is not None),' +
+        ' str(len(s.triggers.trigger_names()))))(' +
+        '__import__("chimerax.core.session", fromlist=["x"]).Session("ChimeraX", silent=True, minimal=True))');
+      this.sessionProbe = session.ok ? session.value : session.error;
+      const commands: ExpressionReport = native.runExpression(
+        '"%s|%s|%s" % (__import__("chimerax.core.colors", fromlist=["x"]).__name__,' +
+        ' __import__("chimerax.core.session", fromlist=["x"]).__name__,' +
+        ' __import__("chimerax.core.commands", fromlist=["x"]).__name__)');
+      this.commandsProbe = commands.ok ? commands.value : commands.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -167,6 +179,16 @@ struct Index {
         Text('_umath').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.numpyCore.length > 0 ? this.numpyCore : '—').id('cx-numpyc')
           .fontSize(10).fontColor('#B9C8D8').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('session').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.sessionProbe.length > 0 ? this.sessionProbe : '—').id('cx-session')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(4)
+      }.width('100%')
+      Row() {
+        Text('commands').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.commandsProbe.length > 0 ? this.commandsProbe : '—').id('cx-commands')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
         Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)

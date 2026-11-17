@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T10:35:29.011666+00:00",
+  "created_at_utc": "2026-11-17T11:17:13.640034+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 62209061,
-    "sha256": "5e62d02cac0f3625d7036b66f69a9a57a961c04b213b83223c086ca267d2b22e"
+    "bytes": 62215715,
+    "sha256": "3c8bdd2ac1d1eb68ba051514b269e0113a54a16b2cdff83a165393f60d9943e0"
   },
   "checks": [
     {
@@ -60,6 +60,16 @@
       "detail": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so"
     },
     {
+      "name": "A minimal ChimeraX Session can be constructed in the app",
+      "passed": true,
+      "detail": "Session|True|16"
+    },
+    {
+      "name": "ChimeraX command subsystem imports in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands"
+    },
+    {
       "name": "ChimeraX trigger dispatch runs in the app",
       "passed": true,
       "detail": "cx_app_probe|fired"
@@ -84,6 +94,8 @@
     "cx-core": "chimerax.core.errors|UserError|Logger",
     "cx-numpy": "1.26.4|4.0|10",
     "cx-numpyc": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so",
+    "cx-session": "Session|True|16",
+    "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands",
     "cx-trigger": "cx_app_probe|fired",
     "cx-diag": "prefix=/data/storage/el2/base/haps/entry/files/cx-runtime-23845062/cx-generic-runtime|has_version=True|first=LICENSE.txt,__future__.py,__hello__.py",
     "containerModalButtonRowId": "",
@@ -93,7 +105,7 @@
   },
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 12,
+    "passed": 14,
     "failed": 0
   },
   "status": "app_runtime_verified"

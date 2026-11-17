@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 numpy 交叉编译）
+## 当前结论（2026-11-17 Session 与命令子系统）
+
+**鸿蒙应用内可导入 `chimerax.core.{colors,session,commands}`，并用上游 `minimal=True` 路径构造出真实 ChimeraX `Session`（`Session|True|16`）；设备断言 14/14。**
+
+详见 [11 月 17 日 Session 与命令子系统](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-session-2026-11-17.md)。
+
+## 上一结论（2026-11-17 numpy 交叉编译）
 
 **ChimeraX 锁定的 numpy 1.26.4 已交叉编译（meson + 设备端 exe_wrapper）并在应用内运行：`1.26.4 / sqrt(16.0)=4.0 / arange(5).sum()=10`，扩展从应用原生库目录加载。设备断言 12/12。**
 

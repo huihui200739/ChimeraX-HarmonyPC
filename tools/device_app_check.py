@@ -89,6 +89,13 @@ def main() -> int:
         core_path = values.get('cx-numpyc', '')
         record('numpy extension loads from the application native library directory',
                'libs' in core_path and '_multiarray_umath' in core_path, core_path)
+        commands = values.get('cx-commands', '')
+        sess = values.get('cx-session', '')
+        record('A minimal ChimeraX Session can be constructed in the app',
+               sess.startswith('Session|True|') and int(sess.split('|')[-1]) > 0, sess)
+        record('ChimeraX command subsystem imports in the app',
+               commands.startswith('chimerax.core.colors|chimerax.core.session|chimerax.core.commands'),
+               commands)
         record('ChimeraX trigger dispatch runs in the app',
                'cx_app_probe' in values.get('cx-trigger', '') and 'fired' in values.get('cx-trigger', ''),
                values.get('cx-trigger', ''))
