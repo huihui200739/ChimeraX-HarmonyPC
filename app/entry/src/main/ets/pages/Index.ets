@@ -7,8 +7,8 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport } from 'libchime
 // would otherwise be reused after the runtime contents change.
 const ARCHIVE = 'cx-runtime-v4.zip';
 const RUNTIME_DIR = 'cx-generic-runtime';
-// Bump when the packaged runtime changes; a fresh directory avoids partial states.
-const RUNTIME_STORE = 'cx-runtime-store-v4';
+// The store name carries the packaged archive size, so a new payload always
+// extracts into a fresh directory instead of reusing stale content.
 
 @Entry
 @Component
@@ -23,6 +23,8 @@ struct Index {
   @State chimeraxCore: string = '';
   @State diagnostic: string = '';
   @State triggerResult: string = '';
+  @State numpyResult: string = '';
+  @State numpyCore: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -47,9 +49,12 @@ struct Index {
       const file = fs.openSync(archivePath, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
       fs.writeSync(file.fd, packed.buffer as ArrayBuffer);
       fs.closeSync(file);
-      const store = `${files}/${RUNTIME_STORE}`;
+      const store = `${files}/cx-runtime-${packed.byteLength}`;
       const runtimeDir = `${store}/${RUNTIME_DIR}`;
-      if (!fs.accessSync(`${runtimeDir}/lib/python3.11/chimerax/version.py`)) {
+      const ready = fs.accessSync(`${runtimeDir}/lib/python3.11/os.py`) &&
+        fs.accessSync(`${runtimeDir}/lib/python3.11/chimerax/version.py`) &&
+        fs.accessSync(`${runtimeDir}/lib/python3.11/numpy/__init__.py`);
+      if (!ready) {
         this.status = '解包运行环境…';
         if (!fs.accessSync(store)) {
           fs.mkdirSync(store, true);
@@ -85,6 +90,13 @@ struct Index {
         ' "%s|fired" % list(ts.trigger_names())[0])[3])(' +
         '__import__("chimerax.core.triggerset", fromlist=["x"]).TriggerSet())');
       this.triggerResult = trigger.ok ? trigger.value : trigger.error;
+      const numpy: ExpressionReport = native.runExpression(
+        '"%s|%s|%s" % (__import__("numpy").__version__,' +
+        ' str(__import__("numpy").sqrt(16.0)), str(__import__("numpy").arange(5).sum()))');
+      this.numpyResult = numpy.ok ? numpy.value : numpy.error;
+      const numpyCore: ExpressionReport = native.runExpression(
+        '__import__("numpy.core._multiarray_umath", fromlist=["x"]).__file__');
+      this.numpyCore = numpyCore.ok ? numpyCore.value : numpyCore.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -145,6 +157,16 @@ struct Index {
         Text('core').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.chimeraxCore.length > 0 ? this.chimeraxCore : '—').id('cx-core')
           .fontSize(12).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row() {
+        Text('numpy').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.numpyResult.length > 0 ? this.numpyResult : '—').id('cx-numpy')
+          .fontSize(11).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row() {
+        Text('_umath').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.numpyCore.length > 0 ? this.numpyCore : '—').id('cx-numpyc')
+          .fontSize(10).fontColor('#B9C8D8').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
         Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)

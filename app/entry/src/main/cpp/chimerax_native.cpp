@@ -300,10 +300,25 @@ napi_value Initialize(napi_env env, napi_callback_info info) {
   // Extension modules are packaged as application native libraries; the copies
   // extracted next to the standard library cannot be dlopen'ed, so that path is
   // replaced instead of appended.
-  const std::string bootstrap = std::string("import sys\n")
+  // Extensions live in the application native library directory (the loader
+  // refuses ELF objects extracted next to the standard library), while Python
+  // packages come from the runtime tree. A small finder maps submodule names to
+  // the native library copies so numpy/ctypes style packages keep working.
+  const std::string bootstrap = std::string("import sys, os, importlib.machinery, importlib.util\n")
       + "sys.dont_write_bytecode = True\n"
       + "sys.path = [p for p in sys.path if not p.endswith('lib-dynload')]\n"
-      + "sys.path.insert(0, " + PyReprString(lib_dir) + ")\n";
+      + "sys.path.insert(0, " + PyReprString(lib_dir) + ")\n"
+      + "class _CxNativeFinder:\n"
+      + "    _dir = " + PyReprString(lib_dir) + "\n"
+      + "    @classmethod\n"
+      + "    def find_spec(cls, fullname, path=None, target=None):\n"
+      + "        rel = fullname.replace('.', os.sep)\n"
+      + "        for suffix in importlib.machinery.EXTENSION_SUFFIXES:\n"
+      + "            candidate = os.path.join(cls._dir, rel + suffix)\n"
+      + "            if os.path.exists(candidate):\n"
+      + "                return importlib.util.spec_from_file_location(fullname, candidate)\n"
+      + "        return None\n"
+      + "sys.meta_path.insert(0, _CxNativeFinder)\n";
   PyRun_SimpleString(bootstrap.c_str());
   g_initialized = true;
   setBool("initialized", true);

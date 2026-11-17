@@ -83,6 +83,12 @@ def main() -> int:
         record('Genuine ChimeraX version module loads',
                values.get('cx-chimerax', '').startswith('v1.'), values.get('cx-chimerax', ''))
         core = values.get('cx-core', '')
+        numpy = values.get('cx-numpy', '')
+        record('numpy imports and computes in the app',
+               numpy.startswith('1.26.4|4.0|10'), numpy)
+        core_path = values.get('cx-numpyc', '')
+        record('numpy extension loads from the application native library directory',
+               'libs' in core_path and '_multiarray_umath' in core_path, core_path)
         record('ChimeraX trigger dispatch runs in the app',
                'cx_app_probe' in values.get('cx-trigger', '') and 'fired' in values.get('cx-trigger', ''),
                values.get('cx-trigger', ''))

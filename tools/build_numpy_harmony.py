@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-"""Cross-compile numpy for HarmonyOS (aarch64-linux-ohos) against the private runtime.
+"""Cross-compile numpy 1.26.4 for HarmonyOS with meson.
 
-Only the pinned sdist is used; there is no network access and no host-wheel
-substitution. The result is a directory of extension modules plus the numpy
-Python package, importable by the packaged CPython runtime.
+The pinned sdist is configured through a meson cross file:
+
+* clang from the HarmonyOS SDK with the OHOS sysroot,
+* ``exe_wrapper`` runs configure probes on the target through hdc,
+* ``longdouble_format`` is declared explicitly (cross builds cannot run the
+  format probe on the build machine),
+* extension modules are linked against the private libpython with a relative
+  rpath, because the target loader only resolves CPython symbols through an
+  object's own NEEDED entries.
+
+No host wheel and no network access are used.
 """
 from __future__ import annotations
 
@@ -23,11 +31,60 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SDK = Path('/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native')
 VERSION = '1.26.4'
 SHA256 = '2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010'
+TRIPLE = 'aarch64-linux-ohos'
 
 
 def sha256(path: Path) -> str:
     with path.open('rb') as handle:
         return hashlib.file_digest(handle, 'sha256').hexdigest()
+
+
+def cross_file(sdk: Path, runtime_lib: Path, hdc: Path, target: str) -> str:
+    cc = sdk / 'llvm/bin/clang'
+    cxx = sdk / 'llvm/bin/clang++'
+    sysroot = sdk / 'sysroot'
+    common = f'--target={TRIPLE} --sysroot={sysroot}'
+    wrapper = Path('/tmp/cx-meson-device-run.sh')
+    wrapper.write_text(f'''#!/bin/sh
+HDC="{hdc}"
+BIN="$1"
+shift
+"$HDC" -t {target} file send "$BIN" /data/local/tmp/cx-meson-probe >/dev/null 2>&1 || exit 1
+"$HDC" -t {target} shell "chmod 755 /data/local/tmp/cx-meson-probe" >/dev/null 2>&1
+"$HDC" -t {target} shell "/data/local/tmp/cx-meson-probe $*"
+''')
+    wrapper.chmod(0o755)
+    return f'''[binaries]
+c = '{cc}'
+cpp = '{cxx}'
+ar = '{sdk}/llvm/bin/llvm-ar'
+strip = '{sdk}/llvm/bin/llvm-strip'
+ranlib = '{sdk}/llvm/bin/llvm-ranlib'
+pkg-config = 'false'
+pkgconfig = 'false'
+exe_wrapper = '{wrapper}'
+
+[host_machine]
+system = 'linux'
+cpu_family = 'aarch64'
+cpu = 'aarch64'
+endian = 'little'
+
+[properties]
+needs_exe_wrapper = true
+# aarch64 Linux/OHOS uses IEEE binary128 long double; the probe cannot run here.
+longdouble_format = 'IEEE_QUAD_LE'
+
+[built-in options]
+c_args = ['--target={TRIPLE}', '--sysroot={sysroot}', '-O2', '-fPIC']
+cpp_args = ['--target={TRIPLE}', '--sysroot={sysroot}', '-O2', '-fPIC']
+c_link_args = ['--target={TRIPLE}', '--sysroot={sysroot}', '-shared',
+               '-L{runtime_lib}', '-l:libpython3.11.so.1.0',
+               '-Wl,-rpath,$ORIGIN/../../../lib']
+cpp_link_args = ['--target={TRIPLE}', '--sysroot={sysroot}', '-shared',
+                 '-L{runtime_lib}', '-l:libpython3.11.so.1.0',
+                 '-Wl,-rpath,$ORIGIN/../../../lib']
+'''
 
 
 def main() -> int:
@@ -36,77 +93,56 @@ def main() -> int:
     parser.add_argument('--host-python', type=Path,
                         default=ROOT / 'build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11')
     parser.add_argument('--archive', type=Path, default=ROOT / f'build/downloads/numpy-{VERSION}.tar.gz')
-    parser.add_argument('--output', type=Path, default=ROOT / f'build/numpy-{VERSION}-ohos')
-    parser.add_argument('--jobs', type=int, default=4)
+    parser.add_argument('--runtime-lib', type=Path,
+                        default=ROOT / 'build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime/lib')
+    parser.add_argument('--target', default='127.0.0.1:5555')
+    parser.add_argument('--output', type=Path, default=ROOT / f'build/numpy-{VERSION}-ohos-wheel')
     parser.add_argument('--report', type=Path, default=None)
     args = parser.parse_args()
     day = datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
     report_path = args.report or ROOT / f'reports/numpy-{day}.json'
     report: dict = {'schema_version': 1, 'created_at_utc': datetime.now(timezone.utc).isoformat(),
-                    'version': VERSION, 'target': 'aarch64-linux-ohos',
-                    'host_executed': False, 'commands': []}
-    compiler = args.sdk / 'llvm/bin/clang'
-    sysroot = args.sdk / 'sysroot'
+                    'version': VERSION, 'target': TRIPLE, 'builder': 'meson',
+                    'host_executed': False, 'target_executed': False}
+    hdc = Path('/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/toolchains/hdc')
     try:
         if sha256(args.archive) != SHA256:
             raise RuntimeError('numpy sdist checksum does not match the pinned value')
-        work = Path(tempfile.mkdtemp(prefix='numpy-ohos-', dir='/tmp')) / 'numpy'
+        work = Path(tempfile.mkdtemp(prefix='numpy-meson-'))
         with tarfile.open(args.archive) as bundle:
-            bundle.extractall(work.parent, filter='data')
-        source = work.parent / f'numpy-{VERSION}'
-        build_dir = work.parent / 'build-out'
-        build_dir.mkdir()
-        common = f'--target=aarch64-linux-ohos --sysroot={sysroot}'
-        env = {key: value for key, value in os.environ.items()
-               if key not in ('CFLAGS', 'LDFLAGS', 'CC', 'CXX', 'CPP')}
-        env.update({
-            'CC': f'{compiler} {common}',
-            'CXX': f'{args.sdk}/llvm/bin/clang++ {common}',
-            'LDSHARED': f'{compiler} {common} -shared',
-            'AR': f'{args.sdk}/llvm/bin/llvm-ar',
-            'RANLIB': f'{args.sdk}/llvm/bin/llvm-ranlib',
-            'CFLAGS': '-O2 -fPIC -fstack-protector-strong',
-            'LDFLAGS': '-Wl,-z,relro,-z,now',
-            '_PYTHON_HOST_PLATFORM': 'linux-aarch64',
-            'NPY_DISABLE_SVML': '1',
-            'NPY_BLAS_ORDER': '',
-            'NPY_LAPACK_ORDER': '',
-            'NPY_BLAS_LIBS': '',
-            'NPY_LAPACK_LIBS': '',
-            'NPY_ATLAS': '',
-            'PYTHONNOUSERSITE': '1',
-            # numpy 1.26 uses stdlib distutils; the shim lacks msvccompiler.
-            'SETUPTOOLS_USE_DISTUTILS': 'stdlib',
-        })
-        command = [str(args.host_python), 'setup.py', f'build_ext', f'--build-lib={build_dir}',
-                   f'--build-temp={build_dir / "temp"}', '-j', str(args.jobs)]
-        report['commands'].append({'argv': command, 'cwd': str(source)})
-        log = build_dir.parent / 'numpy-build.log'
+            bundle.extractall(work, filter='data')
+        source = work / f'numpy-{VERSION}'
+        cross = work / 'cx-cross.ini'
+        cross.write_text(cross_file(args.sdk, args.runtime_lib, hdc, args.target))
+        wheel_dir = work / 'wheels'
+        wheel_dir.mkdir()
+        env = dict(os.environ)
+        env['PATH'] = f'{args.host_python.parent}:/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin:' + env.get('PATH', '')
+        command = [str(args.host_python), '-m', 'pip', 'wheel', '--no-build-isolation', '--no-deps',
+                   '-w', str(wheel_dir), f'-Csetup-args=--cross-file={cross}',
+                   '-Csetup-args=-Dblas=none', '-Csetup-args=-Dlapack=none', '.']
+        log = work / 'numpy-build.log'
         with log.open('w') as stream:
             result = subprocess.run(command, cwd=source, env=env, stdout=stream,
-                                    stderr=subprocess.STDOUT, timeout=3600)
+                                    stderr=subprocess.STDOUT, timeout=5400)
         report['log'] = str(log)
-        if result.returncode != 0:
-            tail = log.read_text(errors='replace').splitlines()[-30:]
-            raise RuntimeError('numpy build failed:\n' + '\n'.join(tail))
-        target = args.output
-        if target.exists():
-            shutil.rmtree(target)
-        shutil.copytree(build_dir / 'numpy', target / 'numpy')
-        for extra in ('numpy.libs',):
-            candidate = build_dir / extra
-            if candidate.is_dir():
-                shutil.copytree(candidate, target / extra)
-        modules = sorted(p.name for p in (target / 'numpy/core').glob('*.ohos*.so'))
-        report.update({'output': str(target), 'extension_modules': modules,
-                       'files': sum(1 for _ in target.rglob('*') if _.is_file()),
+        wheels = sorted(wheel_dir.glob('numpy-*.whl'))
+        if result.returncode != 0 or not wheels:
+            tail = log.read_text(errors='replace').splitlines()[-25:]
+            raise RuntimeError('numpy meson build failed:\n' + '\n'.join(tail))
+        wheel = wheels[-1]
+        args.output.mkdir(parents=True, exist_ok=True)
+        destination = args.output / wheel.name
+        shutil.copy2(wheel, destination)
+        report.update({'wheel': str(destination), 'wheel_sha256': sha256(destination),
+                       'cross_file': cross.read_text(),
                        'status': 'numpy_cross_compiled_not_target_tested'})
     except Exception as error:  # noqa: BLE001 - report the failure
         report['status'] = 'numpy_build_failed'
         report['error'] = str(error)[:4000]
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-    print(report['status'], report.get('error', '')[:500])
+    print(report['status'], report.get('wheel', ''), report.get('error', '')[:400])
     return 0 if report['status'] == 'numpy_cross_compiled_not_target_tested' else 1
 
 

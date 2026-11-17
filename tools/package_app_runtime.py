@@ -27,6 +27,8 @@ def main() -> int:
     args = parser.parse_args()
     day = datetime.now(timezone.utc).date().isoformat()
     report_path = args.report or ROOT / f'reports/app-runtime-{day}.json'
+    import os
+    chimerax_python = Path(os.environ.get('CX_CHIMERAX_PYTHON', ROOT / 'build/chimerax-python'))
     libs = args.app / 'entry/libs/arm64-v8a'
     raw = args.app / 'entry/src/main/resources/rawfile'
     libs.mkdir(parents=True, exist_ok=True)
@@ -41,13 +43,25 @@ def main() -> int:
     link.symlink_to(library.name)
     # Extension modules must live in the application native library directory:
     # the loader refuses to dlopen ELF objects extracted into the app data dir.
+    # numpy ships its extension modules plus the Python package inside the native
+    # library directory: the loader refuses to dlopen ELF objects extracted into
+    # the application data directory, and numpy resolves submodules from its own
+    # package path.
+    # Only the ELF extension modules go to the native library directory; the
+    # Python package itself travels in the runtime archive.
+    numpy_package = chimerax_python / 'numpy'
+    numpy_files = 0
+    if numpy_package.is_dir():
+        for module in numpy_package.rglob('*.so'):
+            destination = libs / module.relative_to(numpy_package).parent / module.name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(module, destination)
+            numpy_files += 1
     dynload = args.runtime / 'lib/python3.11/lib-dynload'
     staged = 0
     for extension in sorted(dynload.glob('*.so')):
         shutil.copy2(extension, libs / extension.name)
         staged += 1
-    import os
-    chimerax_python = Path(os.environ.get('CX_CHIMERAX_PYTHON', ROOT / 'build/chimerax-python'))
     archive = raw / 'cx-runtime.zip'
     count = 0
     with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as bundle:
@@ -72,6 +86,7 @@ def main() -> int:
               'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest(),
               'extensions_in_libs': staged,
               'chimerax_python': str(chimerax_python),
+              'numpy_files_in_libs': numpy_files,
               'libpython': str(libs / library.name),
               'libpython_sha256': hashlib.sha256((libs / library.name).read_bytes()).hexdigest()}
     report_path.parent.mkdir(parents=True, exist_ok=True)

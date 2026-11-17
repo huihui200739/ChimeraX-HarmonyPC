@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 ChimeraX core 触发器）
+## 当前结论（2026-11-17 numpy 交叉编译）
+
+**ChimeraX 锁定的 numpy 1.26.4 已交叉编译（meson + 设备端 exe_wrapper）并在应用内运行：`1.26.4 / sqrt(16.0)=4.0 / arange(5).sum()=10`，扩展从应用原生库目录加载。设备断言 12/12。**
+
+详见 [11 月 17 日 numpy 交叉编译](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-numpy-2026-11-17.md)。
+
+## 上一结论（2026-11-17 ChimeraX core 触发器）
 
 **在鸿蒙 HAP 内，真实 ChimeraX v1.11.1 的 `TriggerSet` 完成"添加触发器 → 注册 handler → 激活"全链路，读回 `cx_app_probe|fired`；`sortedcontainers` 依赖已随包分发；设备断言 10/10。** numpy 交叉编译已尝试但未成功（distutils 忽略 clang 交叉目标），命令解释器尚未跑通。
 

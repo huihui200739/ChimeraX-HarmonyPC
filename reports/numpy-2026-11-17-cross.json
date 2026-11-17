@@ -1,0 +1,17 @@
+{
+  "wheel": "numpy-1.26.4-cp311-cp311-macosx_27_0_arm64.whl",
+  "sha256": "6379238d752e6442356ce8d4f48f1068b80576cbba2ba163bfd8dca6bfae268a",
+  "version": "1.26.4",
+  "target": "aarch64-linux-ohos",
+  "renamed": 19,
+  "linkage": {
+    "needed": [
+      "libpython3.11.so.1.0",
+      "libc.so"
+    ],
+    "runpath": "$ORIGIN/../../../lib"
+  },
+  "build": "meson cross file; exe_wrapper runs probes on the emulator; longdouble_format=IEEE_QUAD_LE; blas/lapack=none",
+  "host_executed": false,
+  "target_executed": false
+}
