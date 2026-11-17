@@ -19,14 +19,17 @@ import io, sys
 from chimerax.core.session import Session
 from chimerax.core.commands import CmdDesc, StringArg, register, run
 
-session = Session("ChimeraX", silent=True, minimal=True)
-
-class _NullUI:
-    is_gui = False
-    def __getattr__(self, name):
-        return lambda *args, **kwargs: None
-
-session.ui = _NullUI()
+# Reuse the persistent session created by the native bootstrap; creating a new
+# one here would shadow it and lose tools/toolshed.
+try:
+    session
+except NameError:
+    class _NullUI:
+        is_gui = False
+        def __getattr__(self, name):
+            return lambda *args, **kwargs: None
+    session = Session("ChimeraX", silent=True, minimal=True)
+    session.ui = _NullUI()
 calls = []
 
 def _cx_probe(session, value):

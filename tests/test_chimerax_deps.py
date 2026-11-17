@@ -32,6 +32,11 @@ class ChimeraXDependencyTests(unittest.TestCase):
         source = (ROOT / 'tools/package_app_runtime.py').read_text()
         self.assertIn("module.relative_to(numpy_package).parent", source)
 
+    def test_command_script_does_not_shadow_the_session(self):
+        page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
+        self.assertIn('try:\n    session\nexcept NameError:', page,
+                      'the UI script must reuse the persistent session')
+
     def test_bootstrap_registers_core_builtin_commands(self):
         native = (ROOT / 'app/entry/src/main/cpp/chimerax_native.cpp').read_text()
         for needle in ('appdirs.AppDirs', 'app_data_dir', 'core_settings.init',

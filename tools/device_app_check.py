@@ -131,7 +131,10 @@ def main() -> int:
             output = values.get('cx-cmd-output', '')
         builtin = values.get('cx-builtin', '')
         record('Core built-in commands run in the app',
-               'devel-dump:Missing or invalid' in builtin, builtin)
+               builtin.startswith('toolshed-list:ok') and 'devel-dump:Missing or invalid' in builtin,
+               builtin)
+        record('The persistent session keeps its tools and toolshed',
+               'tools=True' in builtin and 'toolshed=True' in builtin, builtin)
         a = 'cx-builtin'
         report[a] = builtin
         record('ChimeraX command syntax runs from the UI',

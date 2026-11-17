@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 内置命令确认 + tools 观察）
+## 当前结论（2026-11-17 两个内置命令通过）
+
+**`toolshed list` 与 `devel dump` 在应用内均可执行，设备断言 19/19。上一轮 `session.tools` 的矛盾已查明：是页面命令脚本覆盖了全局 `session`，改为复用持久会话后解决。**
+
+详见 [11 月 17 日内置命令通过](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-builtin-ok-2026-11-17.md)。
+
+## 上一结论（2026-11-17 内置命令确认 + tools 观察）
 
 **内置命令确认可执行（`devel dump` 返回上游参数校验错误），设备断言 18/18；`toolshed list` 因应用进程内 `session.tools` 读不到而仍失败，已定位并记录矛盾现象。**
 
