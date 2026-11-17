@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 图形层扩展 + 原版图标）
+## 当前结论（2026-11-18 EGL/GLES 上下文打通）
+
+**应用内用 XComponent 拿到原生窗口，建立 EGL + OpenGL ES 3.0 上下文并完成首帧清屏（`ready:OpenGL ES 3.0 ... Mali-G77:2014x285`），设备断言 21/21。CLI 进程里 EGL 一律拿不到显示，渲染必须走 HAP 内的表面。**
+
+详见 [11 月 18 日 EGL 表面](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/gl-surface-2026-11-17.md)。
+
+## 上一结论（2026-11-17 图形层扩展 + 原版图标）
 
 **`chimerax.arrays._arrays` 与 `chimerax.graphics._graphics` 已交叉编译并在应用内运行（`chimerax.graphics._graphics|3`），设备断言 20/20；应用图标换成 ChimeraX 原版图标。**
 

@@ -27,3 +27,7 @@ export interface ScriptReport {
 }
 export const runScript: (code: string) => ScriptReport;
 export const runChimeraCommand: (command: string) => ScriptReport;
+export interface GLReport {
+  status: string;
+}
+export const glStatus: () => GLReport;

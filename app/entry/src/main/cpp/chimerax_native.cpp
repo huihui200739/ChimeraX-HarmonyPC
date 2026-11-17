@@ -605,6 +605,18 @@ napi_value RunChimeraCommand(napi_env env, napi_callback_info info) {
   return out;
 }
 
+extern "C" void RegisterChimeraXGLSurface(napi_env env, void* exports);
+extern "C" const char* ChimeraXGLStatus();
+
+napi_value GLStatus(napi_env env, napi_callback_info info) {
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  const char* status = ChimeraXGLStatus();
+  napi_set_named_property(env, out, "status",
+                          MakeString(env, status ? status : ""));
+  return out;
+}
+
 napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor descriptors[] = {
       {"initializeRuntime", nullptr, Initialize, nullptr, nullptr, nullptr, napi_default, nullptr},
@@ -613,8 +625,11 @@ napi_value Init(napi_env env, napi_value exports) {
       {"extractArchive", nullptr, ExtractArchive, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"runScript", nullptr, RunScript, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"runChimeraCommand", nullptr, RunChimeraCommand, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"glStatus", nullptr, GLStatus, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
-  napi_define_properties(env, exports, sizeof(descriptors) / sizeof(descriptors[0]), descriptors);
+  napi_define_properties(env, exports,
+                         sizeof(descriptors) / sizeof(descriptors[0]), descriptors);
+  RegisterChimeraXGLSurface(env, exports);
   return exports;
 }
 

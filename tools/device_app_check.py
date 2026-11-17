@@ -60,6 +60,17 @@ def main() -> int:
         x1, y1, x2, y2 = (int(v) for v in bounds.groups())
         return ((x1 + x2) // 2, (y1 + y2) // 2)
 
+    def dump_scrolling(required: list[str], rounds: int = 4) -> dict[str, str]:
+        """Dump the layout, scrolling the page when a node is below the viewport."""
+        values = dump()[1]
+        for _ in range(rounds):
+            if all(key in values and values[key] not in ('', '—') for key in required):
+                break
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1400', '1000', '900', '300'])
+            time.sleep(1.5)
+            values.update({k: v for k, v in dump()[1].items() if v not in ('', '—')})
+        return values
+
     def dump() -> tuple[str, dict[str, str]]:
         remote = '/data/local/tmp/cx-app-layout.json'
         run(hdc + ['shell', 'uitest', 'dumpLayout', '-b', BUNDLE, '-p', remote, '-a'])
@@ -86,6 +97,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-gl-status'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -131,6 +143,9 @@ def main() -> int:
             output = values.get('cx-cmd-output', '')
         builtin = values.get('cx-builtin', '')
         graphics = values.get('cx-graphics', '')
+        gl = values.get('cx-gl-status', '')
+        record('An EGL/GLES surface is created inside the app', gl.startswith('xcomponent') or gl.startswith('ready:'), gl)
+        report['gl_status'] = gl
         record('The graphics C++ extension loads and runs in the app',
                graphics.startswith('chimerax.graphics._graphics|3'), graphics)
         record('Core built-in commands run in the app',

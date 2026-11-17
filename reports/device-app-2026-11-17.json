@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T15:03:52.547070+00:00",
+  "created_at_utc": "2026-11-17T16:15:15.677921+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 63808281,
-    "sha256": "47200f99d114110691e40e56d0d83cb68c5a594c1f6b0e7d0b753b68901a2126"
+    "bytes": 63880348,
+    "sha256": "71e5901f4fe0144735a3b183a2e6109fcc3c186f7a1864e0568fc245be20afbd"
   },
   "checks": [
     {
@@ -85,6 +85,11 @@
       "detail": "chimerax.core.errors|UserError|Logger"
     },
     {
+      "name": "An EGL/GLES surface is created inside the app",
+      "passed": true,
+      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285"
+    },
+    {
       "name": "The graphics C++ extension loads and runs in the app",
       "passed": true,
       "detail": "chimerax.graphics._graphics|3"
@@ -129,6 +134,8 @@
     "cx-cmd-py": "Python",
     "cx-cmd-output": "（输出）",
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
+    "cx-gl-surface": "",
+    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
     "cx-graphics": "chimerax.graphics._graphics|3",
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
     "cx-session": "Session|True|16",
@@ -140,12 +147,13 @@
     "EnhanceMinimizeBtn": "",
     "EnhanceCloseBtn": ""
   },
+  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 16",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 20,
+    "passed": 21,
     "failed": 0
   },
   "status": "app_runtime_verified"

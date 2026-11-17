@@ -1,7 +1,7 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport } from 'libchimerax_native.so';
+import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
@@ -84,6 +84,7 @@ struct Index {
   @State commandOutput: string = '';
   @State builtinResult: string = '';
   @State graphicsResult: string = '';
+  @State glStatus: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -201,6 +202,21 @@ struct Index {
       this.chimeraxCore = core.ok ? core.value : core.error;
       this.status = '运行环境就绪';
       hilog.info(0x3802, 'ChimeraX', 'CX_RUNTIME_READY %{public}s', this.version);
+      let polls = 0;
+      const poll = setInterval(() => {
+        polls += 1;
+        try {
+          const gl: GLReport = native.glStatus();
+          if (gl.status.length > 0) {
+            this.glStatus = gl.status;
+          }
+        } catch (error) {
+          this.glStatus = 'gl-status-error';
+        }
+        if (polls >= 10 || this.glStatus.startsWith('ready:')) {
+          clearInterval(poll);
+        }
+      }, 800);
     } catch (error) {
       this.failed = (error as Error).message ?? JSON.stringify(error);
       this.status = '失败';
@@ -209,7 +225,8 @@ struct Index {
   }
 
   build() {
-    Column({ space: 10 }) {
+    Scroll() {
+      Column({ space: 8 }) {
       Text('ChimeraX · Harmony PC').fontSize(24).fontWeight(FontWeight.Bold).fontColor('#FFFFFF')
       Text('应用内嵌私有 CPython 运行环境（通用运行层，非完整应用）').fontSize(12).fontColor('#C9D6E5')
       Divider().color('#3E5C80')
@@ -274,6 +291,13 @@ struct Index {
         Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
+      XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
+        .id('cx-gl-surface').width('100%').height(150).backgroundColor('#16212F')
+      Row() {
+        Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
       Row() {
         Text('graphics').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.graphicsResult.length > 0 ? this.graphicsResult : '—').id('cx-graphics')
@@ -310,6 +334,8 @@ struct Index {
       Blank()
       Text(this.prefix).fontSize(10).fontColor('#7F93A8').width('100%')
     }
-    .width('100%').height('100%').padding(24).backgroundColor('#1E3A5F')
+      .width('100%').padding(20)
+    }
+    .width('100%').height('100%').backgroundColor('#1E3A5F').scrollBar(BarState.Auto)
   }
 }
