@@ -129,6 +129,11 @@ def main() -> int:
             time.sleep(4)
             values = dump()[1]
             output = values.get('cx-cmd-output', '')
+        builtin = values.get('cx-builtin', '')
+        record('A core ChimeraX built-in validates its arguments in the app',
+               'devel-dump:Missing or invalid' in builtin, builtin)
+        a = 'cx-builtin'
+        report[a] = builtin
         record('ChimeraX command syntax runs from the UI',
                'cxprobe:ui-command' in output, output)
         report['command_output'] = output

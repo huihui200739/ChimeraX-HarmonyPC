@@ -39,6 +39,25 @@ result = run(session, "cxprobe hello-harmony")
 print("%s|%s|%s" % (result, len(calls), calls[0]))
 `;
 
+
+// Two genuine ChimeraX built-ins registered by the core bundle: toolshed list
+// executes, and devel dump exercises CmdDesc argument validation.
+const BUILTIN_SCRIPT = `
+from chimerax.core.commands import run
+summary = []
+try:
+    run(session, "toolshed list")
+    summary.append("toolshed-list:ok")
+except Exception as error:
+    summary.append("toolshed-list:" + type(error).__name__ + ":" + str(error)[:40])
+try:
+    run(session, "devel dump /nonexistent/cx-probe.txt")
+    summary.append("devel-dump:no-error")
+except Exception as error:
+    summary.append("devel-dump:" + str(error).split(":")[0])
+print("|".join(summary))
+`;
+
 @Entry
 @Component
 struct Index {
@@ -59,6 +78,7 @@ struct Index {
   @State commandResult: string = '';
   @State commandText: string = 'cxprobe ui-command';
   @State commandOutput: string = '';
+  @State builtinResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -154,6 +174,8 @@ struct Index {
       this.commandsProbe = commands.ok ? commands.value : commands.error;
       const command: ScriptReport = native.runScript(COMMAND_SCRIPT);
       this.commandResult = command.ok ? command.output.trim() : command.error;
+      const builtin: ScriptReport = native.runScript(BUILTIN_SCRIPT);
+      this.builtinResult = (builtin.ok ? builtin.output : builtin.error).trim();
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -240,6 +262,11 @@ struct Index {
       Row() {
         Text('命令执行').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('内置命令').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.builtinResult.length > 0 ? this.builtinResult : '—').id('cx-builtin')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {

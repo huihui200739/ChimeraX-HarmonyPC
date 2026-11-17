@@ -32,6 +32,15 @@ class ChimeraXDependencyTests(unittest.TestCase):
         source = (ROOT / 'tools/package_app_runtime.py').read_text()
         self.assertIn("module.relative_to(numpy_package).parent", source)
 
+    def test_bootstrap_registers_core_builtin_commands(self):
+        native = (ROOT / 'app/entry/src/main/cpp/chimerax_native.cpp').read_text()
+        for needle in ('appdirs.AppDirs', 'app_data_dir', 'core_settings.init',
+                       'toolshed.init', 'register_misc_commands', 'CX_RUNTIME_HOME'):
+            self.assertIn(needle, native, needle)
+        page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
+        self.assertIn('devel dump', page)
+        self.assertIn('cx-builtin', page)
+
     def test_command_execution_probe_matches_the_device_contract(self):
         page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
         for needle in ('cmd commands', 'def _cx_probe(session, value)', '_NullUI',

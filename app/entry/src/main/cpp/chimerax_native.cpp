@@ -322,10 +322,25 @@ napi_value Initialize(napi_env env, napi_callback_info info) {
   PyRun_SimpleString(bootstrap.c_str());
   // A persistent minimal Session and a registered probe command make the app a
   // usable command channel: user input runs against the same interpreter state.
+  {
+    const std::string home_env = std::string("CX_RUNTIME_HOME") + "=" + home;
+    setenv("CX_RUNTIME_HOME", home.c_str(), 1);
+  }
   PyRun_SimpleString(R"PY(
-import sys
+import os, sys
 try:
+    _cx_home = os.environ.get("CX_RUNTIME_HOME") or os.getcwd()
+    os.environ["HOME"] = _cx_home
+    import appdirs, chimerax
+    chimerax.app_dirs = appdirs.AppDirs("ChimeraX", appauthor="RBVI", version="1.11")
+    chimerax.app_dirs_unversioned = appdirs.AppDirs("ChimeraX", appauthor="RBVI")
+    _cx_root = os.path.dirname(os.path.dirname(os.path.abspath(chimerax.__file__)))
+    chimerax.app_data_dir = os.path.join(_cx_root, "share")
+    chimerax.app_lib_dir = os.path.join(_cx_root, "lib")
+    os.makedirs(chimerax.app_data_dir, exist_ok=True)
+    os.makedirs(chimerax.app_lib_dir, exist_ok=True)
     from chimerax.core.session import Session
+    from chimerax.core import core_settings
     from chimerax.core.commands import CmdDesc, StringArg, register
 
     class _NullUI:
@@ -335,6 +350,12 @@ try:
 
     session = Session("ChimeraX", silent=True, minimal=True)
     session.ui = _NullUI()
+    core_settings.init(session)
+    from chimerax.core import toolshed as _cx_toolshed
+    _cx_toolshed.init(session.logger, check_remote=False, check_available=False, session=session)
+    session.toolshed = _cx_toolshed.get_toolshed()
+    from chimerax.core import session as _cx_session_mod
+    _cx_session_mod.register_misc_commands(session)
     _cx_calls = []
 
     def _cx_probe(session, value):
@@ -484,17 +505,8 @@ ScriptOutcome ExecuteScript(const std::string& code) {
                        "_cx_sys.stdout = _cx_buf\n");
     PyObject* result = PyRun_String(code.c_str(), Py_file_input, globals, globals);
     PyRun_SimpleString("_cx_sys.stdout = _cx_real_stdout\n");
-    PyObject* buffer = PyDict_GetItemString(globals, "_cx_buf");
-    if (buffer) {
-      PyObject* text = PyObject_CallMethod(buffer, "getvalue", nullptr);
-      if (text) {
-        const char* value = PyUnicode_AsUTF8(text);
-        if (value) {
-          outcome.output = value;
-        }
-        Py_DECREF(text);
-      }
-    }
+    // Resolve the interpreter state before touching the capture buffer: a pending
+    // exception would otherwise make getvalue() report "exception set".
     if (result) {
       Py_DECREF(result);
       outcome.ok = true;
@@ -506,12 +518,26 @@ ScriptOutcome ExecuteScript(const std::string& code) {
         if (text) {
           const char* message = PyUnicode_AsUTF8(text);
           if (message) {
-            outcome.output += std::string("\n") + message;
+            outcome.output += std::string(message);
           }
           Py_DECREF(text);
         }
       }
       Py_XDECREF(type); Py_XDECREF(value); Py_XDECREF(trace);
+    }
+    PyErr_Clear();
+    PyObject* buffer = PyDict_GetItemString(globals, "_cx_buf");
+    if (buffer) {
+      PyObject* text = PyObject_CallMethod(buffer, "getvalue", nullptr);
+      if (text) {
+        const char* value = PyUnicode_AsUTF8(text);
+        if (value) {
+          outcome.output = std::string(value) + outcome.output;
+        }
+        Py_DECREF(text);
+      } else {
+        PyErr_Clear();
+      }
     }
   }
   PyGILState_Release(gil);

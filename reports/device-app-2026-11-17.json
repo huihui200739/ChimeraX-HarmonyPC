@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T12:48:18.297090+00:00",
+  "created_at_utc": "2026-11-17T13:30:21.831440+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 62411959,
-    "sha256": "5624d4a40d13c60ff23009d92050fc40fe5300021dfa31deb06000d1c57e22ca"
+    "bytes": 62417330,
+    "sha256": "fde0038c34d68f21c7af0df5ecc0b543217afe66f85baeb7f635463c332103f3"
   },
   "checks": [
     {
@@ -85,6 +85,11 @@
       "detail": "chimerax.core.errors|UserError|Logger"
     },
     {
+      "name": "A core ChimeraX built-in validates its arguments in the app",
+      "passed": true,
+      "detail": "toolshed-list:AttributeError:'Session' object has no attribute 'tools|devel-dump:Missing or invalid \\\"path\\\" argument"
+    },
+    {
       "name": "ChimeraX command syntax runs from the UI",
       "passed": true,
       "detail": "cxprobe:ui-command"
@@ -114,6 +119,7 @@
     "cx-cmd-py": "Python",
     "cx-cmd-output": "（输出）",
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
+    "cx-builtin": "toolshed-list:AttributeError:'Session' object has no attribute 'tools|devel-dump:Missing or invalid \\\"path\\\" argument",
     "cx-session": "Session|True|16",
     "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands",
     "cx-trigger": "cx_app_probe|fired",
@@ -123,11 +129,12 @@
     "EnhanceMinimizeBtn": "",
     "EnhanceCloseBtn": ""
   },
+  "cx-builtin": "toolshed-list:AttributeError:'Session' object has no attribute 'tools|devel-dump:Missing or invalid \\\"path\\\" argument",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 16",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 17,
+    "passed": 18,
     "failed": 0
   },
   "status": "app_runtime_verified"

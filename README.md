@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 内置命令依赖链）
+## 当前结论（2026-11-17 内置命令可执行）
+
+**应用内跑通核心内置命令：`devel dump` 返回上游原生参数错误 `Missing or invalid "path" argument`；启动引导补齐 app_dirs/core_settings/toolshed 单例；设备断言 18/18。`toolshed list` 仍缺 `session.tools`，已如实记录。**
+
+详见 [11 月 17 日内置命令可执行](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-builtin-run-2026-11-17.md)。
+
+## 上一结论（2026-11-17 内置命令依赖链）
 
 **实测出核心内置命令（`debug`/`devel`/`pip`/`toolshed`）的依赖链：执行需要 `session.toolshed` → `chimerax.app_dirs`（appdirs）→ `core_settings.settings`；`packaging` 与 `appdirs` 已纳入暂存，内置命令执行仍待补齐。**
 
