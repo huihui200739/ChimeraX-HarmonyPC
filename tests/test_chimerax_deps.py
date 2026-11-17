@@ -71,7 +71,8 @@ class ChimeraXDependencyTests(unittest.TestCase):
     def test_session_probe_uses_the_minimal_path(self):
         page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
         self.assertIn('minimal=True', page)
-        self.assertIn('cx-session', page)
+        # the session value is reported through the merged core-API row
+        self.assertIn('cx-commands', page)
         checker = (ROOT / 'tools/device_app_check.py').read_text()
         self.assertIn('minimal ChimeraX Session', checker)
         self.assertIn('cx-commands', checker)
