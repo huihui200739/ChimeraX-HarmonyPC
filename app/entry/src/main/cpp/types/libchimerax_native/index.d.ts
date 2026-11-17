@@ -20,3 +20,9 @@ export interface ExtractReport {
   error: string;
 }
 export const extractArchive: (archive: string, destination: string) => ExtractReport;
+export interface ScriptReport {
+  ok: boolean;
+  output: string;
+  error: string;
+}
+export const runScript: (code: string) => ScriptReport;

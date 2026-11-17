@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-17 Session 与命令子系统）
+## 当前结论（2026-11-17 执行 ChimeraX 命令）
+
+**应用内成功执行真实 ChimeraX 命令：注册 `cxprobe` → `commands.run(session, "cxprobe hello-harmony")` → 返回 `cxprobe:hello-harmony|1|hello-harmony`；设备断言 15/15。**
+
+详见 [11 月 17 日命令执行](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/chimerax-command-2026-11-17.md)。
+
+## 上一结论（2026-11-17 Session 与命令子系统）
 
 **鸿蒙应用内可导入 `chimerax.core.{colors,session,commands}`，并用上游 `minimal=True` 路径构造出真实 ChimeraX `Session`（`Session|True|16`）；设备断言 14/14。**
 

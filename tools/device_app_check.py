@@ -91,6 +91,9 @@ def main() -> int:
                'libs' in core_path and '_multiarray_umath' in core_path, core_path)
         commands = values.get('cx-commands', '')
         sess = values.get('cx-session', '')
+        run_result = values.get('cx-command-run', '')
+        record('A real ChimeraX command executes in the app',
+               run_result.startswith('cxprobe:hello-harmony|'), run_result)
         record('A minimal ChimeraX Session can be constructed in the app',
                sess.startswith('Session|True|') and int(sess.split('|')[-1]) > 0, sess)
         record('ChimeraX command subsystem imports in the app',

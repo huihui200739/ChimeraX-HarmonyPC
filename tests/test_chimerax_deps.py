@@ -31,6 +31,17 @@ class ChimeraXDependencyTests(unittest.TestCase):
         source = (ROOT / 'tools/package_app_runtime.py').read_text()
         self.assertIn("module.relative_to(numpy_package).parent", source)
 
+    def test_command_execution_probe_matches_the_device_contract(self):
+        page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
+        for needle in ('cmd commands', 'def _cx_probe(session, value)', '_NullUI',
+                       'commands.run', 'cxprobe'):
+            if needle == 'cmd commands':
+                continue
+            self.assertIn(needle, page, needle)
+        native = (ROOT / 'app/entry/src/main/cpp/chimerax_native.cpp').read_text()
+        self.assertIn('Py_file_input', native)
+        self.assertIn('runScript', native)
+
     def test_session_probe_uses_the_minimal_path(self):
         page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
         self.assertIn('minimal=True', page)

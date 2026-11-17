@@ -1,7 +1,7 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import native, { RuntimeReport, ExpressionReport, ExtractReport } from 'libchimerax_native.so';
+import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
@@ -9,6 +9,35 @@ const ARCHIVE = 'cx-runtime-v4.zip';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // The store name carries the packaged archive size, so a new payload always
 // extracts into a fresh directory instead of reusing stale content.
+
+
+// Runs a real ChimeraX command: the command is registered in the (global)
+// command table exactly like a bundle would, then executed through
+// chimerax.core.commands.run with a minimal Session.
+const COMMAND_SCRIPT = `
+import io, sys
+from chimerax.core.session import Session
+from chimerax.core.commands import CmdDesc, StringArg, register, run
+
+session = Session("ChimeraX", silent=True, minimal=True)
+
+class _NullUI:
+    is_gui = False
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: None
+
+session.ui = _NullUI()
+calls = []
+
+def _cx_probe(session, value):
+    calls.append(value)
+    return "cxprobe:" + value
+
+register("cxprobe", CmdDesc(required=[("value", StringArg)],
+                            synopsis="harmony adaptation probe command"), _cx_probe)
+result = run(session, "cxprobe hello-harmony")
+print("%s|%s|%s" % (result, len(calls), calls[0]))
+`;
 
 @Entry
 @Component
@@ -27,6 +56,7 @@ struct Index {
   @State numpyCore: string = '';
   @State commandsProbe: string = '';
   @State sessionProbe: string = '';
+  @State commandResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -109,6 +139,8 @@ struct Index {
         ' __import__("chimerax.core.session", fromlist=["x"]).__name__,' +
         ' __import__("chimerax.core.commands", fromlist=["x"]).__name__)');
       this.commandsProbe = commands.ok ? commands.value : commands.error;
+      const command: ScriptReport = native.runScript(COMMAND_SCRIPT);
+      this.commandResult = command.ok ? command.output.trim() : command.error;
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -179,6 +211,11 @@ struct Index {
         Text('_umath').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.numpyCore.length > 0 ? this.numpyCore : '—').id('cx-numpyc')
           .fontSize(10).fontColor('#B9C8D8').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('命令执行').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
         Text('session').fontSize(13).fontColor('#C9D6E5').width(80)
