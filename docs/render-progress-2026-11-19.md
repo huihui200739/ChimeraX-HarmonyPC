@@ -87,3 +87,27 @@ staging 现在会改 `OpenGL/platform/baseplatform.py`：`nullFunction()` 先尝
 不是鸿蒙平台限制。已把**每一层的真实报错**都记录在上面，接手的人从 `argNames` 这一条继续即可。
 
 引擎侧能力（设备 26/26 断言）不受影响，可交付。
+
+## 追加（03:00）：ES3 库加载已修，露出真正的下一层
+
+修好 `egl.GLES3`（改为加载 `libGLESv3`，此前它返回 GLES2 库）后，报错前进到：
+
+```
+AttributeError: do_dlsym failed: Symbol not found: glGetInteger
+```
+
+`glGetInteger` 是**桌面 GL 的 API**（ES 里叫 `glGetIntegerv`）。也就是说：上下文、入口点、
+版本解析、VAO 全部打通之后，剩下的是 **ChimeraX 渲染器里的桌面 GL 调用需要逐条映射到 GLES**。
+
+这一步的性质与前面不同：它不是"接错线"，而是"API 方言差异"，工作量按 ChimeraX 渲染器里
+用到桌面 API 的处数计（`glGetInteger` 只是第一处）。属于移植工作而非调试。
+
+### 目前已确证的渲染链路状态（设备实测）
+
+| 环节 | 状态 |
+|---|---|
+| EGL 上下文接管 | ✅ `eglMakeCurrent` 成功 |
+| GLES 版本串 | ✅ `raw=` 与 `gl=` 都是 `OpenGL ES 3.0 (4.1 Metal - 91.7)` |
+| ES3 入口点解析 | ✅ VAO 等已可用（加载了真正的 libGLESv3） |
+| ChimeraX 着色器 | 已做 GLSL ES 翻译（补丁 0005） |
+| **ChimeraX 桌面 GL 调用** | ⏳ 需逐条映射（`glGetInteger` → `glGetIntegerv` …） |

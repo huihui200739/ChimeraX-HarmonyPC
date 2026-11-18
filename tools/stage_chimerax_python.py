@@ -215,60 +215,26 @@ def main() -> int:
             + '        return vmajor, vminor')
             version_fn.write_text(text)
 
-    # PyOpenGL's EGL platform leaves some ES3 entry points undefined (NullFunction) because
-    # its dlsym path misses libGLESv3. Patch the platform so a null function first retries a
-    # process-wide dlsym on the GLES library before raising NullFunctionError.
-    base_platform = args.output / 'OpenGL/platform/baseplatform.py'
-    if base_platform.is_file():
-        text = base_platform.read_text()
-        marker = '        """Construct a "null" function pointer"""'
-        if 'CX_GLES_DLSYM_FALLBACK' not in text and marker in text:
-            injection = (
-                '        """Construct a "null" function pointer"""\n'
-                '        # CX_GLES_DLSYM_FALLBACK: HarmonyOS resolves ES3 entry points through\n'
-                '        # libGLESv3 directly; retry there before giving up.\n'
-                '        try:\n'
-                '            _cx_lib = _CX_GLES_LIBRARY\n'
-                '            if _cx_lib is None or not hasattr(_cx_lib, functionName):\n'
-                '                raise AttributeError(functionName)\n'
-                '            # Build a real PyOpenGL wrapper (argNames/error checking) instead of\n'
-                '            # handing back a raw ctypes pointer.\n'
-                '            return self.createFunction(\n'
-                '                functionName, dll=_cx_lib, resultType=resultType,\n'
-                '                argTypes=argTypes, doc=doc, argNames=argNames,\n'
-                '                extension=extension, deprecated=deprecated,\n'
-                '                module=module, error_checker=error_checker)\n'
-                '        except Exception:\n'
-                '            pass\n'
-            )
-            text = text.replace(marker, injection, 1)
-            # module-level handle, created lazily
-            text = text.replace(
-                'class _NullFunctionPointer(object):',
-                '_CX_GLES_LIBRARY = None\n'
-                'try:\n'
-                '    import ctypes as _cx_ctypes_module\n'
-                '    _CX_GLES_LIBRARY = _cx_ctypes_module.CDLL("libGLESv3.so")\n'
-                'except Exception:\n'
-                '    _CX_GLES_LIBRARY = None\n\n\n'
-                'class _NullFunctionPointer(object):', 1)
-            base_platform.write_text(text)
-
-    # Re-entrant initialization must still deliver a GL module: an early caller can leave
-    # GL as None while the guard says "already initialized".
-    gl_init = args.output / 'chimerax/graphics/opengl.py'
-    if gl_init.is_file():
-        text = gl_init.read_text()
-        needle = ("    global _initialized_pyopengl\n"
-                  "    if _initialized_pyopengl:\n"
-                  "        return\n")
-        if needle in text and 'CX_GL_REENTRY' not in text:
+    # PyOpenGL's EGL platform resolves GLES3 to the GLES2 library, so ES3 entry points
+    # (vertex array objects) are missing on HarmonyOS where libGLESv2 lacks them.
+    egl_platform = args.output / 'OpenGL/platform/egl.py'
+    if egl_platform.is_file():
+        text = egl_platform.read_text()
+        needle = ("    @baseplatform.lazy_property\n"
+                  "    def GLES3(self):\n"
+                  "        # implementers guide says to use the same name for the DLL\n"
+                  "        return self.GLES2\n")
+        if needle in text and 'CX_GLES3_LIBRARY' not in text:
             text = text.replace(needle,
-                "    global _initialized_pyopengl\n"
-                "    # CX_GL_REENTRY: only skip when the module global was really bound.\n"
-                "    if _initialized_pyopengl and globals().get('GL') is not None:\n"
-                "        return\n")
-            gl_init.write_text(text)
+                "    @baseplatform.lazy_property\n"
+                "    def GLES3(self):\n"
+                "        # CX_GLES3_LIBRARY: load the real ES3 library; GLESv2 has no VAOs.\n"
+                "        try:\n"
+                "            return ctypesloader.loadLibrary(\n"
+                "                ctypes.cdll, 'GLESv3', mode=ctypes.RTLD_GLOBAL)\n"
+                "        except OSError:\n"
+                "            return self.GLES2\n")
+            egl_platform.write_text(text)
 
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
