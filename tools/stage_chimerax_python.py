@@ -213,9 +213,25 @@ def main() -> int:
                 try:
                     value = getattr(module, name)
                 except AttributeError:
-                    value = getattr(library, name)
-                    setattr(module, name, value)
-                    return value
+                    # Wrap direct library dispatch: convert PyOpenGL constant objects
+                    # to plain integers, otherwise ctypes passes garbage and calls such
+                    # as glCheckFramebufferStatus return a silent zero.
+                    raw = getattr(library, name)
+                    import ctypes as _ct
+
+                    def call(*args, _raw=raw, **_kwargs):
+                        converted = []
+                        for arg in args:
+                            if isinstance(arg, (int, float)):
+                                converted.append(_ct.c_uint(int(arg)))
+                            elif isinstance(arg, (bytes, bytearray, str)):
+                                converted.append(arg)
+                            else:
+                                converted.append(arg)
+                        return _raw(*converted)
+
+                    setattr(module, name, call)
+                    return call
                 # PyOpenGL keeps undefined entry points as NullFunction placeholders.
                 if type(value).__name__ == 'NullFunction':
                     try:

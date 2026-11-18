@@ -155,3 +155,49 @@ size 校验、context 对接、入口点解析全部通过。`status 0` 表示
 5. 帧缓冲尺寸校验 ✅
 6. 帧缓冲完整性检查 ⏳（`status 0`）
 7. 像素回读 + 出图 ⏳
+
+## 追加（06:00）：status 0 但 glGetError 为 0
+
+探针新增诊断，设备读回：
+
+```
+enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE)
+glerr=0
+view!OpenGLError:Framebuffer image capture creation failed, status 0, color b…
+```
+
+两条关键信息：
+
+1. **枚举正常**：`GL_FRAMEBUFFER` / `GL_FRAMEBUFFER_COMPLETE` 都是 PyOpenGL 的常量对象（值正确）
+2. **没有 GL 错误**：`glGetError()` 返回 0
+
+"返回值 0 且无错误"意味着 `glCheckFramebufferStatus` 在那次调用上**没有被真正执行**
+（返回了默认 0），最可能是：该入口点在我们的 GL 代理里落到"未解析/占位"路径，
+用 ctypes 直取时参数（PyOpenGL 常量对象）没有被正确转成 `GLenum`。
+
+## 修法（下一步，明确）
+
+在 `_GlesProxy` 里给"直取的库函数"设置 `argtypes`（`c_uint`）与 `restype`，
+让 `glCheckFramebufferStatus(GL_FRAMEBUFFER)` 真正跑到驱动上；或者干脆让代理对所有
+`gl*` 名字都用 `ctypes` 显式声明 `restype=c_uint, argtypes=[c_uint]` 的统一包装。
+
+这一步之后若 `status` 变成 `0x8CD5`（`GL_FRAMEBUFFER_COMPLETE`），`image_rgba()` 就会回读像素。
+
+## 追加（06:15）：整数化参数包装后仍是 status 0 —— 此事封存
+
+给直取库函数加了 `c_uint` 参数转换后，设备读回完全不变：
+
+```
+enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE)
+glerr=0
+view!OpenGLError:Framebuffer image capture creation failed, status 0, color b…
+```
+
+枚举正确、`glGetError()==0`、`glCheckFramebufferStatus` 返回 0 —— 三者互相矛盾，说明
+**这次调用根本没有到驱动**（PyOpenGL 的 GLES3 包装层在我们这条接管路径上仍拿的是占位对象）。
+
+结论：**ChimeraX 渲染器要出图，需要把 PyOpenGL 的 GLES3 入口点解析整段重做**
+（不是打补丁级改动，而是给 PyOpenGL 一个"从 libGLESv3 全量 dlsym + 正确包装"的加载器）。
+这是明确的、可估算的工程任务（约半天），不属于"再接一根线"。
+
+在此之前，适配的其他部分全部可交付、可复现、有设备收据（26/26）。

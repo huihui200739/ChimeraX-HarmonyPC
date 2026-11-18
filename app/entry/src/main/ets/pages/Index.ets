@@ -162,6 +162,11 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     # drawing and capture an offscreen image.
     try:
         from chimerax.core.models import Model
+        # Report the enum values the framebuffer check depends on; a zero here explains
+        # a "status 0" from glCheckFramebufferStatus.
+        import chimerax.graphics.opengl as _cxgl
+        notes.append("enums=%s,%s" % (str(_cxgl.GL.GL_FRAMEBUFFER),
+                                      str(_cxgl.GL.GL_FRAMEBUFFER_COMPLETE)))
         view = session.main_view
         view.initialize_rendering(ctx)
         drawing = Model("cx_probe", session)
@@ -183,6 +188,11 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     except BaseException as error:
         import traceback
         where = traceback.format_exc().strip().splitlines()
+        try:
+            import chimerax.graphics.opengl as _cxgl2
+            notes.append("glerr=" + str(_cxgl2.GL.glGetError()))
+        except Exception:
+            pass
         notes.append("view!" + type(error).__name__ + ":" + str(error)[:60]
                      + "@" + (where[-3].strip()[:90] if len(where) >= 3 else "?"))
     # Plain concatenation: error strings inside notes may contain % placeholders.
