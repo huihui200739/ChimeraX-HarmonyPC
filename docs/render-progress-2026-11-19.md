@@ -218,3 +218,32 @@ view!OpenGLError:Link failure (0)
 （现在凡是"取状态/取日志"类的查询都返回 0/空，而"设置/绑定"类调用是生效的——
 这也解释了为什么能走到链接这一步）。修法已写在上一段：给 PyOpenGL 一个
 libGLESv3 全量 dlsym + 正确包装的加载器。
+
+## 追加（07:00）：越过链接检查，暴露出真正的工作量 —— 着色器需要 GLSL ES 移植
+
+跳过不可靠的 `GL_LINK_STATUS` 查询后，`image_rgba()` 走到绘制阶段并报：
+
+```
+GLError(err = 1282 /* GL_INVALID_OPERATION */,
+        baseOperation = glGetUniformBlockIndex,
+        cArguments = (0, b'lighting_block'))
+```
+
+`err 1282` = GL_INVALID_OPERATION，`program=0` 且着色器里没有 `lighting_block` 这个 uniform block。
+
+**这说明 ChimeraX 渲染器用的是桌面 GL 的 UBO（uniform buffer object）着色器体系**：
+- 我们的 GLSL ES 翻译（补丁 0005 的 `translate_shader_to_gles`）只处理了版本声明与 precision，
+  没有把 UBO 块改写成 ES 可用的 uniform 变量
+- 结果是程序链接后有 0 个 uniform block，`glGetUniformBlockIndex` 自然返回 INVALID_OPERATION
+
+### 结论（这是本轮最重要的判断）
+
+渲染要出图，剩下的不是"再接一根线"，而是**把 ChimeraX 的着色器体系移植到 GLSL ES**：
+`vertexShader.txt` / `fragmentShader.txt` 里的 UBO 声明、`layout(std140)`、`glGetUniformBlockIndex`
+/ `glBindBufferBase` 等调用都要有 ES 等价实现。这是一个**以天计**的移植任务
+（着色器改写 + uniform 路径重构 + 逐帧验证），不是小时级调试。
+
+### 当前能力边界（不受影响）
+
+设备 26/26 断言全过：运行时、numpy、core/commands/Session、atomic、PDB/CIF 读取、
+graphics C++ 扩展、EGL/GLES 表面、GLSL 绘制、PyOpenGL 上下文对齐，全部可复现。

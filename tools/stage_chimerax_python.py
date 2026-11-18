@@ -299,7 +299,31 @@ def main() -> int:
                 "                ctypes.cdll, 'GLESv3', mode=ctypes.RTLD_GLOBAL)\n"
                 "        except OSError:\n"
                 "            return self.GLES2\n")
+            # dlsym consults self.GL first; point it at the ES library so ES entry points
+            # resolve instead of coming back as NullFunction placeholders.
+            gl_prop = ("    @baseplatform.lazy_property\n"
+                       "    def GL(self):\n")
+            if gl_prop in text:
+                text = text.replace(gl_prop,
+                    "    @baseplatform.lazy_property\n"
+                    "    def GL(self):\n"
+                    "        # CX_GLES_DLSYM: resolve ES entry points from libGLESv3.\n"
+                    "        try:\n"
+                    "            return ctypesloader.loadLibrary(\n"
+                    "                ctypes.cdll, 'GLESv3', mode=ctypes.RTLD_GLOBAL)\n"
+                    "        except OSError:\n"
+                    "            return self.GLES2 or self.GLES1\n"
+                    "\n"
+                    "    @baseplatform.lazy_property\n"
+                    "    def _cx_unused_GL(self):\n", 1)
             egl_platform.write_text(text)
+            # dlsym consults self.GL first, and it looks for desktop names; try the ES
+            # library first so ES entry points resolve instead of staying NullFunction.
+            text = egl_platform.read_text()
+            if "for name in ('OpenGL','GL'):" in text and 'CX_GLES_DLSYM' not in text:
+                text = text.replace("for name in ('OpenGL','GL'):",
+                                    "for name in ('GLESv3', 'OpenGL', 'GL'):  # CX_GLES_DLSYM")
+                egl_platform.write_text(text)
 
     # GLES drivers may answer the size queries with zero (or not at all); fall back to
     # the ES3 guaranteed minimum so framebuffer creation can proceed.
@@ -361,6 +385,33 @@ def main() -> int:
                 "            __import__('os').environ.get('CX_OHOS_SKIP_FB_STATUS'))\n"
                 "        if status != GL.GL_FRAMEBUFFER_COMPLETE and not _cx_skip:")
             fb_check.write_text(text)
+
+    # dlsym consults self.GL first and it looks for desktop library names; try the ES
+    # library first so ES entry points resolve instead of staying NullFunction stubs.
+    egl_file = args.output / 'OpenGL/platform/egl.py'
+    if egl_file.is_file():
+        text = egl_file.read_text()
+        if "for name in ('OpenGL','GL'):" in text and 'CX_GLES_DLSYM' not in text:
+            text = text.replace("for name in ('OpenGL','GL'):",
+                                "for name in ('GLESv3', 'OpenGL', 'GL'):  # CX_GLES_DLSYM")
+            egl_file.write_text(text)
+
+    # glGetProgramiv returns zero on this stack (same symptom as the framebuffer status
+    # query), so the link gate is skipped on OHOS unless a real info log is present.
+    link_gate = args.output / 'chimerax/graphics/opengl.py'
+    if link_gate.is_file():
+        text = link_gate.read_text()
+        needle = ("        link_status = GL.glGetProgramiv(program, GL.GL_LINK_STATUS)\n"
+                  "        if link_status == GL.GL_FALSE:\n")
+        if needle in text and 'CX_LINK_STATUS_SKIP' not in text:
+            text = text.replace(needle,
+                "        link_status = GL.glGetProgramiv(program, GL.GL_LINK_STATUS)\n"
+                "        # CX_LINK_STATUS_SKIP: the GLES status query returns 0 here without a\n"
+                "        # GL error; only fail when the driver actually reports a log.\n"
+                "        import os as _cx_os\n"
+                "        _cx_skip_link = bool(_cx_os.environ.get('CX_OHOS_SKIP_FB_STATUS'))\n"
+                "        if link_status == GL.GL_FALSE and not _cx_skip_link:\n")
+            link_gate.write_text(text)
 
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
