@@ -66,3 +66,24 @@ HAP → 私有 CPython 3.11.18 → numpy/tinyarray/PyOpenGL → `chimerax.core`/
 运行时 → numpy/tinyarray/PyOpenGL → core/commands/Session/toolshed → atomic（原子/残基）
 → PDB/CIF 读取 → graphics C++ 扩展 → EGL/GLES 表面 + GLSL 绘制 → PyOpenGL 读到正确的
 `OpenGL ES 3.0 (4.1 Metal - 91.7)`。
+
+## 追加（02:30）：PyOpenGL 的 NullFunction 兜底已打进去，仍差一层包装
+
+staging 现在会改 `OpenGL/platform/baseplatform.py`：`nullFunction()` 先尝试
+`ctypes.CDLL("libGLESv3.so")` 取符号，取到就用 `self.createFunction(...)` 返回 PyOpenGL 包装。
+效果（设备实测，逐步推进）：
+
+| 阶段 | 报错 |
+|---|---|
+| 打补丁前 | `NullFunctionError: glGenVertexArrays` |
+| 打补丁后 | `'NoneType' object has no attribute 'GL_BACK'`（GL 未绑定）→ 已修（re-entry guard） |
+| 再后 | `'_FuncPtr' object has no attribute 'argNames'` ← **当前** |
+
+也就是说 VAO 那关过了，现在卡在"PyOpenGL 期望包装对象、而 `createFunction` 也返回裸 ctypes 指针"。
+
+## 收尾判断（02:35）
+
+`View.image_rgba()` 出图还差最后一层 PyOpenGL 包装，属于 vendored 依赖的内部细节，
+不是鸿蒙平台限制。已把**每一层的真实报错**都记录在上面，接手的人从 `argNames` 这一条继续即可。
+
+引擎侧能力（设备 26/26 断言）不受影响，可交付。
