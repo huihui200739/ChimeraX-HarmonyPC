@@ -163,8 +163,12 @@ def main() -> int:
                model.startswith('atoms=2|residues=1|names=C1,N1'), model)
         cx_render = values.get('cx-render', '')
         report['chimerax_render'] = cx_render
-        record('ChimeraX uses the OHOS EGL context class',
-               cx_render.startswith('context=EGLContext'), cx_render)
+        record('ChimeraX adopts the native EGL context and GLES answers on it',
+               # The adopted native context is verified through the raw GLES library;
+               # PyOpenGL's entry points are the remaining gap (recorded below).
+               cx_render.startswith('context=EGLContext-adopted')
+               and 'raw=OpenGL ES' in cx_render,
+               cx_render)
         render = values.get('cx-gl-render', '')
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)

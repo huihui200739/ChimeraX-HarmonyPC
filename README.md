@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 渲染上下文接入）
+## 当前结论（2026-11-18 Python 接管 native EGL 上下文）
+
+**Python 用 native 交出的句柄 `eglMakeCurrent` 成功，裸 GLES 在该上下文回读 `OpenGL ES 3.0 (4.1 Metal)`；剩下 PyOpenGL 函数表未随上下文重解析（`gl=?`）。设备断言 26/26。**
+
+详见 [11 月 18 日 EGL 接管](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/egl-adoption-2026-11-18.md)。
+
+## 上一结论（2026-11-18 渲染上下文接入）
 
 **`chimerax.graphics` 的 `OpenGLContext` 已在设备上切换到 OHOS 的 `EGLContext`（补丁经 staging 自动应用），设备断言 26/26；但 Python 线程尚未接管 native 的 EGL 上下文（`gl=?|fbo=False`），这是下一步的精确目标。**
 

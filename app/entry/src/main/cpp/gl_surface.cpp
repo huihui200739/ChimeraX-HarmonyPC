@@ -231,3 +231,24 @@ extern "C" void RegisterChimeraXGLSurface(napi_env env, void* exports) {
 extern "C" const char* ChimeraXGLStatus() { return g_status.c_str(); }
 
 extern "C" const char* ChimeraXGLRender() { return g_render_status.c_str(); }
+
+extern "C" void* ChimeraXGLDisplay() { return reinterpret_cast<void*>(g_display); }
+extern "C" void* ChimeraXGLContext() { return reinterpret_cast<void*>(g_context); }
+extern "C" void* ChimeraXGLSurface() { return reinterpret_cast<void*>(g_surface); }
+
+// Hands the context to another thread (the interpreter thread) for offscreen work.
+// EGL keeps a context current on at most one thread, so the render thread releases
+// it before Python adopts it.
+extern "C" int ChimeraXGLRelease() {
+  if (g_display == EGL_NO_DISPLAY) {
+    return 0;
+  }
+  return eglMakeCurrent(g_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) ? 1 : 0;
+}
+
+extern "C" int ChimeraXGLReacquire() {
+  if (g_display == EGL_NO_DISPLAY || g_context == EGL_NO_CONTEXT) {
+    return 0;
+  }
+  return eglMakeCurrent(g_display, g_surface, g_surface, g_context) ? 1 : 0;
+}

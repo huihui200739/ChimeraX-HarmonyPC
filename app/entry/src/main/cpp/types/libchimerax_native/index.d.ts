@@ -32,3 +32,11 @@ export interface GLReport {
   render: string;
 }
 export const glStatus: () => GLReport;
+export interface GLHandlesReport {
+  display: string;
+  context: string;
+  surface: string;
+  released: boolean;
+}
+export const glHandles: () => GLHandlesReport;
+export const glReacquire: () => boolean;

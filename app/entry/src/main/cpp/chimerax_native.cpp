@@ -618,6 +618,36 @@ napi_value RunChimeraCommand(napi_env env, napi_callback_info info) {
 extern "C" void RegisterChimeraXGLSurface(napi_env env, void* exports);
 extern "C" const char* ChimeraXGLStatus();
 extern "C" const char* ChimeraXGLRender();
+extern "C" void* ChimeraXGLDisplay();
+extern "C" void* ChimeraXGLContext();
+extern "C" void* ChimeraXGLSurface();
+extern "C" int ChimeraXGLRelease();
+extern "C" int ChimeraXGLReacquire();
+
+// Exposes the EGL handles so the interpreter can adopt the same context; pointers
+// travel as decimal strings because napi has no 64-bit integer type.
+napi_value GLHandles(napi_env env, napi_callback_info info) {
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  const std::string values[3] = {
+      std::to_string(reinterpret_cast<uintptr_t>(ChimeraXGLDisplay())),
+      std::to_string(reinterpret_cast<uintptr_t>(ChimeraXGLContext())),
+      std::to_string(reinterpret_cast<uintptr_t>(ChimeraXGLSurface()))};
+  const char* names[3] = {"display", "context", "surface"};
+  for (int index = 0; index < 3; ++index) {
+    napi_set_named_property(env, out, names[index], MakeString(env, values[index]));
+  }
+  napi_value released = nullptr;
+  napi_get_boolean(env, ChimeraXGLRelease() != 0, &released);
+  napi_set_named_property(env, out, "released", released);
+  return out;
+}
+
+napi_value GLReacquire(napi_env env, napi_callback_info info) {
+  napi_value out = nullptr;
+  napi_get_boolean(env, ChimeraXGLReacquire() != 0, &out);
+  return out;
+}
 
 napi_value GLStatus(napi_env env, napi_callback_info info) {
   napi_value out = nullptr;
@@ -640,6 +670,8 @@ napi_value Init(napi_env env, napi_value exports) {
       {"runScript", nullptr, RunScript, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"runChimeraCommand", nullptr, RunChimeraCommand, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glStatus", nullptr, GLStatus, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"glHandles", nullptr, GLHandles, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"glReacquire", nullptr, GLReacquire, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports,
                          sizeof(descriptors) / sizeof(descriptors[0]), descriptors);

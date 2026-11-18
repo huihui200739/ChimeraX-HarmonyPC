@@ -1,7 +1,7 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport } from 'libchimerax_native.so';
+import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
@@ -116,18 +116,43 @@ print("models=%d|atoms=%d|residues=%d" % (
 
 
 
-// Walks the render path the port needs: ChimeraX's own OpenGLContext (the OHOS EGL
-// branch), an offscreen framebuffer, a clear and a pixel readback.
-const RENDER_SCRIPT = `
-def cx_render_probe():
+// Adopts the EGL context the native surface created, renders offscreen through
+// ChimeraX's own OpenGLContext and reads the pixel back.
+const ADOPT_SCRIPT = `
+import ctypes
+
+def adopt_and_render(display_ptr, context_ptr, surface_ptr):
+    egl = ctypes.CDLL("libEGL.so")
+    egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
+    egl.eglMakeCurrent.restype = ctypes.c_uint
+    egl.eglGetError.restype = ctypes.c_int
+    display = ctypes.c_void_p(int(display_ptr))
+    context = ctypes.c_void_p(int(context_ptr))
+    surface = ctypes.c_void_p(int(surface_ptr))
+    if not egl.eglMakeCurrent(display, surface, surface, context):
+        return "make-current:failed:0x%x" % egl.eglGetError()
+    # Does the raw GLES library see the adopted context? This separates "context not
+    # current" from "PyOpenGL bound its entry points to another context".
+    gles = ctypes.CDLL("libGLESv3.so")
+    gles.glGetString.restype = ctypes.c_char_p
+    gles.glGetString.argtypes = [ctypes.c_uint]
+    raw_version = gles.glGetString(0x1F02)
+    raw_renderer = gles.glGetString(0x1F01)
+    import numpy
     from chimerax.graphics import opengl as cxgl
+    # Re-resolve PyOpenGL's entry points now that the adopted context is current.
+    try:
+        cxgl._initialize_pyopengl()
+    except Exception as error:
+        pass
     ctx = cxgl.OpenGLContext(None, None)
-    if not ctx.make_current():
-        return "make-current:false"
+    ctx.display = display
+    ctx.context = context
+    ctx.surface = surface
+    ctx._owns_context = False
     GL = cxgl.GL
     version = GL.glGetString(GL.GL_VERSION)
     version = version.decode("utf-8", "replace") if version else "?"
-    context_class = type(ctx).__name__
     fbo = GL.glGenFramebuffers(1)
     GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo)
     rbo = GL.glGenRenderbuffers(1)
@@ -139,20 +164,16 @@ def cx_render_probe():
     GL.glViewport(0, 0, 32, 32)
     GL.glClearColor(0.25, 0.5, 0.75, 1.0)
     GL.glClear(GL.GL_COLOR_BUFFER_BIT)
-    pixel = (ctypes.c_ubyte * 4)() if False else None
-    import numpy
     pixel = numpy.zeros(4, dtype=numpy.uint8)
     GL.glReadPixels(16, 16, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixel.ctypes.data)
-    parsed = "?"
-    try:
-        parsed = "%d.%d" % tuple(cxgl.Render(ctx).opengl_version_number())
-    except Exception as error:
-        parsed = "unparsed:" + type(error).__name__
-    ctx.done_current()
-    return "context=%s|gl=%s|fbo=%s|pixel=%d,%d,%d|version=%s" % (
-        context_class, version, complete, pixel[0], pixel[1], pixel[2], parsed)
+    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
+    GL.glDeleteFramebuffers(1, [fbo])
+    GL.glDeleteRenderbuffers(1, [rbo])
+    return "context=EGLContext-adopted|raw=%s|gl=%s|fbo=%s|pixel=%d,%d,%d" % (
+        (raw_version or b"?").decode("utf-8", "replace"), version, complete,
+        pixel[0], pixel[1], pixel[2])
 
-print(cx_render_probe())
+print(adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;
 
 @Entry
@@ -305,9 +326,30 @@ struct Index {
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
         ' ",".join(sorted(__import__("os").listdir(__import__("sys").prefix + "/lib/python3.11"))[:3]))');
       this.diagnostic = diag.ok ? diag.value : diag.error;
-      const rendered: ScriptReport = native.runScript(RENDER_SCRIPT);
-      this.renderResult = (rendered.ok ? rendered.output : rendered.error).trim();
-
+      // The XComponent surface is created after the first frame, so the EGL handles
+      // only exist a moment later; adoption therefore runs deferred.
+      setTimeout(() => {
+        let handles: GLHandlesReport | null = null;
+        try {
+          handles = native.glHandles();
+        } catch (error) {
+          handles = null;
+        }
+        if (handles !== null && handles.context !== '0') {
+          const adoptScript: string = ADOPT_SCRIPT.replace('__DISPLAY__', handles.display)
+            .replace('__CONTEXT__', handles.context)
+            .replace('__SURFACE__', handles.surface);
+          const adopted: ScriptReport = native.runScript(adoptScript);
+          this.renderResult = (adopted.ok ? adopted.output : adopted.error).trim();
+          try {
+            native.glReacquire();
+          } catch (error) {
+            this.renderResult += '|reacquire:failed';
+          }
+        } else {
+          this.renderResult = 'handles:unavailable';
+        }
+      }, 3000);
       const chimerax: ExpressionReport = native.runExpression(
         '__import__("chimerax.version").version.version');
       this.chimeraxVersion = chimerax.ok ? chimerax.value : chimerax.error;
