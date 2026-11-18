@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 Qt 窗口模式的运行时阻塞）
+## 当前结论（2026-11-18 Qt 路径封存 / 探针形态可交付）
+
+**Qt 窗口在本模拟器上起不来：ArkTS 静态编译后传给 napi 的对象字段在 Qt 的 JS 状态里不可见（四条路径均有日志证据，见文档）。引擎侧探针模式 26/26 断言通过，是当前可交付形态。**
+
+详见 [Qt 最终状态](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/qt-status-2026-11-18-final.md)。
+
+## 上一结论（2026-11-18 Qt 窗口模式的运行时阻塞）
 
 **Qt 模式已完整接入并跑到插件内部，但模拟器运行时禁止 `napi_run_script` 求值全局表达式，Qt 6.12 OHOS 插件依赖它构造 LocalStorage（`LocalStorage.makeNewLocalStorage()`），因此窗口未能起来。探针模式 26/26 仍全过。**
 

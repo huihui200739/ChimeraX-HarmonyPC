@@ -12,8 +12,9 @@
  */
 import { getLocalStorageTsInterface } from './LocalStorageTsModule';
 
+// Empty table on purpose: the rebuilt plugin then takes the LocalStorage instance that
+// QAbilityStage passes as "localStorage", which avoids the ETS factory round-trip.
 class ModulesFactoriesTable {
-  LocalStorage: () => Record<string, object> = getLocalStorageTsInterface;
 }
 
 export function getModulesFactoriesMapForQt(): object {

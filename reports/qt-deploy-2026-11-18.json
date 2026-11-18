@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-18T09:41:38.692923+00:00",
+  "created_at_utc": "2026-11-18T10:09:56.735569+00:00",
   "copied": [
     {
       "label": "libqohos.so",
@@ -89,7 +89,6 @@
     }
   ],
   "missing": [],
-  "localstorage_patched": true,
   "app_libs_count": 93,
   "status": "qt_runtime_staged"
 }

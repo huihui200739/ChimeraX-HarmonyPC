@@ -57,10 +57,11 @@ def main() -> int:
     for candidate in sorted((QT_BIND / 'out').rglob('*.so')) if (QT_BIND / 'out').is_dir() else []:
         copy(candidate, args.app_libs / candidate.name, candidate.name)
 
-    # The plugin evaluates LocalStorage.makeNewLocalStorage(), which the ArkTS runtime
-    # rejects; the equal-length constructor form is patched in place.
+    # The prebuilt plugin evaluates LocalStorage.makeNewLocalStorage(), which the ArkTS
+    # runtime rejects; the equal-length constructor form is patched in place. The rebuilt
+    # plugin takes the instance from ArkTS, so it is left untouched.
     qohos = args.app_libs / 'libqohos.so'
-    if qohos.is_file():
+    if qohos.is_file() and not (ROOT / 'build/qt/ohos-plugin/libqohos.so').is_file():
         original = b'LocalStorage.makeNewLocalStorage'
         replacement = (b'(()=>new LocalStorage())'
                        + b' ' * (len(original) - len(b'(()=>new LocalStorage())')))
