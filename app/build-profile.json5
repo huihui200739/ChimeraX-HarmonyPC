@@ -9,7 +9,7 @@
         "runtimeOS": "HarmonyOS",
         // Qt's OHOS platform plugin evaluates JS expressions inside the ArkTS VM
         // (LocalStorage.makeNewLocalStorage()), which the static ArkTS runtime rejects.
-        "arkTSVersion": "1.1"
+        "arkTSVersion": "1.0"
       }
     ],
     "buildModeSet": [ { "name": "debug" }, { "name": "release" } ]

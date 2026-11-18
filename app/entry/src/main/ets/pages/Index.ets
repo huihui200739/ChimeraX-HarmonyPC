@@ -1,7 +1,7 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport } from 'libchimerax_native.so';
+import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport, EvalProbeReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
@@ -241,6 +241,7 @@ struct Index {
   @State graphicsResult: string = '';
   @State glStatus: string = '';
   @State qtModeState: string = '';
+  @State evalProbeState: string = '';
   @State glRender: string = '';
   @State atomicResult: string = '';
   @State glStackResult: string = '';

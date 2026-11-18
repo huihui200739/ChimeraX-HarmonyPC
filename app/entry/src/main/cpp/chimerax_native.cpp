@@ -661,6 +661,46 @@ napi_value GLStatus(napi_env env, napi_callback_info info) {
   return out;
 }
 
+
+// Runs an expression through napi_run_script so the page can learn which forms the
+// ArkTS runtime accepts. Qt's OHOS plugin relies on this mechanism for LocalStorage.
+napi_value EvalProbe(napi_env env, napi_callback_info info) {
+  size_t argc = 1;
+  napi_value argv[1] = {nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  if (argc < 1) {
+    napi_set_named_property(env, out, "error", MakeString(env, "no expression"));
+    return out;
+  }
+  napi_value result = nullptr;
+  napi_status status = napi_run_script(env, argv[0], &result);
+  napi_value okValue = nullptr;
+  napi_get_boolean(env, status == napi_ok, &okValue);
+  napi_set_named_property(env, out, "ok", okValue);
+  if (status == napi_ok && result != nullptr) {
+    napi_valuetype type = napi_undefined;
+    if (napi_typeof(env, result, &type) == napi_ok) {
+      napi_value typeName = nullptr;
+      napi_create_int32(env, static_cast<int32_t>(type), &typeName);
+      napi_set_named_property(env, out, "typeName", typeName);
+    }
+  } else {
+    bool pending = false;
+    napi_is_exception_pending(env, &pending);
+    if (pending) {
+      napi_value error = nullptr;
+      napi_get_and_clear_last_exception(env, &error);
+      napi_value message = nullptr;
+      if (napi_coerce_to_string(env, error, &message) == napi_ok) {
+        napi_set_named_property(env, out, "error", message);
+      }
+    }
+  }
+  return out;
+}
+
 napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor descriptors[] = {
       {"initializeRuntime", nullptr, Initialize, nullptr, nullptr, nullptr, napi_default, nullptr},
@@ -672,6 +712,7 @@ napi_value Init(napi_env env, napi_value exports) {
       {"glStatus", nullptr, GLStatus, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glHandles", nullptr, GLHandles, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glReacquire", nullptr, GLReacquire, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"evalProbe", nullptr, EvalProbe, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports,
                          sizeof(descriptors) / sizeof(descriptors[0]), descriptors);

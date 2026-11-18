@@ -42,3 +42,30 @@ QNapi: exception: global expression doesn't start with known module path: 'Local
 - Qt 模式代码全部保留在工程内，由沙箱 `qt-mode.flag` 开关控制，不删。
 - 探针模式（无 Qt）仍然 26/26 全过，是当前可交付的形态。
 - `tools/patch_qohos_localstorage.py` 与 `tools/stage_qt_deploy.py` 保留（等重编插件后可继续用）。
+
+## 追加实验（17:00–17:20）
+
+新增 native `evalProbe`（`napi_run_script` 封装）在**页面线程**上测了 9 个表达式，全部通过：
+
+```
+OK:1+1  OK:JSON.stringify({a:1})  OK:globalThis.JSON.stringify({a:1})
+OK:new Date().getTime() > 0  OK:globalThis.localStorage ? 1 : 0
+OK:(function(){return 1})()  OK:LocalStorage.makeNewLocalStorage()
+OK:new LocalStorage()  OK:(function(){return new LocalStorage()})()
+```
+
+而**同一个字符串在 Qt 自己的 JS 状态里被拒**（`QNapi: exception: global expression doesn't
+start with known module path`）。结论更精确了：
+
+- 不是应用侧 ArkTS 禁止 eval（页面线程一切正常）
+- 是 **Qt 插件用 `initJsThreadState()` 建的那个 JS 状态**里 globals 解析受限
+- 给 `modulesFactories` 补 `LocalStorage` 工厂（照抄 Qt 官方模板 `LocalStorageTsModule.ets`）**没有效果**，
+  因为求值路径不是 `napi_load_module`，而是直接的 script eval
+- `arkTSVersion` 试过 `1.1` 与 `1.0`，报错不变
+
+因此**必须重编 `libqohos.so`**：把 `qohosjsmain.cpp:1322` 与
+`render/qohoswindowproxydatafactory.cpp:88` 的两处 `jsState.eval(...)` 换成不经 eval 的路径
+（例如由 ArkTS 侧把 `LocalStorage` 实例经 `appStartupObj` 传入，或在 C++ 里直接调
+`OH_NativeXComponent_*` + ArkUI localStorage API）。
+
+这是当前唯一可行的"界面与原版一致"通路，预计 4–8 小时。

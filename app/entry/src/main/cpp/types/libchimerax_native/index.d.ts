@@ -40,3 +40,9 @@ export interface GLHandlesReport {
 }
 export const glHandles: () => GLHandlesReport;
 export const glReacquire: () => boolean;
+export interface EvalProbeReport {
+  ok: boolean;
+  typeName?: number;
+  error?: string;
+}
+export const evalProbe: (expression: string) => EvalProbeReport;

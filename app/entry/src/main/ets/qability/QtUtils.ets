@@ -1,30 +1,27 @@
 /*
- * snippets/qt-ohos/QtUtils.ets
+ * Module factories handed to Qt's internal JS state.
  *
- * 目标位置: app/entry/src/main/ets/qability/QtUtils.ets  (新文件)
+ * Qt resolves service modules inside its own VM through this table; without a
+ * "LocalStorage" entry the plugin's loadContent() call fails with
+ * "global expression doesn't start with known module path:
+ *  'LocalStorage.makeNewLocalStorage()'". The entry mirrors Qt's own ArkTS template
+ * (qtbase/src/harmonyos/templates/entry/src/main/ets/qability/QtUtils.ets).
  *
- * 上游 templates 版本还注册了 'LocalStorage' 与 'QEmbeddedComponentCreator'
- * (templates/entry/src/main/ets/qability/QtUtils.ets)。这两项只在 Qt Quick /
- * QEmbeddedComponent 场景被 Qt 侧按名字抓取；ChimeraX 是 Widgets 应用，不加载
- * QML，因此 modulesFactories 返回空表即可 —— makeJsModulesFactoriesMap()
- * (qohosjsmain.cpp:852) 对空对象是安全的循环零次。
- *
- * 若后续要跑 Qt Quick(比如某个 bundle 用 QQuickWidget)，再按 templates 补齐：
- *   factories['LocalStorage'] = getLocalStorageTsInterface;
- *   factories['QEmbeddedComponentCreator'] = getQEmbeddedComponentCreatorTsInterface;
+ * ArkTS rejects indexed signatures, index access and some standard-library helpers, so
+ * the table is a declared class whose own property is the module name.
  */
+import { getLocalStorageTsInterface } from './LocalStorageTsModule';
 
-// ArkTS forbids untyped object literals, so the empty factory table is declared
-// through an explicit interface (it only has to be an object Qt can iterate).
-// ArkTS forbids indexed signatures, so the empty factory table is a plain object.
-export default class QtUtils {
-  // Qt iterates the entries of this object; for a Widgets application the table is
-  // empty, so a plain object wrapped in the declared interface is enough.
-  static getModulesFactoriesMapForQt(): object {
-    const factories: object = new EmptyFactories();
-    return factories;
-  }
+class ModulesFactoriesTable {
+  LocalStorage: () => Record<string, object> = getLocalStorageTsInterface;
 }
 
-class EmptyFactories {
+export function getModulesFactoriesMapForQt(): object {
+  return new ModulesFactoriesTable();
+}
+
+export default class QtUtils {
+  static getModulesFactoriesMapForQt(): object {
+    return getModulesFactoriesMapForQt();
+  }
 }
