@@ -136,6 +136,15 @@ def main() -> int:
     if running_on_ohos():
         # The EGL platform binds GLES entry points through OpenGL.GLES2; OpenGL.GL
         # stays empty there and every call would return None.
+        import ctypes as _ctypes
+
+        # Point PyOpenGL's platform at libGLESv3 before it builds its function table:
+        # its EGL platform otherwise leaves ES3 entry points (VAOs) undefined.
+        try:
+            import OpenGL.platform as _pyp
+            _pyp.PLATFORM.GL = _ctypes.CDLL('libGLESv3.so')
+        except Exception:
+            pass
         # GLES3 first: ES 2.0 has no vertex array objects, which the renderer needs.
         try:
             import OpenGL.GLES3 as _gles_module
@@ -143,7 +152,6 @@ def main() -> int:
             import OpenGL.GLES2 as _gles_module
         # PyOpenGL resolves GLES3 entry points through its EGL platform and leaves some
         # of them undefined (e.g. glGenVertexArrays); fall back to dlsym on libGLESv3.
-        import ctypes as _ctypes
 
         class _GlesProxy:
             def __init__(self, module, library):

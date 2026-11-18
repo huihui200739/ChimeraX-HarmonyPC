@@ -51,3 +51,18 @@ HAP → 私有 CPython 3.11.18 → numpy/tinyarray/PyOpenGL → `chimerax.core`/
 - 下一步（明确）：给 PyOpenGL 的 EGL 平台打补丁，让它用 `dlsym(libGLESv3.so)` 兜底所有
   `NullFunction`；或在 staging 里把 `OpenGL.platform.PLATFORM.GL` 直接替换成 `ctypes.CDLL("libGLESv3.so")`
   **在 import OpenGL.GLES3 之前**（这是根因层面的修法）
+
+## 追加（02:00）：平台句柄前置也没解决
+
+在 `import OpenGL.GLES3` 之前把 `OpenGL.platform.PLATFORM.GL` 指向 `ctypes.CDLL("libGLESv3.so")`
+仍然无效 —— `glGenVertexArrays` 还是 `NullFunctionError`。说明 PyOpenGL 的 GLES3 函数表在
+**更早**（`OpenGL.raw.GLES3` 导入时）就已建好并缓存。
+
+彻底修法只有一条：**给 PyOpenGL 打补丁**（改 `OpenGL/platform/egl.py` 或 `OpenGL/raw/GLES3/*` 的
+加载逻辑，让 NullFunction 回落到 `dlsym(libGLESv3.so)`），这是 vendored 依赖的可控改动。
+预估 2–3 小时，属于"渲染出图"的最后一环。
+
+在此之前，完整能力边界如下（设备 26/26 全部可验）：
+运行时 → numpy/tinyarray/PyOpenGL → core/commands/Session/toolshed → atomic（原子/残基）
+→ PDB/CIF 读取 → graphics C++ 扩展 → EGL/GLES 表面 + GLSL 绘制 → PyOpenGL 读到正确的
+`OpenGL ES 3.0 (4.1 Metal - 91.7)`。
