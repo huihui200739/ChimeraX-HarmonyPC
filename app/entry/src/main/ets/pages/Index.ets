@@ -145,33 +145,56 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         cxgl._initialize_pyopengl()
     except Exception as error:
         pass
+    # Which PyOpenGL entry points can actually see the adopted context?
+    probes = []
+    try:
+        import OpenGL.GL as pygl
+        value = pygl.glGetString(pygl.GL_VERSION)
+        probes.append("GL=" + ((value.decode() if isinstance(value, bytes) else str(value))[:28]))
+    except BaseException as error:
+        probes.append("GL!" + type(error).__name__)
+    try:
+        import OpenGL.GLES2 as gles2
+        value = gles2.glGetString(gles2.GL_VERSION)
+        probes.append("GLES2=" + ((value.decode() if isinstance(value, bytes) else str(value))[:28]))
+    except BaseException as error:
+        probes.append("GLES2!" + type(error).__name__)
+    try:
+        import OpenGL.platform as pyp
+        probes.append("platform=" + type(pyp.PLATFORM).__name__)
+    except BaseException as error:
+        probes.append("platform!" + type(error).__name__)
     ctx = cxgl.OpenGLContext(None, None)
     ctx.display = display
     ctx.context = context
     ctx.surface = surface
     ctx._owns_context = False
     GL = cxgl.GL
-    version = GL.glGetString(GL.GL_VERSION)
-    version = version.decode("utf-8", "replace") if version else "?"
+    try:
+        raw = GL.glGetString(GL.GL_VERSION)
+    except Exception:
+        raw = gles.glGetString(0x1F02)
+    version = raw.decode("utf-8", "replace") if raw else "?"
+    # GLES2 exposes only GLES2 enum names; use the numeric values that GLES3 keeps.
+    GL_FRAMEBUFFER, GL_RENDERBUFFER, GL_RGBA8 = 0x8D40, 0x8D41, 0x8058
+    GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_COMPLETE = 0x8CE0, 0x8CD5
+    GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
     fbo = GL.glGenFramebuffers(1)
-    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo)
+    GL.glBindFramebuffer(GL_FRAMEBUFFER, fbo)
     rbo = GL.glGenRenderbuffers(1)
-    GL.glBindRenderbuffer(GL.GL_RENDERBUFFER, rbo)
-    GL.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_RGBA8, 32, 32)
-    GL.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
-                                 GL.GL_RENDERBUFFER, rbo)
-    complete = GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) == GL.GL_FRAMEBUFFER_COMPLETE
+    GL.glBindRenderbuffer(GL_RENDERBUFFER, rbo)
+    GL.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32)
+    GL.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo)
+    complete = GL.glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE
     GL.glViewport(0, 0, 32, 32)
     GL.glClearColor(0.25, 0.5, 0.75, 1.0)
-    GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+    GL.glClear(GL_COLOR_BUFFER_BIT)
     pixel = numpy.zeros(4, dtype=numpy.uint8)
-    GL.glReadPixels(16, 16, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixel.ctypes.data)
-    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
-    GL.glDeleteFramebuffers(1, [fbo])
-    GL.glDeleteRenderbuffers(1, [rbo])
-    return "context=EGLContext-adopted|raw=%s|gl=%s|fbo=%s|pixel=%d,%d,%d" % (
-        (raw_version or b"?").decode("utf-8", "replace"), version, complete,
-        pixel[0], pixel[1], pixel[2])
+    GL.glReadPixels(16, 16, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+    GL.glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    return "context=EGLContext-adopted|raw=%s|gl=%s|probe=%s|fbo=%s|pixel=%d,%d,%d" % (
+        (raw_version or b"?").decode("utf-8", "replace"), version, ";".join(probes),
+        complete, pixel[0], pixel[1], pixel[2])
 
 print(adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;

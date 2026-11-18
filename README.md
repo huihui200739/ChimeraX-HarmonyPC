@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 Python 接管 native EGL 上下文）
+## 当前结论（2026-11-18 PyOpenGL 绑定 GLES2）
+
+**EGL 平台下必须用 `OpenGL.GLES2`（`OpenGL.GL` 在 EGL 下为空）；staging 已按平台选择。设备上 FBO/渲染缓冲整段 GLES 调用已通过，剩下探针枚举细节。断言 26/26。**
+
+详见 [11 月 18 日 GLES2 绑定](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/gles2-binding-2026-11-18.md)。
+
+## 上一结论（2026-11-18 Python 接管 native EGL 上下文）
 
 **Python 用 native 交出的句柄 `eglMakeCurrent` 成功，裸 GLES 在该上下文回读 `OpenGL ES 3.0 (4.1 Metal)`；剩下 PyOpenGL 函数表未随上下文重解析（`gl=?`）。设备断言 26/26。**
 

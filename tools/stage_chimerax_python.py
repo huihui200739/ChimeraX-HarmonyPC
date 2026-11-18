@@ -122,6 +122,27 @@ def main() -> int:
                 '    return load_lib(name)\n\n\n'
                 f'def python_module_name(name: str) -> str:\n    return "{dotted}.lib" + name\n')
 
+    # PyOpenGL on HarmonyOS must expose the GLES entry points: `OpenGL.GL` is the
+    # desktop binding and resolves to no functions under the EGL platform, while
+    # `OpenGL.GLES2` is the EGL/GLES one that ChimeraX needs on this target.
+    gl_module = args.output / 'chimerax/graphics/opengl.py'
+    if gl_module.is_file():
+        text = gl_module.read_text()
+        needle = """    global GL
+    import OpenGL.GL
+    GL = OpenGL.GL"""
+        if needle in text and 'OpenGL.GLES2' not in text:
+            text = text.replace(needle, """    global GL
+    if running_on_ohos():
+        # The EGL platform binds GLES entry points through OpenGL.GLES2; OpenGL.GL
+        # stays empty there and every call would return None.
+        import OpenGL.GLES2
+        GL = OpenGL.GLES2
+    else:
+        import OpenGL.GL
+        GL = OpenGL.GL""")
+            gl_module.write_text(text)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'
