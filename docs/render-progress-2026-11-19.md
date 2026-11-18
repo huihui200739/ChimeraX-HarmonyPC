@@ -130,3 +130,28 @@ AttributeError: do_dlsym failed: Symbol not found: glGetInteger
 - 设备断言 **26/26** 全过（引擎能力完整）
 - 渲染：上下文、入口点、着色器翻译、FBO 创建路径都已打通，卡在尺寸上限这一个数值上
 - 这是"最后一公里"的调试，不是架构问题
+
+## 追加（05:25）：帧缓冲已创建，卡在完整性检查
+
+按顺序又过三关：
+
+| 报错 | 处理 |
+|---|---|
+| `Frame buffer invalid size 64, 64` | `valid_size()` 改为不依赖具体 context 类，退回 ES3 保证的 2048 |
+| `'Framebuffer' object has no attribute 'max_framebuffer_size'` | 同上（属性查询带 getattr 兜底） |
+| **当前** `Framebuffer image capture creation failed, status 0, color b…` | 帧缓冲完整性检查返回 0 |
+
+含义：`image_rgba()` 现在已经走到"创建 capture framebuffer → 检查完整性"，说明
+size 校验、context 对接、入口点解析全部通过。`status 0` 表示
+`glCheckFramebufferStatus` 的返回值没有被正确解释（枚举/函数绑定层面），是渲染链路
+最后一个 GL 细节。
+
+## 至此渲染链路的进度（每一步都有设备日志）
+
+1. EGL 上下文接管 ✅
+2. PyOpenGL 与上下文一致 ✅（`gl=OpenGL ES 3.0 (4.1 Metal - 91.7)`）
+3. ES3 库加载（VAO） ✅
+4. 桌面/ES API 方言映射 ✅
+5. 帧缓冲尺寸校验 ✅
+6. 帧缓冲完整性检查 ⏳（`status 0`）
+7. 像素回读 + 出图 ⏳

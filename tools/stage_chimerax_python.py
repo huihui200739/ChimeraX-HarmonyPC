@@ -277,6 +277,48 @@ def main() -> int:
                 "            return self.GLES2\n")
             egl_platform.write_text(text)
 
+    # GLES drivers may answer the size queries with zero (or not at all); fall back to
+    # the ES3 guaranteed minimum so framebuffer creation can proceed.
+    fb_size = args.output / 'chimerax/graphics/opengl.py'
+    if fb_size.is_file():
+        text = fb_size.read_text()
+        old_valid = ("    def valid_size(self, width, height):\n"
+                     "\n"
+                     "        max_rb_size = GL.glGetInteger(GL.GL_MAX_RENDERBUFFER_SIZE)\n"
+                     "        max_tex_size = GL.glGetInteger(GL.GL_MAX_TEXTURE_SIZE)\n"
+                     "        max_size = min(max_rb_size, max_tex_size)\n"
+                     "        return width <= max_size and height <= max_size\n")
+        new_valid = ("    def valid_size(self, width, height):\n"
+                     "        # CX_FB_SIZE_FALLBACK: the OHOS EGL context class has no size\n"
+                     "        # query; ES3 guarantees 2048, which is plenty for capture.\n"
+                     "        try:\n"
+                     "            query = getattr(self._opengl_context, 'max_framebuffer_size', None)\n"
+                     "            max_size = int(query()) if query is not None else 0\n"
+                     "        except Exception:\n"
+                     "            max_size = 0\n"
+                     "        if max_size <= 0:\n"
+                     "            max_size = 2048\n"
+                     "        return width <= max_size and height <= max_size\n")
+        if old_valid in text and 'CX_FB_SIZE_FALLBACK' not in text:
+            text = text.replace(old_valid, new_valid)
+            text = text.replace(
+                "    def max_framebuffer_size(self):\n"
+                "        max_rb_size = GL.glGetInteger(GL.GL_MAX_RENDERBUFFER_SIZE)\n"
+                "        max_tex_size = GL.glGetInteger(GL.GL_MAX_TEXTURE_SIZE)\n"
+                "        max_size = min(max_rb_size, max_tex_size)\n"
+                "        return max_size\n",
+                "    def max_framebuffer_size(self):\n"
+                "        # CX_FB_SIZE_FALLBACK: ES3 guarantees 2048; use it when the driver\n"
+                "        # answers zero or the query is unavailable.\n"
+                "        try:\n"
+                "            max_rb_size = int(GL.glGetInteger(GL.GL_MAX_RENDERBUFFER_SIZE))\n"
+                "            max_tex_size = int(GL.glGetInteger(GL.GL_MAX_TEXTURE_SIZE))\n"
+                "            max_size = min(max_rb_size, max_tex_size)\n"
+                "        except Exception:\n"
+                "            max_size = 0\n"
+                "        return max_size if max_size > 0 else 2048\n")
+            fb_size.write_text(text)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'

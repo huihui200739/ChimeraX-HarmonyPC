@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-18T19:28:32.260245+00:00",
+  "created_at_utc": "2026-11-18T21:22:56.162173+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147224871,
-    "sha256": "5567963da74bc78dfb1b1a7948ab6972d5ce38f0bb6421640816f49334bd7be7"
+    "bytes": 147231397,
+    "sha256": "a4d9c41c8855b68a1b9acf4875cc3eefe6b4889b9408fa563dfe6b268e8f6a6b"
   },
   "checks": [
     {
       "name": "HAP installs",
       "passed": true,
-      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:error: failed to install bundle. code:9568288 error: install failed due to insufficient disk memory. \nAppMod finish\n"
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
     },
     {
       "name": "Application starts",
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Frame buffer invalid size 64, 64@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-29268658/cx-generic-runtime/lib/p"
+      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Framebuffer image capture creation failed, status 0, color b@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-29269113/cx-generic-runtime/li"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -142,6 +142,18 @@
   ],
   "ui": {
     "enhanceAppLabel": "ChimeraX",
+    "cx-menu-file": "File",
+    "cx-menu-tools": "Tools",
+    "cx-menu-actions": "Actions",
+    "cx-menu-presets": "Presets",
+    "cx-menu-help": "Help",
+    "cx-tool-open": "Open",
+    "cx-tool-save": "Save",
+    "cx-tool-undo": "Undo",
+    "cx-tool-redo": "Redo",
+    "cx-tool-rotate": "Rotate",
+    "cx-tool-zoom": "Zoom",
+    "cx-tool-center": "Center",
     "cx-status": "运行环境就绪",
     "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16",
     "cx-trigger": "cx_app_probe|fired",
@@ -160,7 +172,7 @@
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
     "cx-qt-mode": "启用 Qt 窗口模式",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
-    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Frame buffer invalid size 64, 64@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-29268658/cx-generic-runtime/lib/p",
+    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Framebuffer image capture creation failed, status 0, color b@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-29269113/cx-generic-runtime/li",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -170,7 +182,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
-  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Frame buffer invalid size 64, 64@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-29268658/cx-generic-runtime/lib/p",
+  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|view!OpenGLError:Framebuffer image capture creation failed, status 0, color b@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-29269113/cx-generic-runtime/li",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 28",

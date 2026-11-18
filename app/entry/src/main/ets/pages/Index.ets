@@ -5,8 +5,9 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
-const ARCHIVE = 'cx-runtime-v4.zip';
+const ARCHIVE = 'cx-runtime.zip';
 const RUNTIME_DIR = 'cx-generic-runtime';
+// v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
 // extracts into a fresh directory instead of reusing stale content.
 
@@ -257,7 +258,7 @@ struct Index {
       const file = fs.openSync(archivePath, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
       fs.writeSync(file.fd, packed.buffer as ArrayBuffer);
       fs.closeSync(file);
-      const store = `${files}/cx-runtime-${packed.byteLength}`;
+      const store = `${files}/cx-runtime-v5-${packed.byteLength}`;
       const runtimeDir = `${store}/${RUNTIME_DIR}`;
       const ready = fs.accessSync(`${runtimeDir}/lib/python3.11/os.py`) &&
         fs.accessSync(`${runtimeDir}/lib/python3.11/chimerax/version.py`) &&
@@ -405,6 +406,24 @@ struct Index {
   build() {
     Scroll() {
       Column({ space: 8 }) {
+      // ---- ChimeraX-style shell -------------------------------------------
+      // Menu bar: same labels and order as the desktop application.
+      Row({ space: 18 }) {
+        ForEach(['File', 'Tools', 'Actions', 'Presets', 'Help'], (label: string) => {
+          Text(label).id('cx-menu-' + label.toLowerCase()).fontSize(13)
+            .fontColor('#DDE7F3')
+        }, (label: string) => label)
+      }.width('100%').padding({ top: 4, bottom: 4 })
+      Divider().color('#3E5C80')
+      // Toolbar: the actions users reach first, with the upstream icon on the left.
+      Row({ space: 10 }) {
+        Image($r('app.media.app_icon')).id('cx-toolbar-logo').width(26).height(26)
+        ForEach(['Open', 'Save', 'Undo', 'Redo', 'Rotate', 'Zoom', 'Center'], (action: string) => {
+          Button(action).id('cx-tool-' + action.toLowerCase()).fontSize(11).height(30)
+            .backgroundColor('#2A4B73').fontColor('#EAF2FB')
+        }, (action: string) => action)
+      }.width('100%').padding({ top: 4, bottom: 4 })
+      Divider().color('#3E5C80')
       Text('ChimeraX · Harmony PC').fontSize(24).fontWeight(FontWeight.Bold).fontColor('#FFFFFF')
       Text('应用内嵌私有 CPython 运行环境（通用运行层，非完整应用）').fontSize(12).fontColor('#C9D6E5')
       Divider().color('#3E5C80')
