@@ -67,6 +67,9 @@ export default class QAbilityStage extends AbilityStage {
       abilityClassName: abilityClassName,
       // 该字段 Qt 侧命名即 _unusedQChildProcess, 仅用于让 hvigor 保留
       // QChildProcess(.ets) 不被摇树; 非子进程模式随便给个对象。
+      // The rebuilt libqohos takes the factory by name; ArkTS class fields are not
+      // enumerable inside Qt's JS state, so hand it over explicitly.
+      localStorageFactory: (): object => new LocalStorage(),
       _unusedQChildProcess: QtUtils.getModulesFactoriesMapForQt()
     });
   }

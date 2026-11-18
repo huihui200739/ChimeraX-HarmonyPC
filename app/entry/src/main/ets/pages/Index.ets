@@ -180,39 +180,27 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_COMPLETE = 0x8CE0, 0x8CD5
     GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
     notes = []
-    try:
-        fbo = GL.glGenFramebuffers(1)
-        GL.glBindFramebuffer(GL_FRAMEBUFFER, fbo)
-        rbo = GL.glGenRenderbuffers(1)
-        GL.glBindRenderbuffer(GL_RENDERBUFFER, rbo)
-        GL.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32)
-        GL.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo)
-        complete = GL.glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE
-        GL.glViewport(0, 0, 32, 32)
-        GL.glClearColor(0.25, 0.5, 0.75, 1.0)
-        GL.glClear(GL_COLOR_BUFFER_BIT)
-        pixel = numpy.zeros(4, dtype=numpy.uint8)
-        GL.glReadPixels(16, 16, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
-        notes.append("pixel=%d,%d,%d" % (pixel[0], pixel[1], pixel[2]))
-        GL.glBindFramebuffer(GL_FRAMEBUFFER, 0)
-        GL.glDeleteFramebuffers(1, [fbo])
-        GL.glDeleteRenderbuffers(1, [rbo])
-    except BaseException as error:
-        complete = False
-        notes.append("error=" + type(error).__name__ + ":" + str(error)[:60])
-    # ChimeraX's own offscreen path: does the View produce an image on this context?
+    # ChimeraX's own render path: create its Render on the adopted context, add a
+    # drawing and capture an offscreen image.
     try:
         from chimerax.graphics import Drawing
-        drawing = Drawing("cx_probe")
         view = session.main_view
+        view.initialize_rendering(ctx)
+        drawing = Drawing("cx_probe")
+        drawing.set_position([[10.0, 10.0, 0.0]] * 7, [[0.9, 0.2, 0.2, 1.0]])
         view.add_drawing(drawing)
         frame = view.image_rgba(width=64, height=64)
-        notes.append("view=%dx%d" % (frame.shape[0], frame.shape[1]) if frame is not None
-                     else "view:none")
+        if frame is None:
+            notes.append("view:none")
+        else:
+            center = frame[32, 32]
+            notes.append("view=%dx%d|center=%d,%d,%d" % (
+                frame.shape[0], frame.shape[1], center[0], center[1], center[2]))
     except BaseException as error:
-        notes.append("view!" + type(error).__name__ + ":" + str(error)[:50])
-    return "context=EGLContext-adopted|raw=%s|gl=%s|fbo=%s|%s" % (
-        (raw_version or b"?").decode("utf-8", "replace"), version, complete, ";".join(notes))
+        notes.append("view!" + type(error).__name__ + ":" + str(error)[:80])
+    # Plain concatenation: error strings inside notes may contain % placeholders.
+    return ("context=EGLContext-adopted|raw=" + (raw_version or b"?").decode("utf-8", "replace")
+            + "|gl=" + str(version) + "|" + ";".join(notes))
 
 print(adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;

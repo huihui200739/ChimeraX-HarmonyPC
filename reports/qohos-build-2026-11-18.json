@@ -1,0 +1,239 @@
+{
+  "task": "rebuild Qt for HarmonyOS QPA plugin libqohos.so without the two napi_run_script LocalStorage evaluations",
+  "date": "2026-11-18",
+  "result": {
+    "plugin_built": true,
+    "strategy_used": "standalone plugin build against the official HarmonyOS prebuilt Qt 6.12.0 (full qtbase configure never attempted)",
+    "artifact": "build/qt/ohos-plugin/libqohos.so",
+    "artifact_size_bytes": 4024760,
+    "artifact_sha256": "6dcddfe831b27736ae6b6c0cd0aa8a3604c55a0e4a70cb6a91f69e8316fd7fed",
+    "unstripped_copy": "build/qt/ohos-build/libqohos.so",
+    "unstripped_size_bytes": 8863216,
+    "unstripped_sha256": "130188a5e18b91cea60412db4862991753fe33c1442a466c880a098947857f0b",
+    "prebuilt_reference": "build/qt/prebuilt/harmonyos-arm64/plugins/platforms/libqohos.so",
+    "prebuilt_size_bytes": 3989552
+  },
+  "source_change": {
+    "patch": "patches/qt-ohos/0102-ohos-no-eval-localstorage-handoff.patch",
+    "patch_sha256": "1cdce1cbac2486d0e99138f32ccfb274327c33437636ee05b943a4547868444c",
+    "patch_lines": 280,
+    "patched_tree": "build/qt/ohos-src/src/plugins/platforms/ohos (git repo, pristine commit 3ab18ff, patch commit on top)",
+    "upstream_tree_untouched": "build/qt/src/qtbase",
+    "apply_check": {
+      "command": "cd build/qt/src/qtbase && GIT_DIR=/nonexistent git apply --check -v ../../../../patches/qt-ohos/0102-ohos-no-eval-localstorage-handoff.patch",
+      "exit_code": 0,
+      "note": "inside the ChimeraX-HarmonyPC git repository plain `git apply` silently prints 'Skipped patch' for every file because /build/ is in .gitignore; GIT_DIR=/nonexistent forces the filesystem patch mode. A real apply into a scratch copy of the pristine plugin tree also verified byte-identical results."
+    },
+    "edits": [
+      {
+        "file": "src/plugins/platforms/ohos/qohoslocalstorageprovider.h",
+        "kind": "new file",
+        "lines": 219,
+        "summary": "LocalStorageProvider: resolves the ArkTS LocalStorage hand-off once (localStorageFactory / localStorage / modulesFactories.LocalStorage) and exposes makeNewLocalStorage(); script evaluation only as last-resort fallback"
+      },
+      {
+        "file": "src/plugins/platforms/ohos/qohosjsmain.cpp",
+        "kind": "modified",
+        "hunks": [
+          "line 58: #include \"qohoslocalstorageprovider.h\"",
+          "line 1323: loadWindowStageContentPage() - eval<QNapi::Object>(\"LocalStorage.makeNewLocalStorage()\") replaced by QtOhos::LocalStorageProvider::makeNewLocalStorage(jsState, Q_FUNC_INFO)",
+          "line 1645 (after line 1640 'modulesFactories' read): QtOhos::LocalStorageProvider::initFromAppStartupObject(jsState, appStartupObj) in setupQtApplicationImpl()"
+        ]
+      },
+      {
+        "file": "src/plugins/platforms/ohos/render/qohoswindowproxydatafactory.cpp",
+        "kind": "modified",
+        "hunks": [
+          "line 9: #include <qohoslocalstorageprovider.h>",
+          "line 89: makeLocalStorage() body returns QtOhos::LocalStorageProvider::makeNewLocalStorage(jsState, Q_FUNC_INFO) (covers sub-window and float-window paths)"
+        ]
+      }
+    ],
+    "eval_sites_left_in_binary": "1 string literal (the documented fallback inside the shared inline implementation, instantiated in two TUs) - no call site evaluates it unless ArkTS provides no hand-off at all"
+  },
+  "toolchain": {
+    "cmake": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/cmake (3.28.2, bundled with DevEco; no pip cmake and no cmake on PATH on this host)",
+    "ninja": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/ninja",
+    "clang": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++ (OHOS clang 15.0.4, target aarch64-linux-ohos)",
+    "sysroot": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+    "toolchain_file": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build/cmake/ohos.toolchain.cmake",
+    "host_qt": "build/qt/host-qt-6.12.0 (QT_HOST_PATH, provides libexec/moc; the prebuilt HarmonyOS package ships no host tools)",
+    "qt_target": "build/qt/prebuilt/harmonyos-arm64 (CMAKE_PREFIX_PATH; ships private headers, per-module cmake packages and 11 libQt6*.so)",
+    "node_addon_api": "/Users/huihui/.dsh/profiles/node_modules (contains node-addon-api/napi.h; the OHOS SDK and the prebuilt Qt ship no napi.h)",
+    "fontconfig_headers": "build/qt/ohos-plugin-proj/fontconfig-shim/fontconfig/fontconfig.h (generated shim, see fixes[3])"
+  },
+  "configure": {
+    "project_dir": "build/qt/ohos-plugin-proj",
+    "build_dir": "build/qt/ohos-build",
+    "command": "CM=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/cmake; $CM -S build/qt/ohos-plugin-proj -B build/qt/ohos-build -G Ninja -DCMAKE_MAKE_PROGRAM=$SDK/build-tools/cmake/bin/ninja -DCMAKE_TOOLCHAIN_FILE=$SDK/build/cmake/ohos.toolchain.cmake -DOHOS_ARCH=arm64-v8a -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$PWD/build/qt/prebuilt/harmonyos-arm64 -DQT_HOST_PATH=$PWD/build/qt/host-qt-6.12.0 -DQOHOS_SRC=$PWD/build/qt/ohos-src/src/plugins/platforms/ohos -DNODE_ADDON_API_ROOT=/Users/huihui/.dsh/profiles/node_modules",
+    "resolved_cache_values": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_MAKE_PROGRAM": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build-tools/cmake/bin/ninja",
+      "CMAKE_PREFIX_PATH": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64",
+      "CMAKE_TOOLCHAIN_FILE": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/build/cmake/ohos.toolchain.cmake",
+      "OHOS_ARCH": "arm64-v8a",
+      "QT_HOST_PATH": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
+      "QOHOS_SRC": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/ohos-src/src/plugins/platforms/ohos",
+      "NODE_ADDON_API_ROOT": "/Users/huihui/.dsh/profiles/node_modules"
+    },
+    "compile_definitions": [
+      "NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS",
+      "NAPI_CPP_EXCEPTIONS",
+      "QT_NO_CAST_FROM_ASCII",
+      "QT_NO_DYNAMIC_CAST",
+      "VK_USE_PLATFORM_OHOS=1"
+    ],
+    "sources": {
+      "cpp_files": 89,
+      "note": "89 .cpp from qtbase/src/plugins/platforms/ohos/CMakeLists.txt SOURCES plus the two vulkan sources (prebuilt Qt has QT_FEATURE_vulkan=1); extras/ (QtHarmonyExtras) intentionally not built",
+      "link_stubs": [
+        "libEGL.so",
+        "libGLESv3.so",
+        "libace_napi.z.so",
+        "libace_ndk.z.so",
+        "libhiappevent_ndk.z.so",
+        "libhilog_ndk.z.so",
+        "libnative_display_manager.so",
+        "libnative_vsync.so",
+        "libnative_window.so",
+        "libnative_window_manager.so",
+        "libohfileshare.so",
+        "libohfileuri.so",
+        "libohhicollie.so",
+        "libohinput.so",
+        "libpasteboard.so",
+        "libpixelmap.so",
+        "libqos.so",
+        "libudmf.so",
+        "libohinputmethod.so"
+      ]
+    },
+    "project_dir_documented": "docs/qt-ohos-standalone-build (byte-identical copy of build/qt/ohos-plugin-proj, sha256 72e5020a... and 63643f46...)"
+  },
+  "timings": {
+    "configure_seconds": 0.88,
+    "build_seconds": 40.44,
+    "build_cpu_seconds_user": 268.53,
+    "ninja_targets": 92,
+    "clean_rebuild": true,
+    "host": "macOS, 10 cores, 16 GB",
+    "total_wall_clock_including_recon_and_patching_minutes": 18,
+    "repro_verified_byte_identical": true,
+    "repro_note": "building docs/qt-ohos-standalone-build into a scratch dir reproduced sha256 130188a5...8857f0b byte-identically"
+  },
+  "failures_and_fixes": [
+    {
+      "stage": "environment recon",
+      "error": "no cmake in PATH and no pip 'cmake' module on this host (the earlier probe notes claimed a pip cmake 4.4.5)",
+      "fix": "used the cmake 3.28.2 bundled with DevEco Studio: <SDK>/build-tools/cmake/bin/cmake (satisfies Qt's 3.25 minimum)"
+    },
+    {
+      "stage": "configure",
+      "error": "CMake Error at CMakeLists.txt:23 (find_package): Could not find a package configuration file provided by \"Qt6\" (requested version 6.12)",
+      "cause": "the OHOS toolchain file pins CMAKE_FIND_ROOT_PATH_MODE_PACKAGE/_LIBRARY/_INCLUDE to ONLY and roots every search in the SDK sysroot, which hides CMAKE_PREFIX_PATH",
+      "fix": "in the project CMakeLists, append every CMAKE_PREFIX_PATH entry to CMAKE_FIND_ROOT_PATH and set the three *_MODE_* variables to BOTH after project()"
+    },
+    {
+      "stage": "configure",
+      "error": "NodeAddonApi_INCLUDE_DIR not set / napi.h would not be found (neither the OHOS SDK nor the prebuilt Qt ships node-addon-api)",
+      "fix": "find_package(NodeAddonApi REQUIRED) from the prebuilt package's FindNodeAddonApi.cmake with NODE_ADDON_API_ROOT=/Users/huihui/.dsh/profiles/node_modules"
+    },
+    {
+      "stage": "compile",
+      "error": "qohosplatformfontdatabase.cpp:8:10: fatal error: 'fontconfig/fontconfig.h' file not found",
+      "cause": "the official Qt for HarmonyOS build links fontconfig statically (vcpkg) and exports the Fc* symbols from libQt6Gui.so; no fontconfig headers exist on this host",
+      "fix": "generated a 4-declaration shim header build/qt/ohos-plugin-proj/fontconfig-shim/fontconfig/fontconfig.h; llvm-nm confirms the plugin's FcInit/FcConfigGetCurrent/FcConfigAppFontAddDir/FcConfigBuildFonts are version-bound to Qt_6 and resolve from libQt6Gui.so, so no libfontconfig NEEDED entry is created (same as the prebuilt)"
+    },
+    {
+      "stage": "verification",
+      "error": "git apply --check printed 'Skipped patch' for all three files and returned 0, i.e. a false positive",
+      "cause": "/build/ is listed in the repository .gitignore and git apply skips ignored paths inside a work tree",
+      "fix": "verify with GIT_DIR=/nonexistent (plain filesystem mode) and additionally apply the patch for real into a pristine scratch copy and diff it against the patched tree"
+    },
+    {
+      "stage": "artifact tuning",
+      "error": "first link used default symbol visibility (10.5 MB, all internal symbols exported) and a -z,lazy experiment diverged from the reference",
+      "fix": "CXX_VISIBILITY_PRESET hidden + VISIBILITY_INLINES_HIDDEN ON (only qt_plugin_instance / qt_plugin_query_metadata_v2 and the Q_DECL_EXPORT'ed plugin API remain exported); reverted the -z,lazy experiment after confirming the prebuilt itself ships BIND_NOW/RELRO, so the SDK default is kept"
+    }
+  ],
+  "verification": {
+    "elf": {
+      "class": "ELF64",
+      "type": "DYN (Shared object file)",
+      "machine": "AArch64",
+      "command": "llvm-readelf -h -d"
+    },
+    "needed_count": 24,
+    "needed_sets_identical_to_prebuilt": true,
+    "needed_list": [
+      "libEGL.so",
+      "libGLESv3.so",
+      "libace_napi.z.so",
+      "libace_ndk.z.so",
+      "libhiappevent_ndk.z.so",
+      "libhilog_ndk.z.so",
+      "libnative_display_manager.so",
+      "libnative_vsync.so",
+      "libnative_window.so",
+      "libnative_window_manager.so",
+      "libohfileshare.so",
+      "libohfileuri.so",
+      "libohhicollie.so",
+      "libohinput.so",
+      "libpasteboard.so",
+      "libpixelmap.so",
+      "libqos.so",
+      "libudmf.so",
+      "libohinputmethod.so",
+      "libQt6OpenGL.so",
+      "libQt6Gui.so",
+      "libQt6Core.so",
+      "libc++_shared.so",
+      "libc.so"
+    ],
+    "libcxx_shared_present": true,
+    "runpath": {
+      "ours": "none",
+      "prebuilt": "/usr/local/Qt-6.12.0/lib (build-machine path, nonexistent on device)",
+      "action": "no patchelf needed; libQt6*.so live next to the plugin in app/entry/libs/arm64-v8a"
+    },
+    "dynamic_flags": "BIND_NOW / FLAGS_1 NOW (identical to prebuilt)",
+    "exported_symbols": {
+      "ours": 155,
+      "prebuilt": 66,
+      "qt_namespace_symbols_leaked": 0,
+      "plugin_entry_symbols": [
+        "qt_plugin_instance",
+        "qt_plugin_query_metadata_v2"
+      ],
+      "note": "the prebuilt applies Qt's generated version script (Qt_6/NonQt), ours does not, so the plugin's own Q_DECL_EXPORT'ed QtOhos/QOhos* API and a few weak RTTI objects are additionally exported; no Qt6::Core/Gui symbol is exported, so interposition risk is limited to same-named plugin symbols"
+    },
+    "undefined_symbol_diff": {
+      "ours_only": [
+        "_ZN7QString6appendERKS_",
+        "_ZNSt4__n112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEE6appendEmc",
+        "_ZNSt4__n112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEC2ERKS5_",
+        "memchr",
+        "napi_add_finalizer"
+      ],
+      "all_resolved": true,
+      "why": "link uses -Wl,--no-undefined against the prebuilt Qt and the API 24 sysroot stubs, so every referenced symbol exists at link time; napi_add_finalizer comes from the Napi::Reference persistent-reference bookkeeping of the new hand-off code"
+    },
+    "static_confirmation_of_the_change": [
+      "strings: 'LocalStorage hand-off accepted from', 'modulesFactories.LocalStorage', 'localStorageFactory' present in the .so",
+      "the two former call sites no longer contain the eval expression; only the single fallback literal remains"
+    ]
+  },
+  "not_done": [
+    "no on-device verification (hdc/emulator deliberately out of scope for this task; mainline owns device validation)",
+    "extras/ sub-plugin (QtHarmonyExtras) not rebuilt - unchanged and not modified",
+    "no full qtbase configure/build was attempted because the standalone plugin path succeeded"
+  ],
+  "residual_risks": [
+    "the hand-off is resolved from appStartupObj; whether appStartupObj.modulesFactories.LocalStorage is reachable by napi_get_named_property from an ArkTS class instance can only be confirmed on device. If it is not, the plugin logs a warning and falls back to the old eval (identical behaviour to today), and the ArkTS side must pass localStorageFactory explicitly (snippet in docs/qt-ohos-build-2026-11-18.md)",
+    "if ArkTS hands over a single LocalStorage instance instead of a factory, it is consumed by the main window only; multi-window (sub-window/float window) creation then needs the factory form",
+    "symbol exports are not filtered by Qt's version script, so the rebuilt plugin exports more symbols than the prebuilt (no Qt-namespace leakage observed)",
+    "the plugin was built against the API 24 sysroot in this DevEco installation; API-level behaviour was not exercised at runtime",
+    "no runtime test of the ArkTS<->C++ napi call path (needs the device)"
+  ]
+}

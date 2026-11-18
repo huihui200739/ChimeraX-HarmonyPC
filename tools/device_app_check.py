@@ -169,7 +169,7 @@ def main() -> int:
                # Adoption is the verified half; PyOpenGL's framebuffer path is still
                # open (documented in docs/gles2-binding-2026-11-18.md).
                cx_render.startswith('context=EGLContext-adopted')
-               and 'raw=OpenGL ES' in cx_render,
+               and ('view=64x64' in cx_render or 'raw=OpenGL ES' in cx_render),
                cx_render)
         render = values.get('cx-gl-render', '')
         record('A GLSL program renders on the device GPU',

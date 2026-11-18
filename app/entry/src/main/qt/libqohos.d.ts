@@ -15,6 +15,7 @@ interface QtApplicationSetupParams {
   appName: string,
   appArgs?: Array<string>,
   abilityClassName: string,
+  localStorageFactory?: () => object,
   _unusedQChildProcess: object,
 }
 

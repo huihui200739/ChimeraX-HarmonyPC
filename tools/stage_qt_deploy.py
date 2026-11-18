@@ -42,7 +42,12 @@ def main() -> int:
                                  'path': str(dst.relative_to(ROOT))})
 
     # Qt platform plugin and libraries: libqohos must sit flat in the app library dir.
-    copy(PREBUILT / 'plugins/platforms/libqohos.so', args.app_libs / 'libqohos.so', 'libqohos.so')
+    # Prefer the locally rebuilt plugin: it hands LocalStorage over through napi calls
+    # instead of evaluating a JS expression, which this runtime refuses.
+    rebuilt = ROOT / 'build/qt/ohos-plugin/libqohos.so'
+    plugin_source = rebuilt if rebuilt.is_file() else PREBUILT / 'plugins/platforms/libqohos.so'
+    copy(plugin_source, args.app_libs / 'libqohos.so',
+         'libqohos.so' + ('' if rebuilt.is_file() else ' (prebuilt)'))
     for library in sorted((PREBUILT / 'lib').glob('libQt6*.so*')):
         copy(library, args.app_libs / library.name, library.name)
     copy(SDK / 'llvm/lib/aarch64-linux-ohos/libc++_shared.so',
