@@ -202,6 +202,14 @@ def main() -> int:
                     }
                     if name in es_enums:
                         return es_enums[name]
+                    # Fall back to the desktop module for the shared enum table: values
+                    # are identical in GL and GLES for the names ChimeraX uses.
+                    for source in ('OpenGL.GL', 'OpenGL.raw.GL'):
+                        try:
+                            module_obj = __import__(source, fromlist=['x'])
+                            return getattr(module_obj, name)
+                        except Exception:
+                            continue
                 try:
                     value = getattr(module, name)
                 except AttributeError:
