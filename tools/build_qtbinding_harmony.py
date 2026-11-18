@@ -930,11 +930,11 @@ def verify_symbol_closure(sdk: Path, qt: Path, ps_install: Path, sb_install: Pat
     cross-built bindings bind to the prebuilt Qt, our own libpyside6/libshiboken6
     and the SDK's libc++_shared.so with no dangling C++ references.
     """
+    # Union of every Qt module the bindings can bind to; a symbol missing here
+    # but present in one of them is a bug in this check, not in the binding.
     qt_syms = set()
-    for name in ('libQt6Core.so', 'libQt6Gui.so', 'libQt6Widgets.so'):
-        candidate = qt / 'lib' / name
-        if candidate.exists():
-            qt_syms |= _exported_symbols(sdk, candidate)
+    for candidate in sorted((qt / 'lib').glob('libQt6*.so')):
+        qt_syms |= _exported_symbols(sdk, candidate)
     own = set()
     for candidate in (ps_install / 'PySide6/libpyside6.abi3.so.6.12',
                       sb_install / 'lib/libshiboken6.abi3.so.6.12'):

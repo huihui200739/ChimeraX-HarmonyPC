@@ -1,0 +1,65 @@
+{
+  "created_at_utc": "2026-11-18T00:34:18.357553+00:00",
+  "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src",
+  "commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "version": "v1.11.1",
+  "branch": "HEAD",
+  "files": 3977,
+  "package": "appdirs",
+  "dependencies": [
+    {
+      "wheel": "sortedcontainers-2.4.0-py2.py3-none-any.whl",
+      "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+    },
+    {
+      "wheel": "packaging-26.3-py3-none-any.whl",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"
+    },
+    {
+      "wheel": "appdirs-1.4.4-py2.py3-none-any.whl",
+      "sha256": "a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
+    }
+  ],
+  "modules": [
+    "AGL",
+    "EGL",
+    "GL",
+    "GLE",
+    "GLES1",
+    "GLES2",
+    "GLES3",
+    "GLU",
+    "GLUT",
+    "GLX",
+    "Tk",
+    "WGL",
+    "__config__.py",
+    "__init__.cython-30.pxd",
+    "__init__.pxd",
+    "__init__.py",
+    "__init__.pyi",
+    "__pycache__",
+    "_bytes.py",
+    "_configflags.py",
+    "_core",
+    "_distributor_init.py",
+    "_elffile.py",
+    "_globals.py",
+    "_manylinux.py",
+    "_musllinux.py",
+    "_null.py",
+    "_opaque.py",
+    "_parser.py",
+    "_pyinstaller",
+    "_pytesttester.py",
+    "_pytesttester.pyi",
+    "_ranges.py",
+    "_structures.py",
+    "_tokenizer.py",
+    "_typing",
+    "_utils",
+    "acceleratesupport.py",
+    "array_api",
+    "arrays"
+  ]
+}

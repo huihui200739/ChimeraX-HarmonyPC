@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 PyOpenGL + graphics 层可用）
+## 当前结论（2026-11-18 读取器与 atomic 模型层）
+
+**CIF/PDB 读取器 C++ 扩展与单一 `libcxatomstruct.so` 已交叉编译；`AtomicStructure` 可在设备创建；创建原子仍卡在 pyinstance 实例注册（已记录）。**
+
+详见 [11 月 18 日读取器与 atomic 模型层](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/readers-atomic-2026-11-18.md)。
+
+## 上一结论（2026-11-18 PyOpenGL + graphics 层可用）
 
 **应用内 `OpenGL 3.1.10`、`chimerax.graphics.opengl`、`chimerax.core.models` 均可导入（`PYOPENGL_PLATFORM=egl`），配合已建立的 EGL/GLES 3.0 表面；设备断言 22/22。**
 

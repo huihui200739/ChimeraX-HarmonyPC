@@ -25,6 +25,9 @@ MODULES = (
     # (module name, pyx relative to the bundle, extra static sources)
     ('atomic/cymol', 'atomic/atomic_cpp/cymol.pyx', ()),
     ('atomic/cytmpl', 'atomic/atomic_cpp/cytmpl.pyx', ()),
+    # Structure readers: they are required for opening real files.
+    ('mmcif/mmcif', 'mmcif/src/mmcif.pyx', ()),
+    ('pdb/_pdbio', 'pdb/src/_pdbio.pyx', ()),
 )
 
 
@@ -53,29 +56,15 @@ def main() -> int:
     sysroot = args.sdk / 'sysroot'
     # Every C++ source ChimeraX compiles into these modules, so the target loader
     # does not need separate shared libraries.
+    # All C++ support code lives in one shared library so the per-type instance
+    # registries are single (see tools/build_atomic_shared_lib_harmony.py).
+    shared_lib_dir = args.packages / 'chimerax/lib'
     static_cpp: list[Path] = []
-    for pattern in ('atomic_lib/atomic_cpp/*.cpp', 'atomic_lib/atomic_cpp/*_cpp/*.cpp',
-                    'arrays/_arrays/*.cpp', 'pdb_lib/*.cpp', 'atomic/atomic_cpp/*.cpp',
-                    'atomic_lib/atomic_cpp/atomstruct_cpp/tmpl/*.cpp',
-                    'core/core_cpp/logger/*.cpp', 'core/core_cpp/ioutil/*.cpp',
-                    'core/core_cpp/chutil/*.cpp'):
-        static_cpp.extend(sorted(bundles.glob(pattern)))
-    # Header roots: <atomstruct/...>, <element/...>, <pyinstance/...> resolve to the
-    # *_cpp directories inside atomic_lib.
-    include_roots = []
-    for header_root in ('atomstruct', 'element', 'pyinstance', 'tmpl'):
-        candidate = bundles / 'atomic_lib/atomic_cpp' / (header_root + '_cpp')
-        if candidate.is_dir():
-            include_roots.append(f'-I{candidate}')
-    tmpl_candidate = bundles / 'atomic_lib/atomic_cpp'
-    include_roots.append(f'-I{tmpl_candidate}')
     py_include = args.cpython / 'source/Include'
     py_objects = args.cpython / 'objects'
     np_include = args.packages / 'numpy/core/include'
     runtime_lib = args.cpython / 'runtime/lib'
     try:
-        if not static_cpp:
-            raise RuntimeError('no C++ sources found for the static link set')
         for module, relative, _extra in MODULES:
             pyx = bundles / relative
             if not pyx.is_file():
@@ -100,9 +89,15 @@ def main() -> int:
                                f'-I{bundles / "atomic/atomic_cpp"}',
                                f'-I{ROOT / "build/graphics-ext/include"}',
                                f'-I{ROOT / "build/atomic-include"}',
+                               f'-I{ROOT / "build/pdb-include"}',
+                               f'-I{bundles / "pdb/pdb_cpp"}',
+                               f'-I{bundles / "pdb/pdbio_cpp"}',
+                               f'-I{bundles / "mmcif/mmcif_cpp"}',
+                               f'-I{bundles / "mmcif/mmcif_cpp/readcif_cpp"}',
                                f'-I{bundles / "atomic_lib"}',
                                '-o', str(target), str(c_file),
                                *[str(path) for path in static_cpp],
+                               f'-L{shared_lib_dir}', '-lcxatomstruct',
                                f'-L{runtime_lib}', '-l:libpython3.11.so.1.0',
                                "-Wl,-rpath,$ORIGIN/../lib"]
                 built = subprocess.run(compile_cmd, capture_output=True, text=True)

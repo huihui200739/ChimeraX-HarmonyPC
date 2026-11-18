@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-17T17:49:19.216624+00:00",
+  "created_at_utc": "2026-11-17T18:27:14.626108+00:00",
   "target": "aarch64-linux-ohos",
   "host_executed": false,
   "host_tools_only": [
@@ -86,7 +86,7 @@
       "stdout_tail": "",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.6
+      "elapsed_s": 0.7
     },
     "bytes": 21440,
     "sha256": "4c1a053df6256e1ccb8c249c93051e97071197f2607db7379c1ce695df8327d2",
@@ -126,7 +126,7 @@
       "stdout_tail": "",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.7
+      "elapsed_s": 0.9
     },
     "bytes": 31928,
     "sha256": "bb456b82467867949117c12efe57dc499d6217210af0f227d986900fe581fd70",
@@ -181,10 +181,10 @@
       "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/shiboken6_generator -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: FALSE\n-- BUILD_TESTS: ON\n-- Using Qt 6\n-- CLANG: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim, /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/libclang.dylib detected\n-- !!! The generated bindings will be installed on /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages,             is it right!?\n-- Configuring done (0.2s)\n-- Generating done (0.1s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host",
+      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: FALSE\n-- BUILD_TESTS: ON\n-- Using Qt 6\n-- CLANG: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim, /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/libclang.dylib detected\n-- !!! The generated bindings will be installed on /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages,             is it right!?\n-- Configuring done (0.3s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host",
       "stderr_tail": "fatal: No names found, cannot describe anything.\nCMake Warning at doc/CMakeLists.txt:57 (message):\n  sphinx-build - not found! doc target disabled",
       "status": "ok",
-      "elapsed_s": 0.3
+      "elapsed_s": 0.5
     },
     "generator_build": {
       "name": "shiboken6_generator_build",
@@ -204,7 +204,7 @@
       "stdout_tail": "ihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/wheels/cmake/Shiboken6Tools/Shiboken6ToolsTargets.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/wheels/cmake/Shiboken6Tools/Shiboken6ToolsTargets-release.cmake\n-- Installing: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/_config.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/bin/shiboken_tool.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/_git_shiboken_generator_version.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsConfig.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsConfigVersion.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsMacros.cmake",
       "stderr_tail": "error: /Library/Developer/CommandLineTools/usr/bin/install_name_tool: for: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/bin/shiboken6 (for architecture arm64) option \"-add_rpath @loader_path/\" would duplicate path, file already has LC_RPATH for: @loader_path/\nerror: /Library/Developer/CommandLineTools/usr/bin/install_name_tool: for: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/shiboken6_generator/shiboken6 (for architecture arm64) option \"-add_rpath @loader_path/\" would duplicate path, file already has LC_RPATH for: @loader_path/",
       "status": "ok",
-      "elapsed_s": 0.0
+      "elapsed_s": 0.1
     },
     "generator_ready": true,
     "generator_binary": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/bin/shiboken6",
@@ -223,7 +223,7 @@
       "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/shiboken6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target -G Ninja -DSHIBOKEN_IS_CROSS_BUILD=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: TRUE\n-- BUILD_TESTS: OFF\n-- Using Qt 6\n-- Python_Development_FOUND:       TRUE\n-- Python_LIBRARIES:       /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib/libpython3.11.so\n-- Python_INCLUDE_DIRS:    /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11\n-- Python_Interpreter_FOUND:     FALSE\n-- Python_EXECUTABLE:      /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11\n-- Python_VERSION:         3.11.18\n-- PYTHON_EXTENSION_SUFFIX: .cpython-311-aarch64-linux-ohos\n-- PYTHON_LIMITED_LIBRARIES: \n-- ******************************************************\n-- ** Limited API enabled \n-- ******************************************************\n-- PYTHON_EXTENSION_SUFFIX:      .abi3\n-- PYTHON_CONFIG_SUFFIX:         .abi3\n-- PYTHON_SHARED_LIBRARY_SUFFIX: .abi3\n-- NUMPY not found\n-- SHIBOKEN_PYTHON_INCLUDE_DIRS computed to value: '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- Configuring done (0.1s)\n-- Generating done (0.0s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target",
+      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: TRUE\n-- BUILD_TESTS: OFF\n-- Using Qt 6\n-- Python_Development_FOUND:       TRUE\n-- Python_LIBRARIES:       /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib/libpython3.11.so\n-- Python_INCLUDE_DIRS:    /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11\n-- Python_Interpreter_FOUND:     FALSE\n-- Python_EXECUTABLE:      /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11\n-- Python_VERSION:         3.11.18\n-- PYTHON_EXTENSION_SUFFIX: .cpython-311-aarch64-linux-ohos\n-- PYTHON_LIMITED_LIBRARIES: \n-- ******************************************************\n-- ** Limited API enabled \n-- ******************************************************\n-- PYTHON_EXTENSION_SUFFIX:      .abi3\n-- PYTHON_CONFIG_SUFFIX:         .abi3\n-- PYTHON_SHARED_LIBRARY_SUFFIX: .abi3\n-- NUMPY not found\n-- SHIBOKEN_PYTHON_INCLUDE_DIRS computed to value: '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- Configuring done (0.2s)\n-- Generating done (0.0s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target",
       "stderr_tail": "fatal: No names found, cannot describe anything.",
       "status": "ok",
       "elapsed_s": 0.2
@@ -236,7 +236,7 @@
       "stdout_tail": "[1/3] Linking CXX shared library libshiboken/libshiboken6.abi3.so.6.12\n[2/3] Creating library symlink libshiboken/libshiboken6.abi3.so\n[3/3] Linking CXX shared module Shiboken.abi3.so",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.1
+      "elapsed_s": 0.2
     },
     "shiboken_install": {
       "name": "shiboken6_target_install",
@@ -293,61 +293,79 @@
     ],
     "pyside_configure": {
       "name": "pyside6_configure",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/pyside6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target -G Ninja -DMODULES=Core;Gui;Widgets -DPYSIDE_IS_CROSS_BUILD=ON -DSHIBOKEN_GENERATOR_EXTRA_FLAGS=--platform=linux;--arch=arm64;--compiler=clang;--compiler-path=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++;--compiler-argument=--target=aarch64-linux-ohos;--compiler-argument=--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot;--compiler-argument=-D__OHOS__=1;--compiler-argument=-D__OHOS_FAMILY__=1;--compiler-argument=-D__MUSL__=1;--compiler-argument=-D_GNU_SOURCE;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore -DCMAKE_MODULE_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_SHARED_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_INSTALL_RPATH=$ORIGIN/../lib -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/pyside6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target -G Ninja -DMODULES=Core;Gui;Widgets;Network;OpenGL;OpenGLWidgets -DPYSIDE_IS_CROSS_BUILD=ON -DSHIBOKEN_GENERATOR_EXTRA_FLAGS=--platform=linux;--arch=arm64;--compiler=clang;--compiler-path=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++;--compiler-argument=--target=aarch64-linux-ohos;--compiler-argument=--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot;--compiler-argument=-D__OHOS__=1;--compiler-argument=-D__OHOS_FAMILY__=1;--compiler-argument=-D__MUSL__=1;--compiler-argument=-D_GNU_SOURCE;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore -DCMAKE_MODULE_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_SHARED_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_INSTALL_RPATH=$ORIGIN/../lib -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "on3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- libshiboken built for Release\n-- ******************************************************\n-- ** PySide6 Limited API enabled.\n-- ******************************************************\n-- *** computed QT_INCLUDE_DIR as /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include\n-- CORE_ABS_DIR:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake\n-- essential module Qt6Core found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Core\n-- essential module Qt6Gui found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Gui\n-- essential module Qt6Widgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Widgets\n-- PySide will be generated using the protected hack!\n-- preparing tests for module 'QtCore'\n-- preparing tests for module 'QtGui'\n-- preparing tests for module 'QtWidgets'\n-- apidoc generation targets disabled due to the following reasons:\n    QT_SRC_DIR variable not set\n    sphinx-build command not found\n    graphviz not found\n    BUILD_DOCS was set to FALSE (default)\n\n-- Configuring done (0.4s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target",
+      "stdout_tail": "odule Qt6Widgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Widgets\n-- essential module Qt6Network found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Network\n-- optional module Qt6OpenGL found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6OpenGL\n-- optional module Qt6OpenGLWidgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6OpenGLWidgets\n-- PySide will be generated using the protected hack!\n-- Qt6Network: Adding SSL classes\n-- Qt6Network: Adding DTLS classes\n-- Qt6Network: Dropping SCTP classes\n-- Qt6Gui: Dropping Desktop OpenGL classes (GLES2)\n-- preparing tests for module 'QtCore'\n-- preparing tests for module 'QtGui'\n-- preparing tests for module 'QtWidgets'\n-- preparing tests for module 'QtNetwork'\n-- preparing tests for module 'QtOpenGL'\n-- preparing tests for module 'QtOpenGLWidgets'\n-- apidoc generation targets disabled due to the following reasons:\n    QT_SRC_DIR variable not set\n    sphinx-build command not found\n    graphviz not found\n    BUILD_DOCS was set to FALSE (default)\n\n-- Configuring done (0.5s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target",
       "stderr_tail": "fatal: No names found, cannot describe anything.\nCMake Warning at tests/CMakeLists.txt:6 (message):\n  Running tests when cross-compiling is not supported because it would\n  require running a target python interpreter which might have a different\n  architecture than the host.",
       "status": "ok",
-      "elapsed_s": 0.6
+      "elapsed_s": 0.8
     },
     "pyside_build": {
       "name": "pyside6_build",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --build /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target --parallel 8",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --build /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target --parallel 8",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "[1/7] Linking CXX shared library libpyside/libpyside6.abi3.so.6.12\n[2/7] Creating library symlink libpyside/libpyside6.abi3.so\n[3/7] Linking CXX shared library tests/pysidetest/libpysidetest.so\n[4/7] Linking CXX shared module PySide6/QtCore.abi3.so\n[5/7] Linking CXX shared module PySide6/QtGui.abi3.so\n[6/7] Linking CXX shared module PySide6/QtWidgets.abi3.so\n[7/7] Linking CXX shared module tests/pysidetest/testbinding.abi3.so",
+      "stdout_tail": "[1/10] Linking CXX shared library libpyside/libpyside6.abi3.so.6.12\n[2/10] Creating library symlink libpyside/libpyside6.abi3.so\n[3/10] Linking CXX shared library tests/pysidetest/libpysidetest.so\n[4/10] Linking CXX shared module PySide6/QtCore.abi3.so\n[5/10] Linking CXX shared module PySide6/QtNetwork.abi3.so\n[6/10] Linking CXX shared module PySide6/QtGui.abi3.so\n[7/10] Linking CXX shared module PySide6/QtOpenGL.abi3.so\n[8/10] Linking CXX shared module PySide6/QtWidgets.abi3.so\n[9/10] Linking CXX shared module tests/pysidetest/testbinding.abi3.so\n[10/10] Linking CXX shared module PySide6/QtOpenGLWidgets.abi3.so",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.4
+      "elapsed_s": 0.7
     },
     "pyside_install": {
       "name": "pyside6_install",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --install /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --install /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/gui_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/widgets_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/datavisualization_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/include/PySide6/pyside6_global.h\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/tasks.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/events.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/futures.py",
+      "stdout_tail": "X-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/share/PySide6/typesystems/widgets_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/share/PySide6/typesystems/datavisualization_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/include/PySide6/pyside6_global.h\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/tasks.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/events.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/futures.py",
       "stderr_tail": "",
       "status": "ok",
       "elapsed_s": 0.1
     },
     "runpath_patches": [
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/PySide6/libpyside6.abi3.so.6.12",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/PySide6/libpyside6.abi3.so.6.12",
         "status": "patched",
         "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
         "now": "$ORIGIN/../lib"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/libpyside6.abi3.so.6.12",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/libpyside6.abi3.so.6.12",
         "status": "patched",
         "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
         "now": "$ORIGIN/../lib"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
         "status": "patched",
         "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
         "now": "$ORIGIN/../lib"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
         "status": "patched",
         "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
         "now": "$ORIGIN/../lib"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtNetwork.abi3.so",
+        "status": "patched",
+        "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
+        "now": "$ORIGIN/../lib"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGL.abi3.so",
+        "status": "patched",
+        "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
+        "now": "$ORIGIN/../lib"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGLWidgets.abi3.so",
+        "status": "patched",
+        "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
+        "now": "$ORIGIN/../lib"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
         "status": "patched",
         "was": "$ORIGIN/:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib:$ORIGIN/../shiboken6/",
         "now": "$ORIGIN/../lib"
@@ -355,7 +373,7 @@
     ],
     "pyside_artifacts": [
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/PySide6/libpyside6.abi3.so.6.12",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/PySide6/libpyside6.abi3.so.6.12",
         "bytes": 266120,
         "machine": "AArch64",
         "needed": [
@@ -371,7 +389,7 @@
         "sha256": "de6432154e5cdf89ca03d09dfa661003323e37465e267f15f6931aa0a4546fcc"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/libpyside6.abi3.so.6.12",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/libpyside6.abi3.so.6.12",
         "bytes": 266120,
         "machine": "AArch64",
         "needed": [
@@ -387,7 +405,7 @@
         "sha256": "de6432154e5cdf89ca03d09dfa661003323e37465e267f15f6931aa0a4546fcc"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
         "bytes": 5016984,
         "machine": "AArch64",
         "needed": [
@@ -401,10 +419,10 @@
         "runpath": [
           "$ORIGIN/../lib"
         ],
-        "sha256": "17ff39e2c5b3927b1aaa031ade74feb64e3f6e60c966fc7323509ffbcf2f4945"
+        "sha256": "e8cfdf75b6f07ec581231967aa97bbc726180a41b3a26ce066c1325a516a814a"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
         "bytes": 5511936,
         "machine": "AArch64",
         "needed": [
@@ -424,7 +442,69 @@
         "sha256": "99640215c8f94792529fce62684cb2636bea7bc0573b26d11c2065db068eca55"
       },
       {
-        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtNetwork.abi3.so",
+        "bytes": 1491888,
+        "machine": "AArch64",
+        "needed": [
+          "libpython3.11.so.1.0",
+          "libpyside6.abi3.so.6.12",
+          "libQt6Network.so",
+          "libshiboken6.abi3.so.6.12",
+          "libQt6Core.so",
+          "libc++_shared.so",
+          "libc.so"
+        ],
+        "runpath": [
+          "$ORIGIN/../lib"
+        ],
+        "sha256": "45e1d0d94f8328da6e66565541e51b90739c18e7030793c9cc36fdb5ddca93d6"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGL.abi3.so",
+        "bytes": 591112,
+        "machine": "AArch64",
+        "needed": [
+          "libpython3.11.so.1.0",
+          "libpyside6.abi3.so.6.12",
+          "libQt6OpenGL.so",
+          "libshiboken6.abi3.so.6.12",
+          "libQt6Gui.so",
+          "libQt6Core.so",
+          "libGLESv3.so",
+          "libEGL.so",
+          "libc++_shared.so",
+          "libc.so"
+        ],
+        "runpath": [
+          "$ORIGIN/../lib"
+        ],
+        "sha256": "182d4cb92f095a7dd8881f6dbd0c18993519ebc8ef3130fce9a9e340f5f16943"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGLWidgets.abi3.so",
+        "bytes": 133592,
+        "machine": "AArch64",
+        "needed": [
+          "libpython3.11.so.1.0",
+          "libpyside6.abi3.so.6.12",
+          "libQt6OpenGLWidgets.so",
+          "libshiboken6.abi3.so.6.12",
+          "libQt6OpenGL.so",
+          "libQt6Widgets.so",
+          "libQt6Gui.so",
+          "libQt6Core.so",
+          "libGLESv3.so",
+          "libEGL.so",
+          "libc++_shared.so",
+          "libc.so"
+        ],
+        "runpath": [
+          "$ORIGIN/../lib"
+        ],
+        "sha256": "6d64cc67804db0b7754ae9e8daeec85ae47073c0bfa03edbef630ce0b9dbe033"
+      },
+      {
+        "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
         "bytes": 6697752,
         "machine": "AArch64",
         "needed": [
@@ -467,6 +547,33 @@
           "closure": "closed"
         },
         {
+          "module": "QtNetwork.abi3.so",
+          "imported": 1432,
+          "from_qt": 1300,
+          "from_pyside_shiboken": 131,
+          "from_libcxx_shared": 1,
+          "unresolved": [],
+          "closure": "closed"
+        },
+        {
+          "module": "QtOpenGL.abi3.so",
+          "imported": 626,
+          "from_qt": 512,
+          "from_pyside_shiboken": 113,
+          "from_libcxx_shared": 1,
+          "unresolved": [],
+          "closure": "closed"
+        },
+        {
+          "module": "QtOpenGLWidgets.abi3.so",
+          "imported": 208,
+          "from_qt": 114,
+          "from_pyside_shiboken": 93,
+          "from_libcxx_shared": 1,
+          "unresolved": [],
+          "closure": "closed"
+        },
+        {
           "module": "QtWidgets.abi3.so",
           "imported": 5788,
           "from_qt": 5637,
@@ -480,7 +587,7 @@
     },
     "status": "bindings_cross_compiled"
   },
-  "status": "pyside6_coreguiwidgets_cross_compiled_not_target_tested",
+  "status": "pyside6_coreguiwidgetsnetworkopenglopenglwidgets_cross_compiled_not_target_tested",
   "verdict": {
     "qt_prebuilt_usable": true,
     "host_qt_ready": true,
@@ -578,25 +685,43 @@
         "note": "shiboken6 runtime, cross-built"
       },
       {
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/PySide6/libpyside6.abi3.so.6.12",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/PySide6/libpyside6.abi3.so.6.12",
         "dest": "libs/arm64-v8a/libpyside6.abi3.so.6.12",
         "present": true,
         "note": "PySide6 runtime, cross-built"
       },
       {
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
         "dest": "libs/arm64-v8a/PySide6/QtCore.abi3.so",
         "present": true,
         "note": "QtCore.abi3 binding (.abi3: loadable by CPython 3.11)"
       },
       {
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
         "dest": "libs/arm64-v8a/PySide6/QtGui.abi3.so",
         "present": true,
         "note": "QtGui.abi3 binding (.abi3: loadable by CPython 3.11)"
       },
       {
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtNetwork.abi3.so",
+        "dest": "libs/arm64-v8a/PySide6/QtNetwork.abi3.so",
+        "present": true,
+        "note": "QtNetwork.abi3 binding (.abi3: loadable by CPython 3.11)"
+      },
+      {
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGL.abi3.so",
+        "dest": "libs/arm64-v8a/PySide6/QtOpenGL.abi3.so",
+        "present": true,
+        "note": "QtOpenGL.abi3 binding (.abi3: loadable by CPython 3.11)"
+      },
+      {
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGLWidgets.abi3.so",
+        "dest": "libs/arm64-v8a/PySide6/QtOpenGLWidgets.abi3.so",
+        "present": true,
+        "note": "QtOpenGLWidgets.abi3 binding (.abi3: loadable by CPython 3.11)"
+      },
+      {
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
         "dest": "libs/arm64-v8a/PySide6/QtWidgets.abi3.so",
         "present": true,
         "note": "QtWidgets.abi3 binding (.abi3: loadable by CPython 3.11)"
@@ -605,27 +730,27 @@
     "python_package": [
       {
         "path": "PySide6/__init__.py",
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/__init__.py",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/__init__.py",
         "kind": "file"
       },
       {
         "path": "PySide6/_config.py",
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/_config.py",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/_config.py",
         "kind": "file"
       },
       {
         "path": "PySide6/_git_pyside_version.py",
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/_git_pyside_version.py",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/_git_pyside_version.py",
         "kind": "file"
       },
       {
         "path": "PySide6/support",
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/support",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support",
         "kind": "dir"
       },
       {
         "path": "PySide6/QtAsyncio",
-        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio",
+        "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio",
         "kind": "dir"
       }
     ],
@@ -651,7 +776,7 @@
       "stdout_tail": "",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.6
+      "elapsed_s": 0.7
     },
     {
       "name": "widgets_probe_compile",
@@ -661,17 +786,17 @@
       "stdout_tail": "",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.7
+      "elapsed_s": 0.9
     },
     {
       "name": "shiboken6_generator_configure",
       "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/shiboken6_generator -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: FALSE\n-- BUILD_TESTS: ON\n-- Using Qt 6\n-- CLANG: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim, /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/libclang.dylib detected\n-- !!! The generated bindings will be installed on /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages,             is it right!?\n-- Configuring done (0.2s)\n-- Generating done (0.1s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host",
+      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: FALSE\n-- BUILD_TESTS: ON\n-- Using Qt 6\n-- CLANG: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim, /Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/libclang.dylib detected\n-- !!! The generated bindings will be installed on /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages,             is it right!?\n-- Configuring done (0.3s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-host",
       "stderr_tail": "fatal: No names found, cannot describe anything.\nCMake Warning at doc/CMakeLists.txt:57 (message):\n  sphinx-build - not found! doc target disabled",
       "status": "ok",
-      "elapsed_s": 0.3
+      "elapsed_s": 0.5
     },
     {
       "name": "shiboken6_generator_build",
@@ -691,7 +816,7 @@
       "stdout_tail": "ihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/wheels/cmake/Shiboken6Tools/Shiboken6ToolsTargets.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/wheels/cmake/Shiboken6Tools/Shiboken6ToolsTargets-release.cmake\n-- Installing: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/_config.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/bin/shiboken_tool.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/python3.11/site-packages/shiboken6_generator/_git_shiboken_generator_version.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsConfig.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsConfigVersion.cmake\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/lib/cmake/Shiboken6Tools/Shiboken6ToolsMacros.cmake",
       "stderr_tail": "error: /Library/Developer/CommandLineTools/usr/bin/install_name_tool: for: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/bin/shiboken6 (for architecture arm64) option \"-add_rpath @loader_path/\" would duplicate path, file already has LC_RPATH for: @loader_path/\nerror: /Library/Developer/CommandLineTools/usr/bin/install_name_tool: for: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install/shiboken6_generator/shiboken6 (for architecture arm64) option \"-add_rpath @loader_path/\" would duplicate path, file already has LC_RPATH for: @loader_path/",
       "status": "ok",
-      "elapsed_s": 0.0
+      "elapsed_s": 0.1
     },
     {
       "name": "shiboken6_generator_version",
@@ -708,7 +833,7 @@
       "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/shiboken6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target -G Ninja -DSHIBOKEN_IS_CROSS_BUILD=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: TRUE\n-- BUILD_TESTS: OFF\n-- Using Qt 6\n-- Python_Development_FOUND:       TRUE\n-- Python_LIBRARIES:       /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib/libpython3.11.so\n-- Python_INCLUDE_DIRS:    /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11\n-- Python_Interpreter_FOUND:     FALSE\n-- Python_EXECUTABLE:      /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11\n-- Python_VERSION:         3.11.18\n-- PYTHON_EXTENSION_SUFFIX: .cpython-311-aarch64-linux-ohos\n-- PYTHON_LIMITED_LIBRARIES: \n-- ******************************************************\n-- ** Limited API enabled \n-- ******************************************************\n-- PYTHON_EXTENSION_SUFFIX:      .abi3\n-- PYTHON_CONFIG_SUFFIX:         .abi3\n-- PYTHON_SHARED_LIBRARY_SUFFIX: .abi3\n-- NUMPY not found\n-- SHIBOKEN_PYTHON_INCLUDE_DIRS computed to value: '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- Configuring done (0.1s)\n-- Generating done (0.0s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target",
+      "stdout_tail": "-- SHIBOKEN_IS_CROSS_BUILD: TRUE\n-- BUILD_TESTS: OFF\n-- Using Qt 6\n-- Python_Development_FOUND:       TRUE\n-- Python_LIBRARIES:       /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib/libpython3.11.so\n-- Python_INCLUDE_DIRS:    /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11\n-- Python_Interpreter_FOUND:     FALSE\n-- Python_EXECUTABLE:      /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11\n-- Python_VERSION:         3.11.18\n-- PYTHON_EXTENSION_SUFFIX: .cpython-311-aarch64-linux-ohos\n-- PYTHON_LIMITED_LIBRARIES: \n-- ******************************************************\n-- ** Limited API enabled \n-- ******************************************************\n-- PYTHON_EXTENSION_SUFFIX:      .abi3\n-- PYTHON_CONFIG_SUFFIX:         .abi3\n-- PYTHON_SHARED_LIBRARY_SUFFIX: .abi3\n-- NUMPY not found\n-- SHIBOKEN_PYTHON_INCLUDE_DIRS computed to value: '/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/include/python3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- Configuring done (0.2s)\n-- Generating done (0.0s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target",
       "stderr_tail": "fatal: No names found, cannot describe anything.",
       "status": "ok",
       "elapsed_s": 0.2
@@ -721,7 +846,7 @@
       "stdout_tail": "[1/3] Linking CXX shared library libshiboken/libshiboken6.abi3.so.6.12\n[2/3] Creating library symlink libshiboken/libshiboken6.abi3.so\n[3/3] Linking CXX shared module Shiboken.abi3.so",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.1
+      "elapsed_s": 0.2
     },
     {
       "name": "shiboken6_target_install",
@@ -735,30 +860,30 @@
     },
     {
       "name": "pyside6_configure",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/pyside6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target -G Ninja -DMODULES=Core;Gui;Widgets -DPYSIDE_IS_CROSS_BUILD=ON -DSHIBOKEN_GENERATOR_EXTRA_FLAGS=--platform=linux;--arch=arm64;--compiler=clang;--compiler-path=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++;--compiler-argument=--target=aarch64-linux-ohos;--compiler-argument=--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot;--compiler-argument=-D__OHOS__=1;--compiler-argument=-D__OHOS_FAMILY__=1;--compiler-argument=-D__MUSL__=1;--compiler-argument=-D_GNU_SOURCE;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore -DCMAKE_MODULE_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_SHARED_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_INSTALL_RPATH=$ORIGIN/../lib -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake -S /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/src/pyside-setup-everywhere-src-6.12.0/sources/pyside6 -B /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target -G Ninja -DMODULES=Core;Gui;Widgets;Network;OpenGL;OpenGLWidgets -DPYSIDE_IS_CROSS_BUILD=ON -DSHIBOKEN_GENERATOR_EXTRA_FLAGS=--platform=linux;--arch=arm64;--compiler=clang;--compiler-path=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++;--compiler-argument=--target=aarch64-linux-ohos;--compiler-argument=--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot;--compiler-argument=-D__OHOS__=1;--compiler-argument=-D__OHOS_FAMILY__=1;--compiler-argument=-D__MUSL__=1;--compiler-argument=-D_GNU_SOURCE;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include;--include-paths=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include/QtCore -DCMAKE_MODULE_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_SHARED_LINKER_FLAGS=-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix/lib -l:libpython3.11.so.1.0 -DCMAKE_INSTALL_RPATH=$ORIGIN/../lib -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON -DCMAKE_INSTALL_PREFIX=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install -DCMAKE_PREFIX_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-generator-install;/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0 -DCMAKE_TOOLCHAIN_FILE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/ohos-aarch64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DPython_SOABI=cpython-311-aarch64-linux-ohos -DPython_ROOT_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/target-python-prefix -DPython_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DPYTHON_EXECUTABLE=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DQFP_PYTHON_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11 -DSHIBOKEN_WRAPPER_HOST_CLANG_LIB_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-lib-only -DClang_DIR=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/clang-shim -DQT_HOST_PATH=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/host-qt-6.12.0",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "on3.11'\n-- SHIBOKEN_PYTHON_LIBRARIES computed to value: ''\n-- libshiboken built for Release\n-- ******************************************************\n-- ** PySide6 Limited API enabled.\n-- ******************************************************\n-- *** computed QT_INCLUDE_DIR as /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/include\n-- CORE_ABS_DIR:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake\n-- essential module Qt6Core found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Core\n-- essential module Qt6Gui found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Gui\n-- essential module Qt6Widgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Widgets\n-- PySide will be generated using the protected hack!\n-- preparing tests for module 'QtCore'\n-- preparing tests for module 'QtGui'\n-- preparing tests for module 'QtWidgets'\n-- apidoc generation targets disabled due to the following reasons:\n    QT_SRC_DIR variable not set\n    sphinx-build command not found\n    graphviz not found\n    BUILD_DOCS was set to FALSE (default)\n\n-- Configuring done (0.4s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target",
+      "stdout_tail": "odule Qt6Widgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Widgets\n-- essential module Qt6Network found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6Network\n-- optional module Qt6OpenGL found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6OpenGL\n-- optional module Qt6OpenGLWidgets found (). Looked in: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/cmake/Qt6OpenGLWidgets\n-- PySide will be generated using the protected hack!\n-- Qt6Network: Adding SSL classes\n-- Qt6Network: Adding DTLS classes\n-- Qt6Network: Dropping SCTP classes\n-- Qt6Gui: Dropping Desktop OpenGL classes (GLES2)\n-- preparing tests for module 'QtCore'\n-- preparing tests for module 'QtGui'\n-- preparing tests for module 'QtWidgets'\n-- preparing tests for module 'QtNetwork'\n-- preparing tests for module 'QtOpenGL'\n-- preparing tests for module 'QtOpenGLWidgets'\n-- apidoc generation targets disabled due to the following reasons:\n    QT_SRC_DIR variable not set\n    sphinx-build command not found\n    graphviz not found\n    BUILD_DOCS was set to FALSE (default)\n\n-- Configuring done (0.5s)\n-- Generating done (0.2s)\n-- Build files have been written to: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target",
       "stderr_tail": "fatal: No names found, cannot describe anything.\nCMake Warning at tests/CMakeLists.txt:6 (message):\n  Running tests when cross-compiling is not supported because it would\n  require running a target python interpreter which might have a different\n  architecture than the host.",
       "status": "ok",
-      "elapsed_s": 0.6
+      "elapsed_s": 0.8
     },
     {
       "name": "pyside6_build",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --build /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target --parallel 8",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --build /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target --parallel 8",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "[1/7] Linking CXX shared library libpyside/libpyside6.abi3.so.6.12\n[2/7] Creating library symlink libpyside/libpyside6.abi3.so\n[3/7] Linking CXX shared library tests/pysidetest/libpysidetest.so\n[4/7] Linking CXX shared module PySide6/QtCore.abi3.so\n[5/7] Linking CXX shared module PySide6/QtGui.abi3.so\n[6/7] Linking CXX shared module PySide6/QtWidgets.abi3.so\n[7/7] Linking CXX shared module tests/pysidetest/testbinding.abi3.so",
+      "stdout_tail": "[1/10] Linking CXX shared library libpyside/libpyside6.abi3.so.6.12\n[2/10] Creating library symlink libpyside/libpyside6.abi3.so\n[3/10] Linking CXX shared library tests/pysidetest/libpysidetest.so\n[4/10] Linking CXX shared module PySide6/QtCore.abi3.so\n[5/10] Linking CXX shared module PySide6/QtNetwork.abi3.so\n[6/10] Linking CXX shared module PySide6/QtGui.abi3.so\n[7/10] Linking CXX shared module PySide6/QtOpenGL.abi3.so\n[8/10] Linking CXX shared module PySide6/QtWidgets.abi3.so\n[9/10] Linking CXX shared module tests/pysidetest/testbinding.abi3.so\n[10/10] Linking CXX shared module PySide6/QtOpenGLWidgets.abi3.so",
       "stderr_tail": "",
       "status": "ok",
-      "elapsed_s": 0.4
+      "elapsed_s": 0.7
     },
     {
       "name": "pyside6_install",
-      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --install /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-target",
+      "command": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/cmake --install /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-target",
       "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC",
       "returncode": 0,
-      "stdout_tail": "Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/gui_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/widgets_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/share/PySide6/typesystems/datavisualization_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/include/PySide6/pyside6_global.h\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/tasks.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/events.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/futures.py",
+      "stdout_tail": "X-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/share/PySide6/typesystems/widgets_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/share/PySide6/typesystems/datavisualization_common.xml\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/include/PySide6/pyside6_global.h\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/tasks.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/events.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/__init__.py\n-- Up-to-date: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/futures.py",
       "stderr_tail": "",
       "status": "ok",
       "elapsed_s": 0.1
