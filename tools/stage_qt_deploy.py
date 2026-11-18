@@ -52,6 +52,18 @@ def main() -> int:
     for candidate in sorted((QT_BIND / 'out').rglob('*.so')) if (QT_BIND / 'out').is_dir() else []:
         copy(candidate, args.app_libs / candidate.name, candidate.name)
 
+    # The plugin evaluates LocalStorage.makeNewLocalStorage(), which the ArkTS runtime
+    # rejects; the equal-length constructor form is patched in place.
+    qohos = args.app_libs / 'libqohos.so'
+    if qohos.is_file():
+        original = b'LocalStorage.makeNewLocalStorage'
+        replacement = (b'(()=>new LocalStorage())'
+                       + b' ' * (len(original) - len(b'(()=>new LocalStorage())')))
+        data = qohos.read_bytes()
+        if original in data:
+            qohos.write_bytes(data.replace(original, replacement))
+            report['localstorage_patched'] = True
+
     report['app_libs_count'] = len(list(args.app_libs.glob('*.so*')))
     report['status'] = 'qt_runtime_staged'
     report_path.parent.mkdir(parents=True, exist_ok=True)

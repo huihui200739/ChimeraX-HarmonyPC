@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 Qt 窗口模式进工程）
+## 当前结论（2026-11-18 Qt 窗口模式的运行时阻塞）
+
+**Qt 模式已完整接入并跑到插件内部，但模拟器运行时禁止 `napi_run_script` 求值全局表达式，Qt 6.12 OHOS 插件依赖它构造 LocalStorage（`LocalStorage.makeNewLocalStorage()`），因此窗口未能起来。探针模式 26/26 仍全过。**
+
+详见 [11 月 18 日 Qt 求值阻塞](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/qt-eval-blocker-2026-11-18.md)（含三条出路与成本）。
+
+## 上一结论（2026-11-18 Qt 窗口模式进工程）
 
 **libqohos 交接代码、导出 main 的 libchimeraxqt.so、Qt 6.12 运行时与 PySide6 绑定全部进 HAP（147 MB）；探针模式 26/26 仍全过，Qt 模式用沙箱标志文件切换。**
 
