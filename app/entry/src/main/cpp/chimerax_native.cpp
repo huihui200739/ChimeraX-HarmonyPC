@@ -357,8 +357,12 @@ try:
     from chimerax.core.tools import Tools
     session.tools = Tools(session)
     # The models manager registers the model triggers that AtomicStructure needs.
-    from chimerax.core.models import Models
-    session.models = Models(session)
+    # It is optional: setup continues even if it cannot be created.
+    try:
+        from chimerax.core.models import Models
+        session.models = Models(session)
+    except Exception as _cx_models_error:
+        _cx_state = "models-failed:" + type(_cx_models_error).__name__ + ":" + str(_cx_models_error)[:80]
     from chimerax.core import toolshed as _cx_toolshed
     _cx_toolshed.init(session.logger, check_remote=False, check_available=False, session=session)
     session.toolshed = _cx_toolshed.get_toolshed()
@@ -375,7 +379,7 @@ try:
                                     synopsis="harmony adaptation probe command"), _cx_probe)
     except Exception:
         pass  # already registered in this interpreter
-    _cx_state = "session-ready"
+    _cx_state = globals().get("_cx_state", "session-ready")
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]
 )PY");
@@ -613,6 +617,7 @@ napi_value RunChimeraCommand(napi_env env, napi_callback_info info) {
 
 extern "C" void RegisterChimeraXGLSurface(napi_env env, void* exports);
 extern "C" const char* ChimeraXGLStatus();
+extern "C" const char* ChimeraXGLRender();
 
 napi_value GLStatus(napi_env env, napi_callback_info info) {
   napi_value out = nullptr;
@@ -620,6 +625,9 @@ napi_value GLStatus(napi_env env, napi_callback_info info) {
   const char* status = ChimeraXGLStatus();
   napi_set_named_property(env, out, "status",
                           MakeString(env, status ? status : ""));
+  const char* render = ChimeraXGLRender();
+  napi_set_named_property(env, out, "render",
+                          MakeString(env, render ? render : ""));
   return out;
 }
 

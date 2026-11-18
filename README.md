@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 真实 PDB 文件可打开）
+## 当前结论（2026-11-18 设备 GPU 跑通 GLSL 绘制）
+
+**应用内在 Mali-G77 上用 GLSL ES 3.0 画三角形并回读像素 `triangle:242,140,38,255`，设备断言 25/25；同轮还打通了真实 PDB 读取（`models=1|atoms=4|residues=1`）。**
+
+详见 [11 月 18 日 GPU 绘制](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/gpu-render-2026-11-18.md)。
+
+## 上一结论（2026-11-18 真实 PDB 文件可打开）
 
 **应用内用 C++ 读取器打开真实 PDB：`models=1|atoms=4|residues=1`，设备断言 24/24。Qt 侧 shim 补丁已就绪（对上游干净 apply），部署闭包 0 unresolved。**
 

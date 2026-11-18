@@ -136,6 +136,7 @@ struct Index {
   @State builtinResult: string = '';
   @State graphicsResult: string = '';
   @State glStatus: string = '';
+  @State glRender: string = '';
   @State atomicResult: string = '';
   @State glStackResult: string = '';
   @State modelResult: string = '';
@@ -279,6 +280,9 @@ struct Index {
           if (gl.status.length > 0) {
             this.glStatus = gl.status;
           }
+          if (gl.render.length > 0) {
+            this.glRender = gl.render;
+          }
         } catch (error) {
           this.glStatus = 'gl-status-error';
         }
@@ -387,6 +391,11 @@ struct Index {
         Text('模型层').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.modelResult.length > 0 ? this.modelResult : '—').id('cx-model')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('GPU 绘制').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.glRender.length > 0 ? this.glRender : '—').id('cx-gl-render')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(2)
       }.width('100%')
       Row() {
         Text('GL 栈').fontSize(13).fontColor('#C9D6E5').width(80)
