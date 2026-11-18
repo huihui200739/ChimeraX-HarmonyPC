@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 PyOpenGL 绑定 GLES2）
+## 当前结论（2026-11-18 Qt 窗口模式进工程）
+
+**libqohos 交接代码、导出 main 的 libchimeraxqt.so、Qt 6.12 运行时与 PySide6 绑定全部进 HAP（147 MB）；探针模式 26/26 仍全过，Qt 模式用沙箱标志文件切换。**
+
+详见 [11 月 18 日 Qt 集成](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/qt-mode-integration-2026-11-18.md)。
+
+## 上一结论（2026-11-18 PyOpenGL 绑定 GLES2）
 
 **EGL 平台下必须用 `OpenGL.GLES2`（`OpenGL.GL` 在 EGL 下为空）；staging 已按平台选择。设备上 FBO/渲染缓冲整段 GLES 调用已通过，剩下探针枚举细节。断言 26/26。**
 

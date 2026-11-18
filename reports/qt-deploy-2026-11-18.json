@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-18T05:29:40.135597+00:00",
+  "copied": [
+    {
+      "label": "libqohos.so",
+      "bytes": 3989552,
+      "path": "app/entry/libs/arm64-v8a/libqohos.so"
+    },
+    {
+      "label": "libQt6Concurrent.so",
+      "bytes": 58496,
+      "path": "app/entry/libs/arm64-v8a/libQt6Concurrent.so"
+    },
+    {
+      "label": "libQt6Core.so",
+      "bytes": 43397688,
+      "path": "app/entry/libs/arm64-v8a/libQt6Core.so"
+    },
+    {
+      "label": "libQt6EglFSDeviceIntegration.so",
+      "bytes": 287224,
+      "path": "app/entry/libs/arm64-v8a/libQt6EglFSDeviceIntegration.so"
+    },
+    {
+      "label": "libQt6Gui.so",
+      "bytes": 10652560,
+      "path": "app/entry/libs/arm64-v8a/libQt6Gui.so"
+    },
+    {
+      "label": "libQt6HarmonyExtras.so",
+      "bytes": 936832,
+      "path": "app/entry/libs/arm64-v8a/libQt6HarmonyExtras.so"
+    },
+    {
+      "label": "libQt6Network.so",
+      "bytes": 2155696,
+      "path": "app/entry/libs/arm64-v8a/libQt6Network.so"
+    },
+    {
+      "label": "libQt6OpenGL.so",
+      "bytes": 542336,
+      "path": "app/entry/libs/arm64-v8a/libQt6OpenGL.so"
+    },
+    {
+      "label": "libQt6OpenGLWidgets.so",
+      "bytes": 51872,
+      "path": "app/entry/libs/arm64-v8a/libQt6OpenGLWidgets.so"
+    },
+    {
+      "label": "libQt6PrintSupport.so",
+      "bytes": 419440,
+      "path": "app/entry/libs/arm64-v8a/libQt6PrintSupport.so"
+    },
+    {
+      "label": "libQt6Sql.so",
+      "bytes": 314208,
+      "path": "app/entry/libs/arm64-v8a/libQt6Sql.so"
+    },
+    {
+      "label": "libQt6Test.so",
+      "bytes": 456624,
+      "path": "app/entry/libs/arm64-v8a/libQt6Test.so"
+    },
+    {
+      "label": "libQt6Widgets.so",
+      "bytes": 7597792,
+      "path": "app/entry/libs/arm64-v8a/libQt6Widgets.so"
+    },
+    {
+      "label": "libQt6Xml.so",
+      "bytes": 172000,
+      "path": "app/entry/libs/arm64-v8a/libQt6Xml.so"
+    },
+    {
+      "label": "libc++_shared.so",
+      "bytes": 1262504,
+      "path": "app/entry/libs/arm64-v8a/libc++_shared.so"
+    },
+    {
+      "label": "_qtcore_abi_probe.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 21440,
+      "path": "app/entry/libs/arm64-v8a/_qtcore_abi_probe.cpython-311-aarch64-linux-ohos.so"
+    },
+    {
+      "label": "_qtwidgets_probe.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 31928,
+      "path": "app/entry/libs/arm64-v8a/_qtwidgets_probe.cpython-311-aarch64-linux-ohos.so"
+    }
+  ],
+  "missing": [],
+  "app_libs_count": 93,
+  "status": "qt_runtime_staged"
+}

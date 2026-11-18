@@ -175,26 +175,44 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     except Exception:
         raw = gles.glGetString(0x1F02)
     version = raw.decode("utf-8", "replace") if raw else "?"
-    # GLES2 exposes only GLES2 enum names; use the numeric values that GLES3 keeps.
+    # GLES2 exposes only GLES2 enum names; GLES3 numeric values are used directly.
     GL_FRAMEBUFFER, GL_RENDERBUFFER, GL_RGBA8 = 0x8D40, 0x8D41, 0x8058
     GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_COMPLETE = 0x8CE0, 0x8CD5
     GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
-    fbo = GL.glGenFramebuffers(1)
-    GL.glBindFramebuffer(GL_FRAMEBUFFER, fbo)
-    rbo = GL.glGenRenderbuffers(1)
-    GL.glBindRenderbuffer(GL_RENDERBUFFER, rbo)
-    GL.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32)
-    GL.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo)
-    complete = GL.glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE
-    GL.glViewport(0, 0, 32, 32)
-    GL.glClearColor(0.25, 0.5, 0.75, 1.0)
-    GL.glClear(GL_COLOR_BUFFER_BIT)
-    pixel = numpy.zeros(4, dtype=numpy.uint8)
-    GL.glReadPixels(16, 16, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
-    GL.glBindFramebuffer(GL_FRAMEBUFFER, 0)
-    return "context=EGLContext-adopted|raw=%s|gl=%s|probe=%s|fbo=%s|pixel=%d,%d,%d" % (
-        (raw_version or b"?").decode("utf-8", "replace"), version, ";".join(probes),
-        complete, pixel[0], pixel[1], pixel[2])
+    notes = []
+    try:
+        fbo = GL.glGenFramebuffers(1)
+        GL.glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+        rbo = GL.glGenRenderbuffers(1)
+        GL.glBindRenderbuffer(GL_RENDERBUFFER, rbo)
+        GL.glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 32, 32)
+        GL.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo)
+        complete = GL.glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE
+        GL.glViewport(0, 0, 32, 32)
+        GL.glClearColor(0.25, 0.5, 0.75, 1.0)
+        GL.glClear(GL_COLOR_BUFFER_BIT)
+        pixel = numpy.zeros(4, dtype=numpy.uint8)
+        GL.glReadPixels(16, 16, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel)
+        notes.append("pixel=%d,%d,%d" % (pixel[0], pixel[1], pixel[2]))
+        GL.glBindFramebuffer(GL_FRAMEBUFFER, 0)
+        GL.glDeleteFramebuffers(1, [fbo])
+        GL.glDeleteRenderbuffers(1, [rbo])
+    except BaseException as error:
+        complete = False
+        notes.append("error=" + type(error).__name__ + ":" + str(error)[:60])
+    # ChimeraX's own offscreen path: does the View produce an image on this context?
+    try:
+        from chimerax.graphics import Drawing
+        drawing = Drawing("cx_probe")
+        view = session.main_view
+        view.add_drawing(drawing)
+        frame = view.image_rgba(width=64, height=64)
+        notes.append("view=%dx%d" % (frame.shape[0], frame.shape[1]) if frame is not None
+                     else "view:none")
+    except BaseException as error:
+        notes.append("view!" + type(error).__name__ + ":" + str(error)[:50])
+    return "context=EGLContext-adopted|raw=%s|gl=%s|fbo=%s|%s" % (
+        (raw_version or b"?").decode("utf-8", "replace"), version, complete, ";".join(notes))
 
 print(adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;
@@ -222,6 +240,7 @@ struct Index {
   @State builtinResult: string = '';
   @State graphicsResult: string = '';
   @State glStatus: string = '';
+  @State qtModeState: string = '';
   @State glRender: string = '';
   @State atomicResult: string = '';
   @State glStackResult: string = '';
@@ -485,6 +504,21 @@ struct Index {
         Text('命令执行').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.commandResult.length > 0 ? this.commandResult : '—').id('cx-command-run')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Button('启用 Qt 窗口模式').id('cx-qt-mode').fontSize(12).height(32)
+          .onClick(() => {
+            try {
+              const file = fs.openSync(this.filesDir() + '/qt-mode.flag',
+                fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+              fs.writeSync(file.fd, '1');
+              fs.closeSync(file);
+              this.qtModeState = '已写入，重启应用生效';
+            } catch (error) {
+              this.qtModeState = '写入失败: ' + (error as Error).message;
+            }
+          })
+        Text(this.qtModeState).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
         .id('cx-gl-surface').width('100%').height(150).backgroundColor('#16212F')

@@ -166,6 +166,8 @@ def main() -> int:
         record('ChimeraX adopts the native EGL context and GLES answers on it',
                # The adopted native context is verified through the raw GLES library;
                # PyOpenGL's entry points are the remaining gap (recorded below).
+               # Adoption is the verified half; PyOpenGL's framebuffer path is still
+               # open (documented in docs/gles2-binding-2026-11-18.md).
                cx_render.startswith('context=EGLContext-adopted')
                and 'raw=OpenGL ES' in cx_render,
                cx_render)

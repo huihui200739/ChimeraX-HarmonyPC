@@ -1,0 +1,10 @@
+--- a/app/entry/src/main/resources/base/profile/main_pages.json
++++ b/app/entry/src/main/resources/base/profile/main_pages.json
+@@ -1 +1,6 @@
+-{ "src": [ "pages/Index" ] }
++{
++  "src": [
++    "pages/Index",
++    "pages/MainWindowNativeNode"
++  ]
++}
