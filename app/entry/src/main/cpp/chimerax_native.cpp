@@ -356,6 +356,9 @@ try:
     core_settings.init(session)
     from chimerax.core.tools import Tools
     session.tools = Tools(session)
+    # The models manager registers the model triggers that AtomicStructure needs.
+    from chimerax.core.models import Models
+    session.models = Models(session)
     from chimerax.core import toolshed as _cx_toolshed
     _cx_toolshed.init(session.logger, check_remote=False, check_available=False, session=session)
     session.toolshed = _cx_toolshed.get_toolshed()

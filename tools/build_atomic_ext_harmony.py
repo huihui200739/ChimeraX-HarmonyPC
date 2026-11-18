@@ -102,8 +102,7 @@ MODULES = (
         'package': 'chimerax/atomic',
         'kind': 'cpython_extension',
         'sources': RIBBON_CPP,
-        'extra': ARRAYS_MARSHALLING + CORE_SUPPORT + ATOMSTRUCT + ATOMSTRUCT_TMPL
-                 + PYINSTANCE + ELEMENT,
+        'extra': (),
         'stage': 'chimerax/atomic/_ribbons.%s' % SUFFIX,
         'module_init': 'PyInit__ribbons',
     },
@@ -113,8 +112,7 @@ MODULES = (
         'package': 'chimerax/atomic',
         'kind': 'shared_library',
         'sources': ('src/bundles/atomic/atomic_cpp/molc.cpp',),
-        'extra': ARRAYS_MARSHALLING + CORE_SUPPORT + ATOMSTRUCT + ATOMSTRUCT_TMPL
-                 + PYINSTANCE + ELEMENT,
+        'extra': (),
         # chimerax/atomic/molc.py resolves "libmolc" as <package dir>/libmolc.so.
         'stage': 'chimerax/atomic/libmolc.so',
         'module_init': None,
@@ -125,7 +123,7 @@ MODULES = (
         'package': 'chimerax/geometry',
         'kind': 'cpython_extension',
         'sources': GEOMETRY_CPP,
-        'extra': ARRAYS_MARSHALLING,
+        'extra': (),
         'stage': 'chimerax/geometry/_geometry.%s' % SUFFIX,
         'module_init': 'PyInit__geometry',
     },
@@ -392,8 +390,12 @@ def main() -> int:
                  f'-I{numpy_include}']
         # --no-undefined makes an unresolved atomstruct/arrays symbol a hard build
         # failure instead of a load-time crash on the device.
-        linker = [f'-L{runtime_lib}', '-l:libpython3.11.so.1.0',
-                  '-Wl,-rpath,$ORIGIN/../lib', '-Wl,--no-undefined']
+        # The atomstruct/element/pyinstance stack lives in one shared library so
+        # the Python instance registry is unique; everything links against it.
+        shared_lib_dir = args.packages / 'chimerax/lib'
+        linker = [f'-L{shared_lib_dir}', '-lcxatomstruct',
+                  f'-L{runtime_lib}', '-l:libpython3.11.so.1.0',
+                  '-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib', '-Wl,--no-undefined']
         report['compile_flags'] = flags
         report['link_flags'] = linker
 

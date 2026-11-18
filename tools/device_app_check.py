@@ -105,7 +105,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-trigger'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-model', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -155,6 +155,9 @@ def main() -> int:
         report['gl_status'] = gl
         atomic = values.get('cx-atomic', '')
         glstack = values.get('cx-glstack', '')
+        model = values.get('cx-model', '')
+        record('A real AtomicStructure with atoms is built in the app',
+               model.startswith('atoms=2|residues=1|names=C1,N1'), model)
         record('PyOpenGL and the graphics Python layer load in the app',
                glstack.startswith('3.') and 'chimerax.graphics.opengl' in glstack, glstack)
         record('The ChimeraX atomic layer imports in the app',

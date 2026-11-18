@@ -64,7 +64,7 @@ def main() -> int:
                        '-o', str(target), *[str(path) for path in sources],
                        f'-L{args.packages / "chimerax/lib"}', '-lcxatomstruct',
                        f'-L{args.cpython / "runtime/lib"}', '-l:libpython3.11.so.1.0',
-                       '-Wl,-rpath,$ORIGIN/../lib']
+                       '-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib']
             built = subprocess.run(command, capture_output=True, text=True)
             if built.returncode != 0:
                 raise RuntimeError(module + ':\n' + built.stderr[-2000:])

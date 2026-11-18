@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-18T00:53:23.533872+00:00",
+  "created_at_utc": "2026-11-18T01:12:59.301178+00:00",
   "target": "aarch64-linux-ohos",
   "modules": [
     {
       "module": "pdb/_pdbio",
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/pdb/_pdbio.cpython-311-aarch64-linux-ohos.so",
-      "bytes": 284944,
-      "sha256": "e03e36b4c2463747e00dae521042f10821463982f6e50787592acbf41db1acda",
+      "bytes": 284976,
+      "sha256": "4ea9345dd1fd15a7d7243eaf69b02c36c51f034380efd53a9db1fcd07c13ada1",
       "sources": 8
     },
     {
       "module": "mmcif/_mmcif",
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/mmcif/_mmcif.cpython-311-aarch64-linux-ohos.so",
-      "bytes": 859392,
-      "sha256": "a1e79e0a73e9b7cf4a180aebe220cb804ffb065c82389689f98b6c8e44777cdc",
+      "bytes": 859424,
+      "sha256": "ff15ce9d754a19866b6a370c38451e78a907fd211f0c1638c56249fde1a4b18d",
       "sources": 4
     }
   ],

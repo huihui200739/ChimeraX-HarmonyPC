@@ -62,6 +62,25 @@ print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s" % (
     hasattr(session, "tools"), hasattr(session, "toolshed"), globals().get("_cx_state", "?")))
 `;
 
+
+// Builds a real AtomicStructure with atoms through chimerax.atomic, which exercises
+// the C++ atomstruct layer, the pyinstance registry and the shared support library.
+const MODEL_SCRIPT = `
+import numpy
+from chimerax.atomic import AtomicStructure
+structure = AtomicStructure(session, name="cx_app_model")
+residue = structure.new_residue("UNL", "A", 1)
+coords = numpy.array([[0.0, 0.0, 0.0], [1.5, 0.0, 0.0]], dtype=numpy.float64)
+names = ["C1", "N1"]
+elements = ["C", "N"]
+for index, name in enumerate(names):
+    atom = structure.new_atom(name, elements[index])
+    atom.coord = coords[index]
+    residue.add_atom(atom)
+print("atoms=%d|residues=%d|names=%s" % (structure.num_atoms, structure.num_residues,
+      ",".join(a.name for a in structure.atoms)))
+`;
+
 @Entry
 @Component
 struct Index {
@@ -87,6 +106,7 @@ struct Index {
   @State glStatus: string = '';
   @State atomicResult: string = '';
   @State glStackResult: string = '';
+  @State modelResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -199,6 +219,8 @@ struct Index {
         ' __import__("chimerax.graphics.opengl", fromlist=["x"]).__name__,' +
         ' str(hasattr(__import__("chimerax.core.models", fromlist=["x"]), "Model")))');
       this.glStackResult = glStack.ok ? glStack.value : glStack.error;
+      const model: ScriptReport = native.runScript(MODEL_SCRIPT);
+      this.modelResult = (model.ok ? model.output : model.error).trim();
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -245,6 +267,12 @@ struct Index {
       Row() {
         Text('状态').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.status).id('cx-status').fontSize(13).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row() {
+        Text('core API').fontSize(12).fontColor('#C9D6E5').width(80)
+        Text((this.commandsProbe.length > 0 ? this.commandsProbe : '—') + ' | ' +
+             (this.sessionProbe.length > 0 ? this.sessionProbe : '—')).id('cx-commands')
+          .fontSize(9).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
         Text('触发器').fontSize(13).fontColor('#C9D6E5').width(80)
@@ -316,6 +344,11 @@ struct Index {
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
+        Text('模型层').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.modelResult.length > 0 ? this.modelResult : '—').id('cx-model')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
         Text('GL 栈').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStackResult.length > 0 ? this.glStackResult : '—').id('cx-glstack')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
@@ -335,16 +368,9 @@ struct Index {
         Text(this.builtinResult.length > 0 ? this.builtinResult : '—').id('cx-builtin')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
-      Row() {
-        Text('core API').fontSize(12).fontColor('#C9D6E5').width(80)
-        Text((this.commandsProbe.length > 0 ? this.commandsProbe : '—') + ' | ' +
-             (this.sessionProbe.length > 0 ? this.sessionProbe : '—')).id('cx-commands')
-          .fontSize(9).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
-      }.width('100%')
       if (this.failed.length > 0) {
         Text(this.failed).id('cx-error').fontSize(12).fontColor('#FFB4A2').width('100%')
       }
-      Blank()
       Text(this.prefix).fontSize(10).fontColor('#7F93A8').width('100%')
     }
       .width('100%').padding(20)

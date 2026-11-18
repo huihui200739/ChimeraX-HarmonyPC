@@ -83,6 +83,58 @@ def main() -> int:
         dependencies.append({'wheel': wheel.name,
                              'sha256': hashlib.sha256(wheel.read_bytes()).hexdigest()})
     dependency = dependencies[0] if dependencies else None
+    # --- platform shims -----------------------------------------------------
+    # Upstream *_lib bundles dlopen per-library shared objects through a Cython
+    # _load_libs module; this port links those translation units into one shared
+    # library, so the module only has to exist for the upstream import to work.
+    for bundle, dotted in (('atomic_lib', 'chimerax.atomic_lib'), ('pdb_lib', 'chimerax.pdb_lib')):
+        target = args.output / 'chimerax' / bundle / '_load_libs.py'
+        if target.parent.is_dir():
+            target.write_text(
+                f'"""Platform shim for the HarmonyOS build ({bundle}).\n\n'
+                'The C++ libraries are linked into chimerax/lib/libcxatomstruct.so instead of\n'
+                'being loaded individually, so this module only satisfies the upstream import.\n"""\n'
+                '\nloaded: dict[str, str] = {}\n\n\n'
+                'def load_lib(name: str) -> str:\n'
+                '    return f"static:{name}"\n\n\n'
+                'def lib_path(name: str) -> str:\n'
+                '    return load_lib(name)\n\n\n'
+                f'def python_module_name(name: str) -> str:\n    return "{dotted}.lib" + name\n')
+
+    # molc.py loads libmolc with ctypes from the package directory; ELF objects in
+    # the app data directory cannot be dlopen'ed, so prefer the native library dir.
+    molc = args.output / 'chimerax/atomic/molc.py'
+    if molc.is_file():
+        text = molc.read_text()
+        if 'CX_NATIVE_LIB_DIR' not in text:
+            needle = """    for ext in exts:
+        if os.path.isabs(lib_name):
+            lib_path = lib_name
+        else:
+            lib_path = os.path.join(os.path.dirname(__file__), lib_name)"""
+            replacement = """    # HarmonyOS port: shared objects extracted under the app data directory cannot be
+    # dlopen'ed there, so the same libraries are packaged in the application native
+    # library directory and looked up first (CX_NATIVE_LIB_DIR is set by the shell).
+    native_dir = os.environ.get('CX_NATIVE_LIB_DIR')
+    for ext in exts:
+        if os.path.isabs(lib_name):
+            lib_path = lib_name
+        else:
+            lib_path = os.path.join(os.path.dirname(__file__), lib_name)
+        if native_dir and not os.path.isabs(lib_name):
+            candidate = os.path.join(native_dir, 'chimerax', 'atomic',
+                                     os.path.basename(lib_path) + ext)
+            if os.path.exists(candidate):
+                lib_path = candidate"""
+            if needle in text:
+                text = text.replace(needle, replacement)
+                text = text.replace("""        lib_path += ext
+        if not os.path.exists(lib_path):""",
+"""        if not lib_path.endswith(ext):
+            lib_path += ext
+        if not os.path.exists(lib_path):""")
+                molc.write_text(text)
+
     files = {str(p.relative_to(args.output)): hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted(args.output.rglob('*')) if p.is_file()}
     record = {'created_at_utc': datetime.now(timezone.utc).isoformat(),

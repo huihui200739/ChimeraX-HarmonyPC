@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 读取器与 atomic 模型层）
+## 当前结论（2026-11-18 真实原子模型创建成功）
+
+**应用内用 chimerax.atomic 建出真实结构（`atoms=2|residues=1|names=C1,N1`），设备断言 23/23。根因是 pyinstance 注册表被多份静态拷贝分裂，已改为单一 `libcxatomstruct.so` 共享库。**
+
+详见 [11 月 18 日原子模型](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/atomic-model-2026-11-18.md)。
+
+## 上一结论（2026-11-18 读取器与 atomic 模型层）
 
 **CIF/PDB 读取器 C++ 扩展与单一 `libcxatomstruct.so` 已交叉编译；`AtomicStructure` 可在设备创建；创建原子仍卡在 pyinstance 实例注册（已记录）。**
 

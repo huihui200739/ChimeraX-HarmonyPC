@@ -99,7 +99,7 @@ def main() -> int:
                                *[str(path) for path in static_cpp],
                                f'-L{shared_lib_dir}', '-lcxatomstruct',
                                f'-L{runtime_lib}', '-l:libpython3.11.so.1.0',
-                               "-Wl,-rpath,$ORIGIN/../lib"]
+                               "-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib"]
                 built = subprocess.run(compile_cmd, capture_output=True, text=True)
                 if built.returncode != 0:
                     report['modules'].append({'module': module, 'status': 'compile-failed',
