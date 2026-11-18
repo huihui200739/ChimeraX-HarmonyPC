@@ -363,6 +363,14 @@ try:
         session.models = Models(session)
     except Exception as _cx_models_error:
         _cx_state = "models-failed:" + type(_cx_models_error).__name__ + ":" + str(_cx_models_error)[:80]
+    # The main view is what offscreen rendering captures from; the minimal session does
+    # not create one on its own.
+    try:
+        from chimerax.graphics.view import View
+        session.main_view = View(session.models.scene_root_model,
+                                 window_size=(256, 256), trigger_set=session.triggers)
+    except Exception as _cx_view_error:
+        _cx_state = "view-failed:" + type(_cx_view_error).__name__ + ":" + str(_cx_view_error)[:80]
     from chimerax.core import toolshed as _cx_toolshed
     _cx_toolshed.init(session.logger, check_remote=False, check_available=False, session=session)
     session.toolshed = _cx_toolshed.get_toolshed()

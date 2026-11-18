@@ -230,10 +230,86 @@
     "no full qtbase configure/build was attempted because the standalone plugin path succeeded"
   ],
   "residual_risks": [
-    "the hand-off is resolved from appStartupObj; whether appStartupObj.modulesFactories.LocalStorage is reachable by napi_get_named_property from an ArkTS class instance can only be confirmed on device. If it is not, the plugin logs a warning and falls back to the old eval (identical behaviour to today), and the ArkTS side must pass localStorageFactory explicitly (snippet in docs/qt-ohos-build-2026-11-18.md)",
-    "if ArkTS hands over a single LocalStorage instance instead of a factory, it is consumed by the main window only; multi-window (sub-window/float window) creation then needs the factory form",
-    "symbol exports are not filtered by Qt's version script, so the rebuilt plugin exports more symbols than the prebuilt (no Qt-namespace leakage observed)",
-    "the plugin was built against the API 24 sysroot in this DevEco installation; API-level behaviour was not exercised at runtime",
-    "no runtime test of the ArkTS<->C++ napi call path (needs the device)"
-  ]
+    "the enumeration round-trip is a diagnostic-first fallback: it will show exactly which property name ArkTS exposes (or prove that nothing is exposed), but it can only work if the ArkTS value is a real napi object at all. If appStartupObj itself hides everything (the device showed even Has(\"localStorage\") failing while appContext/modulesFactories reads succeed), expect the new 'appStartupObj exposes N properties: [...]' line to settle it in one run",
+    "a hand-off that needs a receiver is now called with this=<owner>; if ArkTS instead needs this to be the module namespace, the retry with this=global covers the common case only",
+    "instance hand-offs are still consumed once (main window); multi-window still needs the factory form",
+    "no on-device verification by this agent (deployment and device runs are done by mainline)"
+  ],
+  "revisions": [
+    {
+      "revision": "r1",
+      "when": "2026-11-18 17:30",
+      "artifact_sha256": "6dcddfe831b27736ae6b6c0cd0aa8a3604c55a0e4a70cb6a91f69e8316fd7fed",
+      "artifact_size_bytes": 4024760,
+      "patch": "patches/qt-ohos/0102-ohos-no-eval-localstorage-handoff.patch (1cdce1cb...)",
+      "device_result": "deployed; all three hand-off paths missed on device, plugin fell back to script evaluation"
+    },
+    {
+      "revision": "r2",
+      "when": "2026-11-18 20:45",
+      "artifact": "build/qt/ohos-plugin/libqohos.so",
+      "artifact_sha256": "b270897b71ee193196c3a40f01ab72655a00af628bb7d69ca2eddf4e736a35f5",
+      "artifact_size_bytes": 4037432,
+      "unstripped_sha256": "6970e08bdcc826c8ae287d3c5d02063db2703ae1bc82fb2c1206509b748ff599",
+      "patches": [
+        "patches/qt-ohos/0102-ohos-no-eval-localstorage-handoff.patch (1cdce1cb...) - unchanged",
+        "patches/qt-ohos/0103-ohos-localstorage-enumerate-fallback.patch (bf4ad500...) - new, incremental on top of 0102"
+      ],
+      "reason": "device proved ArkTS-bridged objects are invisible to napi_has_named_property and to makeJsModulesFactoriesMap() enumeration; added an enumeration-based last resort plus diagnostics"
+    }
+  ],
+  "device_findings_2026-11-18_20h": [
+    "no hand-off at all (modulesFactories only): Qt's own loadJsModuleViaEtsFactoryOrFail() reached the ArkTS factory but the call failed with 'Error: Need object' -> bridged functions need a real receiver",
+    "localStorageFactory: () => new LocalStorage(): not matched (arrow function does not arrive as napi_function)",
+    "localStorage: new LocalStorage(): even Has(\"localStorage\") on appStartupObj did not match",
+    "official prebuilt plugin: JS abort on 'global expression doesn't start with known module path: LocalStorage.makeNewLocalStorage()'"
+  ],
+  "change_0103": {
+    "file": "src/plugins/platforms/ohos/qohoslocalstorageprovider.h",
+    "insertions": 421,
+    "deletions": 28,
+    "what": [
+      "new LocalStorageDetail helpers: clearPendingException(), enumeratePropertyNames(), describePropertyNames(), nameMatches(), callableReturnsObject(), objectOffersLocalStorageApi(), findByEnumeration()",
+      "adopt(): when direct getOptionalPropOrEmpty<Function>(obj,\"makeNewLocalStorage\") and Has(\"setOrCreate\") both fail, enumerate own+inherited property names via napi_get_all_property_names(env, obj, napi_key_include_prototypes, napi_key_all_properties, napi_key_numbers_to_strings, &names) with napi_get_property_names() as fallback",
+      "maker search order by name hint: makeNewLocalStorage, invoke, call, apply, factory, constructor; a callable is accepted only if calling it returns an object",
+      "receiver handling: napi_call_function(this=owner object) -> retry with this=global -> napi_new_instance(); the winning receiver is kept as a persistent reference and reused by makeNewLocalStorage() (this is what 'Need object' demands)",
+      "nested (one level) object scan for makeNewLocalStorage / setOrCreate / set+get",
+      "diagnostics: logs appStartupObj / modulesFactories / each candidate property lists (first 10 names), the napi_typeof of rejected members, and the JS exception text of failed probes",
+      "accepted hand-off now logs the mechanism: 'factory', 'instance:setOrCreate', 'factory-interface:makeNewLocalStorage', 'enumerated:<prop> (<how>)'",
+      "final warning now embeds both property lists: appStartupObj: [...] ; modulesFactories: [...]"
+    ],
+    "new_log_strings": [
+      "%s: appStartupObj exposes %zu propert(ies): %s",
+      "%s: modulesFactories exposes %zu propert(ies): %s",
+      "%s: '%s' exposes %zu propert(ies): %s",
+      "%s: '%s.%s' is not napi_function (napi_typeof=%d)",
+      "%s: JS exception while probing (%s): %s",
+      "%s: hand-off '%s' exposed no LocalStorage API; properties: [%s]",
+      "%s: LocalStorage hand-off accepted from '%s' (%s)"
+    ]
+  },
+  "verification_r2": {
+    "clean_build": true,
+    "build_seconds": 48.02,
+    "build_note": "clean rebuild (rm -rf build/qt/ohos-build), 92 targets, 10 cores; reproduced sha256 6970e08b.../b270897b... byte-identically",
+    "needed_sets_identical_to_prebuilt": true,
+    "needed_count": 24,
+    "elf": "ELF64 / DYN / AArch64",
+    "dynamic_flags": "BIND_NOW / FLAGS_1 NOW (unchanged)",
+    "exported_symbols": {
+      "count": 155,
+      "qt_namespace_symbols_leaked": 0,
+      "plugin_entries": [
+        "qt_plugin_instance",
+        "qt_plugin_query_metadata_v2"
+      ]
+    },
+    "patch_chain": {
+      "verified": "pristine qtbase plugin tree + 0102 + 0103 == build/qt/ohos-src tree (diff -r clean)",
+      "0103_is_incremental": true,
+      "0103_check_against_pristine_exits_1_by_design": "it modifies a file that only exists after 0102"
+    },
+    "configure_seconds": 1.19,
+    "build_cpu_seconds_user": 295.05
+  }
 }

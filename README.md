@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 Qt 路径封存 / 探针形态可交付）
+## 当前结论（2026-11-19 PyOpenGL 与接管的 EGL 上下文对齐）
+
+**设备读回 `gl=OpenGL ES 3.0 (4.1 Metal - 91.7)`：PyOpenGL 终于和原生上下文一致（此前 `gl=?`）。三处修复：`PYOPENGL_PLATFORM=egl`、改用 `OpenGL.GLES2`、`glGetString` 返回值适配数组。剩 `View.image_rgba()` 内部的 GL 初始化版本解析。**
+
+详见 [11 月 19 日渲染进展](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/render-progress-2026-11-19.md)。
+
+## 上一结论（2026-11-18 Qt 路径封存 / 探针形态可交付）
 
 **Qt 窗口在本模拟器上起不来：ArkTS 静态编译后传给 napi 的对象字段在 Qt 的 JS 状态里不可见（四条路径均有日志证据，见文档）。引擎侧探针模式 26/26 断言通过，是当前可交付形态。**
 

@@ -143,6 +143,23 @@ def main() -> int:
         GL = OpenGL.GL""")
             gl_module.write_text(text)
 
+    # GLES2 through PyOpenGL returns arrays from glGetString, not bytes; ChimeraX calls
+    # .decode() on them. Route those calls through a helper that accepts both.
+    gl_text = args.output / 'chimerax/graphics/opengl.py'
+    if gl_text.is_file():
+        text = gl_text.read_text()
+        if '_gl_string_text' not in text:
+            helper = '\ndef _gl_string_text(value):\n    """Decode a glGetString result: bytes on desktop GL, an array on GLES."""\n    if value is None:\n        return \'\'\n    if isinstance(value, bytes):\n        return value.decode(\'utf-8\', \'replace\')\n    try:\n        return bytes(value).decode(\'utf-8\', \'replace\')\n    except Exception:\n        return str(value)\n\n\n'
+            marker = 'def _initialize_pyopengl('
+            if marker in text:
+                text = text.replace(marker, helper + marker, 1)
+                for name in ('GL_VERSION', 'GL_VENDOR', 'GL_RENDERER',
+                             'GL_SHADING_LANGUAGE_VERSION'):
+                    text = text.replace(
+                        'GL.glGetString(GL.%s).decode(\'utf-8\')' % name,
+                        '_gl_string_text(GL.glGetString(GL.%s))' % name)
+                gl_text.write_text(text)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'

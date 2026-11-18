@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-18T06:41:14.727994+00:00",
+  "created_at_utc": "2026-11-18T12:20:43.304731+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147186660,
-    "sha256": "c2c700449b44f939afb8c2cc2c967cad5f0643ae43feeafcd79f5249cb1a5617"
+    "bytes": 147223421,
+    "sha256": "d4d1ad7eb9915a858161a746ad39285880b291fc8b6bcbd17ea410c9d8a7c64c"
   },
   "checks": [
     {
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|fbo=False|pixel=0,0,0;view!AttributeError:'Session' object has no attribute 'main_view'"
+      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|view!AttributeError:'Session' object has no attribute 'main_view'"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -160,7 +160,7 @@
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
     "cx-qt-mode": "启用 Qt 窗口模式",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
-    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|fbo=False|pixel=0,0,0;view!AttributeError:'Session' object has no attribute 'main_view'",
+    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|view!AttributeError:'Session' object has no attribute 'main_view'",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -170,7 +170,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
-  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|fbo=False|pixel=0,0,0;view!AttributeError:'Session' object has no attribute 'main_view'",
+  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=?|view!AttributeError:'Session' object has no attribute 'main_view'",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 28",

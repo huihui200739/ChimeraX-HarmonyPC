@@ -145,50 +145,33 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         cxgl._initialize_pyopengl()
     except Exception as error:
         pass
-    # Which PyOpenGL entry points can actually see the adopted context?
-    probes = []
-    try:
-        import OpenGL.GL as pygl
-        value = pygl.glGetString(pygl.GL_VERSION)
-        probes.append("GL=" + ((value.decode() if isinstance(value, bytes) else str(value))[:28]))
-    except BaseException as error:
-        probes.append("GL!" + type(error).__name__)
-    try:
-        import OpenGL.GLES2 as gles2
-        value = gles2.glGetString(gles2.GL_VERSION)
-        probes.append("GLES2=" + ((value.decode() if isinstance(value, bytes) else str(value))[:28]))
-    except BaseException as error:
-        probes.append("GLES2!" + type(error).__name__)
-    try:
-        import OpenGL.platform as pyp
-        probes.append("platform=" + type(pyp.PLATFORM).__name__)
-    except BaseException as error:
-        probes.append("platform!" + type(error).__name__)
+    # ChimeraX's context wrapper, pointed at the adopted EGL objects.
     ctx = cxgl.OpenGLContext(None, None)
-    ctx.display = display
-    ctx.context = context
-    ctx.surface = surface
+    ctx.display = ctypes.c_void_p(int(display_ptr))
+    ctx.context = ctypes.c_void_p(int(context_ptr))
+    ctx.surface = ctypes.c_void_p(int(surface_ptr))
     ctx._owns_context = False
-    GL = cxgl.GL
-    try:
-        raw = GL.glGetString(GL.GL_VERSION)
-    except Exception:
-        raw = gles.glGetString(0x1F02)
-    version = raw.decode("utf-8", "replace") if raw else "?"
     # GLES2 exposes only GLES2 enum names; GLES3 numeric values are used directly.
     GL_FRAMEBUFFER, GL_RENDERBUFFER, GL_RGBA8 = 0x8D40, 0x8D41, 0x8058
     GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_COMPLETE = 0x8CE0, 0x8CD5
     GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
+    version = (raw_version or b"?").decode("utf-8", "replace")
     notes = []
     # ChimeraX's own render path: create its Render on the adopted context, add a
     # drawing and capture an offscreen image.
     try:
-        from chimerax.graphics import Drawing
+        from chimerax.core.models import Model
         view = session.main_view
         view.initialize_rendering(ctx)
-        drawing = Drawing("cx_probe")
-        drawing.set_position([[10.0, 10.0, 0.0]] * 7, [[0.9, 0.2, 0.2, 1.0]])
-        view.add_drawing(drawing)
+        drawing = Model("cx_probe", session)
+        # One red triangle around the origin: three vertices, one triangle.
+        vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
+                               dtype=numpy.float32)
+        normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
+        triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
+        drawing.set_geometry(vertices, normals, triangles)
+        drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3, dtype=numpy.float32)
+        session.models.add([drawing])
         frame = view.image_rgba(width=64, height=64)
         if frame is None:
             notes.append("view:none")
