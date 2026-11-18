@@ -105,7 +105,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-model', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -156,6 +156,9 @@ def main() -> int:
         atomic = values.get('cx-atomic', '')
         glstack = values.get('cx-glstack', '')
         model = values.get('cx-model', '')
+        opened = values.get('cx-open', '')
+        record('A real PDB file is opened by the C++ reader in the app',
+               opened.startswith('models=1|atoms=4|residues=1'), opened)
         record('A real AtomicStructure with atoms is built in the app',
                model.startswith('atoms=2|residues=1|names=C1,N1'), model)
         record('PyOpenGL and the graphics Python layer load in the app',

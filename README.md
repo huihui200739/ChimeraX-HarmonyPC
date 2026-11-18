@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 真实原子模型创建成功）
+## 当前结论（2026-11-18 真实 PDB 文件可打开）
+
+**应用内用 C++ 读取器打开真实 PDB：`models=1|atoms=4|residues=1`，设备断言 24/24。Qt 侧 shim 补丁已就绪（对上游干净 apply），部署闭包 0 unresolved。**
+
+详见 [11 月 18 日文件打开](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/file-open-2026-11-18.md)。
+
+## 上一结论（2026-11-18 真实原子模型创建成功）
 
 **应用内用 chimerax.atomic 建出真实结构（`atoms=2|residues=1|names=C1,N1`），设备断言 23/23。根因是 pyinstance 注册表被多份静态拷贝分裂，已改为单一 `libcxatomstruct.so` 共享库。**
 

@@ -81,6 +81,38 @@ print("atoms=%d|residues=%d|names=%s" % (structure.num_atoms, structure.num_resi
       ",".join(a.name for a in structure.atoms)))
 `;
 
+
+// Reads a real PDB file from the app sandbox through the C++ PDB reader, which is
+// the path the production "open" command takes once the file dialog exists.
+const OPEN_SCRIPT = `
+import os
+from chimerax.io import open_input
+from chimerax.pdb.pdb import open_pdb
+
+pdb_text = """HEADER    HARMONY PROBE
+ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N
+ATOM      2  CA  ALA A   1       1.458   0.000   0.000  1.00  0.00           C
+ATOM      3  C   ALA A   1       2.009   1.420   0.000  1.00  0.00           C
+ATOM      4  O   ALA A   1       1.251   2.392   0.000  1.00  0.00           O
+END
+"""
+path = os.path.join(chimerax_home(), "cx_probe.pdb") if "chimerax_home" in dir() else "/data/storage/el2/base/haps/entry/files/cx_probe.pdb"
+with open(path, "w") as handle:
+    handle.write(pdb_text)
+with open_input(path) as stream:
+    opened = open_pdb(session, stream, path)
+models = []
+stack = list(opened) if isinstance(opened, (list, tuple)) else [opened]
+while stack:
+    item = stack.pop()
+    if hasattr(item, "num_atoms"):
+        models.append(item)
+    elif isinstance(item, (list, tuple)):
+        stack.extend(item)
+print("models=%d|atoms=%d|residues=%d" % (
+    len(models), sum(m.num_atoms for m in models), sum(m.num_residues for m in models)))
+`;
+
 @Entry
 @Component
 struct Index {
@@ -107,6 +139,7 @@ struct Index {
   @State atomicResult: string = '';
   @State glStackResult: string = '';
   @State modelResult: string = '';
+  @State openResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -221,6 +254,8 @@ struct Index {
       this.glStackResult = glStack.ok ? glStack.value : glStack.error;
       const model: ScriptReport = native.runScript(MODEL_SCRIPT);
       this.modelResult = (model.ok ? model.output : model.error).trim();
+      const opened: ScriptReport = native.runScript(OPEN_SCRIPT);
+      this.openResult = (opened.ok ? opened.output : opened.error).trim();
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -341,6 +376,11 @@ struct Index {
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('打开文件').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.openResult.length > 0 ? this.openResult : '—').id('cx-open')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {
