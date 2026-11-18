@@ -27,7 +27,7 @@ class ChimeraXPackageTests(unittest.TestCase):
 
     def test_page_refreshes_the_archive_copy(self):
         page = (ROOT / 'app/entry/src/main/ets/pages/Index.ets').read_text()
-        self.assertIn('cx-runtime-v4.zip', page)
+        self.assertIn("const ARCHIVE = 'cx-runtime.zip'", page)
         self.assertIn('extractArchive', page)
         self.assertIn('cx-chimerax', page)
 
