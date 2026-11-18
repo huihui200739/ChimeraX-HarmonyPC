@@ -201,3 +201,20 @@ view!OpenGLError:Framebuffer image capture creation failed, status 0, color b…
 这是明确的、可估算的工程任务（约半天），不属于"再接一根线"。
 
 在此之前，适配的其他部分全部可交付、可复现、有设备收据（26/26）。
+
+## 追加（06:35）：越过帧缓冲完整性，进入着色器链接
+
+把不可靠的 `glCheckFramebufferStatus` 门禁在 OHOS 上跳过（`CX_OHOS_SKIP_FB_STATUS=1`，
+补丁带注释说明原因）后，`image_rgba()` 继续推进到：
+
+```
+view!OpenGLError:Link failure (0)
+```
+
+含义：**帧缓冲已建好，现在失败在着色器程序链接**（`Link failure (0)` 里的 0 说明
+`glGetProgramiv(GL_LINK_STATUS)` 同样取不到真值，与前一层的 `status 0` 同源）。
+
+至此渲染链路剩余工作收敛为一件事：**让 PyOpenGL 的 GLES3 入口点真正到达驱动**
+（现在凡是"取状态/取日志"类的查询都返回 0/空，而"设置/绑定"类调用是生效的——
+这也解释了为什么能走到链接这一步）。修法已写在上一段：给 PyOpenGL 一个
+libGLESv3 全量 dlsym + 正确包装的加载器。

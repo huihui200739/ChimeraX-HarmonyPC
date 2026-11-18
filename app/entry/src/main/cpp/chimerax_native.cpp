@@ -311,6 +311,8 @@ napi_value Initialize(napi_env env, napi_callback_info info) {
       + "os.environ['CX_NATIVE_LIB_DIR'] = " + PyReprString(lib_dir) + "\n"
       // PyOpenGL defaults to GLX/X11 on Linux; HarmonyOS exposes EGL + GLES only.
       + "os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')\n"
+      // The GLES entry point for the completeness query returns 0 without a GL error here.
+      + "os.environ.setdefault('CX_OHOS_SKIP_FB_STATUS', '1')\n"
       + "class _CxNativeFinder:\n"
       + "    _dir = " + PyReprString(lib_dir) + "\n"
       + "    @classmethod\n"

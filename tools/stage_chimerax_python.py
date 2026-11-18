@@ -343,6 +343,25 @@ def main() -> int:
                 "        return max_size if max_size > 0 else 2048\n")
             fb_size.write_text(text)
 
+    # glCheckFramebufferStatus never reaches the driver through this PyOpenGL/EGL
+    # combination (it returns 0 with no GL error), so the completeness gate is skipped on
+    # OHOS; the attachment calls themselves do run.
+    fb_check = args.output / 'chimerax/graphics/opengl.py'
+    if fb_check.is_file():
+        text = fb_check.read_text()
+        needle = """        status = GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER)
+        if status != GL.GL_FRAMEBUFFER_COMPLETE:"""
+        if needle in text and 'CX_FB_STATUS_SKIP' not in text:
+            text = text.replace(needle,
+                "        status = GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER)\n"
+                "        # CX_FB_STATUS_SKIP: the GLES entry point returns 0 here without a\n"
+                "        # GL error, so completeness cannot be trusted on this stack.\n"
+                "        import sys as _cx_sys\n"
+                "        _cx_skip = _cx_sys.platform.startswith('linux') and bool(\n"
+                "            __import__('os').environ.get('CX_OHOS_SKIP_FB_STATUS'))\n"
+                "        if status != GL.GL_FRAMEBUFFER_COMPLETE and not _cx_skip:")
+            fb_check.write_text(text)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'
