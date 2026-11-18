@@ -1,7 +1,7 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport, EvalProbeReport } from 'libchimerax_native.so';
+import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport, EvalProbeReport, DrawAtomsReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
@@ -110,12 +110,36 @@ while stack:
         models.append(item)
     elif isinstance(item, (list, tuple)):
         stack.extend(item)
+session.models.add(models)
 print("models=%d|atoms=%d|residues=%d" % (
     len(models), sum(m.num_atoms for m in models), sum(m.num_residues for m in models)))
 `;
 
 
 
+
+
+// Writes atom coordinates for the native point viewer (used until ChimeraX's own
+// renderer is ported to GLSL ES).
+const ATOM_DUMP_SCRIPT = `
+import os
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
+lines = []
+for model in session.models.list():
+    if not hasattr(model, "atoms"):
+        continue
+    coords = model.atoms.coords
+    elements = model.atoms.elements
+    for index, coord in enumerate(coords):
+        x, y, z = float(coord[0]), float(coord[1]), float(coord[2])
+        symbol = elements[index].name if index < len(elements) else "C"
+        tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
+                "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
+        lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (x, y, z, tone[0], tone[1], tone[2]))
+with open(path, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("atoms_written=%d" % len(lines))
+`;
 
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
@@ -232,6 +256,8 @@ struct Index {
   @State glStackResult: string = '';
   @State modelResult: string = '';
   @State openResult: string = '';
+  @State atomsDumpResult: string = '';
+  @State viewerResult: string = '';
   @State renderResult: string = '';
   @State failed: string = '';
 
@@ -349,6 +375,8 @@ struct Index {
       this.modelResult = (model.ok ? model.output : model.error).trim();
       const opened: ScriptReport = native.runScript(OPEN_SCRIPT);
       this.openResult = (opened.ok ? opened.output : opened.error).trim();
+      const dumped: ScriptReport = native.runScript(ATOM_DUMP_SCRIPT);
+      this.atomsDumpResult = (dumped.ok ? dumped.output : dumped.error).trim();
       const diag: ExpressionReport = native.runExpression(
         '"prefix=%s|has_version=%s|first=%s" % (__import__("sys").prefix,' +
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
@@ -523,6 +551,20 @@ struct Index {
             }
           })
         Text(this.qtModeState).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
+      }.width('100%')
+      Row({ space: 8 }) {
+        Button('显示结构').id('cx-viewer-run').fontSize(12).height(32)
+          .onClick(() => {
+            const path: string = this.filesDir() + '/cx_atoms.txt';
+            try {
+              const drawn: DrawAtomsReport = native.drawAtoms(path);
+              this.viewerResult = 'atoms=' + drawn.atoms;
+            } catch (error) {
+              this.viewerResult = 'viewer-error:' + (error as Error).message;
+            }
+          })
+        Text(this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult)
+          .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
         .id('cx-gl-surface').width('100%').height(150).backgroundColor('#16212F')

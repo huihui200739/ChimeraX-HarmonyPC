@@ -46,3 +46,7 @@ export interface EvalProbeReport {
   error?: string;
 }
 export const evalProbe: (expression: string) => EvalProbeReport;
+export interface DrawAtomsReport {
+  atoms: number;
+}
+export const drawAtoms: (path: string) => DrawAtomsReport;

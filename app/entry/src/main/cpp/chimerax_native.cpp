@@ -633,6 +633,7 @@ extern "C" void* ChimeraXGLContext();
 extern "C" void* ChimeraXGLSurface();
 extern "C" int ChimeraXGLRelease();
 extern "C" int ChimeraXGLReacquire();
+extern "C" int ChimeraXGLDrawAtoms(const char* path);
 
 // Exposes the EGL handles so the interpreter can adopt the same context; pointers
 // travel as decimal strings because napi has no 64-bit integer type.
@@ -650,6 +651,28 @@ napi_value GLHandles(napi_env env, napi_callback_info info) {
   napi_value released = nullptr;
   napi_get_boolean(env, ChimeraXGLRelease() != 0, &released);
   napi_set_named_property(env, out, "released", released);
+  return out;
+}
+
+// Renders an atom list produced by the Python side into the XComponent surface.
+napi_value DrawAtoms(napi_env env, napi_callback_info info) {
+  size_t argc = 1;
+  napi_value argv[1] = {nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  std::string path;
+  if (argc >= 1) {
+    char buffer[1024] = {0};
+    size_t length = 0;
+    if (napi_get_value_string_utf8(env, argv[0], buffer, sizeof(buffer), &length) == napi_ok) {
+      path.assign(buffer, length);
+    }
+  }
+  napi_value out = nullptr;
+  napi_create_object(env, &out);
+  const int drawn = path.empty() ? -10 : ChimeraXGLDrawAtoms(path.c_str());
+  napi_value count = nullptr;
+  napi_create_int32(env, drawn, &count);
+  napi_set_named_property(env, out, "atoms", count);
   return out;
 }
 
@@ -722,6 +745,7 @@ napi_value Init(napi_env env, napi_value exports) {
       {"glStatus", nullptr, GLStatus, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glHandles", nullptr, GLHandles, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glReacquire", nullptr, GLReacquire, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"drawAtoms", nullptr, DrawAtoms, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"evalProbe", nullptr, EvalProbe, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports,
