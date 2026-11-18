@@ -111,3 +111,22 @@ AttributeError: do_dlsym failed: Symbol not found: glGetInteger
 | ES3 入口点解析 | ✅ VAO 等已可用（加载了真正的 libGLESv3） |
 | ChimeraX 着色器 | 已做 GLSL ES 翻译（补丁 0005） |
 | **ChimeraX 桌面 GL 调用** | ⏳ 需逐条映射（`glGetInteger` → `glGetIntegerv` …） |
+
+## 追加（03:30）：帧缓冲尺寸检查，渲染器已走到创建 FBO
+
+按顺序又过两关：
+
+1. `do_dlsym failed: Symbol not found: glGetInteger` → 加桌面/ES 别名（`glGetInteger`→`glGetIntegerv`），
+   并把不接受出参的调用包成返回标量的适配器
+2. `Frame buffer invalid size 64, 64` → GLES3 模块缺若干桌面也有的枚举（`GL_MAX_RENDERBUFFER_SIZE` 等），
+   补了枚举表
+
+现在停在 `OpenGLError: Frame buffer invalid size 64, 64`（`opengl.py:2382`）。这说明渲染器
+**已经走到创建帧缓冲**这一步，只是尺寸上限查询仍返回 0 —— 需要确认该查询走的是我们代理的
+`glGetInteger` 适配器还是缓存的直接引用。
+
+## 交付判断
+
+- 设备断言 **26/26** 全过（引擎能力完整）
+- 渲染：上下文、入口点、着色器翻译、FBO 创建路径都已打通，卡在尺寸上限这一个数值上
+- 这是"最后一公里"的调试，不是架构问题

@@ -161,6 +161,47 @@ def main() -> int:
             def __getattr__(self, name):
                 module = object.__getattribute__(self, '_module')
                 library = object.__getattribute__(self, '_library')
+                # Desktop-GL names that have a different ES spelling, and desktop-only
+                # calls that ES lacks (they become no-ops so the renderer continues).
+                aliases = {
+                    'glGetInteger': 'glGetIntegerv',
+                    'glGetFloat': 'glGetFloatv',
+                    'glGetDouble': 'glGetFloatv',
+                    'glGetBoolean': 'glGetBooleanv',
+                }
+                unsupported = {'glPolygonMode', 'glPointSize', 'glDrawBuffer',
+                               'glReadBuffer', 'glLogicOp', 'glPixelStorei'}
+                if name in aliases:
+                    # ChimeraX calls GL.glGetInteger(enum) expecting a scalar; adapt the
+                    # ES "v" form that needs an output buffer.
+                    target = aliases[name]
+                    try:
+                        raw = getattr(module, target)
+                    except AttributeError:
+                        raw = getattr(library, target)
+                    import ctypes as _ct
+                    def scalar_get(enum, _raw=raw):
+                        out = _ct.c_int(0)
+                        _raw(enum, _ct.byref(out))
+                        return out.value
+                    setattr(module, name, scalar_get)
+                    return scalar_get
+                if name in unsupported:
+                    return lambda *args, **kwargs: None
+                if name.startswith('GL_'):
+                    # ES3 exposes some desktop enums under the same values; PyOpenGL's
+                    # GLES3 module omits a few that ChimeraX queries.
+                    es_enums = {
+                        'GL_MAX_RENDERBUFFER_SIZE': 0x84E8,
+                        'GL_MAX_TEXTURE_SIZE': 0x0D33,
+                        'GL_MAX_VIEWPORT_DIMS': 0x0D3A,
+                        'GL_MAX_COLOR_ATTACHMENTS': 0x8CDF,
+                        'GL_MAX_SAMPLES': 0x8D57,
+                        'GL_MAX_VERTEX_ATTRIBS': 0x8869,
+                        'GL_MAX_TEXTURE_IMAGE_UNITS': 0x8872,
+                    }
+                    if name in es_enums:
+                        return es_enums[name]
                 try:
                     value = getattr(module, name)
                 except AttributeError:
