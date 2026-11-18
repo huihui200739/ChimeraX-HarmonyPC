@@ -136,8 +136,39 @@ def main() -> int:
     if running_on_ohos():
         # The EGL platform binds GLES entry points through OpenGL.GLES2; OpenGL.GL
         # stays empty there and every call would return None.
-        import OpenGL.GLES2
-        GL = OpenGL.GLES2
+        # GLES3 first: ES 2.0 has no vertex array objects, which the renderer needs.
+        try:
+            import OpenGL.GLES3 as _gles_module
+        except ImportError:
+            import OpenGL.GLES2 as _gles_module
+        # PyOpenGL resolves GLES3 entry points through its EGL platform and leaves some
+        # of them undefined (e.g. glGenVertexArrays); fall back to dlsym on libGLESv3.
+        import ctypes as _ctypes
+
+        class _GlesProxy:
+            def __init__(self, module, library):
+                object.__setattr__(self, '_module', module)
+                object.__setattr__(self, '_library', library)
+
+            def __getattr__(self, name):
+                module = object.__getattribute__(self, '_module')
+                library = object.__getattribute__(self, '_library')
+                try:
+                    value = getattr(module, name)
+                except AttributeError:
+                    value = getattr(library, name)
+                    setattr(module, name, value)
+                    return value
+                # PyOpenGL keeps undefined entry points as NullFunction placeholders.
+                if type(value).__name__ == 'NullFunction':
+                    try:
+                        value = getattr(library, name)
+                    except AttributeError:
+                        return value
+                    setattr(module, name, value)
+                return value
+
+        GL = _GlesProxy(_gles_module, _ctypes.CDLL('libGLESv3.so'))
     else:
         import OpenGL.GL
         GL = OpenGL.GL""")
@@ -159,6 +190,22 @@ def main() -> int:
                         'GL.glGetString(GL.%s).decode(\'utf-8\')' % name,
                         '_gl_string_text(GL.glGetString(GL.%s))' % name)
                 gl_text.write_text(text)
+
+    # opengl_version_number() cannot parse every ES driver string; fall back to the
+    # version the OHOS context declares so GL initialisation can continue.
+    version_fn = args.output / 'chimerax/graphics/opengl.py'
+    if version_fn.is_file():
+        text = version_fn.read_text()
+        needle = '        vmajor, vminor = [int(v) for v in vs]\n        return vmajor, vminor'
+        if needle in text and 'OHOS_FALLBACK_VERSION' not in text:
+            text = text.replace(needle,
+                '        try:\n'
+            + '            vmajor, vminor = [int(v) for v in vs]\n'
+            + '        except (ValueError, IndexError):\n'
+            + '            # OHOS_FALLBACK_VERSION: GLES 3.0 is the platform baseline.\n'
+            + '            vmajor, vminor = getattr(self, "required_opengl_version", (3, 0))\n'
+            + '        return vmajor, vminor')
+            version_fn.write_text(text)
 
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.

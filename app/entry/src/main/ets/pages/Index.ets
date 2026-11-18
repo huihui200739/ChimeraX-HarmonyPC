@@ -180,7 +180,10 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             notes.append("view=%dx%d|center=%d,%d,%d" % (
                 frame.shape[0], frame.shape[1], center[0], center[1], center[2]))
     except BaseException as error:
-        notes.append("view!" + type(error).__name__ + ":" + str(error)[:80])
+        import traceback
+        where = traceback.format_exc().strip().splitlines()
+        notes.append("view!" + type(error).__name__ + ":" + str(error)[:60]
+                     + "@" + (where[-3].strip()[:90] if len(where) >= 3 else "?"))
     # Plain concatenation: error strings inside notes may contain % placeholders.
     return ("context=EGLContext-adopted|raw=" + (raw_version or b"?").decode("utf-8", "replace")
             + "|gl=" + str(version) + "|" + ";".join(notes))
