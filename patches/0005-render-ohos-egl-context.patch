@@ -1,0 +1,402 @@
+--- a/src/bundles/graphics/src/opengl.py
++++ b/src/bundles/graphics/src/opengl.py
+@@ -37,7 +37,73 @@
+ 
+ # Set to PyOpenGL module OpenGL.GL by _initialize_pyopengl().
+ GL = None
++
++# --- OpenHarmony (OHOS) support ------------------------------------------
++# OHOS builds use the EGL/GLES platform: there is no Qt QOpenGLContext and no
++# GLX/CGL.  The whole graphics stack therefore runs either on the EGL context
++# the HarmonyOS app already made current for the XComponent surface, or on a
++# private pbuffer context created from Python.  See
++# docs/render-integration-2026-11-18.md.
++_ohos_state = {'probed': False, 'running': False}
++
++def running_on_ohos():
++    '''True when running on OpenHarmony/HarmonyOS (EGL + GLES only).'''
++    st = _ohos_state
++    if not st['probed']:
++        st['probed'] = True
++        st['running'] = _detect_ohos()
++    return st['running']
++
++def _detect_ohos():
++    import os, sys
++    # Explicit override wins: also lets the host test the ohos code paths.
++    if os.environ.get('CHIMERAX_OHOS') == '1':
++        return True
++    if sys.platform.startswith('ohos'):
++        return True
++    if not sys.platform.startswith('linux') or os.environ.get('CHIMERAX_OHOS') == '0':
++        return False
++    # A private aarch64-linux-ohos CPython reports sys.platform == 'linux', so
++    # look for the OHOS userland fingerprint.
++    try:
++        import platform
++        ident = ('%s %s' % (platform.platform(), platform.machine())).lower()
++    except Exception:
++        return False
++    if 'ohos' in ident or 'openharmony' in ident or 'harmony' in ident:
++        return True
++    # OHOS userland lives under /system with libEGL.so and no glibc ldconfig.
++    return os.path.isdir('/system/lib64') and os.path.exists('/system/lib64/libEGL.so')
++
++def ohos_glsl_version():
++    '''GLSL ES version line used when translating the upstream #version 330 shaders.'''
++    import os
++    return os.environ.get('CHIMERAX_OHOS_GLSL_VERSION', '300 es')
++
++def _pin_ohos_egl_libraries():
++    '''Load libEGL/libGLESv3 globally so PyOpenGL's EGL platform can resolve symbols.
+ 
++    PyOpenGL's ctypesloader looks for "libEGL.so" through the dynamic loader; on
++    OHOS the libraries are in /system/lib64 and only reachable through
++    LD_LIBRARY_PATH, which is why the app may want to pin them explicitly with
++    CHIMERAX_OHOS_EGL_SO / CHIMERAX_OHOS_GLES_SO.
++    '''
++    import ctypes, os
++    for env, names in (('CHIMERAX_OHOS_EGL_SO', ('libEGL.so', 'libEGL.so.1')),
++                       ('CHIMERAX_OHOS_GLES_SO', ('libGLESv3.so', 'libGLESv2.so'))):
++        candidates = []
++        pinned = os.environ.get(env)
++        if pinned:
++            candidates.append(pinned)
++        candidates.extend('/system/lib64/' + n for n in names)
++        candidates.extend(names)
++        for c in candidates:
++            try:
++                ctypes.CDLL(c, mode=ctypes.RTLD_GLOBAL)
++                break
++            except OSError:
++                continue
++
+ # OpenGL workarounds:
+ stencil8_needed = False
+ 
+@@ -356,6 +422,12 @@
+         return
+     _initialized_pyopengl = True
+ 
++    if running_on_ohos():
++        # PyOpenGL must resolve EGL/GLES entry points, not GLX.
++        import os
++        os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')
++        _pin_ohos_egl_libraries()
++
+     if offscreen:
+         _configure_pyopengl_to_use_osmesa()
+ 
+@@ -405,6 +477,8 @@
+     Return an object that notes the current opengl context and its window
+     so it can later be restored by restore_current_opengl_context().
+     '''
++    if running_on_ohos():
++        return _egl_remember_current()
+     from Qt.QtGui import QOpenGLContext
+     opengl_context = QOpenGLContext.currentContext()
+     opengl_surface = opengl_context.surface() if opengl_context else None
+@@ -416,6 +490,9 @@
+     the current context.
+     '''
+     opengl_context, opengl_surface = remembered_context
++    if running_on_ohos():
++        _egl_restore_current(remembered_context)
++        return
+     from Qt.QtGui import QOpenGLContext
+     if opengl_context and QOpenGLContext.currentContext() != opengl_context:
+         opengl_context.makeCurrent(opengl_surface)
+@@ -1105,6 +1182,11 @@
+     def opengl_version_number(self):
+         'Return major and minor opengl version numbers (integers).'
+         vs = self.opengl_version().split()[0].split('.')[:2]
++        if not vs[0].isdigit():
++            # OpenGL ES reports "OpenGL ES 3.2 v1.r38p1-01bet0" so the version
++            # is the token after the "ES" marker.
++            vs = [t for t in self.opengl_version().split() if t[:1].isdigit()]
++            vs = vs[0].split('.')[:2] if vs else vs
+         vmajor, vminor = [int(v) for v in vs]
+         return vmajor, vminor
+ 
+@@ -1116,13 +1198,15 @@
+         'String description of the OpenGL renderer for the current context.'
+         return GL.glGetString(GL.GL_RENDERER).decode('utf-8')
+ 
+-    def check_opengl_version(self, major = 3, minor = 3):
++    def check_opengl_version(self, major = None, minor = None):
+         '''Check if current OpenGL context meets minimum required version.'''
++        if major is None or minor is None:
++            major, minor = getattr(self._opengl_context, 'required_opengl_version', (3, 3))
+         vmajor, vminor = self.opengl_version_number()
+         if vmajor < major or (vmajor == major and vminor < minor):
+-            raise OpenGLVersionError('ChimeraX requires OpenGL graphics version 3.3.\n'
++            raise OpenGLVersionError('ChimeraX requires OpenGL graphics version %d.%d.\n'
+                                      'Your computer graphics driver provided version %d.%d.\n'
+-                                     % (vmajor, vminor))
++                                     % (major, minor, vmajor, vminor))
+ 
+     def opengl_info(self):
+         lines = ['vendor: %s' % GL.glGetString(GL.GL_VENDOR).decode('utf-8'),
+@@ -3005,6 +3089,8 @@
+         v = shader.find('#version')
+         eol = shader[v:].find('\n') + 1
+         s = shader[:eol] + defs + '\n' + shader[eol:]
++        if running_on_ohos():
++            s = translate_shader_to_gles(s, shader)
+         return s
+ 
+ 
+@@ -3484,3 +3570,253 @@
+     def pixel_scale(self):
+         # Ratio Qt pixel size to OpenGL pixel size.
+         return 1
++
++# --- EGL / GLES context for OpenHarmony ----------------------------------
++# Python-side context used instead of the Qt QOpenGLContext.  It follows the
++# same duck-typed interface as OffScreenRenderingContext above so that Render
++# and Framebuffer work unchanged.
++class EGLContext:
++    '''OpenGL ES context built on EGL, for platforms without Qt (OHOS).
++
++    Two modes:
++      * adopt the EGL context the application already made current for the
++        XComponent surface (no native code change needed, draws on screen);
++      * create a private pbuffer context when nothing is current (offscreen).
++    '''
++
++    required_opengl_version = (3, 0)     # GLES 3.0 is the OHOS baseline
++    required_opengl_core_profile = False
++
++    def __init__(self, graphics_window = None, screen = None, use_stereo = False):
++        _initialize_pyopengl()          # sets the global GL module (EGL platform)
++
++        import os
++        self.window = graphics_window
++        self._screen = screen
++        self._mode = 'mono'             # no stereo on OHOS
++        self._color_bits = None
++        self._depth_bits = 24
++        self._framebuffer_color_bits = 8
++        self._wait_for_vsync = True
++        self._deleted = False
++        self._owns_context = False
++        self._width = int(os.environ.get('CHIMERAX_OHOS_OFFSCREEN_WIDTH', 512))
++        self._height = int(os.environ.get('CHIMERAX_OHOS_OFFSCREEN_HEIGHT', 512))
++        self._pixel_scale = float(os.environ.get('CHIMERAX_PIXEL_SCALE', 1.0))
++
++        from weakref import WeakSet
++        self._framebuffers = WeakSet()
++        self._bindings = WeakSet()
++
++        from OpenGL import EGL
++        self._EGL = EGL
++        self.display = EGL.EGL_NO_DISPLAY
++        self.surface = EGL.EGL_NO_SURFACE
++        self.context = EGL.EGL_NO_CONTEXT
++        self.config = None
++        self.current_shader_program = None
++        self.current_viewport = None
++        self.default_draw_target = GL.GL_BACK
++
++    # -- creation ---------------------------------------------------------
++    def _egl_available(self):
++        from OpenGL import EGL
++        return EGL is not None
++
++    def _create(self):
++        from OpenGL import EGL
++        if self._egl_available() and EGL.eglGetCurrentContext():
++            # The app (native gl_surface.cpp) already made its context current
++            # on this thread; adopt it instead of building a second one.
++            self.display = EGL.eglGetCurrentDisplay()
++            self.context = EGL.eglGetCurrentContext()
++            self.surface = EGL.eglGetCurrentSurface(EGL.EGL_DRAW)
++            self._owns_context = False
++            return
++        self._create_pbuffer()
++
++    def _create_pbuffer(self):
++        from OpenGL import EGL
++        E = EGL
++        self.display = E.eglGetDisplay(E.EGL_DEFAULT_DISPLAY)
++        if not self.display:
++            raise OpenGLError('EGL: no display (CLI process without a HarmonyOS surface?)')
++        major = (EGL.EGLint * 1)()
++        minor = (EGL.EGLint * 1)()
++        if not E.eglInitialize(self.display, major, minor):
++            raise OpenGLError('EGL: eglInitialize failed (0x%x)' % E.eglGetError())
++
++        attribs = [E.EGL_SURFACE_TYPE, E.EGL_PBUFFER_BIT,
++                   E.EGL_RENDERABLE_TYPE, E.EGL_OPENGL_ES3_BIT,
++                   E.EGL_RED_SIZE, 8, E.EGL_GREEN_SIZE, 8,
++                   E.EGL_BLUE_SIZE, 8, E.EGL_ALPHA_SIZE, 8,
++                   E.EGL_DEPTH_SIZE, 24,
++                   E.EGL_NONE]
++        configs = (E.EGLConfig * 1)()
++        n = (EGL.EGLint * 1)()
++        if not E.eglChooseConfig(self.display, (EGL.EGLint * len(attribs))(*attribs),
++                                 configs, 1, n) or n[0] < 1:
++            raise OpenGLError('EGL: no ES3 pbuffer config (0x%x)' % E.eglGetError())
++        self.config = configs[0]
++
++        pattrs = [E.EGL_WIDTH, self._width, E.EGL_HEIGHT, self._height, E.EGL_NONE]
++        self.surface = E.eglCreatePbufferSurface(
++            self.display, self.config, (EGL.EGLint * len(pattrs))(*pattrs))
++        if not self.surface:
++            raise OpenGLError('EGL: eglCreatePbufferSurface failed (0x%x)' % E.eglGetError())
++
++        # Ask for ES 3.2 first (Mali-G77 / Maleoon provide it), fall back to 3.0.
++        for minor_version in (2, 1, 0):
++            cattrs = [E.EGL_CONTEXT_MAJOR_VERSION, 3,
++                      E.EGL_CONTEXT_MINOR_VERSION, minor_version, E.EGL_NONE]
++            ctx = E.eglCreateContext(self.display, self.config, E.EGL_NO_CONTEXT,
++                                     (EGL.EGLint * len(cattrs))(*cattrs))
++            if ctx:
++                self.context = ctx
++                break
++        if not self.context:
++            cattrs = [E.EGL_CONTEXT_CLIENT_VERSION, 3, E.EGL_NONE]
++            self.context = E.eglCreateContext(self.display, self.config, E.EGL_NO_CONTEXT,
++                                              (EGL.EGLint * len(cattrs))(*cattrs))
++        if not self.context:
++            raise OpenGLError('EGL: eglCreateContext(ES3) failed (0x%x)' % E.eglGetError())
++        self._owns_context = True
++        self.make_current()
++
++    # -- state ------------------------------------------------------------
++    @property
++    def created(self):
++        return bool(self.context)
++
++    def make_current(self, window = None):
++        if self._deleted:
++            return False
++        if not self.created:
++            self._create()
++            return True
++        E = self._EGL
++        if E.eglGetCurrentContext() == self.context:
++            self._bind_target_once()
++            return True
++        if not E.eglMakeCurrent(self.display, self.surface, self.surface, self.context):
++            raise OpenGLError('EGL: eglMakeCurrent failed (0x%x)' % E.eglGetError())
++        self._bind_target_once()
++        return True
++
++    def _bind_target_once(self):
++        # GLES has no core/compat VAO story like desktop GL but ChimeraX needs a
++        # bound VAO before shader attribute binding, which Render.initialize_opengl
++        # creates.  Nothing to do here; kept as an extension point.
++        pass
++
++    def done_current(self):
++        if self._deleted or not self.created:
++            return
++        self._EGL.eglMakeCurrent(self.display, self._EGL.EGL_NO_SURFACE,
++                                 self._EGL.EGL_NO_SURFACE, self._EGL.EGL_NO_CONTEXT)
++
++    def swap_buffers(self, window = None):
++        if self.surface and self.display:
++            self._EGL.eglSwapBuffers(self.display, self.surface)
++
++    def swap_interval(self):
++        return 0
++
++    def wait_for_vsync(self, wait):
++        # No portable EGL swap interval control on OHOS.
++        self._wait_for_vsync = wait
++        return False
++
++    def pixel_scale(self):
++        return self._pixel_scale
++
++    @property
++    def stereo(self):
++        return False
++
++    def enable_stereo(self, stereo, window):
++        # Sequential stereo is not available through EGL/GLES on OHOS.
++        return not stereo
++
++    def set_offscreen_color_bits(self, bits):
++        if bits != self._framebuffer_color_bits:
++            self._framebuffer_color_bits = bits
++            self.make_current()
++            for fb in tuple(self._framebuffers):
++                fb.set_color_bits(bits)
++            self.done_current()
++
++    def delete(self):
++        if self._deleted:
++            return
++        self._deleted = True
++        E = self._EGL
++        try:
++            self.done_current()
++            if self._owns_context:
++                if self.surface:
++                    E.eglDestroySurface(self.display, self.surface)
++                if self.context:
++                    E.eglDestroyContext(self.display, self.context)
++            self.surface = E.EGL_NO_SURFACE
++            self.context = E.EGL_NO_CONTEXT
++        except Exception:
++            pass
++
++    def __del__(self):
++        if not self._deleted:
++            self.delete()
++
++
++def _egl_remember_current():
++    from OpenGL import EGL
++    ctx = EGL.eglGetCurrentContext()
++    surf = EGL.eglGetCurrentSurface(EGL.EGL_DRAW)
++    return (ctx or None, surf)
++
++
++def _egl_restore_current(remembered_context):
++    from OpenGL import EGL
++    ctx, surf = remembered_context
++    if ctx and EGL.eglGetCurrentContext() != ctx:
++        EGL.eglMakeCurrent(EGL.eglGetCurrentDisplay(), surf, surf, ctx)
++
++
++_GLSL_ES_REPLACEMENTS = (
++    ('precision highp float;\n', ''),
++)
++
++
++def translate_shader_to_gles(shader, original = None):
++    '''Rewrite the upstream "#version 330 core" GLSL into GLSL ES.
++
++    The upstream shader templates are desktop core-profile 3.30.  GLES has no
++    core profile flags and requires a precision qualifier in the fragment
++    shader, so the version line is replaced and the qualifier injected.
++    '''
++    version = ohos_glsl_version()
++    out = shader
++    for old in ('#version 330 core', '#version 330', '#version 320 core'):
++        if old in out:
++            out = out.replace(old, '#version ' + version, 1)
++            break
++    if 'precision' not in out:
++        eol = out.find('\n')
++        # first non-#define, non-empty line after the version line
++        lines = out.split('\n')
++        for i, line in enumerate(lines):
++            ls = line.strip()
++            if i == 0 or not ls or ls.startswith('#define'):
++                continue
++            lines.insert(i, 'precision highp float;\nprecision highp int;\nprecision highp sampler2D;')
++            eol = None
++            out = '\n'.join(lines)
++            break
++    return out
++
++
++# OHOS has no Qt QOpenGLContext: hand out the EGL implementation instead.
++# Everything in ChimeraX imports OpenGLContext lazily (inside functions), so
++# rebinding the module attribute is enough and keeps the diff small.
++if running_on_ohos():
++    OpenGLContext = EGLContext

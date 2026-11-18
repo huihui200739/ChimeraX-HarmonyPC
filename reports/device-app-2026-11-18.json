@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-18T02:30:08.657494+00:00",
+  "created_at_utc": "2026-11-18T03:45:35.517185+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 76014897,
-    "sha256": "d8e907299e2c753a3f91b3fe19b05864e79a3abd73b833a8656ecf566536b326"
+    "bytes": 76023375,
+    "sha256": "25338f3b7fd4d7de34c59073561f72943ca9ce234f9258054cc60a99693428ad"
   },
   "checks": [
     {
@@ -82,7 +82,7 @@
     {
       "name": "An EGL/GLES surface is created inside the app",
       "passed": true,
-      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2015x285"
+      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285"
     },
     {
       "name": "A real PDB file is opened by the C++ reader in the app",
@@ -93,6 +93,11 @@
       "name": "A real AtomicStructure with atoms is built in the app",
       "passed": true,
       "detail": "atoms=2|residues=1|names=C1,N1"
+    },
+    {
+      "name": "ChimeraX uses the OHOS EGL context class",
+      "passed": true,
+      "detail": "context=EGLContext|gl=?|fbo=False|pixel=0,0,0|version=unparsed:AttributeError"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -153,7 +158,8 @@
     "cx-cmd-py": "Python",
     "cx-cmd-output": "（输出）",
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
-    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2015x285",
+    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
+    "cx-render": "context=EGLContext|gl=?|fbo=False|pixel=0,0,0|version=unparsed:AttributeError",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -162,13 +168,14 @@
     "cx-graphics": "chimerax.graphics._graphics|3",
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
   },
-  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2015x285",
+  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
+  "chimerax_render": "context=EGLContext|gl=?|fbo=False|pixel=0,0,0|version=unparsed:AttributeError",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 28",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 25,
+    "passed": 26,
     "failed": 0
   },
   "status": "app_runtime_verified"

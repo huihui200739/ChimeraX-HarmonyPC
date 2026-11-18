@@ -60,7 +60,7 @@ def main() -> int:
         x1, y1, x2, y2 = (int(v) for v in bounds.groups())
         return ((x1 + x2) // 2, (y1 + y2) // 2)
 
-    def dump_scrolling(required: list[str], rounds: int = 6) -> dict[str, str]:
+    def dump_scrolling(required: list[str], rounds: int = 16) -> dict[str, str]:
         """Scroll from the top to the bottom, merging every dump.
 
         The page is a Scroll, so a single dump only reports the visible rows; the
@@ -74,7 +74,7 @@ def main() -> int:
         for _ in range(rounds):
             if all(key in values for key in required):
                 break
-            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1400', '1000', '700', '300'])
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1300', '1000', '950', '250'])
             time.sleep(1.2)
             values.update({k: v for k, v in dump()[1].items() if v not in ('', '—')})
         return values
@@ -105,7 +105,7 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -161,6 +161,10 @@ def main() -> int:
                opened.startswith('models=1|atoms=4|residues=1'), opened)
         record('A real AtomicStructure with atoms is built in the app',
                model.startswith('atoms=2|residues=1|names=C1,N1'), model)
+        cx_render = values.get('cx-render', '')
+        report['chimerax_render'] = cx_render
+        record('ChimeraX uses the OHOS EGL context class',
+               cx_render.startswith('context=EGLContext'), cx_render)
         render = values.get('cx-gl-render', '')
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)

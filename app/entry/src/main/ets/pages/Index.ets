@@ -113,6 +113,48 @@ print("models=%d|atoms=%d|residues=%d" % (
     len(models), sum(m.num_atoms for m in models), sum(m.num_residues for m in models)))
 `;
 
+
+
+
+// Walks the render path the port needs: ChimeraX's own OpenGLContext (the OHOS EGL
+// branch), an offscreen framebuffer, a clear and a pixel readback.
+const RENDER_SCRIPT = `
+def cx_render_probe():
+    from chimerax.graphics import opengl as cxgl
+    ctx = cxgl.OpenGLContext(None, None)
+    if not ctx.make_current():
+        return "make-current:false"
+    GL = cxgl.GL
+    version = GL.glGetString(GL.GL_VERSION)
+    version = version.decode("utf-8", "replace") if version else "?"
+    context_class = type(ctx).__name__
+    fbo = GL.glGenFramebuffers(1)
+    GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo)
+    rbo = GL.glGenRenderbuffers(1)
+    GL.glBindRenderbuffer(GL.GL_RENDERBUFFER, rbo)
+    GL.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_RGBA8, 32, 32)
+    GL.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
+                                 GL.GL_RENDERBUFFER, rbo)
+    complete = GL.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) == GL.GL_FRAMEBUFFER_COMPLETE
+    GL.glViewport(0, 0, 32, 32)
+    GL.glClearColor(0.25, 0.5, 0.75, 1.0)
+    GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+    pixel = (ctypes.c_ubyte * 4)() if False else None
+    import numpy
+    pixel = numpy.zeros(4, dtype=numpy.uint8)
+    GL.glReadPixels(16, 16, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixel.ctypes.data)
+    parsed = "?"
+    try:
+        parsed = "%d.%d" % tuple(cxgl.Render(ctx).opengl_version_number())
+    except Exception as error:
+        parsed = "unparsed:" + type(error).__name__
+    ctx.done_current()
+    return "context=%s|gl=%s|fbo=%s|pixel=%d,%d,%d|version=%s" % (
+        context_class, version, complete, pixel[0], pixel[1], pixel[2], parsed)
+
+print(cx_render_probe())
+`;
+
 @Entry
 @Component
 struct Index {
@@ -141,6 +183,7 @@ struct Index {
   @State glStackResult: string = '';
   @State modelResult: string = '';
   @State openResult: string = '';
+  @State renderResult: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
@@ -262,6 +305,9 @@ struct Index {
         ' __import__("os").path.exists(__import__("sys").prefix + "/lib/python3.11/chimerax/version.py"),' +
         ' ",".join(sorted(__import__("os").listdir(__import__("sys").prefix + "/lib/python3.11"))[:3]))');
       this.diagnostic = diag.ok ? diag.value : diag.error;
+      const rendered: ScriptReport = native.runScript(RENDER_SCRIPT);
+      this.renderResult = (rendered.ok ? rendered.output : rendered.error).trim();
+
       const chimerax: ExpressionReport = native.runExpression(
         '__import__("chimerax.version").version.version');
       this.chimeraxVersion = chimerax.ok ? chimerax.value : chimerax.error;
@@ -380,6 +426,11 @@ struct Index {
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+      }.width('100%')
+      Row() {
+        Text('ChimeraX 渲染').fontSize(13).fontColor('#C9D6E5').width(80)
+        Text(this.renderResult.length > 0 ? this.renderResult : '—').id('cx-render')
           .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
       }.width('100%')
       Row() {

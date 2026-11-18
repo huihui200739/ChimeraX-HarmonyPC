@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import re
 import subprocess
 import zipfile
 from datetime import datetime, timezone
@@ -83,6 +84,26 @@ def main() -> int:
         dependencies.append({'wheel': wheel.name,
                              'sha256': hashlib.sha256(wheel.read_bytes()).hexdigest()})
     dependency = dependencies[0] if dependencies else None
+    # --- upstream patches ---------------------------------------------------
+    # The render patch adds the OHOS EGL context to chimerax.graphics.opengl; it is
+    # kept as a patch (patches/) so the upstream tree stays untouched.
+    patches_dir = ROOT / 'patches'
+    applied = []
+    for patch_file in sorted(patches_dir.glob('*-render-ohos-*.patch')):
+        # Patches are written against the upstream layout (src/bundles/<b>/src/...)
+        # while the staged tree flattens a bundle to chimerax/<b>/..., so the paths
+        # are rewritten into a temporary patch and applied with -p1.
+        text = patch_file.read_text()
+        rewritten = re.sub(r'(?m)^(---|\+\+\+) ([ab])/src/bundles/([a-z_]+)/src/',
+                           lambda m: f'{m.group(1)} {m.group(2)}/chimerax/{m.group(3)}/', text)
+        temp_patch = args.output.parent / (patch_file.stem + '.staged.patch')
+        temp_patch.write_text(rewritten)
+        result = subprocess.run(['patch', '-p1', '--forward', '--batch', '-i', str(temp_patch)],
+                                cwd=args.output, capture_output=True, text=True)
+        applied.append({'patch': patch_file.name, 'returncode': result.returncode,
+                        'stdout': result.stdout.strip()[:200]})
+    report_extra = applied
+
     # --- platform shims -----------------------------------------------------
     # Upstream *_lib bundles dlopen per-library shared objects through a Cython
     # _load_libs module; this port links those translation units into one shared
@@ -140,7 +161,7 @@ def main() -> int:
     record = {'created_at_utc': datetime.now(timezone.utc).isoformat(),
               'source': str(args.source), 'commit': commit, 'version': version,
               'branch': branch, 'files': len(files), 'package': str(package),
-              'dependencies': dependencies,
+              'dependencies': dependencies, 'patches': report_extra,
               'modules': sorted({p.split('/')[1] for p in files if p.count('/') >= 1})[:40]}
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n')

@@ -1,6 +1,12 @@
 # ChimeraX — 鸿蒙 PC 通用兼容性准备
 
-## 当前结论（2026-11-18 设备 GPU 跑通 GLSL 绘制）
+## 当前结论（2026-11-18 渲染上下文接入）
+
+**`chimerax.graphics` 的 `OpenGLContext` 已在设备上切换到 OHOS 的 `EGLContext`（补丁经 staging 自动应用），设备断言 26/26；但 Python 线程尚未接管 native 的 EGL 上下文（`gl=?|fbo=False`），这是下一步的精确目标。**
+
+详见 [11 月 18 日渲染上下文](/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/docs/render-context-2026-11-18.md)。
+
+## 上一结论（2026-11-18 设备 GPU 跑通 GLSL 绘制）
 
 **应用内在 Mali-G77 上用 GLSL ES 3.0 画三角形并回读像素 `triangle:242,140,38,255`，设备断言 25/25；同轮还打通了真实 PDB 读取（`models=1|atoms=4|residues=1`）。**
 
