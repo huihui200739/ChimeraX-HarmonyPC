@@ -395,6 +395,28 @@ except Exception as error:
     print("sdf-open:" + type(error).__name__ + ":" + str(error)[:70])
 `;
 
+
+// Opens the bundled PDB and asks the list_info bundle about the models: command and model
+// layers talking to each other, not just each one on its own.
+const INFO_MODELS_SCRIPT = `
+import os
+from chimerax.pdb.pdb import open_pdb
+from chimerax.core.commands import run
+
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_probe.pdb")
+if not os.path.exists(path):
+    print("info-models:no-pdb")
+else:
+    with open(path, "rb") as stream:
+        opened = open_pdb(session, stream, path)
+    models = list(session.models.list())
+    try:
+        run(session, "info models")
+        print("info-models:ok|models=%d" % len(models))
+    except Exception as error:
+        print("info-models:" + type(error).__name__ + ":" + str(error)[:60])
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -927,6 +949,11 @@ struct Index {
             } catch (error) {
               this.viewerResult = 'viewer-error';
             }
+          })
+        Button('模型信息').id('cx-info-run').fontSize(12).height(32)
+          .onClick(() => {
+            const report: ScriptReport = native.runScript(INFO_MODELS_SCRIPT);
+            this.viewerResult = (report.ok ? report.output : report.error).trim().slice(0, 90);
           })
         Button('沙箱结构文件').id('cx-list-run').fontSize(12).height(32)
           .onClick(() => {

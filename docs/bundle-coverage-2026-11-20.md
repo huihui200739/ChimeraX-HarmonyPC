@@ -70,3 +70,12 @@ state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances
 `session.data_formats.register(OpenFileFormat(...))`，或者让 toolshed 真正跑一次 bundle 发现。
 
 实验用的「打开 SDF」按钮已撤下，界面不留不可用的入口；`open` 命令本身已注册成功（命令表可见）。
+
+## 追加：`info models` 对上真实模型（命令层 × 模型层打通）
+
+新增「模型信息」按钮：打开内置 PDB → 收集模型 → 执行上游 `info models`。
+
+设备读回：**`info-models:ok|models=2`**
+
+这是第一次"上游命令 + 真实打开的模型"同时工作：`list_info` 的 `info models` 遍历
+`session.models` 并格式化输出，没有报错。命令层与模型层的接口在鸿蒙上是通的。
