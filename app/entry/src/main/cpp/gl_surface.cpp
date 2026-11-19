@@ -352,9 +352,24 @@ void main() {
 precision mediump float;
 in vec4 v_color;
 out vec4 frag_color;
+uniform float spriteMode;
 void main() {
-    // Round sprite so atoms read as spheres rather than squares.
-    frag_color = vec4(v_color.rgb, 1.0);
+    // spriteMode is 1 for atoms and 0 for bond lines: gl_PointCoord is undefined for lines,
+    // so the round mask and shading only apply to sprites.
+    if (spriteMode < 0.5) {
+        frag_color = vec4(v_color.rgb * 0.85, 1.0);
+        return;
+    }
+    vec2 offset = gl_PointCoord - vec2(0.5);
+    float radius2 = dot(offset, offset);
+    if (radius2 > 0.25) {
+        discard;
+    }
+    vec3 normal = vec3(offset.x * 2.0, -offset.y * 2.0,
+                       sqrt(max(0.0, 0.25 - radius2) * 4.0));
+    vec3 light = normalize(vec3(0.35, 0.55, 0.75));
+    float diffuse = max(dot(normalize(normal), light), 0.0);
+    frag_color = vec4(v_color.rgb * (0.35 + 0.75 * diffuse), 1.0);
 }
 )";
   std::string error;
@@ -388,11 +403,13 @@ void main() {
   glUniform1f(glGetUniformLocation(program, "pitch"), g_view_pitch);
   glUniform1f(glGetUniformLocation(program, "zoom"), g_view_zoom);
   if (!bonds.empty()) {
+    glUniform1f(glGetUniformLocation(program, "spriteMode"), 0.0f);
     glBufferData(GL_ARRAY_BUFFER, bonds.size() * sizeof(GLfloat), bonds.data(),
                  GL_STATIC_DRAW);
     glLineWidth(2.0f);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(bonds.size() / 6));
   }
+  glUniform1f(glGetUniformLocation(program, "spriteMode"), 1.0f);
   glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(),
                GL_STATIC_DRAW);
   glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(count));
@@ -445,11 +462,13 @@ static bool RedrawAtoms() {
   glClearColor(0.02f, 0.03f, 0.05f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   if (!g_atom_bonds.empty()) {
+    glUniform1f(glGetUniformLocation(g_view_program, "spriteMode"), 0.0f);
     glBufferData(GL_ARRAY_BUFFER, g_atom_bonds.size() * sizeof(GLfloat),
                  g_atom_bonds.data(), GL_STATIC_DRAW);
     glLineWidth(2.0f);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(g_atom_bonds.size() / 6));
   }
+  glUniform1f(glGetUniformLocation(g_view_program, "spriteMode"), 1.0f);
   glBufferData(GL_ARRAY_BUFFER, g_atom_points.size() * sizeof(GLfloat),
                g_atom_points.data(), GL_STATIC_DRAW);
   glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(g_atom_points.size() / 7));

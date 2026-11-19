@@ -189,3 +189,13 @@ for name in ('model position changed', 'new frame', 'scene begin', 'scene end',
 - 半径按元素给：C 1.0 / N 1.1 / O 1.15 / S 1.3 / 其它 0.9
 
 设备读回：`real-pdb:ok|atoms=1322 view=1322`，断言 **26/26**，截图 `reports/ras-radius-2026-11-20.jpeg`。
+
+## 渲染再进一步：球面着色 + 更大的视口
+
+- 片段着色器用 `gl_PointCoord` 做圆形遮罩与法线近似：`discard` 掉圆外的方形角，按半球法线做
+  漫反射，原子看起来是立体的球而不是方块
+- 用一个 `spriteMode` uniform 区分原子与键线：`gl_PointCoord` 对线段无定义，若不区分会把键也 `discard` 掉
+- 视口高度 220 → 360，蛋白终于能完整看到
+
+设备截图：`reports/ras-viewport-2026-11-20.jpeg`（1322 原子的 ras 蛋白，彩色球+键，清晰可辨），
+断言仍然 **26/26**。

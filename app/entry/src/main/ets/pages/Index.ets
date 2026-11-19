@@ -1188,7 +1188,7 @@ struct Index {
           })
       }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
-        .id('cx-gl-surface').width('100%').height(220).backgroundColor('#16212F')
+        .id('cx-gl-surface').width('100%').height(360).backgroundColor('#16212F')
         .onTouch((event: TouchEvent) => {
           if (event.touches.length === 0) {
             return;
