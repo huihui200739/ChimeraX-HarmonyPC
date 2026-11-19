@@ -167,6 +167,34 @@ with open(path, "w") as handle:
 print("demo_atoms=%d" % len(lines))
 `;
 
+
+// Lists structure files the app itself wrote into the sandbox; the app has no system
+// file dialog yet, so this is the open path users can exercise today.
+const LIST_SCRIPT = `
+import os
+root = "/data/storage/el2/base/haps/entry/files"
+names = sorted(n for n in os.listdir(root) if n.endswith((".pdb", ".cif", ".mmcif")))
+print("files=%d|%s" % (len(names), ",".join(names)))
+`;
+
+// Double helix: a helix plus a strand, so the viewer shows a genuinely three-dimensional
+// object with visible bonds instead of a planar four-atom probe.
+const DEMO2_SCRIPT = `
+import math, os
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
+lines = []
+for index in range(48):
+    angle = index * 1.745
+    lines.append("%.4f %.4f %.4f 0.400 0.750 0.950" % (
+        6.0 * math.cos(angle), 6.0 * math.sin(angle), index * 1.2 - 28.0))
+for index in range(20):
+    lines.append("%.4f %.4f %.4f 0.950 0.550 0.350" % (
+        -8.0 + index * 0.9, 10.0 + math.sin(index * 0.6) * 2.0, index * 1.4 - 14.0))
+with open(path, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("demo2_atoms=%d" % len(lines))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -287,6 +315,7 @@ struct Index {
   @State lastTouchX: number = -1;
   @State lastTouchY: number = -1;
   @State lastPinchSpan: number = 0;
+  @State fileListState: string = '';
   @State renderResult: string = '';
   @State failed: string = '';
 
@@ -636,6 +665,25 @@ struct Index {
         Text(this.qtModeState).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       Row({ space: 8 }) {
+        Button('双螺旋示例').id('cx-demo2-run').fontSize(12).height(32)
+          .onClick(() => {
+            const built: ScriptReport = native.runScript(DEMO2_SCRIPT);
+            if (!built.ok) {
+              this.viewerResult = 'demo2-error';
+              return;
+            }
+            try {
+              const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+              this.viewerResult = 'demo2=' + drawn.atoms;
+            } catch (error) {
+              this.viewerResult = 'viewer-error';
+            }
+          })
+        Button('沙箱结构文件').id('cx-list-run').fontSize(12).height(32)
+          .onClick(() => {
+            const listed: ScriptReport = native.runScript(LIST_SCRIPT);
+            this.fileListState = (listed.ok ? listed.output : listed.error).trim();
+          })
         Button('示例螺旋').id('cx-demo-run').fontSize(12).height(32)
           .onClick(() => {
             const built: ScriptReport = native.runScript(DEMO_SCRIPT);
@@ -660,8 +708,9 @@ struct Index {
               this.viewerResult = 'viewer-error:' + (error as Error).message;
             }
           })
-        Text(this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult)
-          .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
+        Text(this.fileListState.length > 0 ? this.fileListState
+             : (this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult))
+          .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(2)
       }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
         .id('cx-gl-surface').width('100%').height(220).backgroundColor('#16212F')

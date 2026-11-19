@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T05:41:37.563741+00:00",
+  "created_at_utc": "2026-11-19T07:04:22.075391+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147470913,
-    "sha256": "0ca99f077a1874009902cf78f909668f46506296b95468157816d318c03e9ce6"
+    "bytes": 147484183,
+    "sha256": "96030a3f3d23534c55866757be11ad524992fba936f2ad01ba43f5a4d808a98f"
   },
   "checks": [
     {
@@ -171,6 +171,9 @@
     "cx-cmd-output": "（输出）",
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
     "cx-qt-mode": "启用 Qt 窗口模式",
+    "cx-demo2-run": "双螺旋示例",
+    "cx-list-run": "沙箱结构文件",
+    "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
     "cx-viewer-status": "atoms_written=4",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
