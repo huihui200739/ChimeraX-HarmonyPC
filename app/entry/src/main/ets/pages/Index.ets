@@ -230,6 +230,27 @@ with open(os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt"
 print("opened=%d|atoms=%d" % (len(models), len(lines)))
 `;
 
+
+// Three-helix bundle: a larger structure used to check that the viewer copes with
+// hundreds of atoms and that bonds stay cheap at that size.
+const DEMO3_SCRIPT = `
+import math, os
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
+lines = []
+offsets = [(-9.0, 0.0, 0.550, 0.700, 0.950),
+           (9.0, 0.0, 0.950, 0.650, 0.300),
+           (0.0, 11.0, 0.450, 0.900, 0.550)]
+for (ox, oy, red, green, blue) in offsets:
+    for index in range(56):
+        angle = index * 1.745
+        lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+            ox + 5.2 * math.cos(angle), oy + 5.2 * math.sin(angle),
+            index * 1.35 - 38.0, red, green, blue))
+with open(path, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("demo3_atoms=%d" % len(lines))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -715,6 +736,21 @@ struct Index {
               this.viewerResult = 'viewer-error';
             }
           })
+        Button('三螺旋束').id('cx-demo3-run').fontSize(12).height(32)
+          .onClick(() => {
+            const started: number = Date.now();
+            const built: ScriptReport = native.runScript(DEMO3_SCRIPT);
+            if (!built.ok) {
+              this.viewerResult = 'demo3-error';
+              return;
+            }
+            try {
+              const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+              this.viewerResult = 'demo3=' + drawn.atoms + '|' + (Date.now() - started) + 'ms';
+            } catch (error) {
+              this.viewerResult = 'viewer-error';
+            }
+          })
         Button('沙箱结构文件').id('cx-list-run').fontSize(12).height(32)
           .onClick(() => {
             const listed: ScriptReport = native.runScript(LIST_SCRIPT);
@@ -817,6 +853,15 @@ struct Index {
           }, (name: string) => name)
         }.width('100%')
       }
+      Row({ space: 16 }) {
+        Text('模型: ' + (this.modelResult.length > 0 ? this.modelResult.split('|')[0] : '—'))
+          .id('cx-status-model').fontSize(10).fontColor('#9FB4C8')
+        Text('原子: ' + (this.openResult.indexOf('atoms=') >= 0
+          ? this.openResult.split('atoms=')[1].split('|')[0] : '—'))
+          .id('cx-status-atoms').fontSize(10).fontColor('#9FB4C8')
+        Text('视图: yaw/pitch/zoom').id('cx-status-view').fontSize(10).fontColor('#9FB4C8')
+        Text('状态: ' + this.status).id('cx-status-state').fontSize(10).fontColor('#9FB4C8')
+      }.width('100%')
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
