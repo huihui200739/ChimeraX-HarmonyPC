@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <string>
 
 
 // Draws one triangle through a real GLSL program into the window surface and reads
@@ -112,6 +113,14 @@ EGLContext g_context = EGL_NO_CONTEXT;
 std::string g_status = "not-initialised";
 int g_surface_width = 0;
 int g_surface_height = 0;
+// Last uploaded geometry plus view state, so touch input can re-render cheaply.
+std::vector<GLfloat> g_atom_points;
+std::vector<GLfloat> g_atom_bonds;
+float g_view_yaw = 0.35f;
+float g_view_pitch = 0.20f;
+float g_view_zoom = 1.0f;
+GLuint g_view_program = 0;
+GLuint g_view_buffer = 0;
 
 void SetStatus(const std::string& status) {
   g_status = status;
@@ -309,10 +318,18 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 color;
 uniform float scale;
+uniform float yaw;
+uniform float pitch;
+uniform float zoom;
 out vec3 v_color;
 void main() {
     v_color = color;
-    gl_Position = vec4(position * scale, 1.0);
+    float cy = cos(yaw), sy = sin(yaw);
+    vec3 r = vec3(cy * position.x + sy * position.z, position.y,
+                  -sy * position.x + cy * position.z);
+    float cp = cos(pitch), sp = sin(pitch);
+    vec3 q = vec3(r.x, cp * r.y - sp * r.z, sp * r.y + cp * r.z);
+    gl_Position = vec4(q * zoom, 1.0);
     gl_PointSize = 8.0;
 }
 )";
@@ -357,6 +374,20 @@ void main() {
                GL_STATIC_DRAW);
   glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(count));
   eglSwapBuffers(g_display, g_surface);
+  g_view_buffer = buffer;
+  // A fresh draw starts from the default orientation so the molecule is visible.
+  g_view_yaw = 0.35f;
+  g_view_pitch = 0.20f;
+  g_view_zoom = 1.0f;
+  g_atom_points = points;
+  g_atom_bonds = bonds;
+  if (g_view_program != 0) {
+    glDeleteProgram(g_view_program);
+  }
+  g_view_program = program;
+  glUniform1f(glGetUniformLocation(program, "yaw"), g_view_yaw);
+  glUniform1f(glGetUniformLocation(program, "pitch"), g_view_pitch);
+  glUniform1f(glGetUniformLocation(program, "zoom"), g_view_zoom);
   char summary[96];
   snprintf(summary, sizeof(summary), "atoms:%zu", count);
   g_render_status = summary;
@@ -365,6 +396,60 @@ void main() {
   glDeleteShader(vertex);
   glDeleteShader(fragment);
   return static_cast<int>(count);
+}
+
+
+// Re-renders the cached geometry with the current view angles; used by touch input.
+static bool RedrawAtoms() {
+  if (g_view_program == 0 || g_atom_points.empty()) {
+    return false;
+  }
+  if (!eglMakeCurrent(g_display, g_surface, g_surface, g_context)) {
+    return false;
+  }
+  glUseProgram(g_view_program);
+  glUniform1f(glGetUniformLocation(g_view_program, "yaw"), g_view_yaw);
+  glUniform1f(glGetUniformLocation(g_view_program, "pitch"), g_view_pitch);
+  glUniform1f(glGetUniformLocation(g_view_program, "zoom"), g_view_zoom);
+  glBindBuffer(GL_ARRAY_BUFFER, g_view_buffer);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+                        reinterpret_cast<void*>(3 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
+  glViewport(0, 0, g_surface_width, g_surface_height);
+  glClearColor(0.02f, 0.03f, 0.05f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  if (!g_atom_bonds.empty()) {
+    glBufferData(GL_ARRAY_BUFFER, g_atom_bonds.size() * sizeof(GLfloat),
+                 g_atom_bonds.data(), GL_STATIC_DRAW);
+    glLineWidth(2.0f);
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(g_atom_bonds.size() / 6));
+  }
+  glBufferData(GL_ARRAY_BUFFER, g_atom_points.size() * sizeof(GLfloat),
+               g_atom_points.data(), GL_STATIC_DRAW);
+  glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(g_atom_points.size() / 6));
+  eglSwapBuffers(g_display, g_surface);
+  return true;
+}
+
+// Rotates the cached structure; dx/dy are screen deltas in pixels.
+extern "C" int ChimeraXGLRotate(float dx, float dy) {
+  g_view_yaw += dx * 0.01f;
+  g_view_pitch += dy * 0.01f;
+  return RedrawAtoms() ? 1 : 0;
+}
+
+// Zooms the cached structure; factor > 1 enlarges it.
+extern "C" int ChimeraXGLZoom(float factor) {
+  g_view_zoom *= factor;
+  if (g_view_zoom < 0.2f) {
+    g_view_zoom = 0.2f;
+  }
+  if (g_view_zoom > 8.0f) {
+    g_view_zoom = 8.0f;
+  }
+  return RedrawAtoms() ? 1 : 0;
 }
 
 extern "C" const char* ChimeraXGLStatus() { return g_status.c_str(); }

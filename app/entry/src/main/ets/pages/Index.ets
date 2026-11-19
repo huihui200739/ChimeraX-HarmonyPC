@@ -258,6 +258,8 @@ struct Index {
   @State openResult: string = '';
   @State atomsDumpResult: string = '';
   @State viewerResult: string = '';
+  @State lastTouchX: number = -1;
+  @State lastTouchY: number = -1;
   @State renderResult: string = '';
   @State failed: string = '';
 
@@ -567,7 +569,29 @@ struct Index {
           .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
-        .id('cx-gl-surface').width('100%').height(150).backgroundColor('#16212F')
+        .id('cx-gl-surface').width('100%').height(220).backgroundColor('#16212F')
+        .onTouch((event: TouchEvent) => {
+          if (event.touches.length === 0) {
+            return;
+          }
+          const touch: TouchObject = event.touches[0];
+          if (event.type === TouchType.Move && this.lastTouchX >= 0) {
+            const dx: number = touch.windowX - this.lastTouchX;
+            const dy: number = touch.windowY - this.lastTouchY;
+            try {
+              native.rotateView(dx, dy);
+            } catch (error) {
+              this.viewerResult = 'rotate-error';
+            }
+          }
+          if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
+            this.lastTouchX = -1;
+            this.lastTouchY = -1;
+            return;
+          }
+          this.lastTouchX = touch.windowX;
+          this.lastTouchY = touch.windowY;
+        })
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')

@@ -50,3 +50,5 @@ export interface DrawAtomsReport {
   atoms: number;
 }
 export const drawAtoms: (path: string) => DrawAtomsReport;
+export const rotateView: (dx: number, dy: number) => boolean;
+export const zoomView: (factor: number) => boolean;

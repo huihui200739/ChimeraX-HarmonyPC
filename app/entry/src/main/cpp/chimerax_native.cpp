@@ -634,6 +634,8 @@ extern "C" void* ChimeraXGLSurface();
 extern "C" int ChimeraXGLRelease();
 extern "C" int ChimeraXGLReacquire();
 extern "C" int ChimeraXGLDrawAtoms(const char* path);
+extern "C" int ChimeraXGLRotate(float dx, float dy);
+extern "C" int ChimeraXGLZoom(float factor);
 
 // Exposes the EGL handles so the interpreter can adopt the same context; pointers
 // travel as decimal strings because napi has no 64-bit integer type.
@@ -673,6 +675,30 @@ napi_value DrawAtoms(napi_env env, napi_callback_info info) {
   napi_value count = nullptr;
   napi_create_int32(env, drawn, &count);
   napi_set_named_property(env, out, "atoms", count);
+  return out;
+}
+
+// Touch-driven view updates for the structure viewer.
+napi_value RotateView(napi_env env, napi_callback_info info) {
+  size_t argc = 2;
+  napi_value argv[2] = {nullptr, nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  double dx = 0, dy = 0;
+  if (argc >= 1) napi_get_value_double(env, argv[0], &dx);
+  if (argc >= 2) napi_get_value_double(env, argv[1], &dy);
+  napi_value out = nullptr;
+  napi_get_boolean(env, ChimeraXGLRotate(static_cast<float>(dx), static_cast<float>(dy)) != 0, &out);
+  return out;
+}
+
+napi_value ZoomView(napi_env env, napi_callback_info info) {
+  size_t argc = 1;
+  napi_value argv[1] = {nullptr};
+  napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  double factor = 1.0;
+  if (argc >= 1) napi_get_value_double(env, argv[0], &factor);
+  napi_value out = nullptr;
+  napi_get_boolean(env, ChimeraXGLZoom(static_cast<float>(factor)) != 0, &out);
   return out;
 }
 
@@ -746,6 +772,8 @@ napi_value Init(napi_env env, napi_value exports) {
       {"glHandles", nullptr, GLHandles, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"glReacquire", nullptr, GLReacquire, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"drawAtoms", nullptr, DrawAtoms, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"rotateView", nullptr, RotateView, nullptr, nullptr, nullptr, napi_default, nullptr},
+      {"zoomView", nullptr, ZoomView, nullptr, nullptr, nullptr, napi_default, nullptr},
       {"evalProbe", nullptr, EvalProbe, nullptr, nullptr, nullptr, napi_default, nullptr},
   };
   napi_define_properties(env, exports,
