@@ -105,6 +105,23 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
+        # Top-of-page first: the command bar lives there, and clicking needs its rect.
+        for _ in range(3):
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '600', '1000', '1500', '200'])
+            time.sleep(0.5)
+        dump()
+        ui_command = _rect_from_dump('cx-cmd-run')
+        ui_python = _rect_from_dump('cx-cmd-py')
+        ui_output = ''
+        if ui_command:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_command[0]), str(ui_command[1])])
+            time.sleep(4)
+            ui_output = dump()[1].get('cx-cmd-output', '')
+        ui_python_output = ''
+        if ui_python:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
+            time.sleep(4)
+            ui_python_output = dump()[1].get('cx-cmd-output', '')
         values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
@@ -138,16 +155,8 @@ def main() -> int:
                values.get('cx-trigger', ''))
         record('ChimeraX core modules import in the app',
                core.startswith('chimerax.core.errors|UserError|Logger'), core)
-        # Interactive command channel: press the command button, then the Python sample.
-        dump()
-        command_box = _rect_from_dump('cx-cmd-run')
-        python_box = _rect_from_dump('cx-cmd-py')
-        output = ''
-        if command_box:
-            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(command_box[0]), str(command_box[1])])
-            time.sleep(4)
-            values = dump()[1]
-            output = values.get('cx-cmd-output', '')
+        # Interactive command channel results were captured at the top of the page.
+        output = ui_output
         builtin = values.get('cx-builtin', '')
         graphics = values.get('cx-graphics', '')
         gl = values.get('cx-gl-status', '')
@@ -190,13 +199,7 @@ def main() -> int:
         record('ChimeraX command syntax runs from the UI',
                'cxprobe:ui-command' in output, output)
         report['command_output'] = output
-        if python_box:
-            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(python_box[0]), str(python_box[1])])
-            time.sleep(4)
-            values = dump()[1]
-            python_output = values.get('cx-cmd-output', '')
-        else:
-            python_output = ''
+        python_output = ui_python_output
         record('The Python sample runs from the UI',
                'ChimeraX' in python_output and any(ch.isdigit() for ch in python_output), python_output)
         report['python_output'] = python_output
