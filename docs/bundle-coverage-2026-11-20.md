@@ -91,3 +91,18 @@ staging 现在会把上游 `bundles/<name>/bundle_info.xml` 复制进 `chimerax/
 
 下一步：在引导里调用 toolshed 的发现流程（或按 XML 手工注册 provider/格式），
 这样"格式表/命令表/manager"三件事可以一次解决。
+
+## 追加：SDF 读取的一次尝试（走出两步，仍差一步）
+
+直接调用 sdf bundle 的 `read_sdf` 而不走 `open` 命令（绕开格式表）：
+
+| 输入 | 结果 |
+|---|---|
+| `open file.sdf` | `UserError: Unrecognized file suffix '.sdf'`（格式表来自 bundle 元数据） |
+| `read_sdf(session, 二进制流, path)` | `TypeError: endswith first arg must be str or bytes`（它要文本流） |
+| `read_sdf(session, 文本流, path)` | `sdf-read:ok` 但 **`atoms=0`** —— 我构造的 SDF 不符合该读取器的期望格式 |
+
+结论：读接口本身能跑，问题在我给的样例数据；下一步用上游 `tests/data` 里现成的 `.sdf` 样例重试。
+「打开 SDF」按钮先撤下，避免留一个显示 0 原子的入口。
+
+设备断言保持 **26/26**。

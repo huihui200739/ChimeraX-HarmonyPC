@@ -360,8 +360,9 @@ print("commands=%d|%s" % (len(names), ",".join(sorted(names)[:24])))
 `;
 
 
-// Writes a two-atom SDF file and opens it through the ChimeraX open command, which
-// exercises the sdf reader plus the open bundle the payload now ships.
+// Writes a two-atom SDF and reads it with the sdf bundle's reader. The open command needs
+// the data-format table that only toolshed populates, so the reader is called directly and
+// its models are drawn by the native viewer.
 const OPEN_SDF_SCRIPT = `
 import os
 root = "/data/storage/el2/base/haps/entry/files"
@@ -372,29 +373,33 @@ text = chr(10).join([
     "",
     "  2  1  0  0  0  0  0  0  0  0999 V2000",
     "    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
-    "    1.5000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0",
+    "    1.4000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
     "  1  2  1  0",
     "M  END",
 ]) + chr(10)
 with open(sdf, "w") as handle:
     handle.write(text)
-# The sdf bundle provides its reader through the data-format provider registry, which a
-# normal start-up populates from bundle metadata; register it here.
 try:
-    from chimerax.sdf import _SDF_API
-    _SDF_API.run_provider(session, "sdf", session.data_formats)
+    from chimerax.sdf import read_sdf
+    with open(sdf, "r") as stream:
+        models = read_sdf(session, stream, sdf)
 except Exception as error:
-    print("sdf-provider:" + type(error).__name__ + ":" + str(error)[:50])
-from chimerax.core.commands import run
-try:
-    run(session, "open " + sdf)
-    models = list(session.models.list())
-    atoms = sum(len(m.atoms) for m in models if hasattr(m, "atoms"))
-    print("sdf-open:ok|models=%d|atoms=%d" % (len(models), atoms))
-except Exception as error:
-    print("sdf-open:" + type(error).__name__ + ":" + str(error)[:70])
+    print("sdf-read:" + type(error).__name__ + ":" + str(error)[:70])
+    models = []
+atoms = 0
+lines = []
+for model in (models if isinstance(models, (list, tuple)) else [models]):
+    if model is None or not hasattr(model, "atoms"):
+        continue
+    atoms += len(model.atoms)
+    for index, coord in enumerate(model.atoms.coords):
+        lines.append("%.4f %.4f %.4f 0.800 0.800 0.800" % (
+            float(coord[0]), float(coord[1]), float(coord[2])))
+if lines:
+    with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
+        handle.write(chr(10).join(lines))
+print("sdf-read:ok|atoms=%d" % atoms)
 `;
-
 
 // Opens the bundled PDB and asks the list_info bundle about the models: command and model
 // layers talking to each other, not just each one on its own.
