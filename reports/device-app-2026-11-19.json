@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T10:20:27.096220+00:00",
+  "created_at_utc": "2026-11-19T10:41:08.059163+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147505150,
-    "sha256": "e8c158eddbd0a4a5a4b80172237618680ff8bf3079279269b3e97c175099b403"
+    "bytes": 147505233,
+    "sha256": "a11041cb68ac9248e123895ae9ef44b26b3839c31e57a2e95d6e7454266c7293"
   },
   "checks": [
     {

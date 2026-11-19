@@ -297,3 +297,20 @@ current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
 ### 这条线之外的一切都已交付
 
 引擎、结构读写、可视化、界面外壳、打包与 26 项断言均稳定；渲染只差这一个绑定问题。
+
+## 追加（18:45）：平台层 override 已确认打进暂存树，但 PyOpenGL 仍返回 0
+
+这次先验证补丁落地（`grep -c CX_GLES_DIRECT` = 3，且块位于文件末尾），再重编上机：
+
+```
+current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
+```
+
+**仍在 0。** 说明问题不在"平台属性返回哪个库"，而在更早的一层：`OpenGL.raw.GLES3`
+在 `import OpenGL.GLES3` 时就把函数对象（含绑定）生成好了，此后改平台属性对它无效。
+
+**下一步（唯一有效方向）**：改 `OpenGL/raw/GLES3/__init__.py`（或 `OpenGL/GLES3/VERSION/*`）
+里生成函数的那段，让它用 `libGLESv3.so` 的显式句柄；或在导入 `OpenGL` **之前**就把
+`ctypes.util.find_library` 打桩，让 `ctypesloader` 能解析到该库。
+
+其余一切保持交付状态（26/26、可视化、界面外壳、安装包）。
