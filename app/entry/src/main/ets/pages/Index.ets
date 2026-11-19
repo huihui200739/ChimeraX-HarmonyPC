@@ -286,6 +286,7 @@ struct Index {
   @State viewerResult: string = '';
   @State lastTouchX: number = -1;
   @State lastTouchY: number = -1;
+  @State lastPinchSpan: number = 0;
   @State renderResult: string = '';
   @State failed: string = '';
 
@@ -295,6 +296,59 @@ struct Index {
 
   private filesDir(): string {
     return AppStorage.get<string>('cxFilesDir') ?? '';
+  }
+
+  // Toolbar actions. Open runs the read -> dump -> draw chain, Centre resets the view and
+  // the zoom buttons drive the native viewer, so the toolbar is functional, not decorative.
+  private runToolbarAction(action: string): void {
+    if (action === 'Open') {
+      const opened: ScriptReport = native.runScript(OPEN_SCRIPT);
+      if (!opened.ok) {
+        this.openResult = opened.error;
+        return;
+      }
+      this.openResult = opened.output.trim();
+      const dumped: ScriptReport = native.runScript(ATOM_DUMP_SCRIPT);
+      this.atomsDumpResult = (dumped.ok ? dumped.output : dumped.error).trim();
+      try {
+        const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+        this.viewerResult = 'atoms=' + drawn.atoms;
+      } catch (error) {
+        this.viewerResult = 'viewer-error';
+      }
+      return;
+    }
+    if (action === 'Center') {
+      const built: ScriptReport = native.runScript(DEMO_SCRIPT);
+      if (built.ok) {
+        try {
+          const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+          this.viewerResult = 'demo=' + drawn.atoms;
+        } catch (error) {
+          this.viewerResult = 'viewer-error';
+        }
+      }
+      return;
+    }
+    if (action === 'Zoom') {
+      try {
+        native.zoomView(1.2);
+        this.viewerResult = 'zoom-in';
+      } catch (error) {
+        this.viewerResult = 'zoom-error';
+      }
+      return;
+    }
+    if (action === 'Rotate') {
+      try {
+        native.rotateView(40, 15);
+        this.viewerResult = 'rotated';
+      } catch (error) {
+        this.viewerResult = 'rotate-error';
+      }
+      return;
+    }
+    this.viewerResult = action + ':not-implemented';
   }
 
   private executeCommand(): void {
@@ -487,6 +541,7 @@ struct Index {
         ForEach(['Open', 'Save', 'Undo', 'Redo', 'Rotate', 'Zoom', 'Center'], (action: string) => {
           Button(action).id('cx-tool-' + action.toLowerCase()).fontSize(11).height(30)
             .backgroundColor('#2A4B73').fontColor('#EAF2FB')
+            .onClick(() => this.runToolbarAction(action))
         }, (action: string) => action)
       }.width('100%').padding({ top: 4, bottom: 4 })
       Divider().color('#3E5C80')
@@ -615,6 +670,23 @@ struct Index {
             return;
           }
           const touch: TouchObject = event.touches[0];
+          if (event.touches.length === 2) {
+            const dx: number = event.touches[0].windowX - event.touches[1].windowX;
+            const dy: number = event.touches[0].windowY - event.touches[1].windowY;
+            const span: number = Math.sqrt(dx * dx + dy * dy);
+            if (this.lastPinchSpan > 0 && span > 0) {
+              const factor: number = span / this.lastPinchSpan;
+              if (factor > 0.5 && factor < 2.0) {
+                try {
+                  native.zoomView(factor);
+                } catch (error) {
+                  this.viewerResult = 'zoom-error';
+                }
+              }
+            }
+            this.lastPinchSpan = span;
+            return;
+          }
           if (event.type === TouchType.Move && this.lastTouchX >= 0) {
             const dx: number = touch.windowX - this.lastTouchX;
             const dy: number = touch.windowY - this.lastTouchY;
