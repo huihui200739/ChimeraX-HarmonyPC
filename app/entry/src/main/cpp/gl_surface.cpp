@@ -278,14 +278,25 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
   if (count == 0) {
     return -4;
   }
-  // Centre the molecule and scale it to fit the viewport.
-  float cx = 0, cy = 0, cz = 0;
+  // Centre on the bounding-box middle: the centroid of a protein drifts towards its denser
+  // core and leaves the picture off-centre.
+  float min_x = vertices[0], max_x = vertices[0];
+  float min_y = vertices[1], max_y = vertices[1];
+  float min_z = vertices[2], max_z = vertices[2];
   for (size_t i = 0; i < count; ++i) {
-    cx += vertices[i * 7];
-    cy += vertices[i * 7 + 1];
-    cz += vertices[i * 7 + 2];
+    const float x = vertices[i * 7];
+    const float y = vertices[i * 7 + 1];
+    const float z = vertices[i * 7 + 2];
+    min_x = x < min_x ? x : min_x;
+    max_x = x > max_x ? x : max_x;
+    min_y = y < min_y ? y : min_y;
+    max_y = y > max_y ? y : max_y;
+    min_z = z < min_z ? z : min_z;
+    max_z = z > max_z ? z : max_z;
   }
-  cx /= count; cy /= count; cz /= count;
+  const float cx = 0.5f * (min_x + max_x);
+  const float cy = 0.5f * (min_y + max_y);
+  const float cz = 0.5f * (min_z + max_z);
   // Normalise by the largest axis extent: a long thin helix would otherwise shrink to a
   // dot when the radius-based scale is used.
   float extent = 0.0f;
