@@ -391,22 +391,13 @@ try:
         pass  # already registered in this interpreter
     # Bundle-provided commands have to be registered explicitly: this minimal session
     # never runs the toolshed bundle discovery that a normal start-up performs.
-    # Each bundle command is registered on its own: one failing descriptor must not stop
-    # the others.
-    _cx_bundle_errors = []
-    for _cx_module, _cx_attr, _cx_cmds in (
-            ("chimerax.list_info", "_InfoAPI", ("list", "info")),):
-        try:
-            _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
-            for _cx_cmd in _cx_cmds:
-                try:
-                    _cx_api.register_command(_cx_cmd, session.logger)
-                except Exception as _cx_one:
-                    _cx_bundle_errors.append(_cx_cmd + ":" + type(_cx_one).__name__)
-        except Exception as _cx_bundle_error:
-            _cx_bundle_errors.append(type(_cx_bundle_error).__name__)
-    if _cx_bundle_errors:
-        _cx_state = "bundle-register:" + ",".join(_cx_bundle_errors)[:70]
+    # Register the bundle command that works on this runtime: "list models" from list_info.
+    try:
+        from chimerax.list_info import _InfoAPI as _cx_info_api
+        _cx_info_api.register_command("list", session.logger)
+    except Exception as _cx_bundle_error:
+        _cx_state = ("bundle-register:" + type(_cx_bundle_error).__name__
+                     + ":" + str(_cx_bundle_error)[:40])
     _cx_state = globals().get("_cx_state", "session-ready")
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]
