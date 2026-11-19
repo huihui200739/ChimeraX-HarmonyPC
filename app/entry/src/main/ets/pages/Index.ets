@@ -110,7 +110,13 @@ while stack:
         models.append(item)
     elif isinstance(item, (list, tuple)):
         stack.extend(item)
-session.models.add(models)
+# Registering models triggers notifications that need managers this minimal session
+# lacks; keep the list regardless so the viewer still sees the atoms.
+cx_opened_models = list(models)
+try:
+    session.models.add(models)
+except Exception:
+    pass
 print("models=%d|atoms=%d|residues=%d" % (
     len(models), sum(m.num_atoms for m in models), sum(m.num_residues for m in models)))
 `;
@@ -125,7 +131,9 @@ const ATOM_DUMP_SCRIPT = `
 import os
 path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
 lines = []
-for model in session.models.list():
+candidates = list(globals().get("cx_opened_models") or [])
+candidates += [m for m in session.models.list() if m not in candidates]
+for model in candidates:
     if not hasattr(model, "atoms"):
         continue
     coords = model.atoms.coords
@@ -139,6 +147,24 @@ for model in session.models.list():
 with open(path, "w") as handle:
     handle.write(chr(10).join(lines))
 print("atoms_written=%d" % len(lines))
+`;
+
+
+// Builds a small alpha-helix so the viewer has a genuinely three-dimensional demo
+// structure (the four-atom PDB probe is planar and collapses to a dot when rotated).
+const DEMO_SCRIPT = `
+import math, os
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
+lines = []
+for index in range(60):
+    angle = index * 0.9
+    x = 6.0 * math.cos(angle)
+    y = 6.0 * math.sin(angle)
+    z = index * 0.55 - 16.0
+    lines.append("%.4f %.4f %.4f 0.450 0.700 0.950" % (x, y, z))
+with open(path, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("demo_atoms=%d" % len(lines))
 `;
 
 // Adopts the EGL context the native surface created, renders offscreen through
@@ -555,6 +581,20 @@ struct Index {
         Text(this.qtModeState).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
       }.width('100%')
       Row({ space: 8 }) {
+        Button('示例螺旋').id('cx-demo-run').fontSize(12).height(32)
+          .onClick(() => {
+            const built: ScriptReport = native.runScript(DEMO_SCRIPT);
+            if (!built.ok) {
+              this.viewerResult = 'demo-error';
+              return;
+            }
+            try {
+              const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+              this.viewerResult = 'demo=' + drawn.atoms;
+            } catch (error) {
+              this.viewerResult = 'viewer-error';
+            }
+          })
         Button('显示结构').id('cx-viewer-run').fontSize(12).height(32)
           .onClick(() => {
             const path: string = this.filesDir() + '/cx_atoms.txt';

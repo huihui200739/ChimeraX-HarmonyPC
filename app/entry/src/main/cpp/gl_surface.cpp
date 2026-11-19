@@ -276,15 +276,18 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
     cz += vertices[i * 6 + 2];
   }
   cx /= count; cy /= count; cz /= count;
-  float radius = 0.0f;
+  // Normalise by the largest axis extent: a long thin helix would otherwise shrink to a
+  // dot when the radius-based scale is used.
+  float extent = 0.0f;
   for (size_t i = 0; i < count; ++i) {
-    const float dx = vertices[i * 6] - cx;
-    const float dy = vertices[i * 6 + 1] - cy;
-    const float dz = vertices[i * 6 + 2] - cz;
-    const float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-    radius = distance > radius ? distance : radius;
+    const float dx = std::fabs(vertices[i * 6] - cx);
+    const float dy = std::fabs(vertices[i * 6 + 1] - cy);
+    const float dz = std::fabs(vertices[i * 6 + 2] - cz);
+    extent = dx > extent ? dx : extent;
+    extent = dy > extent ? dy : extent;
+    extent = dz > extent ? dz : extent;
   }
-  const float scale = radius > 1e-3f ? 0.85f / radius : 1.0f;
+  const float scale = extent > 1e-3f ? 0.9f / extent : 1.0f;
   std::vector<GLfloat> points;
   points.reserve(vertices.size());
   for (size_t i = 0; i < count; ++i) {
@@ -364,6 +367,11 @@ void main() {
   glClear(GL_COLOR_BUFFER_BIT);
   glUseProgram(program);
   glUniform1f(glGetUniformLocation(program, "scale"), 1.0f);
+  // View uniforms must be set before drawing: zoom defaults to 0 and would collapse
+  // every vertex onto the origin (the "single dot" symptom).
+  glUniform1f(glGetUniformLocation(program, "yaw"), g_view_yaw);
+  glUniform1f(glGetUniformLocation(program, "pitch"), g_view_pitch);
+  glUniform1f(glGetUniformLocation(program, "zoom"), g_view_zoom);
   if (!bonds.empty()) {
     glBufferData(GL_ARRAY_BUFFER, bonds.size() * sizeof(GLfloat), bonds.data(),
                  GL_STATIC_DRAW);

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-19T05:07:01.244019+00:00",
+  "target": "aarch64-linux-ohos",
+  "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/lib/libcxatomstruct.so",
+  "bytes": 3256448,
+  "sha256": "d3f1f949aaea6babae3884a72b03c521d3b89f72f6791376ee790aaf17f9081b",
+  "sources": 54,
+  "status": "atomic_shared_lib_cross_compiled_not_target_tested"
+}
