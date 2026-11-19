@@ -434,6 +434,44 @@ def main() -> int:
                 "    pass\n")
             egl_file.write_text(text)
 
+    # PyOpenGL resolves libraries through ctypes.util.find_library, which does not know the
+    # HarmonyOS layout; stub it before OpenGL is imported so the GLESv3 soname resolves to
+    # the real file. Without this every GL entry point silently returns zero.
+    gl_top = args.output / 'chimerax/graphics/opengl.py'
+    if gl_top.is_file():
+        text = gl_top.read_text()
+        marker = 'CX_FIND_LIBRARY_STUB'
+        if marker not in text:
+            stub = (
+                "# CX_FIND_LIBRARY_STUB: HarmonyOS libraries are not in ldconfig's cache, so\n"
+                "# ctypes.util.find_library returns None for them. Map the GLES/EGL names to the\n"
+                "# real files before PyOpenGL builds its function table.\n"
+                "def _cx_install_find_library_stub():\n"
+                "    import ctypes.util as _cx_cu\n"
+                "    import os as _cx_os\n"
+                "    original = _cx_cu.find_library\n"
+                "    table = (('glesv3', '/system/lib64/libGLESv3.so'),\n"
+                "             ('glesv2', '/system/lib64/libGLESv3.so'),\n"
+                "             ('glesv1', '/system/lib64/libGLESv3.so'),\n"
+                "             ('egl', '/system/lib64/libEGL.so'))\n"
+                "    def patched(name, *args, **kwargs):\n"
+                "        lowered = (name or '').lower()\n"
+                "        for probe, path in table:\n"
+                "            if probe in lowered and _cx_os.path.exists(path):\n"
+                "                return path\n"
+                "        return original(name, *args, **kwargs)\n"
+                "    _cx_cu.find_library = patched\n"
+                "\n"
+                "\n"
+                "_cx_install_find_library_stub()\n")
+            lines = text.split('\n')
+            insert_at = 0
+            for index, line in enumerate(lines[:40]):
+                if line.startswith('from __future__') or line.startswith('import ') or line.startswith('from '):
+                    insert_at = index + 1
+            lines.insert(insert_at, stub)
+            gl_top.write_text('\n'.join(lines))
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'

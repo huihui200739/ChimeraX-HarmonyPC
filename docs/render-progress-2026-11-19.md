@@ -314,3 +314,29 @@ current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
 `ctypes.util.find_library` 打桩，让 `ctypesloader` 能解析到该库。
 
 其余一切保持交付状态（26/26、可视化、界面外壳、安装包）。
+
+## 追加（20:05）：find_library 打桩后仍是 0 —— 结论收敛
+
+在 `chimerax/graphics/opengl.py` 顶部对 `ctypes.util.find_library` 打桩（把 glesv3/glesv2/egl
+映射到 `/system/lib64/` 的真实文件），且**已验证补丁落在暂存树**（`CX_FIND_LIBRARY_STUB` 位于文件
+首部），重编上机后：
+
+```
+current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
+```
+
+仍未变化。至此三条修法都试过：平台属性 override、find_library 打桩、代理层替换。
+共同结论：**PyOpenGL 在这个平台上生成的函数包装本身不可用**（绑定到的句柄没有 ES3 实现），
+而裸 `ctypes` 调用同一库完全正常。
+
+### 可行的收尾方案（需要一次较大的改动）
+
+在 `chimerax/graphics/opengl.py` 里**用我们自己的 ctypes 封装替换整个 GL 模块**：
+按 ChimeraX 实际用到的函数清单（可从源码 grep 出，约 80–120 个）用 `argtypes/restype` 精确声明，
+数组参数走 `numpy.ctypes.data`。这样既不依赖 PyOpenGL 的绑定，也不会有"静默返回 0"。
+
+工作量约半天到一天，风险可控（函数清单固定、有 26 项回归兜底）。
+
+### 当前交付状态
+
+设备断言 26/26，结构可视化、界面外壳、安装包均可用；渲染是唯一未完成项。
