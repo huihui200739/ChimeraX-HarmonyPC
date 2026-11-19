@@ -274,6 +274,31 @@ with open(path, "w") as handle:
 print("demo4_atoms=%d" % len(lines))
 `;
 
+
+// Saves the current atom list as a PDB file inside the sandbox: a round trip that proves
+// the write side works without a system file dialog.
+const SAVE_SCRIPT = `
+import os
+root = "/data/storage/el2/base/haps/entry/files"
+src = os.path.join(root, "cx_atoms.txt")
+dst = os.path.join(root, "cx_saved.pdb")
+lines = []
+element_of = {(0.75, 0.75, 0.75): "C", (0.35, 0.45, 0.95): "N",
+              (0.95, 0.35, 0.30): "O", (0.95, 0.85, 0.25): "S"}
+with open(src) as handle:
+    rows = [line.split() for line in handle if line.strip()]
+for index, row in enumerate(rows, start=1):
+    x, y, z = float(row[0]), float(row[1]), float(row[2])
+    key = (round(float(row[3]), 2), round(float(row[4]), 2), round(float(row[5]), 2))
+    symbol = element_of.get(key, "C")
+    lines.append("ATOM  %5d  %-3s UNL A   1    %8.3f%8.3f%8.3f  1.00  0.00          %2s" % (
+        index, symbol + str(index), x, y, z, symbol))
+lines.append("END")
+with open(dst, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("saved=%d" % len(rows))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -437,6 +462,11 @@ struct Index {
           this.viewerResult = 'viewer-error';
         }
       }
+      return;
+    }
+    if (action === 'Save') {
+      const saved: ScriptReport = native.runScript(SAVE_SCRIPT);
+      this.viewerResult = (saved.ok ? saved.output : saved.error).trim();
       return;
     }
     if (action === 'Zoom') {

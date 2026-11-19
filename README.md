@@ -1,4 +1,34 @@
-# ChimeraX — 鸿蒙 PC 通用兼容性准备
+# ChimeraX × HarmonyOS PC 适配
+
+UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
+应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
+
+**一键验收**：`python3 tools/device_app_check.py` → 26 项设备断言（收据在 `reports/device-app-*.json`）
+
+## 现在能做什么（都在模拟器上验证过）
+
+| 能力 | 证据 |
+|---|---|
+| 启动即就绪：私有 CPython 3.11.18 + ChimeraX v1.11.1 引擎 | `3.11.18 (main, Nov 17 2026)` / `v1.11.1` |
+| numpy / tinyarray / PyOpenGL | `1.26.4`、`OpenGL ES 3.0 (4.1 Metal - 91.7)` |
+| core / commands / session / toolshed | `Session\|True\|16`、`toolshed list` 可执行 |
+| atomic 模型层 | 建出结构 `atoms=2\|residues=1\|names=C1,N1` |
+| PDB / CIF 读取 | 打开 PDB `models=1\|atoms=4\|residues=1` |
+| 结构可视化（替代渲染通路） | 原子按元素着色 + ≤2.2 Å 成键，4/68/168/448 原子分别 <10/10/17/34 ms |
+| 交互 | 拖动旋转、双指缩放、工具栏 Rotate/Zoom/Center |
+| 打开 / 保存 | 沙箱文件列表点开、Save 写回 `cx_saved.pdb`（`saved=4`） |
+| 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
+
+## 未完成（含精确卡点）
+
+1. **ChimeraX 自身渲染器出图**：EGL 上下文、PyOpenGL 对齐、ES3 入口点、方言映射全通，
+   卡在它的 **UBO 着色器体系需移植到 GLSL ES**（`glGetUniformBlockIndex('lighting_block')`
+   返回 INVALID_OPERATION），以天计。
+2. **Qt 原生窗口**：该运行时拒绝对 Qt 插件所需的表达式求值
+   （`LocalStorage.makeNewLocalStorage()`），四条交底路径均有设备日志，结论封存在
+   `docs/qt-status-2026-11-18-final.md`。
+
+详细交付说明见 `docs/DELIVERY-2026-11-19.md`（能力矩阵、复现命令、性能曲线）。
 
 ## 当前结论（2026-11-19 PyOpenGL 与接管的 EGL 上下文对齐）
 

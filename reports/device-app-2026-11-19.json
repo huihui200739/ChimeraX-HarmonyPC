@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T07:04:22.075391+00:00",
+  "created_at_utc": "2026-11-19T07:53:23.127739+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147484183,
-    "sha256": "96030a3f3d23534c55866757be11ad524992fba936f2ad01ba43f5a4d808a98f"
+    "bytes": 147500375,
+    "sha256": "1029e1b39f355ea08fa34bb3acdcd6f7d5aa15f5d4e68dca33a341fe940bb1c5"
   },
   "checks": [
     {
@@ -172,10 +172,16 @@
     "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
     "cx-qt-mode": "启用 Qt 窗口模式",
     "cx-demo2-run": "双螺旋示例",
+    "cx-demo3-run": "三螺旋束",
+    "cx-demo4-run": "大结构(448)",
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
     "cx-viewer-status": "atoms_written=4",
+    "cx-status-model": "模型: atoms=2",
+    "cx-status-atoms": "原子: 4",
+    "cx-status-view": "视图: yaw/pitch/zoom",
+    "cx-status-state": "状态: 运行环境就绪",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
     "cx-open": "models=1|atoms=4|residues=1",
