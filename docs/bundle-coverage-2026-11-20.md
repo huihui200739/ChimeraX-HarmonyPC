@@ -42,3 +42,14 @@ state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances
 
 `info` 子命令注册报 `ValueError`（`list` 成功）。注册已改为逐命令隔离，不影响其他命令；
 下一步打印该错误的完整信息再修。
+
+## 追加：再接入 `zone` / `sdf` / `mol2`
+
+三个纯 Python bundle（无 C++ 依赖）已加入暂存清单并确认进入 payload（`zone 3`、`sdf 2`、`mol2 2` 个文件）。
+设备断言仍 26/26，说明新增包没有破坏现有导入链。
+
+它们的命令（`zone`、`open` 的 sdf/mol2 读取）依赖：
+- `zone`：需要 selection/模型管理器
+- `sdf`/`mol2`：需要 `chimerax.atomic` 与 `open` 命令通路
+
+下一步按依赖逐个注册并验证。
