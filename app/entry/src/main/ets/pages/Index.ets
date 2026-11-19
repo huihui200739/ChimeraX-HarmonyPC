@@ -477,6 +477,7 @@ struct Index {
   @State atomsDumpResult: string = '';
   @State viewerResult: string = '';
   @State commandsState: string = '';
+  @State commandNames: string[] = [];
   @State lastTouchX: number = -1;
   @State lastTouchY: number = -1;
   @State lastPinchSpan: number = 0;
@@ -934,12 +935,25 @@ struct Index {
           .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
           .onClick(() => {
             const listed: ScriptReport = native.runScript(COMMANDS_SCRIPT);
-            this.commandsState = (listed.ok ? listed.output : listed.error).trim();
+            const text: string = (listed.ok ? listed.output : listed.error).trim();
+            this.commandsState = text;
+            const parts: string[] = text.split('|');
+            this.commandNames = parts.length > 1 && parts[1].length > 0
+              ? parts[1].split(',') : [];
           })
         Text(this.commandsState.length > 0 ? this.commandsState : '—')
           .id('cx-cmd-list-output').fontSize(10).fontColor('#9FB4C8')
           .layoutWeight(1).maxLines(3)
       }.width('100%')
+      if (this.commandNames.length > 0) {
+        Row({ space: 6 }) {
+          ForEach(this.commandNames, (name: string) => {
+            Button(name).id('cx-cmdchip-' + name).fontSize(9).height(24)
+              .backgroundColor('#16324F').fontColor('#CFE0F0')
+              .onClick(() => { this.commandText = name; })
+          }, (name: string) => name)
+        }.width('100%')
+      }
       Row({ space: 14 }) {
         Text('模型: ' + (this.openResult.indexOf('models=') >= 0
           ? this.openResult.split('models=')[1].split('|')[0] : '—'))
