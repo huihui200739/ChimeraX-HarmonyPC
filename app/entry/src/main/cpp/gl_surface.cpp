@@ -333,7 +333,7 @@ void main() {
     float cp = cos(pitch), sp = sin(pitch);
     vec3 q = vec3(r.x, cp * r.y - sp * r.z, sp * r.y + cp * r.z);
     gl_Position = vec4(q * zoom, 1.0);
-    gl_PointSize = 8.0;
+    gl_PointSize = 10.0;
 }
 )";
   const char* fragment_source = R"(#version 300 es
