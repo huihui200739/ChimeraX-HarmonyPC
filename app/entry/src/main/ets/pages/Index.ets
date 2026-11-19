@@ -908,6 +908,25 @@ struct Index {
              : (this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult))
           .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(2)
       }.width('100%')
+      Row({ space: 14 }) {
+        Text('模型: ' + (this.openResult.indexOf('models=') >= 0
+          ? this.openResult.split('models=')[1].split('|')[0] : '—'))
+          .id('cx-status-model').fontSize(10).fontColor('#9FB4C8')
+        Text('原子: ' + (this.openResult.indexOf('atoms=') >= 0
+          ? this.openResult.split('atoms=')[1].split('|')[0] : '—'))
+          .id('cx-status-atoms').fontSize(10).fontColor('#9FB4C8')
+        Text('视图: ' + this.viewerResult).id('cx-status-view').fontSize(10).fontColor('#9FB4C8')
+        Button('重置视角').id('cx-view-reset').fontSize(10).height(26)
+          .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+          .onClick(() => {
+            try {
+              native.rotateView(0, 0);
+              this.viewerResult = 'view-reset';
+            } catch (error) {
+              this.viewerResult = 'reset-error';
+            }
+          })
+      }.width('100%')
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
         .id('cx-gl-surface').width('100%').height(220).backgroundColor('#16212F')
         .onTouch((event: TouchEvent) => {
@@ -972,15 +991,6 @@ struct Index {
           }, (name: string) => name)
         }.width('100%')
       }
-      Row({ space: 16 }) {
-        Text('模型: ' + (this.modelResult.length > 0 ? this.modelResult.split('|')[0] : '—'))
-          .id('cx-status-model').fontSize(10).fontColor('#9FB4C8')
-        Text('原子: ' + (this.openResult.indexOf('atoms=') >= 0
-          ? this.openResult.split('atoms=')[1].split('|')[0] : '—'))
-          .id('cx-status-atoms').fontSize(10).fontColor('#9FB4C8')
-        Text('视图: yaw/pitch/zoom').id('cx-status-view').fontSize(10).fontColor('#9FB4C8')
-        Text('状态: ' + this.status).id('cx-status-state').fontSize(10).fontColor('#9FB4C8')
-      }.width('100%')
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')

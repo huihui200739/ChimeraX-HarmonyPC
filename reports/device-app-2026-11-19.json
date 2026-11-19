@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T08:48:02.083172+00:00",
+  "created_at_utc": "2026-11-19T09:07:31.649080+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147504386,
-    "sha256": "8fc71be447d2674fa9ed45c3b8eb8dbfc73c59dcc90c9048f1aa7f3281ac1ab6"
+    "bytes": 147505251,
+    "sha256": "dc964a299c4c69c53e30b00e29c6e7325e8299b523d11cfdeb4f551345e46d98"
   },
   "checks": [
     {
@@ -131,13 +131,13 @@
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
-      "passed": true,
-      "detail": "cxprobe:ui-command"
+      "passed": false,
+      "detail": ""
     },
     {
       "name": "The Python sample runs from the UI",
-      "passed": true,
-      "detail": "ChimeraX 28"
+      "passed": false,
+      "detail": ""
     }
   ],
   "ui": {
@@ -178,10 +178,10 @@
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
     "cx-viewer-status": "GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockIndex,\\n\\tpyArgs = (0, b'lighting_block'),\\n\\tcArgs = (0, b'lighting_block'),\\n\\tcArguments = (0, b'lighting_block'),\\n\\tresult = 0\\n)",
-    "cx-status-model": "模型: atoms=2",
+    "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: yaw/pitch/zoom",
-    "cx-status-state": "状态: 运行环境就绪",
+    "cx-status-view": "视图: GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockIndex,\\n\\tpyArgs = (0, b'lighting_block'),\\n\\tcArgs = (0, b'lighting_block'),\\n\\tcArguments = (0, b'lighting_block'),\\n\\tresult = 0\\n)",
+    "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
     "cx-open": "models=1|atoms=4|residues=1",
@@ -195,12 +195,12 @@
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
   "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
-  "command_output": "cxprobe:ui-command",
-  "python_output": "ChimeraX 28",
+  "command_output": "",
+  "python_output": "",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 26,
-    "failed": 0
+    "passed": 24,
+    "failed": 2
   },
-  "status": "app_runtime_verified"
+  "status": "app_runtime_incomplete"
 }
