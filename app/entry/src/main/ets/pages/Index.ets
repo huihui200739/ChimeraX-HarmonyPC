@@ -308,44 +308,20 @@ import ctypes
 def diagnose(display_ptr, context_ptr, surface_ptr):
     egl = ctypes.CDLL("libEGL.so")
     egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
-    egl.eglGetCurrentContext.restype = ctypes.c_void_p
     display = ctypes.c_void_p(int(display_ptr))
     context = ctypes.c_void_p(int(context_ptr))
     surface = ctypes.c_void_p(int(surface_ptr))
     if not egl.eglMakeCurrent(display, surface, surface, context):
         return "make-current:failed"
-    current = egl.eglGetCurrentContext()
-    # Bypass PyOpenGL: does the raw library create a program on this context?
     gles = ctypes.CDLL("libGLESv3.so")
     gles.glCreateProgram.restype = ctypes.c_uint
-    raw_program = int(gles.glCreateProgram())
-    gles.glGetError.restype = ctypes.c_uint
-    raw_error = int(gles.glGetError())
-    from chimerax.graphics import opengl as cxgl
-    cxgl._initialize_pyopengl()
-    GL = cxgl.GL
-    py_program = 0
-    try:
-        py_program = int(GL.glCreateProgram())
-    except BaseException as error:
-        py_program = -1
-    py_error = 0
-    try:
-        py_error = int(GL.glGetError())
-    except BaseException:
-        py_error = -1
-    kind = type(GL).__name__
-    has_func = hasattr(GL.glCreateProgram, "func")
-    direct = 0
-    try:
-        direct = int(GL.glCreateProgram.func())
-    except BaseException:
-        direct = -1
-    return ("current=%d|raw_program=%d|py_program=%d|gl_type=%s|has_func=%s|direct=%d"
-            % (bool(current), raw_program, py_program, kind, has_func, direct))
+    program = int(gles.glCreateProgram())
+    gles.glDeleteProgram(program)
+    return "raw_program=%d" % program
 
 print(diagnose("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
