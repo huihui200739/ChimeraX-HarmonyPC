@@ -106,3 +106,20 @@ staging 现在会把上游 `bundles/<name>/bundle_info.xml` 复制进 `chimerax/
 「打开 SDF」按钮先撤下，避免留一个显示 0 原子的入口。
 
 设备断言保持 **26/26**。
+
+## 追加：真实蛋白（ras.pdb，1322 个 ATOM）读取结果 = 0 原子
+
+把上游 `viewdock/test-data/ras.pdb`（1322 个 ATOM 行）作为资源打包，用 ArkTS 从 rawfile 复制到沙箱后
+调用 `open_pdb`：
+
+```
+real-pdb:ok|atoms=0 view=4   ← view=4 是上一轮遗留的旧几何
+```
+
+即 `open_pdb` 对这个真实文件返回的模型**没有原子**，而 4 原子的探针 PDB 是正常的。
+两种可能：
+1. `open_pdb` 需要按块解析（多 MODEL / 大文件路径），我们的调用方式只处理了小文件
+2. 该 fixture 缺 `END` 或含非标准记录，读取器静默跳过
+
+「Ras 蛋白」按钮已撤下。下一步在开发运行时里对同一文件跑 `open_pdb` 并打印异常/计数，
+先定位是解析问题还是文件问题，再决定是否换 fixture。

@@ -422,6 +422,39 @@ else:
         print("info-models:" + type(error).__name__ + ":" + str(error)[:60])
 `;
 
+
+// Copies the bundled ras.pdb asset into the sandbox and opens it: a real 1300-atom protein
+// rather than the four-atom probe.
+const OPEN_REAL_PDB_SCRIPT = `
+import os
+root = "/data/storage/el2/base/haps/entry/files"
+target = os.path.join(root, "cx_demo.pdb")
+from chimerax.pdb.pdb import open_pdb
+if not os.path.exists(target):
+    print("real-pdb:asset-missing")
+else:
+    with open(target, "rb") as stream:
+        opened = open_pdb(session, stream, target)
+    models = [m for m in (opened if isinstance(opened, (list, tuple)) else [opened])
+              if hasattr(m, "atoms")]
+    atoms = 0
+    lines = []
+    for model in models:
+        atoms += len(model.atoms)
+        elements = model.atoms.elements
+        for index, coord in enumerate(model.atoms.coords):
+            symbol = elements[index].name if index < len(elements) else "C"
+            tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
+                    "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
+            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+                float(coord[0]), float(coord[1]), float(coord[2]),
+                tone[0], tone[1], tone[2]))
+    if lines:
+        with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
+            handle.write(chr(10).join(lines))
+    print("real-pdb:ok|atoms=%d" % atoms)
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
