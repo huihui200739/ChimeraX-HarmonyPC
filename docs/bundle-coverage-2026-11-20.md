@@ -148,3 +148,28 @@ for name in ('model position changed', 'new frame', 'scene begin', 'scene end',
 
 设备验证：断言 **26/26** 保持，`cx-open` 仍是 `models=1|atoms=4|residues=1`。
 下一步用 `ras.pdb`（1322 ATOM）复测真实蛋白。
+
+## 打通：真实蛋白与真实 SDF 都能打开并显示
+
+### 真正的 bug
+
+`open_pdb(session, stream, path)` 返回的是 `(models, status)` 形态（实测 `[list, str]`）。
+之前的代码用 `[m for m in opened if hasattr(m, "atoms")]` 过滤，把模型列表和状态串一起滤掉，
+于是表现为"读取成功但 0 原子"。改成递归展平（`_cx_models`）后立刻正常。
+
+同一个 bug 也影响 SDF 读取。
+
+### 设备读回
+
+| 资产 | 结果 |
+|---|---|
+| `ras.pdb`（上游 viewdock 示例，1322 个 ATOM） | `real-pdb:ok\|atoms=1322` → 视口 `view=1322` |
+| `Structure2D_CID_95480.sdf`（上游 sdf 测试样例，48 原子） | `real-sdf:ok\|atoms=48` → 视口 `view=48` |
+
+两者都是通过 ArkTS 从 `rawfile` 复制到沙箱后读取，不依赖系统文件对话框。
+
+### 顺带修正
+
+- 引导里补注册读取器需要的 trigger（`model position changed` 等），否则 `AtomicStructure`
+  初始化会抛 `KeyError` 并被静默吞掉
+- 断言仍 **26/26**

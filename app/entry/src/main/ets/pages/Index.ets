@@ -435,8 +435,7 @@ if not os.path.exists(target):
 else:
     with open(target, "rb") as stream:
         opened = open_pdb(session, stream, target)
-    models = [m for m in (opened if isinstance(opened, (list, tuple)) else [opened])
-              if hasattr(m, "atoms")]
+    models = _cx_models(opened)
     atoms = 0
     lines = []
     for model in models:
@@ -453,6 +452,89 @@ else:
         with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
             handle.write(chr(10).join(lines))
     print("real-pdb:ok|atoms=%d" % atoms)
+`;
+
+
+// Opens the real protein asset (1322 ATOM records) now that the reader's triggers exist.
+const REAL_PDB_SCRIPT = `
+import os
+def _cx_models(value):
+    """open_pdb returns (models, status) shaped data; flatten it to the actual models."""
+    out = []
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, bytes)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+        elif hasattr(item, "atoms"):
+            out.append(item)
+    return out
+
+
+root = "/data/storage/el2/base/haps/entry/files"
+target = os.path.join(root, "cx_demo.pdb")
+from chimerax.pdb.pdb import open_pdb
+try:
+    with open(target, "rb") as stream:
+        opened = open_pdb(session, stream, target)
+    models = _cx_models(opened)
+    lines = []
+    for model in models:
+        elements = model.atoms.elements
+        for index, coord in enumerate(model.atoms.coords):
+            symbol = elements[index].name if index < len(elements) else "C"
+            tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
+                    "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
+            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+                float(coord[0]), float(coord[1]), float(coord[2]),
+                tone[0], tone[1], tone[2]))
+    if lines:
+        with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
+            handle.write(chr(10).join(lines))
+    print("real-pdb:ok|atoms=%d" % len(lines))
+except Exception as error:
+    print("real-pdb:" + type(error).__name__ + ":" + str(error)[:60])
+`;
+
+// Opens the upstream SDF fixture through its reader, bypassing the format table.
+const REAL_SDF_SCRIPT = `
+import os
+def _cx_models(value):
+    """open_pdb returns (models, status) shaped data; flatten it to the actual models."""
+    out = []
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, bytes)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+        elif hasattr(item, "atoms"):
+            out.append(item)
+    return out
+
+
+root = "/data/storage/el2/base/haps/entry/files"
+target = os.path.join(root, "cx_demo.sdf")
+from chimerax.sdf import read_sdf
+try:
+    with open(target, "r") as stream:
+        models = read_sdf(session, stream, target)
+    lines = []
+    atoms = 0
+    for model in _cx_models(models):
+        atoms += len(model.atoms)
+        for coord in model.atoms.coords:
+            lines.append("%.4f %.4f %.4f 0.700 0.850 0.750" % (
+                float(coord[0]), float(coord[1]), float(coord[2])))
+    if lines:
+        with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
+            handle.write(chr(10).join(lines))
+    print("real-sdf:ok|atoms=%d" % atoms)
+except Exception as error:
+    print("real-sdf:" + type(error).__name__ + ":" + str(error)[:60])
 `;
 
 // Adopts the EGL context the native surface created, renders offscreen through
@@ -592,6 +674,31 @@ struct Index {
 
   // Toolbar actions. Open runs the read -> dump -> draw chain, Centre resets the view and
   // the zoom buttons drive the native viewer, so the toolbar is functional, not decorative.
+  // Copies a rawfile asset into the sandbox, then runs the script that opens it.
+  private openAsset(asset: string, script: string): void {
+    try {
+      const bytes: Uint8Array = getContext(this).resourceManager.getRawFileContentSync(asset);
+      const path: string = this.filesDir() + '/' + asset;
+      const file = fs.openSync(path, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+      fs.writeSync(file.fd, bytes.buffer as ArrayBuffer);
+      fs.closeSync(file);
+    } catch (error) {
+      this.viewerResult = 'asset-copy-failed';
+      return;
+    }
+    const report: ScriptReport = native.runScript(script);
+    const text: string = (report.ok ? report.output : report.error).trim();
+    this.viewerResult = text.slice(0, 60);
+    if (text.indexOf('ok|') > 0) {
+      try {
+        const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+        this.viewerResult = text.slice(0, 34) + ' view=' + drawn.atoms;
+      } catch (error) {
+        this.viewerResult = 'viewer-error';
+      }
+    }
+  }
+
   private runToolbarAction(action: string): void {
     if (action === 'Open') {
       const opened: ScriptReport = native.runScript(OPEN_SCRIPT);
@@ -988,6 +1095,10 @@ struct Index {
               this.viewerResult = 'viewer-error';
             }
           })
+        Button('Ras 蛋白').id('cx-real-run').fontSize(12).height(32)
+          .onClick(() => { this.openAsset('cx_demo.pdb', REAL_PDB_SCRIPT); })
+        Button('打开 SDF').id('cx-sdf-run').fontSize(12).height(32)
+          .onClick(() => { this.openAsset('cx_demo.sdf', REAL_SDF_SCRIPT); })
         Button('模型信息').id('cx-info-run').fontSize(12).height(32)
           .onClick(() => {
             const report: ScriptReport = native.runScript(INFO_MODELS_SCRIPT);
