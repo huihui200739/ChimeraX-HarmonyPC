@@ -334,8 +334,15 @@ def diagnose(display_ptr, context_ptr, surface_ptr):
         py_error = int(GL.glGetError())
     except BaseException:
         py_error = -1
-    return "current=%d|raw_program=%d|raw_error=%d|py_program=%d|py_error=%d" % (
-        bool(current), raw_program, raw_error, py_program, py_error)
+    kind = type(GL).__name__
+    has_func = hasattr(GL.glCreateProgram, "func")
+    direct = 0
+    try:
+        direct = int(GL.glCreateProgram.func())
+    except BaseException:
+        direct = -1
+    return ("current=%d|raw_program=%d|py_program=%d|gl_type=%s|has_func=%s|direct=%d"
+            % (bool(current), raw_program, py_program, kind, has_func, direct))
 
 print(diagnose("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;

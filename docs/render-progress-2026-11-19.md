@@ -340,3 +340,21 @@ current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
 ### 当前交付状态
 
 设备断言 26/26，结构可视化、界面外壳、安装包均可用；渲染是唯一未完成项。
+
+## 追加（20:50）：四次修法全部试过，结论稳定
+
+| 尝试 | 结果 |
+|---|---|
+| 平台属性 override（`EGLPlatform.GL = property(...)`，已确认落盘） | 仍 `py_program=0` |
+| `ctypes.util.find_library` 打桩（已确认落盘） | 仍 0 |
+| 代理层 `_FuncPtr` 重绑 | 仍 0 |
+| 代理层 `wrapper.func` 重绑（PyOpenGL 实际调用路径） | 仍 0 |
+
+同时 `raw=2`（裸 ctypes 调同一库成功）始终不变。
+
+**稳定结论**：PyOpenGL 在 OHOS 上生成的包装对象，其调用最终不落在 `libGLESv3.so` 的实现上，
+且我们无法从外部改变这一点。**唯一可靠收尾**：用自建 ctypes 封装替换 `chimerax.graphics.GL`
+（按 ChimeraX 实际使用的函数清单声明 argtypes/restype，数组参数走 `numpy.ctypes.data`）。
+这条已作为独立工作项记录，工作量半天到一天。
+
+四次尝试的补丁均已回退，暂存树回到稳定状态；设备 26/26 全过。
