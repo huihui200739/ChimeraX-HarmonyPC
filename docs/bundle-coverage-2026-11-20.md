@@ -79,3 +79,15 @@ state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances
 
 这是第一次"上游命令 + 真实打开的模型"同时工作：`list_info` 的 `info models` 遍历
 `session.models` 并格式化输出，没有报错。命令层与模型层的接口在鸿蒙上是通的。
+
+## 追加：把 `bundle_info.xml` 一起打包（为 toolshed 发现铺路）
+
+已安装形态的 ChimeraX bundle 是"包目录里带 `bundle_info.xml`"，文件格式与 provider 声明都在其中。
+staging 现在会把上游 `bundles/<name>/bundle_info.xml` 复制进 `chimerax/<name>/`：
+
+- 暂存文件数 4143 → **4160**
+- `chimerax/sdf/` 现在包含 `__init__.py`、`sdf.py`、**`bundle_info.xml`**
+- 设备断言仍 **26/26**，`list-models:ok`、`state=session-ready` 不变
+
+下一步：在引导里调用 toolshed 的发现流程（或按 XML 手工注册 provider/格式），
+这样"格式表/命令表/manager"三件事可以一次解决。

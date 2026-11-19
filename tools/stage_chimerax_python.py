@@ -508,6 +508,17 @@ def main() -> int:
     if atomspec_source.is_file() and atomspec_target.parent.is_dir():
         shutil.copy2(atomspec_source, atomspec_target)
 
+    # Installed bundles carry their bundle_info.xml inside the package: file format and
+    # provider declarations live there, so ship it next to the code.
+    source_bundles = ROOT / 'build/downloads/ChimeraX-src/src/bundles'
+    copied_infos = 0
+    if source_bundles.is_dir():
+        for info in sorted(source_bundles.glob('*/bundle_info.xml')):
+            target_pkg = args.output / 'chimerax' / info.parent.name
+            if target_pkg.is_dir():
+                shutil.copy2(info, target_pkg / 'bundle_info.xml')
+                copied_infos += 1
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'
