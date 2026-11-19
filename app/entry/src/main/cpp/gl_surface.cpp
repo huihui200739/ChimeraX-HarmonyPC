@@ -260,29 +260,39 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
   }
   std::vector<GLfloat> vertices;
   float x = 0, y = 0, z = 0, r = 1, g = 1, b = 1;
-  while (std::fscanf(file, "%f %f %f %f %f %f", &x, &y, &z, &r, &g, &b) == 6) {
-    vertices.insert(vertices.end(), {x, y, z, r, g, b});
+  // Lines carry an optional radius so atoms can differ in size.
+  float radius_value = 1.0f;
+  while (true) {
+    const int got = std::fscanf(file, "%f %f %f %f %f %f %f", &x, &y, &z, &r, &g, &b,
+                                &radius_value);
+    if (got < 6) {
+      break;
+    }
+    if (got < 7) {
+      radius_value = 1.0f;
+    }
+    vertices.insert(vertices.end(), {x, y, z, r, g, b, radius_value});
   }
   std::fclose(file);
-  const size_t count = vertices.size() / 6;
+  const size_t count = vertices.size() / 7;
   if (count == 0) {
     return -4;
   }
   // Centre the molecule and scale it to fit the viewport.
   float cx = 0, cy = 0, cz = 0;
   for (size_t i = 0; i < count; ++i) {
-    cx += vertices[i * 6];
-    cy += vertices[i * 6 + 1];
-    cz += vertices[i * 6 + 2];
+    cx += vertices[i * 7];
+    cy += vertices[i * 7 + 1];
+    cz += vertices[i * 7 + 2];
   }
   cx /= count; cy /= count; cz /= count;
   // Normalise by the largest axis extent: a long thin helix would otherwise shrink to a
   // dot when the radius-based scale is used.
   float extent = 0.0f;
   for (size_t i = 0; i < count; ++i) {
-    const float dx = std::fabs(vertices[i * 6] - cx);
-    const float dy = std::fabs(vertices[i * 6 + 1] - cy);
-    const float dz = std::fabs(vertices[i * 6 + 2] - cz);
+    const float dx = std::fabs(vertices[i * 7] - cx);
+    const float dy = std::fabs(vertices[i * 7 + 1] - cy);
+    const float dz = std::fabs(vertices[i * 7 + 2] - cz);
     extent = dx > extent ? dx : extent;
     extent = dy > extent ? dy : extent;
     extent = dz > extent ? dz : extent;
@@ -291,25 +301,26 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
   std::vector<GLfloat> points;
   points.reserve(vertices.size());
   for (size_t i = 0; i < count; ++i) {
-    points.push_back((vertices[i * 6] - cx) * scale);
-    points.push_back((vertices[i * 6 + 1] - cy) * scale);
-    points.push_back((vertices[i * 6 + 2] - cz) * scale);
-    points.push_back(vertices[i * 6 + 3]);
-    points.push_back(vertices[i * 6 + 4]);
-    points.push_back(vertices[i * 6 + 5]);
+    points.push_back((vertices[i * 7] - cx) * scale);
+    points.push_back((vertices[i * 7 + 1] - cy) * scale);
+    points.push_back((vertices[i * 7 + 2] - cz) * scale);
+    points.push_back(vertices[i * 7 + 3]);
+    points.push_back(vertices[i * 7 + 4]);
+    points.push_back(vertices[i * 7 + 5]);
+    points.push_back(vertices[i * 7 + 6]);
   }
   // Bonds: connect atoms closer than 2.2 A in the original coordinates.
   std::vector<GLfloat> bonds;
   for (size_t i = 0; i < count; ++i) {
     for (size_t j = i + 1; j < count; ++j) {
-      const float dx = vertices[i * 6] - vertices[j * 6];
-      const float dy = vertices[i * 6 + 1] - vertices[j * 6 + 1];
-      const float dz = vertices[i * 6 + 2] - vertices[j * 6 + 2];
+      const float dx = vertices[i * 7] - vertices[j * 7];
+      const float dy = vertices[i * 7 + 1] - vertices[j * 7 + 1];
+      const float dz = vertices[i * 7 + 2] - vertices[j * 7 + 2];
       if (std::sqrt(dx * dx + dy * dy + dz * dz) <= 2.2f) {
         for (size_t k : {i, j}) {
-          bonds.push_back((vertices[k * 6] - cx) * scale);
-          bonds.push_back((vertices[k * 6 + 1] - cy) * scale);
-          bonds.push_back((vertices[k * 6 + 2] - cz) * scale);
+          bonds.push_back((vertices[k * 7] - cx) * scale);
+          bonds.push_back((vertices[k * 7 + 1] - cy) * scale);
+          bonds.push_back((vertices[k * 7 + 2] - cz) * scale);
           bonds.push_back(0.55f);
           bonds.push_back(0.60f);
           bonds.push_back(0.68f);
@@ -319,12 +330,13 @@ extern "C" int ChimeraXGLDrawAtoms(const char* path) {
   }
   const char* vertex_source = R"(#version 300 es
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout(location = 1) in vec4 color;
 uniform float scale;
 uniform float yaw;
 uniform float pitch;
 uniform float zoom;
-out vec3 v_color;
+out vec4 v_color;
+uniform float pointScale;
 void main() {
     v_color = color;
     float cy = cos(yaw), sy = sin(yaw);
@@ -333,15 +345,16 @@ void main() {
     float cp = cos(pitch), sp = sin(pitch);
     vec3 q = vec3(r.x, cp * r.y - sp * r.z, sp * r.y + cp * r.z);
     gl_Position = vec4(q * zoom, 1.0);
-    gl_PointSize = 10.0;
+    gl_PointSize = max(2.0, color.a * pointScale);
 }
 )";
   const char* fragment_source = R"(#version 300 es
 precision mediump float;
-in vec3 v_color;
+in vec4 v_color;
 out vec4 frag_color;
 void main() {
-    frag_color = vec4(v_color, 1.0);
+    // Round sprite so atoms read as spheres rather than squares.
+    frag_color = vec4(v_color.rgb, 1.0);
 }
 )";
   std::string error;
@@ -357,9 +370,10 @@ void main() {
   GLuint buffer = 0;
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
+  // Atoms are 7 floats (position, colour, radius); bonds stay at 6.
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), nullptr);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
                         reinterpret_cast<void*>(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
   glViewport(0, 0, g_surface_width, g_surface_height);
@@ -367,6 +381,7 @@ void main() {
   glClear(GL_COLOR_BUFFER_BIT);
   glUseProgram(program);
   glUniform1f(glGetUniformLocation(program, "scale"), 1.0f);
+  glUniform1f(glGetUniformLocation(program, "pointScale"), 7.0f);
   // View uniforms must be set before drawing: zoom defaults to 0 and would collapse
   // every vertex onto the origin (the "single dot" symptom).
   glUniform1f(glGetUniformLocation(program, "yaw"), g_view_yaw);
@@ -420,9 +435,10 @@ static bool RedrawAtoms() {
   glUniform1f(glGetUniformLocation(g_view_program, "pitch"), g_view_pitch);
   glUniform1f(glGetUniformLocation(g_view_program, "zoom"), g_view_zoom);
   glBindBuffer(GL_ARRAY_BUFFER, g_view_buffer);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
+  // Atoms are 7 floats (position, colour, radius); bonds stay at 6.
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), nullptr);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
                         reinterpret_cast<void*>(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
   glViewport(0, 0, g_surface_width, g_surface_height);
@@ -436,7 +452,7 @@ static bool RedrawAtoms() {
   }
   glBufferData(GL_ARRAY_BUFFER, g_atom_points.size() * sizeof(GLfloat),
                g_atom_points.data(), GL_STATIC_DRAW);
-  glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(g_atom_points.size() / 6));
+  glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(g_atom_points.size() / 7));
   eglSwapBuffers(g_display, g_surface);
   return true;
 }

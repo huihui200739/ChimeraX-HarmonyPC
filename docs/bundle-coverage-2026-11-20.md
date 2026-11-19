@@ -173,3 +173,19 @@ for name in ('model position changed', 'new frame', 'scene begin', 'scene end',
 - 引导里补注册读取器需要的 trigger（`model position changed` 等），否则 `AtomicStructure`
   初始化会抛 `KeyError` 并被静默吞掉
 - 断言仍 **26/26**
+
+## 渲染改进：按元素半径的圆形原子
+
+上一轮的半径方案编译失败，定位到两处：
+
+1. **片段着色器仍声明 `in vec3 v_color`**，而顶点着色器已输出 `vec4` —— 类型不匹配，`glCompileShader`
+   失败后程序为空，绘制即消失
+2. 早先的 stride 替换漏了中心点/包围盒循环里的 `i * 6`，导致顶点错位
+
+修完后：
+
+- 顶点布局 7 floats（位置 3 + 颜色 3 + 半径 1），颜色属性按 `vec4` 读取，`.a` 即半径
+- `gl_PointSize = max(2.0, color.a * pointScale)`，`pointScale = 7.0`
+- 半径按元素给：C 1.0 / N 1.1 / O 1.15 / S 1.3 / 其它 0.9
+
+设备读回：`real-pdb:ok|atoms=1322 view=1322`，断言 **26/26**，截图 `reports/ras-radius-2026-11-20.jpeg`。

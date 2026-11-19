@@ -445,9 +445,10 @@ else:
             symbol = elements[index].name if index < len(elements) else "C"
             tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
                     "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
-            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+            radius = {"C": 1.0, "N": 1.1, "O": 1.15, "S": 1.3}.get(symbol, 0.9)
+            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f %.3f" % (
                 float(coord[0]), float(coord[1]), float(coord[2]),
-                tone[0], tone[1], tone[2]))
+                tone[0], tone[1], tone[2], radius))
     if lines:
         with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
             handle.write(chr(10).join(lines))
@@ -487,9 +488,10 @@ try:
             symbol = elements[index].name if index < len(elements) else "C"
             tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
                     "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
-            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+            radius = {"C": 1.0, "N": 1.1, "O": 1.15, "S": 1.3}.get(symbol, 0.9)
+            lines.append("%.4f %.4f %.4f %.3f %.3f %.3f %.3f" % (
                 float(coord[0]), float(coord[1]), float(coord[2]),
-                tone[0], tone[1], tone[2]))
+                tone[0], tone[1], tone[2], radius))
     if lines:
         with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
             handle.write(chr(10).join(lines))
@@ -527,7 +529,7 @@ try:
     for model in _cx_models(models):
         atoms += len(model.atoms)
         for coord in model.atoms.coords:
-            lines.append("%.4f %.4f %.4f 0.700 0.850 0.750" % (
+            lines.append("%.4f %.4f %.4f 0.700 0.850 0.750 1.0" % (
                 float(coord[0]), float(coord[1]), float(coord[2])))
     if lines:
         with open(os.path.join(root, "cx_atoms.txt"), "w") as handle:
