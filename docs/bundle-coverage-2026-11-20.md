@@ -199,3 +199,14 @@ for name in ('model position changed', 'new frame', 'scene begin', 'scene end',
 
 设备截图：`reports/ras-viewport-2026-11-20.jpeg`（1322 原子的 ras 蛋白，彩色球+键，清晰可辨），
 断言仍然 **26/26**。
+
+## 景深提示（depth cue）
+
+顶点着色器把旋转后的 `q.z` 传到片段着色器，片段按深度压暗：
+
+```glsl
+float depth_fade = clamp(1.0 - (v_depth + 0.9) * 0.35, 0.45, 1.0);
+```
+
+远的原子/键更暗、近的更亮，蛋白的前后层次立刻可分。截图 `reports/ras-depth-2026-11-20.jpeg`，
+断言 **26/26**。

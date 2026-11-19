@@ -336,6 +336,7 @@ uniform float yaw;
 uniform float pitch;
 uniform float zoom;
 out vec4 v_color;
+out float v_depth;
 uniform float pointScale;
 void main() {
     v_color = color;
@@ -344,6 +345,9 @@ void main() {
                   -sy * position.x + cy * position.z);
     float cp = cos(pitch), sp = sin(pitch);
     vec3 q = vec3(r.x, cp * r.y - sp * r.z, sp * r.y + cp * r.z);
+    // q.z is the rotated depth; the fragment shader dims atoms behind the centroid so the
+    // structure reads in three dimensions.
+    v_depth = q.z;
     gl_Position = vec4(q * zoom, 1.0);
     gl_PointSize = max(2.0, color.a * pointScale);
 }
@@ -351,13 +355,15 @@ void main() {
   const char* fragment_source = R"(#version 300 es
 precision mediump float;
 in vec4 v_color;
+in float v_depth;
 out vec4 frag_color;
 uniform float spriteMode;
 void main() {
     // spriteMode is 1 for atoms and 0 for bond lines: gl_PointCoord is undefined for lines,
     // so the round mask and shading only apply to sprites.
+    float depth_fade = clamp(1.0 - (v_depth + 0.9) * 0.35, 0.45, 1.0);
     if (spriteMode < 0.5) {
-        frag_color = vec4(v_color.rgb * 0.85, 1.0);
+        frag_color = vec4(v_color.rgb * 0.85 * depth_fade, 1.0);
         return;
     }
     vec2 offset = gl_PointCoord - vec2(0.5);
@@ -369,7 +375,7 @@ void main() {
                        sqrt(max(0.0, 0.25 - radius2) * 4.0));
     vec3 light = normalize(vec3(0.35, 0.55, 0.75));
     float diffuse = max(dot(normalize(normal), light), 0.0);
-    frag_color = vec4(v_color.rgb * (0.35 + 0.75 * diffuse), 1.0);
+    frag_color = vec4(v_color.rgb * (0.35 + 0.75 * diffuse) * depth_fade, 1.0);
 }
 )";
   std::string error;
