@@ -355,6 +355,14 @@ try:
 
     session = Session("ChimeraX", silent=True, minimal=True)
     session.ui = _NullUI()
+    # Bundles declare extra triggers while a normal start-up imports them; register the ones
+    # the structure readers attach handlers to, otherwise open_pdb fails mid-parse.
+    for _cx_trigger in ('model position changed', 'new frame', 'scene begin', 'scene end',
+                        'frame drawn', 'graphics update'):
+        try:
+            session.triggers.add_trigger(_cx_trigger)
+        except Exception:
+            pass
     core_settings.init(session)
     from chimerax.core.tools import Tools
     session.tools = Tools(session)

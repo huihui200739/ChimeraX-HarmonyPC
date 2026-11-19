@@ -123,3 +123,28 @@ real-pdb:ok|atoms=0 view=4   ← view=4 是上一轮遗留的旧几何
 
 「Ras 蛋白」按钮已撤下。下一步在开发运行时里对同一文件跑 `open_pdb` 并打印异常/计数，
 先定位是解析问题还是文件问题，再决定是否换 fixture。
+
+## 根因找到：结构读取器需要的 trigger 没注册
+
+在**开发运行时**里对 `ras.pdb` 复现 `open_pdb`，第一次拿到真实异常：
+
+```
+KeyError: "No trigger named 'model position changed'"
+  structure.py: _register_hover_trigger -> triggers.add_handler(MODEL_POSITION_CHANGED, ...)
+```
+
+即 `AtomicStructure` 初始化时要挂 trigger handler，而最小会话里没人注册这些 trigger
+（正常启动由 bundle 导入时注册）。这解释了"读出来了但 0 原子"——解析中途抛异常被上层吞掉。
+
+### 修法
+
+引导里在 `Session` 之后注册读取器会用到的 trigger：
+
+```python
+for name in ('model position changed', 'new frame', 'scene begin', 'scene end',
+             'frame drawn', 'graphics update'):
+    session.triggers.add_trigger(name)
+```
+
+设备验证：断言 **26/26** 保持，`cx-open` 仍是 `models=1|atoms=4|residues=1`。
+下一步用 `ras.pdb`（1322 ATOM）复测真实蛋白。
