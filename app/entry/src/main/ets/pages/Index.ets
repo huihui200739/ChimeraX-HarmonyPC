@@ -195,6 +195,41 @@ with open(path, "w") as handle:
 print("demo2_atoms=%d" % len(lines))
 `;
 
+
+// Opens a structure file the user picked from the sandbox listing.
+const OPEN_PATH_SCRIPT = `
+import os
+from chimerax.io import open_input
+from chimerax.pdb.pdb import open_pdb
+
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "__FILE__")
+with open_input(path) as stream:
+    opened = open_pdb(session, stream, path)
+models = []
+stack = list(opened) if isinstance(opened, (list, tuple)) else [opened]
+while stack:
+    item = stack.pop()
+    if hasattr(item, "num_atoms"):
+        models.append(item)
+    elif isinstance(item, (list, tuple)):
+        stack.extend(item)
+cx_opened_models = models
+lines = []
+for model in models:
+    coords = model.atoms.coords
+    elements = model.atoms.elements
+    for index, coord in enumerate(coords):
+        symbol = elements[index].name if index < len(elements) else "C"
+        tone = {"C": (0.75, 0.75, 0.75), "N": (0.35, 0.45, 0.95),
+                "O": (0.95, 0.35, 0.30), "S": (0.95, 0.85, 0.25)}.get(symbol, (0.6, 0.8, 0.6))
+        lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+            float(coord[0]), float(coord[1]), float(coord[2]),
+            tone[0], tone[1], tone[2]))
+with open(os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt"), "w") as handle:
+    handle.write(chr(10).join(lines))
+print("opened=%d|atoms=%d" % (len(models), len(lines)))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -316,6 +351,7 @@ struct Index {
   @State lastTouchY: number = -1;
   @State lastPinchSpan: number = 0;
   @State fileListState: string = '';
+  @State fileNames: string[] = [];
   @State renderResult: string = '';
   @State failed: string = '';
 
@@ -682,7 +718,12 @@ struct Index {
         Button('沙箱结构文件').id('cx-list-run').fontSize(12).height(32)
           .onClick(() => {
             const listed: ScriptReport = native.runScript(LIST_SCRIPT);
-            this.fileListState = (listed.ok ? listed.output : listed.error).trim();
+            const text: string = (listed.ok ? listed.output : listed.error).trim();
+            this.fileListState = text;
+            const parts: string[] = text.split('|');
+            const names: string[] = parts.length > 1 && parts[1].length > 0
+              ? parts[1].split(',') : [];
+            this.fileNames = names;
           })
         Button('示例螺旋').id('cx-demo-run').fontSize(12).height(32)
           .onClick(() => {
@@ -753,6 +794,29 @@ struct Index {
           this.lastTouchX = touch.windowX;
           this.lastTouchY = touch.windowY;
         })
+      if (this.fileNames.length > 0) {
+        Row({ space: 6 }) {
+          ForEach(this.fileNames, (name: string) => {
+            Button(name).id('cx-file-' + name).fontSize(10).height(28)
+              .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+              .onClick(() => {
+                const script: string = OPEN_PATH_SCRIPT.replace('__FILE__', name);
+                const opened: ScriptReport = native.runScript(script);
+                if (!opened.ok) {
+                  this.viewerResult = 'open-error';
+                  return;
+                }
+                this.openResult = opened.output.trim();
+                try {
+                  const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+                  this.viewerResult = name + ':' + drawn.atoms;
+                } catch (error) {
+                  this.viewerResult = 'viewer-error';
+                }
+              })
+          }, (name: string) => name)
+        }.width('100%')
+      }
       Row() {
         Text('GL 表面').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.glStatus.length > 0 ? this.glStatus : '—').id('cx-gl-status')
