@@ -359,6 +359,42 @@ except Exception as error:
 print("commands=%d|%s" % (len(names), ",".join(sorted(names)[:24])))
 `;
 
+
+// Writes a two-atom SDF file and opens it through the ChimeraX open command, which
+// exercises the sdf reader plus the open bundle the payload now ships.
+const OPEN_SDF_SCRIPT = `
+import os
+root = "/data/storage/el2/base/haps/entry/files"
+sdf = os.path.join(root, "cx_demo.sdf")
+text = chr(10).join([
+    "cx_demo",
+    "  chimerax-harmony",
+    "",
+    "  2  1  0  0  0  0  0  0  0  0999 V2000",
+    "    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+    "    1.5000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0",
+    "  1  2  1  0",
+    "M  END",
+]) + chr(10)
+with open(sdf, "w") as handle:
+    handle.write(text)
+# The sdf bundle provides its reader through the data-format provider registry, which a
+# normal start-up populates from bundle metadata; register it here.
+try:
+    from chimerax.sdf import _SDF_API
+    _SDF_API.run_provider(session, "sdf", session.data_formats)
+except Exception as error:
+    print("sdf-provider:" + type(error).__name__ + ":" + str(error)[:50])
+from chimerax.core.commands import run
+try:
+    run(session, "open " + sdf)
+    models = list(session.models.list())
+    atoms = sum(len(m.atoms) for m in models if hasattr(m, "atoms"))
+    print("sdf-open:ok|models=%d|atoms=%d" % (len(models), atoms))
+except Exception as error:
+    print("sdf-open:" + type(error).__name__ + ":" + str(error)[:70])
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `

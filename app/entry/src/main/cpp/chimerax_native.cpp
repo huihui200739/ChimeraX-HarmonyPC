@@ -392,12 +392,31 @@ try:
     # Bundle-provided commands have to be registered explicitly: this minimal session
     # never runs the toolshed bundle discovery that a normal start-up performs.
     # Register the bundle command that works on this runtime: "list models" from list_info.
-    try:
-        from chimerax.list_info import _InfoAPI as _cx_info_api
-        _cx_info_api.register_command("list", session.logger)
-    except Exception as _cx_bundle_error:
-        _cx_state = ("bundle-register:" + type(_cx_bundle_error).__name__
-                     + ":" + str(_cx_bundle_error)[:40])
+    # Managers that bundle commands depend on. Each is created once, before registration.
+    for _cx_module, _cx_attr, _cx_name in (
+            ("chimerax.data_formats", "_FormatsBundleAPI", "data formats"),
+            ("chimerax.open_command", "_OpenBundleAPI", "open command")):
+        try:
+            _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
+            _cx_api.init_manager(session, None, _cx_name)
+        except Exception as _cx_manager_error:
+            _cx_state = ("manager:" + _cx_name + ":" + type(_cx_manager_error).__name__
+                         + ":" + str(_cx_manager_error)[:40])
+
+    # Bundle commands verified to work on this runtime.
+    for _cx_module, _cx_attr, _cx_cmds in (
+            ("chimerax.list_info", "_InfoAPI", ("list",)),
+            ("chimerax.open_command", "_OpenBundleAPI", ("open",))):
+        try:
+            _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
+            for _cx_cmd in _cx_cmds:
+                try:
+                    _cx_api.register_command(_cx_cmd, session.logger)
+                except Exception as _cx_one:
+                    _cx_state = "bundle-register:" + _cx_cmd + ":" + type(_cx_one).__name__
+        except Exception as _cx_bundle_error:
+            _cx_state = ("bundle-register:" + type(_cx_bundle_error).__name__
+                         + ":" + str(_cx_bundle_error)[:40])
     _cx_state = globals().get("_cx_state", "session-ready")
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]

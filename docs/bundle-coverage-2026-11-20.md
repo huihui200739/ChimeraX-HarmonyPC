@@ -53,3 +53,20 @@ state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances
 - `sdf`/`mol2`：需要 `chimerax.atomic` 与 `open` 命令通路
 
 下一步按依赖逐个注册并验证。
+
+## 追加：`open` 命令与文件格式注册链路（含一次失败记录）
+
+按依赖顺序补齐了 `open` 命令所需的管理器，设备读回逐步推进：
+
+| 阶段 | 设备读回 |
+|---|---|
+| 直接 `open` | `AttributeError: 'Session' object has no attribute 'open_command'` |
+| 建 `open command` manager | `AttributeError: 'Session' object has no attribute 'data_formats'` |
+| 建 `data formats` manager | `UserError: Unrecognized file suffix '.sdf'` |
+| 手动调 `_SDF_API.run_provider(...)` | 仍是 `Unrecognized file suffix '.sdf'` |
+
+**结论**：文件格式表来自 bundle 元数据（`bundle_info.xml` 的格式声明），由 toolshed 在正常启动时
+装载；我们绕过 toolshed 就没人注册格式。**正确修法**是直接调
+`session.data_formats.register(OpenFileFormat(...))`，或者让 toolshed 真正跑一次 bundle 发现。
+
+实验用的「打开 SDF」按钮已撤下，界面不留不可用的入口；`open` 命令本身已注册成功（命令表可见）。
