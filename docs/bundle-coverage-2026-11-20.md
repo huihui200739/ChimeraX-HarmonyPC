@@ -24,3 +24,21 @@ state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances
 
 `list models` / `info` 这类检视命令暂时不可用；一旦 `_atomspec` 编出来，`list_info` 与
 `items_inspection` 应该能直接工作（它们只依赖 core + models）。
+
+## 追加：`list models` 已在设备上执行成功
+
+设备读回：`toolshed-list:ok|devel-dump:...|list-models:ok|tools=True|toolshed=True`
+
+### 打通的三个真实缺口
+
+1. **payload 未包含新 bundle** —— 暂存后忘记重新打包，ZIP 里 `list_info entries: 0`。教训：
+   `stage → package → build` 必须按序，缺一步就会用旧树。
+2. **`chimerax.core.commands._atomspec` 缺失** —— 它由 PEG 语法 `_atomspec.peg` 生成：
+   用 `grako` 生成 19 KB 的 `_atomspec.py`，放进 `vendor/core/`，由 staging 分发。
+3. **grako 运行时 + Python 3.11 兼容** —— vendored `grako`（1 MB），并在 `__init__.py` 的
+   `from __future__` **之后**注入 `collections.abc` 兼容 shim（第一次插在文件首行导致 SyntaxError）。
+
+### 残留
+
+`info` 子命令注册报 `ValueError`（`list` 成功）。注册已改为逐命令隔离，不影响其他命令；
+下一步打印该错误的完整信息再修。

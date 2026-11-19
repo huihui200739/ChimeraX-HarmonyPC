@@ -473,6 +473,41 @@ def main() -> int:
             lines.insert(insert_at, stub)
             gl_top.write_text('\n'.join(lines))
 
+    # chimerax.core.commands._atomspec is generated from a PEG grammar by grako; ship the
+    # generated module (see vendor/core) so atom specifications work in the app.
+    # The generated atomspec module needs grako's runtime at import time.
+    grako_source = ROOT / 'vendor/grako'
+    if grako_source.is_dir():
+        shutil.copytree(grako_source, args.output / 'grako', dirs_exist_ok=True)
+        # grako predates Python 3.10 and imports ABCs from collections; restore them.
+        grako_init = args.output / 'grako/__init__.py'
+        if grako_init.is_file():
+            text = grako_init.read_text()
+            if 'CX_COLLECTIONS_SHIM' not in text:
+                shim = (
+                    "# CX_COLLECTIONS_SHIM: grako uses the pre-3.10 collections ABC names.\n"
+                    "import collections as _cx_collections\n"
+                    "import collections.abc as _cx_abc\n"
+                    "for _cx_name in ('Mapping', 'MutableMapping', 'Sequence', 'MutableSequence',\n"
+                    "                 'Iterable', 'Iterator', 'Callable', 'Set', 'MutableSet',\n"
+                    "                 'Hashable'):\n"
+                    "    if not hasattr(_cx_collections, _cx_name):\n"
+                    "        setattr(_cx_collections, _cx_name, getattr(_cx_abc, _cx_name))\n")
+                lines = text.split('\n')
+                insert_at = 0
+                for index, line in enumerate(lines):
+                    stripped = line.strip()
+                    if not stripped or stripped.startswith('#') or stripped.startswith('from __future__'):
+                        insert_at = index + 1
+                        continue
+                    break
+                lines.insert(insert_at, shim)
+                grako_init.write_text('\n'.join(lines))
+    atomspec_target = args.output / 'chimerax/core/commands/_atomspec.py'
+    atomspec_source = ROOT / 'vendor/core/_atomspec.py'
+    if atomspec_source.is_file() and atomspec_target.parent.is_dir():
+        shutil.copy2(atomspec_source, atomspec_target)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'

@@ -1,10 +1,10 @@
 {
-  "created_at_utc": "2026-11-19T13:41:17.618433+00:00",
+  "created_at_utc": "2026-11-19T15:28:20.587035+00:00",
   "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src",
   "commit": "60235d303c18f72c6ebd45a620b540ba84825994",
   "version": "v1.11.1",
   "branch": "HEAD",
-  "files": 4056,
+  "files": 4136,
   "package": "appdirs",
   "dependencies": [
     {
@@ -45,8 +45,10 @@
     "__init__.pxd",
     "__init__.py",
     "__init__.pyi",
+    "__main__.py",
     "__pycache__",
     "_bytes.py",
+    "_config.py",
     "_configflags.py",
     "_core",
     "_distributor_init.py",
@@ -64,9 +66,7 @@
     "_structures.py",
     "_tokenizer.py",
     "_typing",
-    "_utils",
-    "acceleratesupport.py",
-    "array_api",
-    "arrays"
+    "_unicode_characters.py",
+    "_utils"
   ]
 }

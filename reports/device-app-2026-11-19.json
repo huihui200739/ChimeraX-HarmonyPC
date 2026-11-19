@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T14:46:14.682274+00:00",
+  "created_at_utc": "2026-11-19T15:38:34.896355+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 145384941,
-    "sha256": "0950d99869c30f394ec435b4cd80d3d30a468b03c82afa4eee975a46e837cf40"
+    "bytes": 145528939,
+    "sha256": "771bda55b35326a6235e175274a43cf4f1500abc231871f590b82ce9dd92d27f"
   },
   "checks": [
     {
@@ -122,12 +122,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=bundle-register:info:ValueError"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=bundle-register:info:ValueError"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -190,11 +190,11 @@
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=bundle-register:info:ValueError"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
   "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=bundle-register:info:ValueError",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 28",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
