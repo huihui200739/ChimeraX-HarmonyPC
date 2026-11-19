@@ -304,47 +304,41 @@ print("saved=%d" % len(rows))
 // program and read GL_LINK_STATUS through the same PyOpenGL path ChimeraX uses.
 const SHADER_DIAG_SCRIPT = `
 import ctypes
-import numpy
 
 def diagnose(display_ptr, context_ptr, surface_ptr):
     egl = ctypes.CDLL("libEGL.so")
     egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
+    egl.eglGetCurrentContext.restype = ctypes.c_void_p
     display = ctypes.c_void_p(int(display_ptr))
     context = ctypes.c_void_p(int(context_ptr))
     surface = ctypes.c_void_p(int(surface_ptr))
     if not egl.eglMakeCurrent(display, surface, surface, context):
         return "make-current:failed"
+    current = egl.eglGetCurrentContext()
+    # Bypass PyOpenGL: does the raw library create a program on this context?
+    gles = ctypes.CDLL("libGLESv3.so")
+    gles.glCreateProgram.restype = ctypes.c_uint
+    raw_program = int(gles.glCreateProgram())
+    gles.glGetError.restype = ctypes.c_uint
+    raw_error = int(gles.glGetError())
     from chimerax.graphics import opengl as cxgl
     cxgl._initialize_pyopengl()
     GL = cxgl.GL
-    vertex = GL.glCreateShader(0x8B31)
-    GL.glShaderSource(vertex, """#version 300 es
-layout(location = 0) in vec3 position;
-void main() { gl_Position = vec4(position, 1.0); }
-""")
-    GL.glCompileShader(vertex)
-    compiled = numpy.zeros(1, dtype=numpy.int32)
-    GL.glGetShaderiv(vertex, 0x8B81, compiled)
-    fragment = GL.glCreateShader(0x8B30)
-    GL.glShaderSource(fragment, """#version 300 es
-precision mediump float;
-out vec4 color;
-void main() { color = vec4(1.0); }
-""")
-    GL.glCompileShader(fragment)
-    program = GL.glCreateProgram()
-    GL.glAttachShader(program, vertex)
-    GL.glAttachShader(program, fragment)
-    GL.glLinkProgram(program)
-    linked = numpy.zeros(1, dtype=numpy.int32)
-    GL.glGetProgramiv(program, 0x8B82, linked)
-    block = GL.glGetUniformBlockIndex(program, b"lighting_block")
-    return "vertex_compiled=%d|fragment_compiled=%d|linked=%d|uniform_block=%d" % (
-        int(compiled[0]), 1, int(linked[0]), int(block))
+    py_program = 0
+    try:
+        py_program = int(GL.glCreateProgram())
+    except BaseException as error:
+        py_program = -1
+    py_error = 0
+    try:
+        py_error = int(GL.glGetError())
+    except BaseException:
+        py_error = -1
+    return "current=%d|raw_program=%d|raw_error=%d|py_program=%d|py_error=%d" % (
+        bool(current), raw_program, raw_error, py_program, py_error)
 
 print(diagnose("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;
-
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `

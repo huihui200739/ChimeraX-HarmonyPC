@@ -272,3 +272,28 @@ GLError(err = 1282, baseOperation = glGetUniformBlockIndex,
 `OpenGL/platform/egl.py` 里让 `GL` 属性指向能真正 `dlsym` 到 ES3 符号的库（已部分完成：
 `GLES3` 与 `GL` 的搜索列表已加入 `GLESv3`），再让 PyOpenGL 用它自己的工厂函数生成包装——
 这样既有正确签名，也不会静默返回 0。这条留给下一次连续调试。
+
+## 追加（18:20）：决定性诊断 —— 裸库可用，PyOpenGL 恒返回 0
+
+设备读回：
+
+```
+current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
+```
+
+- `current=1`：上下文在 Python 线程上确实是 current
+- `raw_program=2`：用 `ctypes.CDLL("libGLESv3.so")` 直接调 `glCreateProgram()` **成功**
+- `py_program=0`：走 PyOpenGL 的 `GL.glCreateProgram()` 返回 0，且 `glGetError()` 为 0
+
+结论钉死：**上下文没问题、驱动没问题，问题在 PyOpenGL 的入口点绑定**。它把函数解析到了一个
+不含 ES3 实现的库句柄上（`ctypesloader` 在该系统上找不到 `libGLESv3.so` 的 soname），
+调用因此静默返回 0。
+
+试过的两条修法都没生效（staging 补丁未匹配到目标代码、代理层仍未拦住调用），
+说明 PyOpenGL 的包装是在 `import OpenGL.GLES3` 期间由 `OpenGL.raw.GLES3` 生成的，
+必须在**平台层**（`OpenGL/platform/egl.py`）就让它拿到正确句柄——这次改动没有真正落地，
+需要下一次用"先验证补丁是否打进暂存树"的方式复查。
+
+### 这条线之外的一切都已交付
+
+引擎、结构读写、可视化、界面外壳、打包与 26 项断言均稳定；渲染只差这一个绑定问题。

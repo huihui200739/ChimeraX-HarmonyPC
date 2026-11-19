@@ -415,6 +415,34 @@ def main() -> int:
                 "        if link_status == GL.GL_FALSE and not _cx_skip_link:\n")
             link_gate.write_text(text)
 
+    # ctypesloader.lookup cannot resolve the OHOS soname, so both GLES3 and GL fall back
+    # to a library without the ES3 entry points (calls silently return zero). Load the
+    # library by its full name instead.
+    egl_direct = args.output / 'OpenGL/platform/egl.py'
+    if egl_direct.is_file():
+        text = egl_direct.read_text()
+        if 'CX_GLES_DIRECT' not in text:
+            text = text.replace(
+                "from OpenGL.platform import baseplatform, ctypesloader",
+                "from OpenGL.platform import baseplatform, ctypesloader\n"
+                "import os as _cx_os\n"
+                "_CX_GLES_LIB = None\n"
+                "if _cx_os.path.exists('/system/lib64/libGLESv3.so'):\n"
+                "    _CX_GLES_LIB = ctypes.CDLL('libGLESv3.so', mode=ctypes.RTLD_GLOBAL)  # CX_GLES_DIRECT", 1)
+            text = text.replace(
+                "    @baseplatform.lazy_property\n    def GLES3(self):",
+                "    @baseplatform.lazy_property\n"
+                "    def GLES3(self):\n"
+                "        if _CX_GLES_LIB is not None:\n"
+                "            return _CX_GLES_LIB  # CX_GLES_DIRECT\n", 1)
+            text = text.replace(
+                "    @baseplatform.lazy_property\n    def GL(self):",
+                "    @baseplatform.lazy_property\n"
+                "    def GL(self):\n"
+                "        if _CX_GLES_LIB is not None:\n"
+                "            return _CX_GLES_LIB  # CX_GLES_DIRECT\n", 1)
+            egl_direct.write_text(text)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'

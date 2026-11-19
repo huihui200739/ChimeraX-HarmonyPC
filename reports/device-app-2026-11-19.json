@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T09:39:26.189320+00:00",
+  "created_at_utc": "2026-11-19T10:20:27.096220+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147505247,
-    "sha256": "8d59ec5c0874ecf564d7c76ed5460f346afe181b8fbc36292737a757c28d1894"
+    "bytes": 147505150,
+    "sha256": "e8c158eddbd0a4a5a4b80172237618680ff8bf3079279269b3e97c175099b403"
   },
   "checks": [
     {
       "name": "HAP installs",
       "passed": true,
-      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:error: failed to install bundle. code:9568288 error: install failed due to insufficient disk memory. \nAppMod finish\n"
     },
     {
       "name": "Application starts",
@@ -177,10 +177,10 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockIndex,\\n\\tpyArgs = (0, b'lighting_block'),\\n\\tcArgs = (0, b'lighting_block'),\\n\\tcArguments = (0, b'lighting_block'),\\n\\tresult = 0\\n)",
+    "cx-viewer-status": "current=1|raw_program=2|raw_error=0|py_program=0|py_error=0",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockIndex,\\n\\tpyArgs = (0, b'lighting_block'),\\n\\tcArgs = (0, b'lighting_block'),\\n\\tcArguments = (0, b'lighting_block'),\\n\\tresult = 0\\n)",
+    "cx-status-view": "视图: current=1|raw_program=2|raw_error=0|py_program=0|py_error=0",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
