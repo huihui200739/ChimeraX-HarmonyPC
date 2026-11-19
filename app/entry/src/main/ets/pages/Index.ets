@@ -340,6 +340,25 @@ except Exception as error:
     print("list-models:" + type(error).__name__ + ":" + str(error)[:60])
 `;
 
+
+// Lists every command registered in the session: proof that the command system is wired,
+// and the starting point for a real tool palette.
+const COMMANDS_SCRIPT = `
+names = []
+try:
+    from chimerax.core.commands import cli as _cli
+    def _walk(node, prefix):
+        for word, child in node.subcommands.items():
+            full = (prefix + " " + word).strip()
+            if child.has_command():
+                names.append(full)
+            _walk(child, full)
+    _walk(_cli._command_info.commands, "")
+except Exception as error:
+    names = ["error:" + type(error).__name__]
+print("commands=%d|%s" % (len(names), ",".join(sorted(names)[:24])))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -457,6 +476,7 @@ struct Index {
   @State openResult: string = '';
   @State atomsDumpResult: string = '';
   @State viewerResult: string = '';
+  @State commandsState: string = '';
   @State lastTouchX: number = -1;
   @State lastTouchY: number = -1;
   @State lastPinchSpan: number = 0;
@@ -908,6 +928,17 @@ struct Index {
         Text(this.fileListState.length > 0 ? this.fileListState
              : (this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult))
           .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(2)
+      }.width('100%')
+      Row({ space: 8 }) {
+        Button('命令清单').id('cx-cmd-list').fontSize(11).height(28)
+          .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+          .onClick(() => {
+            const listed: ScriptReport = native.runScript(COMMANDS_SCRIPT);
+            this.commandsState = (listed.ok ? listed.output : listed.error).trim();
+          })
+        Text(this.commandsState.length > 0 ? this.commandsState : '—')
+          .id('cx-cmd-list-output').fontSize(10).fontColor('#9FB4C8')
+          .layoutWeight(1).maxLines(3)
       }.width('100%')
       Row({ space: 14 }) {
         Text('模型: ' + (this.openResult.indexOf('models=') >= 0
