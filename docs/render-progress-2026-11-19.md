@@ -247,3 +247,28 @@ GLError(err = 1282 /* GL_INVALID_OPERATION */,
 
 设备 26/26 断言全过：运行时、numpy、core/commands/Session、atomic、PDB/CIF 读取、
 graphics C++ 扩展、EGL/GLES 表面、GLSL 绘制、PyOpenGL 上下文对齐，全部可复现。
+
+## 追加（16:55）：找到了 status 0 的根因，并做了一次失败尝试
+
+新增 `SHADER_DIAG_SCRIPT`（自建一个最简单的 ES3 程序并读 `GL_LINK_STATUS`）后，
+设备读回的关键一行是：
+
+```
+GLError(err = 1282, baseOperation = glGetUniformBlockIndex,
+        cArgs = (0, b'lighting_block'), result = 0)
+```
+
+**`program = 0`** —— 说明 `GL.glCreateProgram()` 返回了 0。结合"无 GL 错误、返回值恒 0"的一系列
+现象，可以确定：**PyOpenGL 在这条路径上给出的是 NullFunction 占位对象，它们静默返回 0。**
+
+尝试过的修法与其结果：
+
+| 尝试 | 结果 |
+|---|---|
+| 用 `type(value).__name__ == 'NullFunction'` 判断并替换 | 判断永不命中（PyOpenGL 按函数名生成类名） |
+| 用 `isinstance(value, _NullFunctionPointer)` 判断并替换为 dlsym 结果 | **应用启动即崩**（替换后的函数签名不匹配，导入期调用就炸） |
+
+已回退到"不替换"的稳定状态（设备 26/26 全过）。**正确做法**：不要替换对象，而是在
+`OpenGL/platform/egl.py` 里让 `GL` 属性指向能真正 `dlsym` 到 ES3 符号的库（已部分完成：
+`GLES3` 与 `GL` 的搜索列表已加入 `GLESv3`），再让 PyOpenGL 用它自己的工厂函数生成包装——
+这样既有正确签名，也不会静默返回 0。这条留给下一次连续调试。

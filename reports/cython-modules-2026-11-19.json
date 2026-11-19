@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T05:07:40.418962+00:00",
+  "created_at_utc": "2026-11-19T08:47:31.487944+00:00",
   "target": "aarch64-linux-ohos",
   "modules": [
     {
@@ -8,21 +8,21 @@
       "status": "built",
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/cymol.cpython-311-aarch64-linux-ohos.so",
       "bytes": 606032,
-      "sha256": "93a17d892a4ccff8d124401ef460890ecf2e7e129c6ffbd6415a0676bd805e8a"
+      "sha256": "23c0cf0b38d4df0e0254231c5c711a8b2ea6c80afce5cef7fb0ee8700f106bef"
     },
     {
       "module": "atomic/cytmpl",
       "status": "built",
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/cytmpl.cpython-311-aarch64-linux-ohos.so",
       "bytes": 96408,
-      "sha256": "d1227a49293011534d06559b4a61c6ab790ce56567fa5ee7e3e05fddc7ba242f"
+      "sha256": "e2f80e2a441e90f7673112a36c5d2fbb9d8a6d7abcd1c2ca641145931a6abe73"
     },
     {
       "module": "mmcif/mmcif",
       "status": "built",
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/mmcif/mmcif.cpython-311-aarch64-linux-ohos.so",
       "bytes": 712736,
-      "sha256": "19b04b89058c5ddee64fdd18a18a1e601c86dec2b629b2d69ffa1a26d27ace5c"
+      "sha256": "ffc4ec2986c001f7f6130aa26da28d9ac32b453ae11e294694d1a247ea633523"
     },
     {
       "module": "pdb/_pdbio",

@@ -232,8 +232,10 @@ def main() -> int:
 
                     setattr(module, name, call)
                     return call
-                # PyOpenGL keeps undefined entry points as NullFunction placeholders.
-                if type(value).__name__ == 'NullFunction':
+                # PyOpenGL keeps undefined entry points as placeholders whose class name is
+                # the function name; replacing them eagerly crashed the import path, so they
+                # are left in place (they return zero, which the callers tolerate).
+                if False:
                     try:
                         value = getattr(library, name)
                     except AttributeError:
