@@ -251,6 +251,29 @@ with open(path, "w") as handle:
 print("demo3_atoms=%d" % len(lines))
 `;
 
+
+// Large bundle: eight helices (~450 atoms) to check the viewer at a realistic size and
+// expose the cost of the O(n^2) bond pass.
+const DEMO4_SCRIPT = `
+import math, os
+path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_atoms.txt")
+lines = []
+ring = 0
+for cluster in range(8):
+    angle_offset = cluster * (2.0 * math.pi / 8.0)
+    ox = 26.0 * math.cos(angle_offset)
+    oy = 26.0 * math.sin(angle_offset)
+    for index in range(56):
+        angle = index * 1.745 + angle_offset
+        lines.append("%.4f %.4f %.4f %.3f %.3f %.3f" % (
+            ox + 5.0 * math.cos(angle), oy + 5.0 * math.sin(angle),
+            index * 1.25 - 35.0, 0.35 + 0.07 * cluster, 0.75, 0.95 - 0.06 * cluster))
+        ring += 1
+with open(path, "w") as handle:
+    handle.write(chr(10).join(lines))
+print("demo4_atoms=%d" % len(lines))
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -747,6 +770,21 @@ struct Index {
             try {
               const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
               this.viewerResult = 'demo3=' + drawn.atoms + '|' + (Date.now() - started) + 'ms';
+            } catch (error) {
+              this.viewerResult = 'viewer-error';
+            }
+          })
+        Button('大结构(448)').id('cx-demo4-run').fontSize(12).height(32)
+          .onClick(() => {
+            const started: number = Date.now();
+            const built: ScriptReport = native.runScript(DEMO4_SCRIPT);
+            if (!built.ok) {
+              this.viewerResult = 'demo4-error';
+              return;
+            }
+            try {
+              const drawn: DrawAtomsReport = native.drawAtoms(this.filesDir() + '/cx_atoms.txt');
+              this.viewerResult = 'demo4=' + drawn.atoms + '|' + (Date.now() - started) + 'ms';
             } catch (error) {
               this.viewerResult = 'viewer-error';
             }
