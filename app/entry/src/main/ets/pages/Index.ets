@@ -59,6 +59,12 @@ try:
     summary.append("devel-dump:no-error")
 except Exception as error:
     summary.append("devel-dump:" + str(error).split(":")[0])
+# "list models" comes from the list_info bundle, which the payload now ships.
+try:
+    run(session, "list models")
+    summary.append("list-models:ok")
+except Exception as error:
+    summary.append("list-models:" + type(error).__name__ + ":" + str(error)[:60])
 print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s" % (
     hasattr(session, "tools"), hasattr(session, "toolshed"), globals().get("_cx_state", "?")))
 `;
@@ -322,6 +328,18 @@ def diagnose(display_ptr, context_ptr, surface_ptr):
 print(diagnose("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
 `;
 
+
+// Runs a command registered by a newly staged bundle: "list models" comes from the
+// list_info bundle and only needs the core + models manager.
+const LIST_COMMAND_SCRIPT = `
+from chimerax.core.commands import run
+try:
+    result = run(session, "list models")
+    print("list-models:ok")
+except Exception as error:
+    print("list-models:" + type(error).__name__ + ":" + str(error)[:60])
+`;
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `
@@ -485,6 +503,11 @@ struct Index {
           this.viewerResult = 'viewer-error';
         }
       }
+      return;
+    }
+    if (action === 'Tools') {
+      const listed: ScriptReport = native.runScript(LIST_COMMAND_SCRIPT);
+      this.viewerResult = (listed.ok ? listed.output : listed.error).trim();
       return;
     }
     if (action === 'Save') {
@@ -699,6 +722,7 @@ struct Index {
         ForEach(['File', 'Tools', 'Actions', 'Presets', 'Help'], (label: string) => {
           Text(label).id('cx-menu-' + label.toLowerCase()).fontSize(13)
             .fontColor('#DDE7F3')
+            .onClick(() => this.runToolbarAction(label))
         }, (label: string) => label)
       }.width('100%').padding({ top: 4, bottom: 4 })
       Divider().color('#3E5C80')

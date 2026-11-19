@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T13:26:21.963949+00:00",
+  "created_at_utc": "2026-11-19T14:46:14.682274+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 147504788,
-    "sha256": "955bbc7319409f426698f189acddd544e17fc53bd3bec72050163511bf972ca1"
+    "bytes": 145384941,
+    "sha256": "0950d99869c30f394ec435b4cd80d3d30a468b03c82afa4eee975a46e837cf40"
   },
   "checks": [
     {
       "name": "HAP installs",
       "passed": true,
-      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:error: failed to install bundle. code:9568288 error: install failed due to insufficient disk memory. \nAppMod finish\n"
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
     },
     {
       "name": "Application starts",
@@ -122,12 +122,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -177,10 +177,10 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "current=1|raw_program=2|raw_error=0|py_program=0|py_error=0",
+    "cx-viewer-status": "raw_program=2",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: current=1|raw_program=2|raw_error=0|py_program=0|py_error=0",
+    "cx-status-view": "视图: raw_program=2",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
@@ -190,11 +190,11 @@
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x418",
   "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ModuleNotFoundError:No module named 'chimerax.core.commands._atomspec'|tools=True|toolshed=True|state=bundle-register-failed:ValueError:Can not reuse CmdDesc instances",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 28",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",

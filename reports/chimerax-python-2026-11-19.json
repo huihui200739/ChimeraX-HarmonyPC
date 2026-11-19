@@ -1,10 +1,10 @@
 {
-  "created_at_utc": "2026-11-19T12:45:26.151098+00:00",
+  "created_at_utc": "2026-11-19T13:41:17.618433+00:00",
   "source": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src",
   "commit": "60235d303c18f72c6ebd45a620b540ba84825994",
   "version": "v1.11.1",
   "branch": "HEAD",
-  "files": 4051,
+  "files": 4056,
   "package": "appdirs",
   "dependencies": [
     {

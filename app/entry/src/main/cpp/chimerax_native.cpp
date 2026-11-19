@@ -389,6 +389,15 @@ try:
                                     synopsis="harmony adaptation probe command"), _cx_probe)
     except Exception:
         pass  # already registered in this interpreter
+    # Bundle-provided commands have to be registered explicitly: this minimal session
+    # never runs the toolshed bundle discovery that a normal start-up performs.
+    try:
+        from chimerax.list_info import _InfoAPI
+        for _cx_cmd in ("list models", "info"):
+            _InfoAPI.register_command(_cx_cmd.split()[0], session.logger)
+    except Exception as _cx_bundle_error:
+        _cx_state = ("bundle-register-failed:" + type(_cx_bundle_error).__name__
+                     + ":" + str(_cx_bundle_error)[:60])
     _cx_state = globals().get("_cx_state", "session-ready")
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]
