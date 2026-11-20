@@ -213,6 +213,12 @@ def main() -> int:
                 break
             run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1200', '1000', '900', '200'])
             time.sleep(0.6)
+        # The demo button copies the real protein into the sandbox; the command probe then opens
+        # that file instead of the four-atom test structure.
+        real_box = _rect_from_dump('cx-real-run')
+        if real_box:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(real_box[0]), str(real_box[1])])
+            time.sleep(14)
         info_output = ''
         if info_box:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(info_box[0]), str(info_box[1])])

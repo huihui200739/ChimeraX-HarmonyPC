@@ -539,3 +539,32 @@ mlp #1: UserError: mlp: no amino acids specified
 这确认了探针确实执行到了 `mlp`（不是 Unknown command），也说明被选中的模型是该
 **probe PDB（ALA 单残基结构）**，其链 polymer type 仍为 0 —— 与开发运行时 `ras.pdb`
 的 `PT_AMINO` 形成对比，下一步要查的是"单残基/无 SEQRES 时链类型如何赋值"。
+
+## 关键发现：单残基结构的 `chains` 数量为 0
+
+开发运行时直接打开探针 PDB（1 个 ALA 残基、4 个原子）：
+
+```
+models 1
+model atoms 4 chains 0      ← 没有链！
+```
+
+而 `Residue::polymer_type()` 的实现是：
+
+```cpp
+inline PolymerType Residue::polymer_type() const {
+    return chain() == nullptr ? PT_NONE : chain()->polymer_type();
+}
+```
+
+**所以 `ALA:0` 的根因是"该结构没有被建链"**，而不是残基名映射表有问题
+（`ras.pdb` 在开发运行时是有链且 `PT_AMINO` 的）。
+
+### 当前待解的唯一问题
+
+App 内探针仍选中 ALA 结构（`#1`）：
+
+- 可能是 `cx_demo.pdb`（ras）未被复制进沙箱
+- 也可能是 App 内读取 ras.pdb 时同样没有建链
+
+下一步：探针打印**每个已打开模型的链数**，一次性区分这两种情况。
