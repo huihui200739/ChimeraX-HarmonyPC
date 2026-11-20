@@ -381,3 +381,11 @@ payload 5364 文件、HAP 156 MB，设备断言 **26/26**、`state=session-ready
 
 设备读回：**`commands=50`**（此前 46）。截图 `reports/commands-50-2026-11-21.jpeg`。
 断言保持 **26/26**、`state=session-ready`。
+
+## ✅ 命令总数到 52；启动状态与诊断分离
+
+- 注册 `segment` 的 `segmentation` 命令后，设备读回 **`commands=52`**
+- 引导里把"命令注册失败"从 `_cx_state` 改为独立 `_cx_notes`：
+  某个 bundle 的 API 注册失败（如 `coulombic` 缺模块）不再污染 `state`，
+  现在稳定显示 **`state=session-ready`**，失败原因仍保留在 notes 里
+- 断言 **26/26**、本地测试 **128 OK**

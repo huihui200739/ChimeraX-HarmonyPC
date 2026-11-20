@@ -420,7 +420,8 @@ try:
             ("chimerax.mlp", "_MyAPI", ("mlp",)),
             ("chimerax.coulombic", "_CoulombicBundle", ("coulombic",)),
             ("chimerax.morph", "_MorphAPI", ("morph",)),
-            ("chimerax.mask", "_MaskBundleAPI", ("mask",))):
+            ("chimerax.mask", "_MaskBundleAPI", ("mask",)),
+            ("chimerax.segment", "_SegmentBundle", ("segmentation",))):
         try:
             _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
             if _cx_module == "chimerax.zone":
@@ -435,10 +436,12 @@ try:
                 try:
                     _cx_api.register_command(_cx_cmd, session.logger)
                 except Exception as _cx_one:
-                    _cx_state = "bundle-register:" + _cx_cmd + ":" + type(_cx_one).__name__
+                    _cx_notes = globals().setdefault("_cx_notes", [])
+                    _cx_notes.append(_cx_cmd + ":" + type(_cx_one).__name__)
         except Exception as _cx_bundle_error:
-            _cx_state = ("bundle-register:" + type(_cx_bundle_error).__name__
-                         + ":" + str(_cx_bundle_error)[:40])
+            _cx_notes = globals().setdefault("_cx_notes", [])
+            _cx_notes.append(_cx_module.rsplit(".", 1)[-1] + ":"
+                             + type(_cx_bundle_error).__name__)
     _cx_state = globals().get("_cx_state", "session-ready")
     if globals().get("_cx_errors"):
         _cx_state = ";".join(globals()["_cx_errors"])[:160]
