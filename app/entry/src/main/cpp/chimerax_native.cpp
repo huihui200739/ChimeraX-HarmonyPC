@@ -416,7 +416,11 @@ try:
     for _cx_module, _cx_attr, _cx_cmds in (
             ("chimerax.list_info", "_InfoAPI", ("list",)),
             ("chimerax.open_command", "_OpenBundleAPI", ("open",)),
-            ("chimerax.zone", "_ZoneBundleAPI", ("zone",))):
+            ("chimerax.zone", "_ZoneBundleAPI", ("zone",)),
+            ("chimerax.mlp", "_MyAPI", ("mlp",)),
+            ("chimerax.coulombic", "_CoulombicBundle", ("coulombic",)),
+            ("chimerax.morph", "_MorphAPI", ("morph",)),
+            ("chimerax.mask", "_MaskBundleAPI", ("mask",))):
         try:
             _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
             if _cx_module == "chimerax.zone":

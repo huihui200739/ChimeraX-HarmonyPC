@@ -367,3 +367,17 @@ payload 5364 文件、HAP 156 MB，设备断言 **26/26**、`state=session-ready
 | `<CLibrary>` | 编译成 `lib<name>.a` 并按 `<Library>` 链接 |
 | 头文件 | bundle 根、`src/include`、arrays/atomstruct 等共享头树 |
 | 共享库 | `libcxatomstruct.so`（registry 唯一性） |
+
+## ✅ 注册 4 个新 bundle 命令，命令总数 46 → 50
+
+新注册（引导内逐个 try/except，互不影响）：
+
+| bundle | 命令 |
+|---|---|
+| `mlp` | `mlp` |
+| `coulombic` | `coulombic` |
+| `morph` | `morph` |
+| `mask` | `mask` |
+
+设备读回：**`commands=50`**（此前 46）。截图 `reports/commands-50-2026-11-21.jpeg`。
+断言保持 **26/26**、`state=session-ready`。
