@@ -551,3 +551,27 @@ raw=2 | program=3 | shader=1 | linked=1
 3. 全部通过后只做**一次**应用内替换验证
 
 这条路不消耗设备与构建时间，也不会让应用反复崩溃。
+
+## 2026-11-21：抓到渲染器真实 GL 调用序列（离线验证的数据基础）
+
+在 adopt 路径装了一个**记录器**（转发给原 PyOpenGL，只记录不改变行为），设备读回摘要：
+
+```
+calls=88; top=glBindBuffer:23:IntConstant/uint32,
+     glGenBuffers:6:int,
+     glBufferData:6:IntConstant/int/c_void_p/IntConstant,
+     glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,
+     glEnableVertexAttribArray:4:int, glVertexAttribDivisor:4:int/int,
+     glGetString:3:IntConstant, glBindVertexArray:3:int, glUseProgram:3:int,
+     glGetIntegerv:3:IntConstant/uint32, glUniformBlockBinding:2:int/int/int
+```
+
+**这是第一次拿到渲染器实际传的参数类型**（此前全靠猜）。几个关键发现：
+
+- 常量是 PyOpenGL 的 `IntConstant`（int 子类）→ 我们的门面按 int 处理即可
+- `glBufferData` 的数据参数已经是 `c_void_p`（PyOpenGL 转换过）
+- `glVertexAttribPointer` 的 offset 传的是 `None`（不是整数）→ 门面的偏移包装已处理
+- `glGetIntegerv` 的第二参是 numpy 数组
+
+据此新增 `tests/test_cxgl_replay.py`：把这些**记录下来的调用形状**合成参数后回放给门面，
+断言全部通过。本地测试 128 → **130**。

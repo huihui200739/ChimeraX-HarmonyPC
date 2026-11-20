@@ -569,6 +569,30 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         cxgl._initialize_pyopengl()
     except Exception as error:
         pass
+    # Record the renderer's real GL call sequence (and forward to PyOpenGL as usual) so the
+    # ctypes facade can be validated offline against actual arguments instead of guesses.
+    try:
+        import json as _json
+        _cx_log = []
+        _cx_original_module2 = object.__getattribute__(cxgl.GL, "_module")
+
+        class _CxRecorder:
+            def __getattr__(self, name):
+                if not name.startswith("gl"):
+                    return getattr(_cx_original_module2, name)
+                target = getattr(_cx_original_module2, name)
+
+                def call(*args, **kwargs):
+                    if len(_cx_log) < 4000:
+                        _cx_log.append([name, [type(a).__name__ for a in args]])
+                    return target(*args, **kwargs)
+
+                return call
+
+        object.__setattr__(cxgl.GL, "_module", _CxRecorder())
+        globals()["_cx_gl_log"] = _cx_log
+    except Exception as error:
+        print("recorder:" + type(error).__name__ + ":" + str(error)[:50])
     # ChimeraX's context wrapper, pointed at the adopted EGL objects.
     ctx = cxgl.OpenGLContext(None, None)
     ctx.display = ctypes.c_void_p(int(display_ptr))
@@ -622,7 +646,22 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     return ("context=EGLContext-adopted|raw=" + (raw_version or b"?").decode("utf-8", "replace")
             + "|gl=" + str(version) + "|" + ";".join(notes))
 
-print(adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
+_cx_result = adopt_and_render("__DISPLAY__", "__CONTEXT__", "__SURFACE__")
+# Summarise the recorded GL call sequence so it can be read back through the probe row.
+try:
+    _cx_log = globals().get("_cx_gl_log", [])
+    _cx_counts = {}
+    _cx_shapes = {}
+    for _name, _types in _cx_log:
+        _cx_counts[_name] = _cx_counts.get(_name, 0) + 1
+        _cx_shapes.setdefault(_name, "/".join(_types) or "-")
+    _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:18]
+    _cx_result += ";calls=%d;top=%s" % (
+        len(_cx_log),
+        ",".join("%s:%d:%s" % (name, count, _cx_shapes[name]) for name, count in _cx_top))
+except Exception as _cx_dump_error:
+    _cx_result = _cx_result + ";log:" + type(_cx_dump_error).__name__
+print(_cx_result)
 `;
 
 @Entry
