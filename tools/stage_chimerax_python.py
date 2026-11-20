@@ -58,7 +58,7 @@ def main() -> int:
     # by tools/build_graphics_ext_harmony.py).
     for bundle in ('arrays', 'graphics', 'geometry', 'atomic_lib', 'atomic', 'pdb_lib',
                    'mmcif', 'pdb', 'io', 'data_formats', 'open_command', 'std_commands',
-                   'items_inspection', 'list_info', 'zone', 'sdf', 'mol2', 'mouse_modes', 'label', 'map'):
+                   'items_inspection', 'list_info', 'zone', 'sdf', 'mol2', 'mouse_modes', 'label', 'map', 'map_filter'):
         source_bundle = args.source / 'src/bundles' / bundle / 'src'
         if source_bundle.is_dir():
             shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)

@@ -59,6 +59,11 @@ try:
     summary.append("devel-dump:no-error")
 except Exception as error:
     summary.append("devel-dump:" + str(error).split(":")[0])
+try:
+    import chimerax.map._map as _cx_map
+    summary.append("map-ext:ok")
+except Exception as error:
+    summary.append("map-ext:" + type(error).__name__)
 # "list models" comes from the list_info bundle, which the payload now ships.
 try:
     run(session, "list models")

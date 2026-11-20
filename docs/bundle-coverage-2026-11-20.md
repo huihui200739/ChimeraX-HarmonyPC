@@ -278,3 +278,22 @@ info-chains:ok
 `libpython3.11.so.1.0` 定位、`Reference_Count` 未定义（补 `refcount.cpp`）。
 
 这条工具的意义：**以后任何 bundle 的 C 扩展都可以一条命令编出来**，不再为每个 bundle 写专用脚本。
+
+## `chimerax.map` 扩展在设备上加载成功；`zone` 的依赖闭包已量化
+
+设备读回（启动内置探针）：**`map-ext:ok`** —— `chimerax.map._map`（1.05 MB 的交叉编译扩展）
+在鸿蒙上真实加载成功。这是**第一个由通用工具构建、并在运行时验证的额外 bundle C 扩展**。
+
+### `zone` 的真实代价（静态依赖闭包分析）
+
+对 `chimerax/zone` 做传递依赖分析（`from chimerax.X` 递归）：
+
+- 闭包共 **43 个 bundle**
+- 当前暂存树缺 **25 个**（`map_data`、`surface`、`dssp`、`map_fit`、`map_series`、`markers`、
+  `nucleotides`、`seqalign`、`save_command`、`shortcuts`、`ui` 等）
+- 其中 `surface`（16 个 `.cpp`）与 `dssp`（1 个 `.cpp`）还需要交叉编译
+
+**结论**：`zone` 不是"再补一个包"能解决的，它需要整个 map/surface 家族的接入。
+`map` + `map_filter` 已暂存（设备 26/26 通过），后续可按需继续。
+
+设备断言保持 **26/26**、`builtin` 含 `map-ext:ok`。
