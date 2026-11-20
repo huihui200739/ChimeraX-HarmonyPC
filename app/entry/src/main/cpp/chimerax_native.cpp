@@ -437,7 +437,8 @@ try:
                     _cx_api.register_command(_cx_cmd, session.logger)
                 except Exception as _cx_one:
                     _cx_notes = globals().setdefault("_cx_notes", [])
-                    _cx_notes.append(_cx_cmd + ":" + type(_cx_one).__name__)
+                    _cx_notes.append(_cx_cmd + ":" + type(_cx_one).__name__
+                                     + ":" + str(_cx_one)[:40])
         except Exception as _cx_bundle_error:
             _cx_notes = globals().setdefault("_cx_notes", [])
             _cx_notes.append(_cx_module.rsplit(".", 1)[-1] + ":"

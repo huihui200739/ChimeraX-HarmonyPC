@@ -400,13 +400,25 @@ import os
 from chimerax.pdb.pdb import open_pdb
 from chimerax.core.commands import run
 
-path = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_probe.pdb")
+# Prefer the real protein asset when it is present (the 示例 button copies it here).
+# Report the choice so a missing asset is obvious instead of looking like a command failure.
+_cx_real = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_demo.pdb")
+path = _cx_real if os.path.exists(_cx_real) else os.path.join(
+    "/data/storage/el2/base/haps/entry/files", "cx_probe.pdb")
 if not os.path.exists(path):
     print("info-models:no-pdb")
 else:
     with open(path, "rb") as stream:
         opened = open_pdb(session, stream, path)
     models = list(session.models.list())
+    # The commands need an atom spec selecting the protein we just opened.
+    for command in ("mlp #1", "coulombic #1", "mask #1", "info chains"):
+        try:
+            run(session, command)
+            print(command.replace(" ", "-") + ":ok")
+        except Exception as error:
+            print(command.replace(" ", "-") + ":" + type(error).__name__
+                  + ":" + str(error)[:40])
     try:
         run(session, "info models")
         print("info-models:ok|models=%d" % len(models))
@@ -426,14 +438,6 @@ else:
         print("kinds=" + _cx_kinds + "|" + "|".join(_cx_attrs))
     except Exception as error:
         print("kinds:" + type(error).__name__ + ":" + str(error)[:40])
-    # The commands need an atom spec selecting the protein we just opened.
-    for command in ("mlp #1", "coulombic #1", "mask #1", "info chains"):
-        try:
-            run(session, command)
-            print(command.replace(" ", "-") + ":ok")
-        except Exception as error:
-            print(command.replace(" ", "-") + ":" + type(error).__name__
-                  + ":" + str(error)[:40])
     for command in ("info atoms", "info residues"):
         try:
             run(session, command)

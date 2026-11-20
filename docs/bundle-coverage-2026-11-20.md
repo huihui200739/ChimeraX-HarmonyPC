@@ -421,3 +421,22 @@ mlp #1: UserError: mlp: no amino acids specified
 
 下一步：让探针改开 `ras.pdb`（1322 原子真实蛋白）再跑 `mlp #1`，才是有意义的验证。
 断言 **26/26**、本地测试 **130 OK**。
+
+## 命令执行验证（本轮结论）
+
+设备读回（探针输出已提前，避免被截断）：
+
+```
+mlp #1: UserError: mlp: no amino acids specified
+coulombic #1: UserError: Unknown command: coulombic
+```
+
+两项都不是"命令系统坏了"，但各有具体原因：
+
+1. **mlp**：探针打开的是 `cx_probe.pdb`（4 原子探针），`#1` 非氨基酸模型 → 触发正确校验。
+   需要先让「示例/Ras 蛋白」把 `cx_demo.pdb` 复制到沙箱，探针才会打开真实蛋白。
+2. **coulombic**：命令表里有它，但执行报 Unknown command → 注册时抛了异常
+   （历史记录是 `ModuleNotFoundError`）。现在注册失败会把**模块名**写进 notes，
+   下一轮据此补依赖。
+
+断言 **26/26**、本地测试 **130 OK**。
