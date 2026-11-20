@@ -396,3 +396,14 @@ raw=2 | program=3 | shader=1 | linked=1
 **下一步（更可靠的方向）**：不要"换绑"，而是**在 staging 阶段直接改写
 `_initialize_pyopengl` 的实现**，让它在创建 GL 时就返回 `_cxgl.make_module()`。
 这样没有对象身份与调用时机问题，一处改动、全链路生效。
+
+## 2026-11-20 结论：把 ctypes 层装进 GL 会崩，暂缓
+
+把 staging 里的 `GL` 直接换成 `_cxgl.make_module()` 后：**应用启动后很快退出**（`CX_RUNTIME_READY`
+之后无日志，窗口消失，断言 2/26）。原因是通用 ctypes 包装在渲染器实际调用序列里会以错误的
+指针/类型调用 GL（例如 `glVertexAttribPointer` 的偏移、`glShaderSource` 的字符串数组），
+在 C 侧就是段错误 —— 这比"返回 0"更危险，因为无栈可查。
+
+已回退到稳定的 proxy 版本（26/26）。**结论**：`_cxgl` 需要按**确切的 C 签名**逐函数声明
+（`argtypes/restype`），而不是通用转换；这是一项独立工作，需要先收集 ChimeraX 实际调用的函数
+清单（可从 `chimerax/graphics/*.py` grep `GL.gl` 得到），再逐个核对。

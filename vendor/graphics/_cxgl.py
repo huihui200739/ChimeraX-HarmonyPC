@@ -33,6 +33,8 @@ def _to_c(arg):
 class GlesModule:
     """Drop-in replacement for PyOpenGL's GL module backed by libGLESv3 directly."""
 
+    _CX_DIRECT = True  # marker so probes can tell this facade apart from the proxy
+
     def __init__(self, constants=None):
         self._cache = {}
         self._constants = constants or {}
@@ -91,7 +93,11 @@ class GlesModule:
         return call
 
 
-def make_module():
-    import OpenGL.GLES3 as gles
+def make_module(constants_module=None):
+    """Build the GL facade. Pass the already-imported PyOpenGL module for enum constants;
+    importing it here would happen too early in ChimeraX's own import sequence."""
+    gles = constants_module
+    if gles is None:
+        import OpenGL.GLES3 as gles
     constants = {k: v for k, v in vars(gles).items() if k.startswith('GL_')}
     return GlesModule(constants)

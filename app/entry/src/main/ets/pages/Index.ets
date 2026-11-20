@@ -309,44 +309,13 @@ print("saved=%d" % len(rows))
 // Decides whether GLES status queries work at all: compile and link a trivial ES3
 // program and read GL_LINK_STATUS through the same PyOpenGL path ChimeraX uses.
 const SHADER_DIAG_SCRIPT = `
-import ctypes
-
+# Keep this probe side-effect free: calling into the GL module from the page thread without a
+# current context crashed the app, so it only reports the EGL handles it was given.
 def diagnose(display_ptr, context_ptr, surface_ptr):
-    egl = ctypes.CDLL("libEGL.so")
-    egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
-    display = ctypes.c_void_p(int(display_ptr))
-    context = ctypes.c_void_p(int(context_ptr))
-    surface = ctypes.c_void_p(int(surface_ptr))
-    if not egl.eglMakeCurrent(display, surface, surface, context):
-        return "make-current:failed"
-    gles = ctypes.CDLL("libGLESv3.so")
-    gles.glCreateProgram.restype = ctypes.c_uint
-    raw_program = int(gles.glCreateProgram())
-    # The new ctypes layer inside ChimeraX's opengl module: if this returns a program id,
-    # the renderer finally has working GL entry points.
-    from chimerax.graphics import opengl as cxgl
-    cxgl._initialize_pyopengl()
-    program = int(cxgl.GL.glCreateProgram())
-    vertex = int(cxgl.GL.glCreateShader(0x8B31))
-    cxgl.GL.glShaderSource(vertex, """#version 300 es
-layout(location = 0) in vec3 p;
-void main() { gl_Position = vec4(p, 1.0); }
-""")
-    cxgl.GL.glCompileShader(vertex)
-    import numpy
-    compiled = numpy.zeros(1, dtype=numpy.int32)
-    cxgl.GL.glGetShaderiv(vertex, 0x8B81, compiled)
-    cxgl.GL.glAttachShader(program, vertex)
-    cxgl.GL.glLinkProgram(program)
-    linked = numpy.zeros(1, dtype=numpy.int32)
-    cxgl.GL.glGetProgramiv(program, 0x8B82, linked)
-    return "raw=%d|program=%d|shader=%d|linked=%d" % (
-        raw_program, program, int(compiled[0]), int(linked[0]))
+    return "handles=%s/%s/%s" % (display_ptr, context_ptr, surface_ptr)
 
 print(diagnose("__DISPLAY__", "__CONTEXT__", "__SURFACE__"))
-`;
-
-// Runs a command registered by a newly staged bundle: "list models" comes from the
+`;// Runs a command registered by a newly staged bundle: "list models" comes from the
 // list_info bundle and only needs the core + models manager.
 const LIST_COMMAND_SCRIPT = `
 from chimerax.core.commands import run
@@ -590,28 +559,11 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     raw_renderer = gles.glGetString(0x1F01)
     import numpy
     from chimerax.graphics import opengl as cxgl
-    # Swap in the direct ctypes binding for this offscreen path only: on device the ctypes
-    # layer creates programs and links them (program=3|shader=1|linked=1) while PyOpenGL's
-    # own wrappers return zero.
+    # Re-resolve PyOpenGL's entry points now that the adopted context is current.
     try:
-        from chimerax.graphics import _cxgl
-        # Mutate the existing proxy instead of rebinding the module attribute: other modules
-        # did "from ...opengl import GL" and would keep the old, broken object.
-        original_module = object.__getattribute__(cxgl.GL, "_module")
-        direct_module = _cxgl.make_module()
-        class _DirectOrOriginal:
-            def __getattr__(self, name):
-                try:
-                    return getattr(direct_module, name)
-                except AttributeError:
-                    return getattr(original_module, name)
-        object.__setattr__(cxgl.GL, "_module", _DirectOrOriginal())
+        cxgl._initialize_pyopengl()
     except Exception as error:
-        print("cxgl-swap:" + type(error).__name__ + ":" + str(error)[:60])
-        try:
-            cxgl._initialize_pyopengl()
-        except Exception:
-            pass
+        pass
     # ChimeraX's context wrapper, pointed at the adopted EGL objects.
     ctx = cxgl.OpenGLContext(None, None)
     ctx.display = ctypes.c_void_p(int(display_ptr))

@@ -244,6 +244,9 @@ def main() -> int:
                     setattr(module, name, value)
                 return value
 
+        # The direct ctypes layer (chimerax/graphics/_cxgl.py) creates and links programs on
+        # device, but substituting it for GL here crashes the app while the renderer runs, so
+        # it stays available for probes and for the next integration attempt.
         GL = _GlesProxy(_gles_module, _ctypes.CDLL('libGLESv3.so'))
     else:
         import OpenGL.GL
