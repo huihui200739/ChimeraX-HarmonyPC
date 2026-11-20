@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess as _sp
+import tempfile
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -181,6 +183,26 @@ def main() -> int:
             module_flags.append(f'-I{bundle_root / include}')
         for relative in module['sources']:
             source = bundle_root / relative
+            if source.suffix == '.pyx':
+                # Cython runs on the build host and only emits C++; compile that instead.
+                generated_dir = workdir / 'cython'
+                generated_dir.mkdir(parents=True, exist_ok=True)
+                generated = generated_dir / (source.stem + '.cpp')
+                host_python = ROOT / 'build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11'
+                if not host_python.is_file():
+                    host_python = Path(sys.executable)
+                cython_include = [f'-I{bundle_root}', f'-I{bundle_root / "src"}',
+                                  f'-I{ROOT / "build/chimerax-python/numpy/core/include"}']
+                cy = _sp.run([str(host_python), '-m', 'cython', '-3', '--cplus',
+                              *cython_include, '-o', str(generated), str(source)],
+                             capture_output=True, text=True)
+                if cy.returncode != 0:
+                    report['failures'].append({'module': module['name'],
+                                               'source': relative,
+                                               'cython_stderr': (cy.stderr or '')[-1500:]})
+                    failed = True
+                    break
+                source = generated
             obj = workdir / (relative.replace('/', '_') + '.o')
             code, output = run([str(clang), *module_flags, '-c', '-o', str(obj), str(source)])
             if code != 0:

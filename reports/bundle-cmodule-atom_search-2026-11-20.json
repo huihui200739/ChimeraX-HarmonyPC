@@ -1,15 +1,16 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-20T14:19:03.929819+00:00",
+  "created_at_utc": "2026-11-20T15:48:28.854926+00:00",
   "bundle": "atom_search",
   "modules": [
     "ast"
   ],
-  "products": [],
-  "failures": [
+  "products": [
     {
       "module": "ast",
-      "link_stderr": "clang-15: error: no such file or directory: '/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/bundle-cmodule/atom_search/search_cpp_ast.pyx.o'\n"
+      "path": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atom_search/ast.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 658856
     }
-  ]
+  ],
+  "failures": []
 }

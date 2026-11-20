@@ -347,3 +347,23 @@ payload 5361 文件、HAP 155 MB，设备断言 **26/26**、`state=session-ready
 - `mmtf`：需要外部 `mmtf.hpp`（mmtf-cpp 第三方库）
 - `surface`：需要 GLU 的 `gluTess*`
 - `atom_search`：声明的是 Cython 源（`search_cpp_ast.pyx`），需走 Cython 生成链路
+
+## ✅ 工具支持 Cython 源（`.pyx`），`atom_search` 也进来了
+
+`<CModule>` 里声明的 `.pyx` 现在会：先在构建机上用 Cython 生成 C++（`--cplus -3`），
+再交叉编译。`atom_search` 的 `ast` 模块因此构建成功。
+
+payload 内 bundle C 扩展达到 **13 个**：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、
+`_segment`、`_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`。
+
+payload 5364 文件、HAP 156 MB，设备断言 **26/26**、`state=session-ready`。
+
+### 现在的构建工具能力（一个工具覆盖三类声明）
+
+| 声明 | 处理 |
+|---|---|
+| `<CModule>` 的 `.cpp` | NDK clang 交叉编译 |
+| `<CModule>` 的 `.pyx` | 主机 Cython → C++ → 交叉编译 |
+| `<CLibrary>` | 编译成 `lib<name>.a` 并按 `<Library>` 链接 |
+| 头文件 | bundle 根、`src/include`、arrays/atomstruct 等共享头树 |
+| 共享库 | `libcxatomstruct.so`（registry 唯一性） |
