@@ -45,6 +45,13 @@ class FakeLib:
     def glBindVertexArray(self, array):
         self._record('glBindVertexArray', array)
 
+    def glUniform3fv(self, location, count, values):
+        self._record('glUniform3fv', location, count, list(values)[:3])
+
+    def glVertexAttribPointer(self, index, size, type_, normalized, stride, offset):
+        self._record('glVertexAttribPointer', index, size, type_, normalized, stride,
+                     offset if offset is None else 'ptr')
+
 
 def make_facade():
     fake = FakeLib()
@@ -131,3 +138,16 @@ def test_aliases_point_at_real_entry_points():
         if target is None:
             continue  # documented as a no-op on GLES
         assert target in sigs.SIGNATURES, '%s -> missing %s' % (name, target)
+
+
+def test_uniform_vector_accepts_list():
+    gl, fake = make_facade()
+    gl.glUniform3fv(5, 1, [0.1, 0.2, 0.3])
+    assert fake.calls[-1][0] == 'glUniform3fv'
+    assert fake.calls[-1][1][:2] == (5, 1)
+
+
+def test_vertex_attrib_pointer_offset_becomes_pointer():
+    gl, fake = make_facade()
+    gl.glVertexAttribPointer(0, 3, 0x1406, 0, 12, 8)
+    assert fake.calls[-1] == ('glVertexAttribPointer', (0, 3, 0x1406, 0, 12, 'ptr'))

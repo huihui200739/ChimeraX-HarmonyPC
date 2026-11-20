@@ -134,6 +134,44 @@ class GlesModule:
 
         return delete
 
+    def _make_sequence_wrapper(self, c_name):
+        raw = getattr(self._lib, c_name)
+        try:
+            raw.restype = None
+        except AttributeError:
+            pass
+
+        def call(*args):
+            converted = []
+            for value in args:
+                if isinstance(value, (list, tuple)):
+                    converted.append((ctypes.c_float * len(value))(*value))
+                elif isinstance(value, (int, numpy.integer)):
+                    converted.append(ctypes.c_int(int(value)))
+                else:
+                    converted.append(_to_c(value))
+            return raw(*converted)
+
+        return call
+
+    def _make_offset_wrapper(self, c_name):
+        raw = getattr(self._lib, c_name)
+        try:
+            raw.restype = None
+        except AttributeError:
+            pass
+
+        def call(*args):
+            converted = list(args)
+            # The last parameter is a byte offset into the bound buffer; ctypes wants a pointer.
+            if converted and isinstance(converted[-1], (int, numpy.integer)):
+                converted[-1] = ctypes.c_void_p(int(converted[-1]))
+            elif converted and converted[-1] is None:
+                converted[-1] = None
+            return raw(*[_to_c(v) for v in converted])
+
+        return call
+
     def _make_generator(self, c_name):
         def generate(count=1, *rest):
             raw = getattr(self._lib, c_name)
@@ -193,6 +231,14 @@ class GlesModule:
             getter = self._make_single_value_getter(name)
             self._cache[name] = getter
             return getter
+        if name in _SEQUENCE_ARG_FUNCS:
+            wrapper = self._make_sequence_wrapper(name)
+            self._cache[name] = wrapper
+            return wrapper
+        if name in _OFFSET_FUNCS:
+            wrapper = self._make_offset_wrapper(name)
+            self._cache[name] = wrapper
+            return wrapper
         if name in _DELETE_FAMILY:
             deleter = self._make_deleter(name)
             self._cache[name] = deleter
@@ -253,6 +299,14 @@ _UNSIGNED_FIRST_ARG = {
     'glEnableVertexAttribArray', 'glDisableVertexAttribArray', 'glValidateProgram',
     'glLinkProgram', 'glCompileShader', 'glAttachShader', 'glDetachShader',
 }
+# Functions that take a Python sequence and a count in PyOpenGL but a raw pointer in GLES.
+_SEQUENCE_ARG_FUNCS = {'glUniform1fv', 'glUniform2fv', 'glUniform3fv', 'glUniform4fv',
+                       'glUniform1iv', 'glUniform2iv', 'glUniform3iv', 'glUniform4iv',
+                       'glVertexAttrib1fv', 'glVertexAttrib2fv', 'glVertexAttrib3fv',
+                       'glVertexAttrib4fv'}
+# "offset" style parameters: an integer is a byte offset, not an address.
+_OFFSET_FUNCS = {'glVertexAttribPointer': -1, 'glDrawElements': -1,
+                 'glDrawElementsInstanced': -1}
 _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteRenderbuffers', 'glDeleteVertexArrays', 'glDeleteProgram',
                   'glDeleteShader')

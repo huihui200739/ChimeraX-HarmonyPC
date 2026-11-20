@@ -525,3 +525,16 @@ raw=2 | program=3 | shader=1 | linked=1
 `glGetIntegerv` 单参返回等 —— 这是一次**完整实现**，不能靠增量试错推进。
 目前已把能自动化的部分做完（89 个调用点可达性测试、82 条精确签名、7 项行为单测、生成器可重跑），
 剩余是逐函数实现 + 每批验证。
+
+## 2026-11-20 深夜：门面补齐 `*v` 与偏移语义（含单测）
+
+新增两组 PyOpenGL 兼容语义：
+
+| 语义 | 覆盖函数 |
+|---|---|
+| `*v` 函数接受 Python 列表/元组（自动打包成 ctypes 数组） | `glUniform[1-4][fi]v`、`glVertexAttrib[1-4]fv` |
+| 末参为"字节偏移"而非地址（int → `c_void_p`） | `glVertexAttribPointer`、`glDrawElements`、`glDrawElementsInstanced` |
+
+对应新增 2 个单测（`glUniform3fv` 列表、`glVertexAttribPointer` 偏移指针化），本地 117 → **119 个用例**。
+
+这两组语义正是之前替换 GL 后崩溃的高风险来源（偏移被当成地址、列表被当成指针）。
