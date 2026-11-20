@@ -564,26 +564,6 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         cxgl._initialize_pyopengl()
     except Exception as error:
         pass
-    # Point this offscreen path at the direct ctypes layer, with argtypes copied from
-    # PyOpenGL's raw declarations so a wrong pointer cannot crash the process.
-    try:
-        from chimerax.graphics import _cxgl
-        from OpenGL.raw import GLES3 as _cx_raw_gles
-        import OpenGL.GLES3 as _cx_gles
-        _cx_original = object.__getattribute__(cxgl.GL, "_module")
-        _cx_direct = _cxgl.make_module(constants_module=_cx_gles,
-                                       signatures_module=_cx_raw_gles)
-
-        class _CxDirect:
-            def __getattr__(self, name):
-                try:
-                    return getattr(_cx_direct, name)
-                except AttributeError:
-                    return getattr(_cx_original, name)
-
-        object.__setattr__(cxgl.GL, "_module", _CxDirect())
-    except Exception as error:
-        print("direct-gl:" + type(error).__name__ + ":" + str(error)[:50])
     # ChimeraX's context wrapper, pointed at the adopted EGL objects.
     ctx = cxgl.OpenGLContext(None, None)
     ctx.display = ctypes.c_void_p(int(display_ptr))

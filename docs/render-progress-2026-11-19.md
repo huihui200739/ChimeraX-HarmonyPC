@@ -458,3 +458,23 @@ raw=2 | program=3 | shader=1 | linked=1
 3. 全部对齐后再一次性接进 `chimerax.graphics.opengl.GL`
 
 当前交付状态：设备 26/26、`state=session-ready`、真实 PDB/SDF 可视化可用。
+
+## 2026-11-20 工具化：从 NDK 头文件生成 GL 签名表
+
+新增 `tools/generate_cxgl_signatures.py`：解析 OpenHarmony NDK 的 `GLES3/gl3.h` 与
+`GLES2/gl2.h`，为 ChimeraX 实际调用的每个 `GL.gl*` 生成精确的 ctypes 签名。
+
+设备结果（`reports/cxgl-signatures.json`）：
+
+| 指标 | 值 |
+|---|---|
+| ChimeraX 全树用到的 GL 函数 | **89** |
+| 签名已生成 | **79** |
+| 剩余 10 个 | 别名或桌面独有（`glGetInteger`→`glGetIntegerv`、`glClearDepth`→`glClearDepthf`、`glDrawBuffer`/`glLogicOp` 无 ES 等价物等），已在生成的 `ALIASES` 表中标注 |
+
+生成器已处理这些真实细节：参数名与类型分离（`GLuint array` → `GLuint`、`const void *data`）、
+指针紧贴符号（`const GLubyte *GL_APIENTRY glGetString`）、`GLvoid`、指针深度、返回 `void`。
+
+**当前不启用**：把该表接进 `_cxgl` 并替换 `GL` 仍会让应用在启动后退出（本轮多次验证），
+因此 facade 的 typed 转换默认关闭、adopt 路径不做替换；表与生成器作为**下一步实现的规格基础**
+保存在仓库里，且不进入 payload。
