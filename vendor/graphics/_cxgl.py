@@ -22,12 +22,41 @@ def _to_c(arg):
     if isinstance(arg, bool):
         return ctypes.c_int(int(arg))
     if isinstance(arg, (int, numpy.integer)):
+        # c_int is what keeps the current integration crash-free; switching to c_uint for
+        # GLuint parameters is the next experiment but needs per-function argtype checking
+        # first, because a few parameters that look like ids are really pointer offsets.
         return ctypes.c_int(int(arg))
     if isinstance(arg, (float, numpy.floating)):
         return ctypes.c_float(float(arg))
     if isinstance(arg, str):
         return ctypes.c_char_p(arg.encode())
     return arg
+
+
+def _convert_for_type(arg, expected):
+    """Convert a Python/numpy argument to what the declared ctypes type expects."""
+    if expected is None:
+        return _to_c(arg)
+    if isinstance(arg, numpy.ndarray):
+        try:
+            return arg.ctypes.data_as(expected)
+        except TypeError:
+            return ctypes.cast(arg.ctypes.data, expected)
+    if expected in (ctypes.c_uint, ctypes.c_int, ctypes.c_uint64, ctypes.c_int64):
+        return int(arg)
+    if expected in (ctypes.c_float, ctypes.c_double):
+        return float(arg)
+    if expected is ctypes.c_void_p:
+        if arg is None:
+            return None
+        if isinstance(arg, (int, numpy.integer)):
+            return ctypes.c_void_p(int(arg))
+        if isinstance(arg, (str, bytes, bytearray)):
+            return ctypes.c_char_p(bytes(arg) if not isinstance(arg, bytes) else arg)
+        return _to_c(arg)
+    if arg is None:
+        return None
+    return _to_c(arg)
 
 
 class GlesModule:

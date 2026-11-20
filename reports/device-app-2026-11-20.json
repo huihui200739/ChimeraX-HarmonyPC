@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-20T07:48:01.288581+00:00",
+  "created_at_utc": "2026-11-20T08:28:47.785376+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 145906371,
-    "sha256": "e2ea59451f067feaf1735a10ce70b80e2324b9bcfd383614d5ce3dd63c99c9a3"
+    "bytes": 145906703,
+    "sha256": "292d112e712ef8d2d4ef8bbe19f2b50f5f3bb242eb5adba11bec6279832a5a11"
   },
   "checks": [
     {
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27739856/cx-generic-runtime/li"
+      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27740188/cx-generic-runtime/li"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -180,14 +180,14 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547770857728/547768178560",
+    "cx-viewer-status": "handles=548096257912/547771110368/547768247072",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547770857728/547768178560",
+    "cx-status-view": "视图: handles=548096257912/547771110368/547768247072",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27739856/cx-generic-runtime/li",
+    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27740188/cx-generic-runtime/li",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -197,7 +197,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27739856/cx-generic-runtime/li",
+  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!RuntimeError:glBindVertexArray(int): ArgumentError@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v5-27740188/cx-generic-runtime/li",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 30",

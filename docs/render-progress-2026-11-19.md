@@ -428,3 +428,18 @@ raw=2 | program=3 | shader=1 | linked=1
 `OpenGL.raw.GLES3` 取签名，生成**显式 `argtypes/restype` + 参数转换**的包装，并对
 `glGen*`/`glShaderSource`/`glBufferData` 等做 PyOpenGL 兼容适配。做完这类"逐个对齐"，
 渲染器就有机会真正出图。
+
+## 2026-11-20 收尾：稳定点定在 `glBindVertexArray`
+
+两次"参数类型"实验（把 int 交给 argtypes 转换、把非负 int 传成 `c_uint`）都会让应用崩溃，
+已全部回退。当前稳定点是：
+
+- 应用 **26/26**、`state=session-ready`
+- 渲染器走到 `glBindVertexArray(int)` 报 `ArgumentError`（GLuint vs c_int）
+
+**为什么不能简单换成 c_uint**：ChimeraX 里有几处"看起来像 id、实际是指针偏移"的整型参数
+（如 `glVertexAttribPointer` 的 offset），盲换类型会造成内存越界 —— 这正是崩溃来源。
+
+**正确做法**：逐函数生成包装，对每个参数按 `OpenGL.raw.GLES3` 的 argtypes 决定
+（GLuint → c_uint，指针 + offset → c_void_p），并对 `glGen*`/`glShaderSource`/`glBufferData`
+保留 PyOpenGL 便捷语义。这是有明确规格的编码工作，不是猜。
