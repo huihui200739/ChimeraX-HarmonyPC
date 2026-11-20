@@ -203,6 +203,26 @@ def main() -> int:
         record('The Python sample runs from the UI',
                'ChimeraX' in python_output and any(ch.isdigit() for ch in python_output), python_output)
         report['python_output'] = python_output
+        # Protein-command probe: the model-info button opens the bundled protein and runs the
+        # bundle commands against it. Its output lands in the viewer status row.
+        info_box = None
+        for _ in range(4):
+            dump()
+            info_box = _rect_from_dump('cx-info-run')
+            if info_box:
+                break
+            run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '1200', '1000', '900', '200'])
+            time.sleep(0.6)
+        info_output = ''
+        if info_box:
+            run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(info_box[0]), str(info_box[1])])
+            time.sleep(18)
+            dump()
+            info_output = dump()[1].get('cx-viewer-status', '')
+        report['info_probe_output'] = info_output
+        record('Bundle commands run against the opened protein',
+               'mlp' in info_output and 'Unknown command' not in info_output, info_output)
+
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
         if screenshot.returncode == 0:
             args.report.parent.mkdir(parents=True, exist_ok=True)

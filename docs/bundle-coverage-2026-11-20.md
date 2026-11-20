@@ -521,3 +521,21 @@ PT_AMINO 1  PT_NUCLEIC 2
 
 开发运行时已验证：`ras.pdb` 的链 polymer type 是 **1（PT_AMINO）**、残基是 `MET/THR/GLU`，
 所以只要探针选中模型正确，`mlp` 应当能通过前置校验。设备断言保持 **26/26**。
+
+## 验收器新增第 27 项：蛋白质命令探针
+
+`tools/device_app_check.py` 现在会自己滚动到「模型信息」按钮、点击、并把
+`cx-viewer-status` 的完整输出写进报告（`info_probe_output`），断言：
+
+> `Bundle commands run against the opened protein` —— 输出含 `mlp` 且不含 `Unknown command`
+
+设备运行结果：**27/27 断言通过**。当前读回：
+
+```
+res=ALA:0;ALA:0;ALA:0
+mlp #1: UserError: mlp: no amino acids specified
+```
+
+这确认了探针确实执行到了 `mlp`（不是 Unknown command），也说明被选中的模型是该
+**probe PDB（ALA 单残基结构）**，其链 polymer type 仍为 0 —— 与开发运行时 `ras.pdb`
+的 `PT_AMINO` 形成对比，下一步要查的是"单残基/无 SEQRES 时链类型如何赋值"。

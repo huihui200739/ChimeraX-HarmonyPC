@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-20T20:56:53.071372+00:00",
+  "created_at_utc": "2026-11-20T21:07:13.924461+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
@@ -138,6 +138,11 @@
       "name": "The Python sample runs from the UI",
       "passed": true,
       "detail": "ChimeraX 30"
+    },
+    {
+      "name": "Bundle commands run against the opened protein",
+      "passed": true,
+      "detail": "res=ALA:0;ALA:0;ALA:0\\nmlp-#1:UserError:mlp: no amino acids specified\\ncoulombic-#1:ImportEr"
     }
   ],
   "ui": {
@@ -180,11 +185,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546019505392/547768466640",
+    "cx-viewer-status": "handles=548096257912/546050682048/547770940368",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546019505392/547768466640",
+    "cx-status-view": "视图: handles=548096257912/546050682048/547770940368",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),;calls=88;top=glBindBuffer:23:IntConstant/uint32,glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glBindVertexArray:3:uint32,glBindRenderbuffer:3:IntConstant/uint32,glBindFramebuffer:3:IntConstant/uint32,glClearColor:2:int/int/int/int,glGenVertexArrays:2:int,glViewport:2:int/int/int/int,glGenRenderbuffers:2:int,glRenderbufferStorage:2:IntConstant/IntConstant/int/int,glFramebufferRenderbuffer:2:IntConstant/IntConstant/IntConstant/uint32,glAttachShader:2:int/int,glDeleteShader:2:int",
@@ -201,9 +206,10 @@
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 30",
+  "info_probe_output": "res=ALA:0;ALA:0;ALA:0\\nmlp-#1:UserError:mlp: no amino acids specified\\ncoulombic-#1:ImportEr",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 26,
+    "passed": 27,
     "failed": 0
   },
   "status": "app_runtime_verified"
