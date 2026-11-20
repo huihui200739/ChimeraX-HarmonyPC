@@ -1,14 +1,29 @@
-"""Unit tests for the ctypes GL facade, using a fake library so no device is needed."""
+"""Unit tests for the ctypes GL facade, using a fake library so no device is needed.
+
+The facade replaces PyOpenGL on HarmonyOS: PyOpenGL's wrappers return zero for every entry
+point there, while direct ctypes calls work. These tests pin the Python-side conveniences the
+ChimeraX renderer relies on.
+"""
 import ctypes
 import importlib.util
+import re
+import unittest
 from pathlib import Path
 
 import numpy
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location('cxgl', ROOT / 'vendor/graphics/_cxgl.py')
-cxgl = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(cxgl)
+
+
+def load(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+cxgl = load(ROOT / 'vendor/graphics/_cxgl.py', 'cxgl')
+sigs = load(ROOT / 'vendor/graphics/_cxgl_sigs.py', 'cxgl_sigs')
 
 
 def plain(value):
@@ -16,9 +31,10 @@ def plain(value):
 
 
 class FakeLib:
+    """Records calls; enough surface for the conveniences under test."""
+
     def __init__(self):
         self.calls = []
-        self.buffers = {}
 
     def _record(self, name, *args):
         self.calls.append((name, tuple(plain(a) for a in args)))
@@ -58,96 +74,83 @@ def make_facade():
     return cxgl.GlesModule(constants={'GL_TRIANGLES': 4}, library=fake), fake
 
 
-def test_create_program_returns_id():
-    gl, _ = make_facade()
-    assert gl.glCreateProgram() == 7
+class FacadeTests(unittest.TestCase):
+    def test_create_program_returns_id(self):
+        gl, _ = make_facade()
+        self.assertEqual(gl.glCreateProgram(), 7)
+
+    def test_generator_returns_single_id(self):
+        gl, _ = make_facade()
+        self.assertEqual(gl.glGenBuffers(1), 100)
+        self.assertEqual(gl.glGenBuffers(3), [100, 101, 102])
+
+    def test_delete_accepts_sequence(self):
+        gl, fake = make_facade()
+        gl.glDeleteBuffers(1, numpy.array([5], dtype=numpy.uint32))
+        self.assertIn(('glDeleteBuffers', (1, 5)), fake.calls)
+
+    def test_single_value_getter(self):
+        gl, _ = make_facade()
+        self.assertEqual(gl.glGetIntegerv(0x0D33), 42)
+
+    def test_shader_source_accepts_text(self):
+        gl, fake = make_facade()
+        gl.glShaderSource(3, '#version 300 es')
+        self.assertIn(('glShaderSource', (3, 1, b'#version 300 es')), fake.calls)
+
+    def test_bind_vertex_array_accepts_int(self):
+        gl, fake = make_facade()
+        gl.glBindVertexArray(9)
+        self.assertIn(('glBindVertexArray', (9,)), fake.calls)
+
+    def test_constants_are_exposed(self):
+        gl, _ = make_facade()
+        self.assertEqual(gl.GL_TRIANGLES, 4)
+
+    def test_uniform_vector_accepts_list(self):
+        gl, fake = make_facade()
+        gl.glUniform3fv(5, 1, [0.1, 0.2, 0.3])
+        name, args = fake.calls[-1]
+        self.assertEqual(name, 'glUniform3fv')
+        self.assertEqual(args[:2], (5, 1))
+
+    def test_vertex_attrib_pointer_offset_becomes_pointer(self):
+        gl, fake = make_facade()
+        gl.glVertexAttribPointer(0, 3, 0x1406, 0, 12, 8)
+        name, args = fake.calls[-1]
+        self.assertEqual(name, 'glVertexAttribPointer')
+        self.assertEqual(args, (0, 3, 0x1406, 0, 12, 'ptr'))
 
 
-def test_generator_returns_single_id():
-    gl, _ = make_facade()
-    assert gl.glGenBuffers(1) == 100
-    assert gl.glGenBuffers(3) == [100, 101, 102]
-
-
-def test_delete_accepts_bare_int():
-    gl, fake = make_facade()
-    gl.glDeleteBuffers(1, numpy.array([5], dtype=numpy.uint32))
-    assert ('glDeleteBuffers', (1, 5)) in fake.calls
-
-
-def test_single_value_getter():
-    gl, _ = make_facade()
-    assert gl.glGetIntegerv(0x0D33) == 42
-
-
-def test_shader_source_accepts_text():
-    gl, fake = make_facade()
-    gl.glShaderSource(3, '#version 300 es')
-    assert ('glShaderSource', (3, 1, b'#version 300 es')) in fake.calls
-
-
-def test_bind_vertex_array_accepts_int():
-    gl, fake = make_facade()
-    gl.glBindVertexArray(9)
-    assert ('glBindVertexArray', (9,)) in fake.calls
-
-
-def test_constants_are_exposed():
-    gl, _ = make_facade()
-    assert gl.GL_TRIANGLES == 4
-
-
-USED_FUNCTIONS = Path(__file__).resolve().parents[1] / 'reports/cxgl-used-functions.txt'
-
-
-def _facade_coverage():
+class ReachabilityTests(unittest.TestCase):
     """Every GL entry point the renderer calls must be reachable through the facade."""
-    import subprocess
 
-    root = Path(__file__).resolve().parents[1]
-    generated = root / 'vendor/graphics/_cxgl_sigs.py'
-    spec = importlib.util.spec_from_file_location('cxgl_sigs', generated)
-    sigs = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(sigs)
-    package = root / 'build/chimerax-python/chimerax'
-    import re
-    names = sorted({name for path in package.rglob('*.py')
-                    for name in re.findall(r'GL\.(gl[A-Za-z0-9_]+)',
-                                           path.read_text(errors='replace'))})
-    return names, sigs
+    def _used_functions(self):
+        package = ROOT / 'build/chimerax-python/chimerax'
+        if not package.is_dir():
+            self.skipTest('staged ChimeraX tree is absent')
+        names = set()
+        for path in package.rglob('*.py'):
+            names.update(re.findall(r'GL\.(gl[A-Za-z0-9_]+)',
+                                    path.read_text(errors='replace')))
+        return sorted(names)
 
+    def test_every_gl_call_is_reachable(self):
+        adapters = set(cxgl._SINGLE_VALUE_GETTERS) | set(cxgl._DELETE_FAMILY)
+        adapters |= set(cxgl._SEQUENCE_ARG_FUNCS) | set(cxgl._OFFSET_FUNCS)
+        adapters |= {'glShaderSource', 'glGenBuffers', 'glGenTextures', 'glGenVertexArrays',
+                     'glGenFramebuffers', 'glGenRenderbuffers'}
+        unreachable = [name for name in self._used_functions()
+                       if name not in sigs.SIGNATURES and name not in sigs.ALIASES
+                       and name not in adapters and name not in cxgl._DESKTOP_ONLY]
+        self.assertEqual(unreachable, [], 'no facade path for: %s' % unreachable)
 
-def test_every_gl_call_is_reachable():
-    names, sigs = _facade_coverage()
-    adapters = set(cxgl._SINGLE_VALUE_GETTERS) | set(cxgl._DELETE_FAMILY)
-    adapters |= {'glShaderSource', 'glGenBuffers', 'glGenTextures', 'glGenVertexArrays',
-                 'glGenFramebuffers', 'glGenRenderbuffers'}
-    unreachable = []
-    for name in names:
-        if name in sigs.SIGNATURES or name in sigs.ALIASES or name in adapters:
-            continue
-        if name in cxgl._DESKTOP_ONLY:
-            continue
-        unreachable.append(name)
-    assert not unreachable, 'no facade path for: %s' % unreachable
+    def test_aliases_point_at_real_entry_points(self):
+        for name, target in sigs.ALIASES.items():
+            if target is None:
+                continue  # documented as a no-op on GLES
+            self.assertIn(target, sigs.SIGNATURES, '%s -> missing %s' % (name, target))
 
 
-def test_aliases_point_at_real_entry_points():
-    _, sigs = _facade_coverage()
-    for name, target in sigs.ALIASES.items():
-        if target is None:
-            continue  # documented as a no-op on GLES
-        assert target in sigs.SIGNATURES, '%s -> missing %s' % (name, target)
-
-
-def test_uniform_vector_accepts_list():
-    gl, fake = make_facade()
-    gl.glUniform3fv(5, 1, [0.1, 0.2, 0.3])
-    assert fake.calls[-1][0] == 'glUniform3fv'
-    assert fake.calls[-1][1][:2] == (5, 1)
-
-
-def test_vertex_attrib_pointer_offset_becomes_pointer():
-    gl, fake = make_facade()
-    gl.glVertexAttribPointer(0, 3, 0x1406, 0, 12, 8)
-    assert fake.calls[-1] == ('glVertexAttribPointer', (0, 3, 0x1406, 0, 12, 'ptr'))
+if __name__ == '__main__':
+    unittest.main()
