@@ -420,6 +420,14 @@ else:
         print("info-models:ok|models=%d" % len(models))
     except Exception as error:
         print("info-models:" + type(error).__name__ + ":" + str(error)[:60])
+    # List commands from the list_info bundle that only need the model layer. "zone" needs
+    # chimerax.map, whose C++ extensions are not built yet, so it stays out of this probe.
+    for command in ("info atoms", "info chains", "info residues"):
+        try:
+            run(session, command)
+            print(command.replace(" ", "-") + ":ok")
+        except Exception as error:
+            print(command.replace(" ", "-") + ":" + type(error).__name__ + ":" + str(error)[:40])
 `;
 
 

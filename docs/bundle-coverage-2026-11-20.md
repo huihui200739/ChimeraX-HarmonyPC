@@ -234,3 +234,26 @@ try/except 吞掉 —— 结果 `session.models` 根本不存在，`list models`
 
 设备读回：`list-models:ok`、`state=session-ready`、断言 **26/26**。
 另外引导现在把启动期错误累积成 `_cx_errors` 一起报出来，不再被后一个错误覆盖。
+
+## 新增可用命令：`info chains`；`zone` 的依赖链摸清
+
+设备读回（「模型信息」按钮）：
+
+```
+info-models:ok|models=2
+info-atoms:ImportError:cannot import name settings
+info-chains:ok
+```
+
+- `info models`、`info chains` 可用（list_info 家族）
+- `info atoms` 还缺一个 settings 模块
+- `zone` 的依赖链：`zone → chimerax.label → chimerax.map_filter → chimerax.map`，
+  而 `chimerax.map` 带有 C++ 扩展（`combine.cpp`/`fittingpy.cpp`/`interpolatepy.cpp`），
+  还没交叉编译 —— 所以 zone 暂时只能注册、不能执行。
+
+### 已补的依赖
+
+- `mouse_modes`（zone 的 initialize 需要）
+- `label`（zone 运行期需要）
+
+两者都是纯 Python，已进入 payload（4183 → 4196 文件）。

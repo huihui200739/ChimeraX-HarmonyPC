@@ -415,9 +415,18 @@ try:
     # Bundle commands verified to work on this runtime.
     for _cx_module, _cx_attr, _cx_cmds in (
             ("chimerax.list_info", "_InfoAPI", ("list",)),
-            ("chimerax.open_command", "_OpenBundleAPI", ("open",))):
+            ("chimerax.open_command", "_OpenBundleAPI", ("open",)),
+            ("chimerax.zone", "_ZoneBundleAPI", ("zone",))):
         try:
             _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
+            if _cx_module == "chimerax.zone":
+                # zone needs its mouse mode object before the command can run.
+                try:
+                    _cx_api.initialize(session, None)
+                except Exception as _cx_zone_error:
+                    _cx_errors = globals().setdefault("_cx_errors", [])
+                    _cx_errors.append("zone-init:" + type(_cx_zone_error).__name__
+                                      + ":" + str(_cx_zone_error)[:50])
             for _cx_cmd in _cx_cmds:
                 try:
                     _cx_api.register_command(_cx_cmd, session.logger)
