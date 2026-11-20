@@ -414,6 +414,18 @@ else:
         opened = open_pdb(session, stream, path)
     models = list(session.models.list())
     # Target the largest model this probe opened (the protein), not an earlier probe model.
+    # Per-model shape: id, atoms, chains — tells us whether the reader created chains at all.
+    try:
+        _cx_shapes = []
+        for _m in models:
+            try:
+                _cx_shapes.append("#%s,%d,%d" % (_m.id, len(_m.atoms),
+                                                 len(list(_m.atoms.residues.chains))))
+            except Exception:
+                _cx_shapes.append("#%s,?," % getattr(_m, "id", "?"))
+        print("models=" + ";".join(_cx_shapes))
+    except Exception as error:
+        print("models:" + type(error).__name__)
     # Prefer a model that actually contains standard amino-acid residues.
     _CX_AMINO = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY", "HIS", "ILE",
                  "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"}
@@ -765,6 +777,38 @@ struct Index {
 
   aboutToAppear(): void {
     this.bootstrap();
+    // Copy after bootstrap: filesDir() comes from AppStorage, which bootstrap fills in.
+    this.copyDemoAssets();
+  }
+
+  // Stage the bundled structures into the sandbox at start-up, so every open path (buttons,
+  // probes, the checker) sees the same real files instead of depending on a prior tap.
+  private copyDemoAssets(): void {
+    const assets: string[] = ['cx_demo.pdb', 'cx_demo.sdf'];
+    for (const asset of assets) {
+      try {
+        const target: string = getContext(this).filesDir + '/' + asset;
+        const bytes: Uint8Array = getContext(this).resourceManager.getRawFileContentSync(asset);
+        // Re-copy when an earlier attempt left a truncated file behind.
+        if (fs.accessSync(target)) {
+          const existing: number = fs.statSync(target).size;
+          if (existing === bytes.byteLength) {
+            continue;
+          }
+        }
+        const file = fs.openSync(target, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+        // Write only this view's bytes: the backing ArrayBuffer may be larger than the view.
+        const payload: ArrayBuffer = bytes.buffer.slice(
+          bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+        fs.writeSync(file.fd, payload);
+        fs.closeSync(file);
+        hilog.info(0x0000, 'ChimeraX', 'asset staged %{public}s (%{public}d bytes)',
+          asset, bytes.byteLength);
+      } catch (error) {
+        hilog.warn(0x0000, 'ChimeraX', 'asset copy failed for %{public}s: %{public}s',
+          asset, JSON.stringify(error));
+      }
+    }
   }
 
   private filesDir(): string {
