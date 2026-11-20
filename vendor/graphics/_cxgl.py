@@ -245,6 +245,14 @@ _SINGLE_VALUE_GETTERS = {
     'glGetFloatv': (ctypes.c_float, 1),
     'glGetBooleanv': (ctypes.c_ubyte, 1),
 }
+# Functions whose GLuint parameters must receive an unsigned value; passing c_int makes
+# ctypes reject the call, which is what stopped the renderer at glBindVertexArray.
+_UNSIGNED_FIRST_ARG = {
+    'glBindVertexArray', 'glBindBuffer', 'glBindTexture', 'glBindFramebuffer',
+    'glBindRenderbuffer', 'glUseProgram', 'glDeleteProgram', 'glDeleteShader',
+    'glEnableVertexAttribArray', 'glDisableVertexAttribArray', 'glValidateProgram',
+    'glLinkProgram', 'glCompileShader', 'glAttachShader', 'glDetachShader',
+}
 _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteRenderbuffers', 'glDeleteVertexArrays', 'glDeleteProgram',
                   'glDeleteShader')
