@@ -106,8 +106,19 @@ def main() -> int:
              f'-I{py_include}', f'-I{bundle_root}', f'-I{include_root}']
     if args.numpy_include.is_dir():
         flags.append(f'-I{args.numpy_include}')
-    linker = [f'-L{runtime_lib}', '-l:libpython3.11.so.1.0',
-              '-Wl,-rpath,$ORIGIN/../../../../../lib:$ORIGIN/../../lib', '-Wl,--no-undefined']
+    shared_lib_dir = args.packages / 'chimerax/lib'
+    if not (shared_lib_dir / 'libcxatomstruct.so').is_file():
+        # The shared support library ships as an app native library, not inside the payload.
+        candidate = ROOT / 'app/entry/libs/arm64-v8a/chimerax/lib'
+        if (candidate / 'libcxatomstruct.so').is_file():
+            shared_lib_dir = candidate
+    linker = [f'-L{runtime_lib}', '-l:libpython3.11.so.1.0']
+    if (shared_lib_dir / 'libcxatomstruct.so').is_file():
+        # atomstruct/pyinstance registries live in one shared library; linking the same
+        # sources per extension would give each copy its own registry.
+        linker += [f'-L{shared_lib_dir}', '-lcxatomstruct']
+    linker += ['-Wl,-rpath,$ORIGIN/../../../../../lib:$ORIGIN/../../lib:$ORIGIN/../lib',
+               '-Wl,--no-undefined']
 
     workdir = ROOT / 'build/bundle-cmodule' / args.bundle
     workdir.mkdir(parents=True, exist_ok=True)

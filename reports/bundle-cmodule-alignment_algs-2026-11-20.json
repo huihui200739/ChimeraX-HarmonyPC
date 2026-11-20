@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-20T14:19:20.462048+00:00",
+  "bundle": "alignment_algs",
+  "modules": [
+    "_nw",
+    "_sw"
+  ],
+  "products": [],
+  "failures": [
+    {
+      "module": "_nw",
+      "source": "_nw/nw.cpp",
+      "stderr": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/alignment_algs/_nw/nw.cpp:34:10: fatal error: 'align_algs/support.h' file not found\n#include <align_algs/support.h>\n         ^~~~~~~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "module": "_sw",
+      "source": "_sw/sw.cpp",
+      "stderr": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/alignment_algs/_sw/sw.cpp:30:10: fatal error: 'align_algs/support.h' file not found\n#include \"align_algs/support.h\"\n         ^~~~~~~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    }
+  ]
+}

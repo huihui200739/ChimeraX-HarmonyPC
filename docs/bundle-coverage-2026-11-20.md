@@ -297,3 +297,28 @@ info-chains:ok
 `map` + `map_filter` 已暂存（设备 26/26 通过），后续可按需继续。
 
 设备断言保持 **26/26**、`builtin` 含 `map-ext:ok`。
+
+## ✅ 十个 bundle 的 C 扩展一次性编译成功并进入 payload
+
+`tools/build_all_bundle_cmodules.py`（在 staging 之后、打包之前运行）：
+
+| bundle | 模块 | 结果 |
+|---|---|---|
+| map | `_map` | ✅ |
+| mask | `_mask` | ✅ |
+| stl | `_stl` | ✅ |
+| morph | `_morph` | ✅ |
+| coulombic | `_esp` | ✅ |
+| mlp | `_mlp` | ✅ |
+| segment | `_segment` | ✅ |
+| dssp | `_dssp` | ✅ |
+| connect_structure | `_cs` | ✅ |
+| match_align | `_msa3d` | ✅ |
+
+关键修法：把共享的 `libcxatomstruct.so`（在 `app/entry/libs/arm64-v8a/chimerax/lib`）加入链接，
+解决 `pyinstance::PythonInstance<atomstruct::Residue>` 等未定义符号。
+
+payload 从 4299 → **5352 个文件**，HAP 154 MB；设备断言 **26/26**、`map-ext:ok`、`state=session-ready`。
+
+未建的三个（`surface` 需要 GLU 的 `gluTess*`；`mmtf`/`alignment_algs` 编译报错；`atom_search` 源码路径）
+已记录，属于下一批。
