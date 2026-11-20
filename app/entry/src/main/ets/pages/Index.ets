@@ -539,6 +539,8 @@ except Exception as error:
     print("real-sdf:" + type(error).__name__ + ":" + str(error)[:60])
 `;
 
+
+
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
 const ADOPT_SCRIPT = `

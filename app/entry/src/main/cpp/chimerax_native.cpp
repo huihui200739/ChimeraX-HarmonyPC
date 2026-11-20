@@ -355,24 +355,25 @@ try:
 
     session = Session("ChimeraX", silent=True, minimal=True)
     session.ui = _NullUI()
-    # Bundles declare extra triggers while a normal start-up imports them; register the ones
-    # the structure readers attach handlers to, otherwise open_pdb fails mid-parse.
+    core_settings.init(session)
+    from chimerax.core.tools import Tools
+    session.tools = Tools(session)
+    try:
+        from chimerax.core.models import Models
+        session.models = Models(session)
+    except Exception as _cx_models_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("models:" + type(_cx_models_error).__name__
+                          + ":" + str(_cx_models_error)[:70])
+    # Structure readers attach handlers to triggers that a full start-up registers while
+    # importing bundles. This runs after Models(), which declares the model triggers itself,
+    # so the calls below only fill in what is still missing.
     for _cx_trigger in ('model position changed', 'new frame', 'scene begin', 'scene end',
                         'frame drawn', 'graphics update'):
         try:
             session.triggers.add_trigger(_cx_trigger)
         except Exception:
             pass
-    core_settings.init(session)
-    from chimerax.core.tools import Tools
-    session.tools = Tools(session)
-    # The models manager registers the model triggers that AtomicStructure needs.
-    # It is optional: setup continues even if it cannot be created.
-    try:
-        from chimerax.core.models import Models
-        session.models = Models(session)
-    except Exception as _cx_models_error:
-        _cx_state = "models-failed:" + type(_cx_models_error).__name__ + ":" + str(_cx_models_error)[:80]
     # The main view is what offscreen rendering captures from; the minimal session does
     # not create one on its own.
     try:
@@ -426,6 +427,8 @@ try:
             _cx_state = ("bundle-register:" + type(_cx_bundle_error).__name__
                          + ":" + str(_cx_bundle_error)[:40])
     _cx_state = globals().get("_cx_state", "session-ready")
+    if globals().get("_cx_errors"):
+        _cx_state = ";".join(globals()["_cx_errors"])[:160]
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]
 )PY");

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-19T22:55:07.160107+00:00",
+  "created_at_utc": "2026-11-19T23:56:55.215701+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 145717625,
-    "sha256": "05d1e5db6f848478bf2e052dbd74a48f8325acea092037d8feb7f1b5a7853f2c"
+    "bytes": 145717721,
+    "sha256": "bb1c772757bd444eb51e4ab96fd1a67ea9be7291c1b64f30120142226e737828"
   },
   "checks": [
     {
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!AttributeError:'Session' object has no attribute 'main_view'@Traceback (most recent call last):"
+      "detail": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -122,12 +122,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:AttributeError:'Session' object has no attribute 'models'|tools=True|toolshed=True|state=view-failed:AttributeError:'Session' object has no attribute 'models'"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:AttributeError:'Session' object has no attribute 'models'|tools=True|toolshed=True|state=view-failed:AttributeError:'Session' object has no attribute 'models'"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -137,7 +137,7 @@
     {
       "name": "The Python sample runs from the UI",
       "passed": true,
-      "detail": "ChimeraX 25"
+      "detail": "ChimeraX 30"
     }
   ],
   "ui": {
@@ -157,7 +157,7 @@
     "cx-cmd-input": "cxprobe ui-command",
     "cx-cmd-run": "执行命令",
     "cx-cmd-py": "Python",
-    "cx-cmd-output": "ChimeraX 25",
+    "cx-cmd-output": "ChimeraX 30",
     "cx-status": "运行环境就绪",
     "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16",
     "cx-trigger": "cx_app_probe|fired",
@@ -187,20 +187,20 @@
     "cx-status-view": "视图: raw_program=2",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!AttributeError:'Session' object has no attribute 'main_view'@Traceback (most recent call last):",
+    "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:AttributeError:'Session' object has no attribute 'models'|tools=True|toolshed=True|state=view-failed:AttributeError:'Session' object has no attribute 'models'"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!AttributeError:'Session' object has no attribute 'main_view'@Traceback (most recent call last):",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:AttributeError:'Session' object has no attribute 'models'|tools=True|toolshed=True|state=view-failed:AttributeError:'Session' object has no attribute 'models'",
+  "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|list-models:ok|tools=True|toolshed=True|state=session-ready",
   "command_output": "cxprobe:ui-command",
-  "python_output": "ChimeraX 25",
+  "python_output": "ChimeraX 30",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
     "passed": 26,

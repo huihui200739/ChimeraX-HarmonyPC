@@ -217,3 +217,20 @@ float depth_fade = clamp(1.0 - (v_depth + 0.9) * 0.35, 0.45, 1.0);
 结构稳稳落在视口中央并铺满。
 
 截图 `reports/ras-centered2-2026-11-20.jpeg`（1322 原子，球体+键+景深，居中），断言 **26/26**。
+
+## 陷阱：trigger 注册顺序会决定 models 管理器是否存在
+
+把 trigger 注册提前到 `Models(session)` 之前，会让 `Models` 自己注册 trigger 时抛
+`KeyError: "Trigger 'model position changed' already exists"`，而这个异常被引导里的
+try/except 吞掉 —— 结果 `session.models` 根本不存在，`list models` 和 View 创建一起失败。
+
+最终顺序（已修复）：
+
+1. `Session(minimal=True)` + `session.ui`
+2. `core_settings.init`
+3. `Tools`、`Models`
+4. **之后**再补注册读取器需要的 trigger（已存在的会抛异常，逐个忽略）
+5. `View(...)`
+
+设备读回：`list-models:ok`、`state=session-ready`、断言 **26/26**。
+另外引导现在把启动期错误累积成 `_cx_errors` 一起报出来，不再被后一个错误覆盖。
