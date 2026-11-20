@@ -440,3 +440,22 @@ coulombic #1: UserError: Unknown command: coulombic
    下一轮据此补依赖。
 
 断言 **26/26**、本地测试 **130 OK**。
+
+## 命令注册全部成功（notes 为空），执行仍有两个具体障碍
+
+设备读回：
+
+```
+state=session-ready|notes=-
+mlp #1: UserError: mlp: no amino acids specified
+coulombic #1: ImportError: cannot import name ...
+```
+
+- **注册层已完全干净**：`notes=-` 表示 52+ 条命令（含 `mlp`/`coulombic`/`morph`/`mask`/
+  `segmentation`）全部注册成功；`coulombic` 不再报 Unknown command
+- **`mlp`**：探针选中的模型仍不是蛋白质（`#1` 是探针模型）。需要确认沙箱里
+  `cx_demo.pdb` 是否真的被复制进去（探针已优先用它）
+- **`coulombic`**：前进到下一个缺失符号（`ImportError: cannot import name ...`），
+  属于依赖链下一层
+
+断言 **26/26**、本地测试 **130 OK**、payload 5391 文件。

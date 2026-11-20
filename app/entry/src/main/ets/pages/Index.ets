@@ -413,8 +413,13 @@ else:
     with open(path, "rb") as stream:
         opened = open_pdb(session, stream, path)
     models = list(session.models.list())
-    # The commands need an atom spec selecting the protein we just opened.
-    for command in ("mlp #1", "coulombic #1", "mask #1", "info chains"):
+    # Target the largest model this probe opened (the protein), not an earlier probe model.
+    try:
+        _cx_big = max(models, key=lambda m: len(m.atoms))
+        _cx_spec = "#%d" % _cx_big.id
+    except Exception:
+        _cx_spec = "#1"
+    for command in ("mlp " + _cx_spec, "coulombic " + _cx_spec, "info chains"):
         try:
             run(session, command)
             print(command.replace(" ", "-") + ":ok")
