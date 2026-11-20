@@ -414,11 +414,24 @@ else:
         opened = open_pdb(session, stream, path)
     models = list(session.models.list())
     # Target the largest model this probe opened (the protein), not an earlier probe model.
+    _cx_big = None
+    _cx_spec = "#1"
     try:
-        _cx_big = max(models, key=lambda m: len(m.atoms))
-        _cx_spec = "#%d" % _cx_big.id
-    except Exception:
-        _cx_spec = "#1"
+        _cx_candidates = [m for m in models if getattr(m, "atoms", None) is not None]
+        if _cx_candidates:
+            _cx_big = max(_cx_candidates, key=lambda m: len(m.atoms))
+            _cx_spec = "#%d" % _cx_big.id
+    except Exception as error:
+        print("target:" + type(error).__name__ + ":" + str(error)[:30])
+    # mlp needs polymer_type == PT_AMINO; report what the target model's residues say.
+    try:
+        if _cx_big is not None:
+            _cx_res = list(_cx_big.atoms.residues)[:3]
+            print("res=" + (";".join("%s:%d" % (r.name, r.polymer_type) for r in _cx_res) or "none"))
+        else:
+            print("res=no-target")
+    except Exception as error:
+        print("res:" + type(error).__name__ + ":" + str(error)[:30])
     for command in ("mlp " + _cx_spec, "coulombic " + _cx_spec, "info chains"):
         try:
             run(session, command)

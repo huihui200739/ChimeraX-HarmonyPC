@@ -459,3 +459,35 @@ coulombic #1: ImportError: cannot import name ...
   属于依赖链下一层
 
 断言 **26/26**、本地测试 **130 OK**、payload 5391 文件。
+
+## 🔍 定位到 `mlp` 失败的真正根因：残基的 polymer_type 为 0（PT_NONE）
+
+设备诊断读回（目标模型为 1322 原子蛋白）：
+
+```
+res=ALA:0;ALA:0;ALA:0
+mlp #1: UserError: mlp: no amino acids specified
+```
+
+残基名是正确的 `ALA`，但 `polymer_type` 是 **0 = PT_NONE**。代码路径：
+
+```cpp
+// Residue.h
+inline PolymerType Residue::polymer_type() const {
+    return chain() == nullptr ? PT_NONE : chain()->polymer_type();
+}
+// Sequence.h
+static PolymerType rname_polymer_type(const ResName& rn) {
+    if (protein3to1(rn) != 'X') return PT_AMINO;   // ALA 应返回 'A'
+    ...
+}
+```
+
+`protein3to1` 的映射表在 `atomstruct_cpp/Sequence.cpp`（`_protein3to1` 静态表），
+而链的 polymer type 在 `Structure.cpp` 建链时用 `Sequence::rname_polymer_type(...)` 赋值。
+
+**推断**：我们的 PDB 读取路径建链时没有走这条赋值（或 `Sequence` 静态表初始化未生效），
+导致所有链/残基都是 PT_NONE —— 这也解释了 `mlp`/`coulombic` 这类依赖聚合物类型的命令全部失败。
+
+下一步（下一轮）：核对 `_pdbio` 建链路径与 `Sequence::_protein3to1` 静态初始化，
+必要时在读取后用脚本补设 chain polymer type 验证假设。
