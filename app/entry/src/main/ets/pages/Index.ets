@@ -347,7 +347,8 @@ try:
     _walk(_cli._command_info.commands, "")
 except Exception as error:
     names = ["error:" + type(error).__name__]
-print("commands=%d|%s" % (len(names), ",".join(sorted(names)[:24])))
+# The palette shows every registered command, not just the first screenful.
+print("commands=%d|%s" % (len(names), ",".join(sorted(names))))
 `;
 
 
