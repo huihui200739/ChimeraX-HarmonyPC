@@ -446,6 +446,7 @@ try:
     _cx_state = globals().get("_cx_state", "session-ready")
     if globals().get("_cx_errors"):
         _cx_state = ";".join(globals()["_cx_errors"])[:160]
+    _cx_notes = globals().get("_cx_notes") or []
 except Exception as _cx_error:
     _cx_state = "session-error:" + str(_cx_error)[:200]
 )PY");

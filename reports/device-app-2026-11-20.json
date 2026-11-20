@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-20T19:21:21.436076+00:00",
+  "created_at_utc": "2026-11-20T19:42:58.344068+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 156046135,
-    "sha256": "a694f397df726056c6fa790eef1f1b87a725241b46b7606d50ba1bd2b23cb5e1"
+    "bytes": 156111067,
+    "sha256": "b0ad6ac80dab296216f1cf51f6172a17115960c75c7f3e09bf8da7104f06d50f"
   },
   "checks": [
     {
@@ -122,12 +122,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -180,11 +180,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546015761200/547769265360",
+    "cx-viewer-status": "handles=548096257912/545962932704/547768380864",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546015761200/547769265360",
+    "cx-status-view": "视图: handles=548096257912/545962932704/547768380864",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),;calls=88;top=glBindBuffer:23:IntConstant/uint32,glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glBindVertexArray:3:uint32,glBindRenderbuffer:3:IntConstant/uint32,glBindFramebuffer:3:IntConstant/uint32,glClearColor:2:int/int/int/int,glGenVertexArrays:2:int,glViewport:2:int/int/int/int,glGenRenderbuffers:2:int,glRenderbufferStorage:2:IntConstant/IntConstant/int/int,glFramebufferRenderbuffer:2:IntConstant/IntConstant/IntConstant/uint32,glAttachShader:2:int/int,glDeleteShader:2:int",
@@ -194,11 +194,11 @@
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
   "chimerax_render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),;calls=88;top=glBindBuffer:23:IntConstant/uint32,glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glBindVertexArray:3:uint32,glBindRenderbuffer:3:IntConstant/uint32,glBindFramebuffer:3:IntConstant/uint32,glClearColor:2:int/int/int/int,glGenVertexArrays:2:int,glViewport:2:int/int/int/int,glGenRenderbuffers:2:int,glRenderbufferStorage:2:IntConstant/IntConstant/int/int,glFramebufferRenderbuffer:2:IntConstant/IntConstant/IntConstant/uint32,glAttachShader:2:int/int,glDeleteShader:2:int",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 30",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",

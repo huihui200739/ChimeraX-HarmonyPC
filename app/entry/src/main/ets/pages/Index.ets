@@ -70,8 +70,10 @@ try:
     summary.append("list-models:ok")
 except Exception as error:
     summary.append("list-models:" + type(error).__name__ + ":" + str(error)[:60])
-print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s" % (
-    hasattr(session, "tools"), hasattr(session, "toolshed"), globals().get("_cx_state", "?")))
+_cx_notes = globals().get("_cx_notes") or []
+print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s|notes=%s" % (
+    hasattr(session, "tools"), hasattr(session, "toolshed"),
+    globals().get("_cx_state", "?"), ",".join(_cx_notes)[:120] or "-"))
 `;
 
 
@@ -1168,6 +1170,19 @@ struct Index {
           .onClick(() => { this.openAsset('cx_demo.sdf', REAL_SDF_SCRIPT); })
         Button('模型信息').id('cx-info-run').fontSize(12).height(32)
           .onClick(() => {
+            // Make sure the real protein is in the sandbox before the probe opens it.
+            try {
+              const assetPath: string = this.filesDir() + '/cx_demo.pdb';
+              if (!fs.accessSync(assetPath)) {
+                const bytes: Uint8Array = getContext(this).resourceManager
+                  .getRawFileContentSync('cx_demo.pdb');
+                const file = fs.openSync(assetPath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+                fs.writeSync(file.fd, bytes.buffer as ArrayBuffer);
+                fs.closeSync(file);
+              }
+            } catch (error) {
+              // fall through: the probe falls back to the small test file
+            }
             const report: ScriptReport = native.runScript(INFO_MODELS_SCRIPT);
             const text: string = (report.ok ? report.output : report.error).trim();
             this.viewerResult = text.slice(0, 90);
