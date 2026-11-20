@@ -1160,7 +1160,11 @@ struct Index {
           ForEach(this.commandNames, (name: string) => {
             Button(name).id('cx-cmdchip-' + name).fontSize(9).height(24)
               .backgroundColor('#16324F').fontColor('#CFE0F0')
-              .onClick(() => { this.commandText = name; })
+              .onClick(() => {
+                // Fill the bar and run it, so a chip is a real command entry point.
+                this.commandText = name;
+                this.executeCommand();
+              })
           }, (name: string) => name)
         }.width('100%')
       }
