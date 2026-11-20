@@ -1,7 +1,15 @@
 import ctypes
 import numpy
 
-lib = ctypes.CDLL('libGLESv3.so', mode=ctypes.RTLD_GLOBAL)
+def _open_gles_library():
+    """Open libGLESv3; returns None where the platform has no such library (host tests)."""
+    try:
+        return ctypes.CDLL('libGLESv3.so', mode=ctypes.RTLD_GLOBAL)
+    except OSError:
+        return None
+
+
+lib = _open_gles_library()
 
 _POINTER_RETURNING = {'glMapBufferRange', 'glMapBuffer'}
 _DESKTOP_ONLY = {'glDrawBuffer', 'glReadBuffer', 'glPolygonMode', 'glPointSize', 'glLogicOp',
@@ -64,7 +72,10 @@ class GlesModule:
 
     _CX_DIRECT = True  # marker so probes can tell this facade apart from the proxy
 
-    def __init__(self, constants=None, signatures=None):
+    def __init__(self, constants=None, signatures=None, library=None):
+        # A private handle: setting argtypes on a shared CDLL attribute would mutate the
+        # signatures every other caller sees.
+        self._lib = library if library is not None else _open_gles_library()
         self._cache = {}
         self._constants = constants or {}
         # PyOpenGL's raw module carries the correct ctypes argtypes for every entry point;
@@ -83,14 +94,62 @@ class GlesModule:
                                    ('glGenRenderbuffers', 'glGenRenderbuffers')):
             self._adapters[generator] = self._make_generator(creator)
 
+    def _make_single_value_getter(self, c_name):
+        c_type, count = _SINGLE_VALUE_GETTERS[c_name]
+        raw = getattr(self._lib, c_name)
+        try:
+            raw.restype = None
+        except AttributeError:
+            pass
+
+        def getter(pname, out=None):
+            holder = (c_type * count)()
+            raw(ctypes.c_uint(int(pname)), holder)
+            if out is not None:
+                for index in range(count):
+                    out[index] = holder[index]
+                return None
+            return holder[0]
+
+        return getter
+
+    def _make_deleter(self, c_name):
+        raw = getattr(self._lib, c_name)
+        try:
+            raw.restype = None
+        except AttributeError:
+            pass
+
+        def delete(*args):
+            if len(args) == 1 and isinstance(args[0], (int, numpy.integer)):
+                holder = (ctypes.c_uint * 1)(int(args[0]))
+                raw(ctypes.c_int(1), holder)
+                return None
+            if len(args) == 2:
+                # A count plus a sequence: hand ctypes an array, not a data pointer.
+                count, values = args
+                holder = (ctypes.c_uint * len(values))(*[int(v) for v in values])
+                return raw(ctypes.c_int(int(count)), holder)
+            return raw(*[_to_c(a) for a in args])
+
+        return delete
+
     def _make_generator(self, c_name):
         def generate(count=1, *rest):
-            raw = getattr(lib, c_name)
-            raw.restype = None
-            total = 1 if count is None else int(count)
+            raw = getattr(self._lib, c_name)
+            try:
+                raw.restype = None
+            except AttributeError:
+                pass
+            total = 1 if count is None else int(getattr(count, "value", count))
             holder = (ctypes.c_uint * max(1, total))()
-            raw(ctypes.c_int(total), holder)
-            values = [int(holder[i]) for i in range(max(1, total))]
+            try:
+                raw.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_uint)]
+            except AttributeError:
+                pass
+            raw(int(total), holder)
+            values = [int(getattr(holder[i], 'value', holder[i]))
+                      for i in range(max(1, total))]
             if rest:
                 # Explicit output array was supplied by the caller.
                 target = rest[0]
@@ -103,16 +162,17 @@ class GlesModule:
 
     # -- special cases -----------------------------------------------------
     def _shader_source(self, shader, source, *rest):
+        library = self._lib if getattr(self, "_lib", None) is not None else lib
         if isinstance(source, str):
             source = source.encode()
         if isinstance(source, (bytes, bytearray)):
             holder = (ctypes.c_char_p * 1)(bytes(source))
-            lib.glShaderSource(_to_c(shader), ctypes.c_int(1), holder, None)
+            library.glShaderSource(_to_c(shader), ctypes.c_int(1), holder, None)
             return None
         if isinstance(source, (list, tuple)):
             items = [s.encode() if isinstance(s, str) else bytes(s) for s in source]
             holder = (ctypes.c_char_p * len(items))(*items)
-            lib.glShaderSource(_to_c(shader), ctypes.c_int(len(items)), holder, None)
+            library.glShaderSource(_to_c(shader), ctypes.c_int(len(items)), holder, None)
             return None
         lib.glShaderSource(_to_c(shader), _to_c(source), None, None)
         return None
@@ -129,6 +189,14 @@ class GlesModule:
             raise AttributeError(name)
         if name in self._adapters:
             return self._adapters[name]
+        if name in _SINGLE_VALUE_GETTERS:
+            getter = self._make_single_value_getter(name)
+            self._cache[name] = getter
+            return getter
+        if name in _DELETE_FAMILY:
+            deleter = self._make_deleter(name)
+            self._cache[name] = deleter
+            return deleter
         # A short, explicit list of desktop-GL calls GLES does not have. Anything else missing
         # must still raise, otherwise a real gap gets swallowed and the app misbehaves.
         if name in _DESKTOP_ONLY:
@@ -136,18 +204,27 @@ class GlesModule:
                 return 0
             self._cache[name] = desktop_only
             return desktop_only
-        raw = getattr(lib, name)
+        raw = getattr(self._lib, name)
         signature = self._signatures.get(name)
         if signature is not None:
             argtypes, restype = signature
-            raw.argtypes = argtypes
-            raw.restype = restype
+            try:
+                raw.argtypes = argtypes
+                raw.restype = restype
+            except AttributeError:
+                pass
         if name in _STRING_RETURNING:
             # ChimeraX compares these results as text, so hand back bytes not an address.
-            raw.restype = ctypes.c_char_p
+            try:
+                raw.restype = ctypes.c_char_p
+            except AttributeError:
+                pass
             self._cache[name] = lambda *a, _raw=raw: _raw(*[_to_c(x) for x in a])
             return self._cache[name]
-        raw.restype = ctypes.c_void_p if name in _POINTER_RETURNING else ctypes.c_uint
+        try:
+            raw.restype = ctypes.c_void_p if name in _POINTER_RETURNING else ctypes.c_uint
+        except AttributeError:
+            pass
 
         def call(*args, _raw=raw, _name=name):
             try:
@@ -159,6 +236,18 @@ class GlesModule:
 
         self._cache[name] = call
         return call
+
+
+# PyOpenGL conveniences that ChimeraX relies on: the renderer calls e.g.
+# GL.glGetIntegerv(pname) and expects a value back, while GLES needs an output buffer.
+_SINGLE_VALUE_GETTERS = {
+    'glGetIntegerv': (ctypes.c_int, 1),
+    'glGetFloatv': (ctypes.c_float, 1),
+    'glGetBooleanv': (ctypes.c_ubyte, 1),
+}
+_DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
+                  'glDeleteRenderbuffers', 'glDeleteVertexArrays', 'glDeleteProgram',
+                  'glDeleteShader')
 
 
 def make_module(constants_module=None, signatures_module=None):

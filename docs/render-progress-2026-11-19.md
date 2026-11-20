@@ -478,3 +478,20 @@ raw=2 | program=3 | shader=1 | linked=1
 **当前不启用**：把该表接进 `_cxgl` 并替换 `GL` 仍会让应用在启动后退出（本轮多次验证），
 因此 facade 的 typed 转换默认关闭、adopt 路径不做替换；表与生成器作为**下一步实现的规格基础**
 保存在仓库里，且不进入 payload。
+
+## 2026-11-20 晚：给 ctypes GL 门面补 PyOpenGL 便捷语义 + 主机侧单元测试
+
+`_cxgl` 现在实现了渲染器依赖的那些"非 C 语义"：
+
+| 便捷语义 | 实现 |
+|---|---|
+| `glGenBuffers(1)` 返回 id | `_make_generator`（单 id 或多 id 列表，也可显式传输出数组） |
+| `glGetIntegerv(pname)` 单参返回标量 | `_make_single_value_getter`（`glGetFloatv`/`glGetBooleanv` 同） |
+| `glDeleteBuffers(1, [id])` / 裸 id | `_make_deleter` |
+| `glShaderSource(shader, "源码")` | `_shader_source`（单串/列表/字节） |
+| 私有库句柄 | 每次 `make_module()` 独立 `CDLL`，避免 `argtypes` 污染全局 |
+
+并新增 **7 个主机侧单元测试**（`tests/test_cxgl_facade.py`，用假库注入，不需要设备）：
+`glCreateProgram` 返回值、生成器 id、删除裸 id、单值 getter、shader 源码、整数绑定、常量表。
+
+本地全量测试：**117 个用例全部通过**；设备断言仍 **26/26**。
