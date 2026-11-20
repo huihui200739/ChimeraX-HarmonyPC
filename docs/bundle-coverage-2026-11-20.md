@@ -491,3 +491,21 @@ static PolymerType rname_polymer_type(const ResName& rn) {
 
 下一步（下一轮）：核对 `_pdbio` 建链路径与 `Sequence::_protein3to1` 静态初始化，
 必要时在读取后用脚本补设 chain polymer type 验证假设。
+
+## ✅ 更正：PDB 读取的聚合物类型是**正确的**（开发运行时验证）
+
+在开发运行时直接打开 `ras.pdb` 并打印链信息：
+
+```
+model AtomicStructure atoms 1322 chains 1322
+chain polymer_type 1 res ['MET','THR','GLU']     ← 1 = PT_AMINO，正确
+PT_AMINO 1  PT_NUCLEIC 2
+```
+
+**结论**：读取器与 `Sequence::_protein3to1` 映射都正常，链的 polymer type = PT_AMINO。
+
+因此应用内探针看到的 `ALA:0` **不是**读取器缺陷，而是**探针选错了模型**
+（应用里存在多个模型：探针模型/示例模型/真实蛋白，`max(len(atoms))` 选到了非蛋白结构）。
+
+下一步：探针改为按模型名（如 `cx_demo`）或"含标准氨基酸残基最多"来定位真实蛋白，
+再跑 `mlp`。
