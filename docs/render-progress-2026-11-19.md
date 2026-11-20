@@ -358,3 +358,29 @@ current=1 | raw_program=2 | raw_error=0 | py_program=0 | py_error=0
 这条已作为独立工作项记录，工作量半天到一天。
 
 四次尝试的补丁均已回退，暂存树回到稳定状态；设备 26/26 全过。
+
+## 2026-11-20 重大进展：自建 ctypes GL 层被验证可用
+
+在 `chimerax/graphics/_cxgl.py` 里实现了一个直接绑定 `libGLESv3.so` 的 GL 模块
+（整数/浮点/字符串/numpy 指针自动转换、`glShaderSource` 适配、字符串类函数返回 bytes、
+缺失的桌面 GL 符号走显式 no-op 列表）。设备诊断读回：
+
+```
+raw=2 | program=3 | shader=1 | linked=1
+```
+
+**这是第一次让 ChimeraX 内部的 GL 调用在鸿蒙上真正创建程序、编译着色器并链接成功。**
+（此前 PyOpenGL 的所有路径都返回 0。）
+
+### 尚未接通的一步
+
+把该层换到 `chimerax.graphics.opengl.GL` 上有两种做法，都还没成功：
+
+| 做法 | 结果 |
+|---|---|
+| 引导期整体替换 `cxgl.GL = _cxgl.make_module()` | 应用启动即崩（2/26） |
+| 仅 adopt 脚本内把代理的 `_module` 就地改指向 ctypes 层 | 应用正常（26/26），但 ChimeraX 渲染器仍用旧引用 |
+
+**结论**：`Render`/`View` 在引导期就缓存了 GL 引用，之后换绑无效。正确做法是**在构造 View/Render
+之前**就把代理就地改指向 ctypes 层（而不是替换对象，也不需要 `import OpenGL.GLES3` 的时机风险）。
+这一条留作下一次连续调试的起点，证据与补丁位置都已记录。

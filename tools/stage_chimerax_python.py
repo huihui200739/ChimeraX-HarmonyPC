@@ -435,6 +435,13 @@ def main() -> int:
                 "    pass\n")
             egl_file.write_text(text)
 
+    # Direct ctypes binding to libGLESv3: PyOpenGL's own wrappers silently return zero on
+    # HarmonyOS (verified on device), while the library itself works.
+    cxgl_source = ROOT / 'vendor/graphics/_cxgl.py'
+    cxgl_target = args.output / 'chimerax/graphics/_cxgl.py'
+    if cxgl_source.is_file() and cxgl_target.parent.is_dir():
+        shutil.copy2(cxgl_source, cxgl_target)
+
     # PyOpenGL resolves libraries through ctypes.util.find_library, which does not know the
     # HarmonyOS layout; stub it before OpenGL is imported so the GLESv3 soname resolves to
     # the real file. Without this every GL entry point silently returns zero.
