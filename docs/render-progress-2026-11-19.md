@@ -384,3 +384,15 @@ raw=2 | program=3 | shader=1 | linked=1
 **结论**：`Render`/`View` 在引导期就缓存了 GL 引用，之后换绑无效。正确做法是**在构造 View/Render
 之前**就把代理就地改指向 ctypes 层（而不是替换对象，也不需要 `import OpenGL.GLES3` 的时机风险）。
 这一条留作下一次连续调试的起点，证据与补丁位置都已记录。
+
+## 2026-11-20 补充：换绑时机的三次尝试与结果
+
+| 做法 | 组件状态 | 渲染器 |
+|---|---|---|
+| adopt 脚本内改代理 `_module` | 26/26 | 仍 `glGetUniformBlockIndex(0, ...)` |
+| 引导期（View 之前）改 `_module` | 启动正常 | 仍失败；且诊断 `program=0`，说明 `_initialize_pyopengl()` 会重建 GL 对象、把换绑冲掉 |
+| 再把 `_initialize_pyopengl` 包一层、每次重建后重新换绑 | 启动正常 | 仍 `program=0` —— 说明 `cxgl.GL` 在重建后不是我们改的那个对象，或渲染器持有更早的函数引用 |
+
+**下一步（更可靠的方向）**：不要"换绑"，而是**在 staging 阶段直接改写
+`_initialize_pyopengl` 的实现**，让它在创建 GL 时就返回 `_cxgl.make_module()`。
+这样没有对象身份与调用时机问题，一处改动、全链路生效。
