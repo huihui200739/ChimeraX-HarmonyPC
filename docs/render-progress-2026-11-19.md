@@ -443,3 +443,18 @@ raw=2 | program=3 | shader=1 | linked=1
 **正确做法**：逐函数生成包装，对每个参数按 `OpenGL.raw.GLES3` 的 argtypes 决定
 （GLuint → c_uint，指针 + offset → c_void_p），并对 `glGen*`/`glShaderSource`/`glBufferData`
 保留 PyOpenGL 便捷语义。这是有明确规格的编码工作，不是猜。
+
+## 2026-11-20 结论：渲染整合暂停，稳定点已固定
+
+第三次参数转换实验（只对"全部参数都是标量"的函数做精确类型转换）**仍然崩溃**，已回退。
+这说明崩溃不只来自参数类型，还涉及 PyOpenGL 的其它隐式约定（例如 `glGetIntegerv(pname)`
+单参数返回值的便捷语义、生成器返回值、`glVertexAttribPointer` 的 offset 指针化等）。
+
+**判断**：在"每步 15 分钟构建 + 崩溃"的循环里盲试不划算。渲染整合改为**按清单逐函数实现**
+的独立工作块：
+
+1. 从 `chimerax/graphics` 提取实际调用的 89 个 `GL.gl*`
+2. 对每个函数写显式的 ctypes 包装（签名 + 便捷语义），逐个在开发运行时里验证
+3. 全部对齐后再一次性接进 `chimerax.graphics.opengl.GL`
+
+当前交付状态：设备 26/26、`state=session-ready`、真实 PDB/SDF 可视化可用。
