@@ -415,7 +415,8 @@ else:
     # List commands from the list_info bundle that only need the model layer. "zone" needs
     # chimerax.map, whose C++ extensions are not built yet, so it stays out of this probe.
     # Exercise the commands the newly built bundles register.
-    for command in ("mlp", "coulombic", "mask", "segmentation", "info chains"):
+    # The commands need an atom spec selecting the protein we just opened.
+    for command in ("mlp #1", "coulombic #1", "mask #1", "info chains"):
         try:
             run(session, command)
             print(command.replace(" ", "-") + ":ok")
