@@ -322,3 +322,28 @@ payload 从 4299 → **5352 个文件**，HAP 154 MB；设备断言 **26/26**、
 
 未建的三个（`surface` 需要 GLU 的 `gluTess*`；`mmtf`/`alignment_algs` 编译报错；`atom_search` 源码路径）
 已记录，属于下一批。
+
+## ✅ 通用工具支持 `<CLibrary>`，又加了 `alignment_algs`
+
+`bundle_info.xml` 里除了 `<CModule>` 还有 `<CLibrary>`（模块链接的静态库）。工具现在会：
+
+1. 解析 `<CLibrary>`（源码 + `IncludeDir`）
+2. 编译成 `lib<name>.a`（`llvm-ar`）
+3. 按模块声明的 `<Library>` / `<LibraryDir>` 链接进去
+4. 把 bundle 的 `src/include` 加入头文件搜索路径
+
+结果：`alignment_algs` 的 `_nw` / `_sw` 两个模块编译链接成功
+（关键符号 `align_algs::make_matrix` 来自 `src/support.cpp` 编成的静态库）。
+
+### 当前 payload 内可用的 bundle C 扩展（12 个）
+
+`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、`_dssp`、`_cs`、`_msa3d`、
+`_nw`、`_sw`
+
+payload 5361 文件、HAP 155 MB，设备断言 **26/26**、`state=session-ready`。
+
+### 仍不可行的三个
+
+- `mmtf`：需要外部 `mmtf.hpp`（mmtf-cpp 第三方库）
+- `surface`：需要 GLU 的 `gluTess*`
+- `atom_search`：声明的是 Cython 源（`search_cpp_ast.pyx`），需走 Cython 生成链路

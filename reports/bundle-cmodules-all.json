@@ -1,5 +1,5 @@
 {
-  "created_at_utc": "2026-11-20T14:41:33.921428+00:00",
+  "created_at_utc": "2026-11-20T15:21:06.416134+00:00",
   "bundles": {
     "map": {
       "returncode": 0,
@@ -107,6 +107,17 @@
         "  \"products\": 1,",
         "  \"failures\": 0,",
         "  \"report\": \"/Users/huihui/Documents/\\u9e3f\\u8499pc\\u9002\\u914d/ChimeraX-HarmonyPC/reports/bundle-cmodule-match_align-2026-11-20.json\"",
+        "}"
+      ],
+      "stderr": ""
+    },
+    "alignment_algs": {
+      "returncode": 0,
+      "tail": [
+        "{",
+        "  \"products\": 2,",
+        "  \"failures\": 0,",
+        "  \"report\": \"/Users/huihui/Documents/\\u9e3f\\u8499pc\\u9002\\u914d/ChimeraX-HarmonyPC/reports/bundle-cmodule-alignment_algs-2026-11-20.json\"",
         "}"
       ],
       "stderr": ""

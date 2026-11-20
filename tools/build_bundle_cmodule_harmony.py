@@ -42,6 +42,20 @@ def run(cmd: list[str], timeout: int = 1800) -> tuple[int, str]:
     return proc.returncode, (proc.stdout or '') + (proc.stderr or '')
 
 
+def parse_libraries(bundle_root: Path) -> list[dict]:
+    """Bundles can declare a CLibrary that their C modules link against."""
+    info = bundle_root / 'bundle_info.xml'
+    tree = ET.parse(info)
+    libraries = []
+    for node in tree.iter('CLibrary'):
+        sources = [child.text.strip() for child in node
+                   if child.tag == 'SourceFile' and child.text]
+        includes = [child.text.strip() for child in node
+                    if child.tag == 'IncludeDir' and child.text]
+        libraries.append({'name': node.get('name'), 'sources': sources, 'includes': includes})
+    return libraries
+
+
 def parse_modules(bundle_root: Path) -> list[dict]:
     info = bundle_root / 'bundle_info.xml'
     tree = ET.parse(info)
@@ -52,7 +66,14 @@ def parse_modules(bundle_root: Path) -> list[dict]:
                    if child.tag == 'SourceFile' and child.text]
         if not sources:
             continue
-        modules.append({'name': name, 'sources': sources})
+        includes = [child.text.strip() for child in node
+                    if child.tag == 'IncludeDir' and child.text]
+        libraries = [child.text.strip() for child in node
+                     if child.tag == 'Library' and child.text]
+        lib_dirs = [child.text.strip() for child in node
+                    if child.tag == 'LibraryDir' and child.text]
+        modules.append({'name': name, 'sources': sources, 'includes': includes,
+                        'libraries': libraries, 'lib_dirs': lib_dirs})
     return modules
 
 
@@ -104,6 +125,10 @@ def main() -> int:
             link.symlink_to(target)
     flags = [f'--target={TRIPLE}', f'--sysroot={sysroot}', '-std=c++17', '-O2', '-fPIC',
              f'-I{py_include}', f'-I{bundle_root}', f'-I{include_root}']
+    # Bundles such as alignment_algs keep public headers under src/include.
+    for extra in (bundle_root / 'src/include', bundle_root / 'src'):
+        if extra.is_dir():
+            flags.append(f'-I{extra}')
     if args.numpy_include.is_dir():
         flags.append(f'-I{args.numpy_include}')
     shared_lib_dir = args.packages / 'chimerax/lib'
@@ -122,13 +147,42 @@ def main() -> int:
 
     workdir = ROOT / 'build/bundle-cmodule' / args.bundle
     workdir.mkdir(parents=True, exist_ok=True)
+
+    ar = args.sdk / 'llvm/bin/llvm-ar'
+    library_products: dict[str, Path] = {}
+    for library in parse_libraries(bundle_root):
+        if not library['sources']:
+            continue
+        objects = []
+        broken = False
+        library_flags = list(flags)
+        for include in library['includes']:
+            library_flags.append(f'-I{bundle_root / include}')
+        for relative in library['sources']:
+            source = bundle_root / relative
+            obj = workdir / ('lib_' + relative.replace('/', '_') + '.o')
+            code, output = run([str(clang), *library_flags, '-c', '-o', str(obj), str(source)])
+            if code != 0:
+                report['failures'].append({'library': library['name'], 'source': relative,
+                                           'stderr': output[-2000:]})
+                broken = True
+                break
+            objects.append(str(obj))
+        if broken:
+            continue
+        archive = workdir / ('lib%s.a' % library['name'])
+        run([str(ar), 'rcs', str(archive), *objects])
+        library_products[library['name']] = archive
     for module in modules:
         objects: list[str] = []
         failed = False
+        module_flags = list(flags)
+        for include in module.get('includes', []):
+            module_flags.append(f'-I{bundle_root / include}')
         for relative in module['sources']:
             source = bundle_root / relative
             obj = workdir / (relative.replace('/', '_') + '.o')
-            code, output = run([str(clang), *flags, '-c', '-o', str(obj), str(source)])
+            code, output = run([str(clang), *module_flags, '-c', '-o', str(obj), str(source)])
             if code != 0:
                 report['failures'].append({'module': module['name'], 'source': relative,
                                            'stderr': output[-3000:]})
@@ -154,7 +208,13 @@ def main() -> int:
         staged_dir = args.packages / 'chimerax' / args.bundle
         staged_dir.mkdir(parents=True, exist_ok=True)
         artifact = staged_dir / (module['name'] + EXT_SUFFIX)
-        code, output = run([str(clang), *flags, '-shared', f'-o{artifact}', *objects, *linker])
+        module_linker = list(linker)
+        for name in module.get('libraries', []):
+            product = library_products.get(name)
+            if product is not None:
+                module_linker.append(str(product))
+        code, output = run([str(clang), *module_flags, '-shared', f'-o{artifact}', *objects,
+                            *module_linker])
         if code != 0:
             report['failures'].append({'module': module['name'], 'link_stderr': output[-4000:]})
             continue

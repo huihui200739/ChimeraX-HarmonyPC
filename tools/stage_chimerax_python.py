@@ -60,7 +60,7 @@ def main() -> int:
                    'mmcif', 'pdb', 'io', 'data_formats', 'open_command', 'std_commands',
                    'items_inspection', 'list_info', 'zone', 'sdf', 'mol2', 'mouse_modes', 'label', 'map', 'map_filter',
                    'mask', 'stl', 'morph', 'coulombic', 'mlp', 'segment', 'dssp',
-                   'connect_structure', 'match_align'):
+                   'connect_structure', 'match_align', 'alignment_algs'):
         source_bundle = args.source / 'src/bundles' / bundle / 'src'
         if source_bundle.is_dir():
             shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)

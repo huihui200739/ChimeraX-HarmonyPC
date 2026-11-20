@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLES = ['map', 'mask', 'stl', 'morph', 'coulombic', 'mlp', 'segment',
-           'dssp', 'connect_structure', 'match_align']
+           'dssp', 'connect_structure', 'match_align', 'alignment_algs']
 
 
 def main() -> int:
