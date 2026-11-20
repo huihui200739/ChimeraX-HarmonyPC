@@ -414,12 +414,24 @@ else:
         opened = open_pdb(session, stream, path)
     models = list(session.models.list())
     # Target the largest model this probe opened (the protein), not an earlier probe model.
+    # Prefer a model that actually contains standard amino-acid residues.
+    _CX_AMINO = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY", "HIS", "ILE",
+                 "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"}
     _cx_big = None
     _cx_spec = "#1"
     try:
+        def _cx_amino_score(model):
+            try:
+                names = {r.name for r in list(model.atoms.residues)[:200]}
+            except Exception:
+                return 0
+            return len(names & _CX_AMINO)
+
         _cx_candidates = [m for m in models if getattr(m, "atoms", None) is not None]
         if _cx_candidates:
-            _cx_big = max(_cx_candidates, key=lambda m: len(m.atoms))
+            _cx_big = max(_cx_candidates, key=_cx_amino_score)
+            if _cx_amino_score(_cx_big) == 0:
+                _cx_big = max(_cx_candidates, key=lambda m: len(m.atoms))
             _cx_spec = "#%d" % _cx_big.id
     except Exception as error:
         print("target:" + type(error).__name__ + ":" + str(error)[:30])
