@@ -405,3 +405,19 @@ coulombic:UserError:Un...
 
 探针输出现在会同时镜像到较宽的那一行，便于读取完整结果。
 断言 **26/26**、本地测试 **130 OK**。
+
+## 更正：`mlp` 失败的原因不是模型语义，而是选中了错误模型
+
+设备读回（新增诊断）：
+
+```
+kinds=AtomicStructure,Model|atoms=True|residues=True
+mlp #1: UserError: mlp: no amino acids specified
+```
+
+- 打开的模型类型是 **`AtomicStructure`**，且 `atoms`、`residues` 都存在 —— 之前"atomic 模型语义缺失"的推测**不成立**
+- 本次探针打开的是 `cx_probe.pdb`（4 原子探针），`#1` 选中的正是这个非氨基酸模型，
+  所以 `mlp` 报"no amino acids specified"是**正确行为**
+
+下一步：让探针改开 `ras.pdb`（1322 原子真实蛋白）再跑 `mlp #1`，才是有意义的验证。
+断言 **26/26**、本地测试 **130 OK**。

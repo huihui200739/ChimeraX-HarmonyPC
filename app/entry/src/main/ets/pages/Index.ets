@@ -415,6 +415,17 @@ else:
     # List commands from the list_info bundle that only need the model layer. "zone" needs
     # chimerax.map, whose C++ extensions are not built yet, so it stays out of this probe.
     # Exercise the commands the newly built bundles register.
+    # Diagnose why mlp sees no amino acids: what the opened models actually are.
+    try:
+        _cx_kinds = ",".join(type(m).__name__ for m in models[:3])
+        _cx_attrs = []
+        for _model in models[:1]:
+            _cx_attrs.append("atoms=%s" % hasattr(_model, "atoms"))
+            if hasattr(_model, "atoms"):
+                _cx_attrs.append("residues=%s" % hasattr(_model.atoms, "residues"))
+        print("kinds=" + _cx_kinds + "|" + "|".join(_cx_attrs))
+    except Exception as error:
+        print("kinds:" + type(error).__name__ + ":" + str(error)[:40])
     # The commands need an atom spec selecting the protein we just opened.
     for command in ("mlp #1", "coulombic #1", "mask #1", "info chains"):
         try:
