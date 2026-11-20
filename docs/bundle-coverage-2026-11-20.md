@@ -257,3 +257,24 @@ info-chains:ok
 - `label`（zone 运行期需要）
 
 两者都是纯 Python，已进入 payload（4183 → 4196 文件）。
+
+## ✅ 通用 bundle C 模块构建工具 + `chimerax.map` 交叉编译成功
+
+新增 `tools/build_bundle_cmodule_harmony.py`：**从 `bundle_info.xml` 的 `<CModule>` 声明**
+读取源码清单（不再靠猜），用 NDK clang 交叉编译并直接装配到暂存树。
+
+首次目标 `chimerax.map`：
+
+| 项 | 结果 |
+|---|---|
+| 源码 | `_map/` 下 20 个 `.cpp`（含 `module.cpp` 的 `PyInit__map`） |
+| 编译 | 全部通过 |
+| 链接 | 需要 arrays 的 `pythonarray.cpp` / `rcarray.cpp` / `refcount.cpp` 支撑 |
+| 产物 | `chimerax/map/_map.cpython-311-aarch64-linux-ohos.so`（1.05 MB） |
+| 打包 | payload 4299 文件、HAP 147 MB |
+| 设备 | **26/26 断言全过**、`state=session-ready` |
+
+过程中修掉的真实问题：Python/numpy 头文件路径、`<arrays/pythonarray.h>` 头树映射、
+`libpython3.11.so.1.0` 定位、`Reference_Count` 未定义（补 `refcount.cpp`）。
+
+这条工具的意义：**以后任何 bundle 的 C 扩展都可以一条命令编出来**，不再为每个 bundle 写专用脚本。
