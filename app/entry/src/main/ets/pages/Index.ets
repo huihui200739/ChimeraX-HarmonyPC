@@ -414,7 +414,15 @@ else:
         print("info-models:" + type(error).__name__ + ":" + str(error)[:60])
     # List commands from the list_info bundle that only need the model layer. "zone" needs
     # chimerax.map, whose C++ extensions are not built yet, so it stays out of this probe.
-    for command in ("info atoms", "info chains", "info residues"):
+    # Exercise the commands the newly built bundles register.
+    for command in ("mlp", "coulombic", "mask", "segmentation", "info chains"):
+        try:
+            run(session, command)
+            print(command.replace(" ", "-") + ":ok")
+        except Exception as error:
+            print(command.replace(" ", "-") + ":" + type(error).__name__
+                  + ":" + str(error)[:40])
+    for command in ("info atoms", "info residues"):
         try:
             run(session, command)
             print(command.replace(" ", "-") + ":ok")
@@ -1145,7 +1153,9 @@ struct Index {
         Button('模型信息').id('cx-info-run').fontSize(12).height(32)
           .onClick(() => {
             const report: ScriptReport = native.runScript(INFO_MODELS_SCRIPT);
-            this.viewerResult = (report.ok ? report.output : report.error).trim().slice(0, 90);
+            const text: string = (report.ok ? report.output : report.error).trim();
+            this.viewerResult = text.slice(0, 90);
+            this.openResult = text.slice(0, 400);
           })
         Button('沙箱结构文件').id('cx-list-run').fontSize(12).height(32)
           .onClick(() => {
@@ -1309,7 +1319,7 @@ struct Index {
       Row() {
         Text('打开文件').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.openResult.length > 0 ? this.openResult : '—').id('cx-open')
-          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(6)
       }.width('100%')
       Row() {
         Text('模型层').fontSize(13).fontColor('#C9D6E5').width(80)

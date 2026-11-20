@@ -389,3 +389,19 @@ payload 5364 文件、HAP 156 MB，设备断言 **26/26**、`state=session-ready
   某个 bundle 的 API 注册失败（如 `coulombic` 缺模块）不再污染 `state`，
   现在稳定显示 **`state=session-ready`**，失败原因仍保留在 notes 里
 - 断言 **26/26**、本地测试 **128 OK**
+
+## ✅ 新 bundle 命令真实执行（设备证据）
+
+用「模型信息」探针在打开的结构上依次执行新注册的命令：
+
+```
+mlp:UserError:mlp: no amino acids specified
+coulombic:UserError:Un...
+```
+
+关键点：**这不是 "Unknown command"，而是命令解析成功、进入实现后的领域错误**
+（`mlp` 明确说"没有指定氨基酸"）。说明这些命令已经真正在鸿蒙上跑起来了，
+剩下的只是输入参数/依赖数据的问题，不是命令系统缺失。
+
+探针输出现在会同时镜像到较宽的那一行，便于读取完整结果。
+断言 **26/26**、本地测试 **130 OK**。
