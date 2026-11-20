@@ -35,13 +35,42 @@ class GlesModule:
 
     _CX_DIRECT = True  # marker so probes can tell this facade apart from the proxy
 
-    def __init__(self, constants=None):
+    def __init__(self, constants=None, signatures=None):
         self._cache = {}
         self._constants = constants or {}
+        # PyOpenGL's raw module carries the correct ctypes argtypes for every entry point;
+        # copying them is what keeps bad pointers from turning into a segfault.
+        self._signatures = signatures or {}
         # Adapters for calls whose Python signature differs from the C one.
         self._adapters = {
             'glShaderSource': self._shader_source,
         }
+        # PyOpenGL lets callers pass a count and get the generated id back; the C API needs
+        # an output array, so these adapters recreate that convenience.
+        for generator, creator in (('glGenBuffers', 'glGenBuffers'),
+                                   ('glGenTextures', 'glGenTextures'),
+                                   ('glGenVertexArrays', 'glGenVertexArrays'),
+                                   ('glGenFramebuffers', 'glGenFramebuffers'),
+                                   ('glGenRenderbuffers', 'glGenRenderbuffers')):
+            self._adapters[generator] = self._make_generator(creator)
+
+    def _make_generator(self, c_name):
+        def generate(count=1, *rest):
+            raw = getattr(lib, c_name)
+            raw.restype = None
+            total = 1 if count is None else int(count)
+            holder = (ctypes.c_uint * max(1, total))()
+            raw(ctypes.c_int(total), holder)
+            values = [int(holder[i]) for i in range(max(1, total))]
+            if rest:
+                # Explicit output array was supplied by the caller.
+                target = rest[0]
+                for index, value in enumerate(values):
+                    target[index] = value
+                return None
+            return values[0] if total == 1 else values
+
+        return generate
 
     # -- special cases -----------------------------------------------------
     def _shader_source(self, shader, source, *rest):
@@ -79,6 +108,11 @@ class GlesModule:
             self._cache[name] = desktop_only
             return desktop_only
         raw = getattr(lib, name)
+        signature = self._signatures.get(name)
+        if signature is not None:
+            argtypes, restype = signature
+            raw.argtypes = argtypes
+            raw.restype = restype
         if name in _STRING_RETURNING:
             # ChimeraX compares these results as text, so hand back bytes not an address.
             raw.restype = ctypes.c_char_p
@@ -86,18 +120,28 @@ class GlesModule:
             return self._cache[name]
         raw.restype = ctypes.c_void_p if name in _POINTER_RETURNING else ctypes.c_uint
 
-        def call(*args, _raw=raw):
-            return _raw(*[_to_c(a) for a in args])
+        def call(*args, _raw=raw, _name=name):
+            try:
+                return _raw(*[_to_c(a) for a in args])
+            except Exception as error:
+                shapes = [type(a).__name__ for a in args]
+                raise RuntimeError("%s(%s): %s" % (_name, ", ".join(shapes),
+                                                   type(error).__name__)) from error
 
         self._cache[name] = call
         return call
 
 
-def make_module(constants_module=None):
+def make_module(constants_module=None, signatures_module=None):
     """Build the GL facade. Pass the already-imported PyOpenGL module for enum constants;
     importing it here would happen too early in ChimeraX's own import sequence."""
     gles = constants_module
     if gles is None:
         import OpenGL.GLES3 as gles
     constants = {k: v for k, v in vars(gles).items() if k.startswith('GL_')}
-    return GlesModule(constants)
+    signatures = {}
+    if signatures_module is not None:
+        for key, value in vars(signatures_module).items():
+            if key.startswith('gl') and hasattr(value, 'argtypes'):
+                signatures[key] = (value.argtypes, value.restype)
+    return GlesModule(constants, signatures)

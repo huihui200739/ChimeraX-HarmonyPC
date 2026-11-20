@@ -407,3 +407,24 @@ raw=2 | program=3 | shader=1 | linked=1
 已回退到稳定的 proxy 版本（26/26）。**结论**：`_cxgl` 需要按**确切的 C 签名**逐函数声明
 （`argtypes/restype`），而不是通用转换；这是一项独立工作，需要先收集 ChimeraX 实际调用的函数
 清单（可从 `chimerax/graphics/*.py` grep `GL.gl` 得到），再逐个核对。
+
+## 2026-11-20 傍晚：渲染器在 ctypes 层上已推进到第一个真实 GL 调用
+
+用"从 `OpenGL.raw.GLES3` 拷贝 argtypes/restype"的方式改造 `_cxgl` 后，adopt 路径的报错**逐层后退**：
+
+| 阶段 | 渲染器报错 |
+|---|---|
+| 仅通用转换 | `TypeError: this function takes at least 2 arguments (1 given)` |
+| 补 `glGen*` 便捷适配（`glGenBuffers(1)` 返回 id） | `ArgumentError: argument 1: TypeError: wrong type` |
+| 给调用加错误包装 | `RuntimeError: glBindVertexArray(int): ArgumentError` —— **已进入真实绘制前的绑定调用** |
+| 试图把 int 直接交给 argtypes 转换 | 应用崩溃（已回退） |
+
+也就是说：现在渲染器**已经走完了以前完全走不到的路径**，卡在 ctypes 参数类型与 PyOpenGL
+约定的差异上（`GLuint` vs `c_int`、生成器返回值、数组指针类型）。
+
+### 下一步（工程化，不是探索）
+
+写一个生成器：对 `chimerax/graphics` 里出现的 89 个 `GL.gl*` 调用，逐个从
+`OpenGL.raw.GLES3` 取签名，生成**显式 `argtypes/restype` + 参数转换**的包装，并对
+`glGen*`/`glShaderSource`/`glBufferData` 等做 PyOpenGL 兼容适配。做完这类"逐个对齐"，
+渲染器就有机会真正出图。
