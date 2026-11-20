@@ -88,3 +88,46 @@ def test_bind_vertex_array_accepts_int():
 def test_constants_are_exposed():
     gl, _ = make_facade()
     assert gl.GL_TRIANGLES == 4
+
+
+USED_FUNCTIONS = Path(__file__).resolve().parents[1] / 'reports/cxgl-used-functions.txt'
+
+
+def _facade_coverage():
+    """Every GL entry point the renderer calls must be reachable through the facade."""
+    import subprocess
+
+    root = Path(__file__).resolve().parents[1]
+    generated = root / 'vendor/graphics/_cxgl_sigs.py'
+    spec = importlib.util.spec_from_file_location('cxgl_sigs', generated)
+    sigs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sigs)
+    package = root / 'build/chimerax-python/chimerax'
+    import re
+    names = sorted({name for path in package.rglob('*.py')
+                    for name in re.findall(r'GL\.(gl[A-Za-z0-9_]+)',
+                                           path.read_text(errors='replace'))})
+    return names, sigs
+
+
+def test_every_gl_call_is_reachable():
+    names, sigs = _facade_coverage()
+    adapters = set(cxgl._SINGLE_VALUE_GETTERS) | set(cxgl._DELETE_FAMILY)
+    adapters |= {'glShaderSource', 'glGenBuffers', 'glGenTextures', 'glGenVertexArrays',
+                 'glGenFramebuffers', 'glGenRenderbuffers'}
+    unreachable = []
+    for name in names:
+        if name in sigs.SIGNATURES or name in sigs.ALIASES or name in adapters:
+            continue
+        if name in cxgl._DESKTOP_ONLY:
+            continue
+        unreachable.append(name)
+    assert not unreachable, 'no facade path for: %s' % unreachable
+
+
+def test_aliases_point_at_real_entry_points():
+    _, sigs = _facade_coverage()
+    for name, target in sigs.ALIASES.items():
+        if target is None:
+            continue  # documented as a no-op on GLES
+        assert target in sigs.SIGNATURES, '%s -> missing %s' % (name, target)

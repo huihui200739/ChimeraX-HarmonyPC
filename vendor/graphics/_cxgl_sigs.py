@@ -21,6 +21,7 @@ SIGNATURES = {
     'glCheckFramebufferStatus': ([ctypes.c_uint], ctypes.c_uint),
     'glClear': ([ctypes.c_uint], None),
     'glClearColor': ([ctypes.c_float, ctypes.c_float, ctypes.c_float, ctypes.c_float], None),
+    'glClearDepthf': ([ctypes.c_float], None),
     'glColorMask': ([ctypes.c_ubyte, ctypes.c_ubyte, ctypes.c_ubyte, ctypes.c_ubyte], None),
     'glCopyTexImage2D': ([ctypes.c_uint, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int], None),
     'glCreateProgram': ([], ctypes.c_uint),
@@ -32,6 +33,7 @@ SIGNATURES = {
     'glDeleteVertexArrays': ([ctypes.c_int, ctypes.POINTER(ctypes.c_uint)], None),
     'glDepthFunc': ([ctypes.c_uint], None),
     'glDepthMask': ([ctypes.c_ubyte], None),
+    'glDepthRangef': ([ctypes.c_float, ctypes.c_float], None),
     'glDisable': ([ctypes.c_uint], None),
     'glDisableVertexAttribArray': ([ctypes.c_uint], None),
     'glDrawElements': ([ctypes.c_uint, ctypes.c_int, ctypes.c_uint, ctypes.c_void_p], None),
@@ -48,6 +50,7 @@ SIGNATURES = {
     'glGenRenderbuffers': ([ctypes.c_int, ctypes.POINTER(ctypes.c_uint)], None),
     'glGenTextures': ([ctypes.c_int, ctypes.POINTER(ctypes.c_uint)], None),
     'glGenVertexArrays': ([ctypes.c_int, ctypes.POINTER(ctypes.c_uint)], None),
+    'glGetBooleanv': ([ctypes.c_uint, ctypes.POINTER(ctypes.c_ubyte)], None),
     'glGetError': ([], ctypes.c_uint),
     'glGetFramebufferAttachmentParameteriv': ([ctypes.c_uint, ctypes.c_uint, ctypes.c_uint, ctypes.POINTER(ctypes.c_int)], None),
     'glGetIntegerv': ([ctypes.c_uint, ctypes.POINTER(ctypes.c_int)], None),
@@ -83,21 +86,8 @@ SIGNATURES = {
     'glVertexAttribPointer': ([ctypes.c_uint, ctypes.c_int, ctypes.c_uint, ctypes.c_ubyte, ctypes.c_int, ctypes.c_void_p], None),
     'glViewport': ([ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int], None),
 }
-}
 
 # name: the ES entry point to call, or None for a no-op
-ALIASES = {
-    "glClearDepth": "glClearDepthf",
-    "glDepthRange": "glDepthRangef",
-    "glDrawBuffer": null,
-    "glGetBoolean": "glGetBooleanv",
-    "glGetDebugMessageLog": null,
-    "glGetInteger": "glGetIntegerv",
-    "glGetTexImage": null,
-    "glLogicOp": null,
-    "glReadBuffer": null,
-    "glTexImage1D": null,
-    "glTexSubImage1D": null
-}
+ALIASES = {'glClearDepth': 'glClearDepthf', 'glDepthRange': 'glDepthRangef', 'glDrawBuffer': None, 'glGetBoolean': 'glGetBooleanv', 'glGetDebugMessageLog': None, 'glGetInteger': 'glGetIntegerv', 'glGetTexImage': None, 'glLogicOp': None, 'glReadBuffer': None, 'glTexImage1D': None, 'glTexSubImage1D': None}
 
 MISSING = ["glClearDepth", "glDepthRange", "glDrawBuffer", "glGetBoolean", "glGetDebugMessageLog", "glGetInteger", "glGetTexImage", "glLogicOp", "glTexImage1D", "glTexSubImage1D"]

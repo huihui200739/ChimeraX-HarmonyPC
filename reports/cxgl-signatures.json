@@ -1,6 +1,7 @@
 {
   "functions_used": 89,
   "functions_covered": 79,
+  "signatures_emitted": 82,
   "missing": [
     "glClearDepth",
     "glDepthRange",

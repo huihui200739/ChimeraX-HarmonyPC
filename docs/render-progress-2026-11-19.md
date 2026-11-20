@@ -495,3 +495,18 @@ raw=2 | program=3 | shader=1 | linked=1
 `glCreateProgram` 返回值、生成器 id、删除裸 id、单值 getter、shader 源码、整数绑定、常量表。
 
 本地全量测试：**117 个用例全部通过**；设备断言仍 **26/26**。
+
+## 2026-11-20 晚（续）：门面可达性测试 + 生成器修复
+
+新增两条**主机侧**测试（`tests/test_cxgl_facade.py`）：
+
+1. `test_every_gl_call_is_reachable`：ChimeraX 用到的**每一个** `GL.gl*` 都必须能通过门面到达
+   （签名表 / 别名 / 适配器 / 桌面 no-op 之一），否则测试失败并列出缺口
+2. `test_aliases_point_at_real_entry_points`：别名必须指向真实存在的签名
+
+为让第 2 条通过，生成器现在**同时为别名目标生成签名**（如 `glClearDepthf`、`glDepthRangef`、
+`glGetBooleanv`），因此表中签名数 82 > 覆盖的 89 个调用中的 79 个。
+
+生成器输出也修了两处真实 bug：重复的右花括号、JSON `null`（应为 Python `None`）。
+
+本地全量：**117 个用例通过**；设备断言 **26/26**。
