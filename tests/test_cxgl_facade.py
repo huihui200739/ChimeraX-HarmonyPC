@@ -174,3 +174,72 @@ class PointerSafetyTests(unittest.TestCase):
         argtypes, restype = cxgl._EXTRA_SIGNATURES['glGetShaderiv']
         self.assertEqual(len(argtypes), 3)
         self.assertIsNone(restype)
+
+
+class DeclaredTypeTests(unittest.TestCase):
+    """Calls with known argtypes must convert per position, not blanket-wrap in c_int."""
+
+    def _recording_library(self):
+        calls = []
+
+        class Lib:
+            def __getattr__(self, name):
+                def call(*args):
+                    calls.append((name, args))
+                    return 0
+                return call
+
+        return Lib(), calls
+
+    def test_buffer_data_accepts_python_ints_and_pointers(self):
+        import ctypes
+        library, calls = self._recording_library()
+        signatures = {'glBufferData': ([ctypes.c_uint, ctypes.c_long, ctypes.c_void_p,
+                                        ctypes.c_uint], None)}
+        facade = cxgl.GlesModule(constants={}, signatures=signatures, library=library)
+        facade.glBufferData(0x8892, 128, ctypes.c_void_p(0x1000), 0x88E4)
+        name, args = calls[-1]
+        self.assertEqual(name, 'glBufferData')
+        self.assertEqual(int(args[1]), 128)
+
+    def test_attrib_pointer_offset_becomes_pointer(self):
+        import ctypes
+        library, calls = self._recording_library()
+        signatures = {'glVertexAttribPointer': ([ctypes.c_uint, ctypes.c_int, ctypes.c_uint,
+                                                 ctypes.c_ubyte, ctypes.c_int,
+                                                 ctypes.c_void_p], None)}
+        facade = cxgl.GlesModule(constants={}, signatures=signatures, library=library)
+        facade.glVertexAttribPointer(0, 3, 0x1406, 0, 12, 12)
+        name, args = calls[-1]
+        self.assertEqual(name, 'glVertexAttribPointer')
+        self.assertIsInstance(args[-1], ctypes.c_void_p)
+
+    def test_matrix_uniform_accepts_bool_transpose(self):
+        import ctypes
+        import numpy
+        library, calls = self._recording_library()
+        signatures = {'glUniformMatrix4fv': ([ctypes.c_int, ctypes.c_int, ctypes.c_ubyte,
+                                              ctypes.POINTER(ctypes.c_float)], None)}
+        facade = cxgl.GlesModule(constants={}, signatures=signatures, library=library)
+        facade.glUniformMatrix4fv(7, 1, False, numpy.eye(4, dtype=numpy.float32))
+        self.assertEqual(calls[-1][0], 'glUniformMatrix4fv')
+
+    def test_pointer_sequence_argument_is_an_array(self):
+        import ctypes
+        library, calls = self._recording_library()
+        signatures = {'glUniform4fv': ([ctypes.c_int, ctypes.c_int,
+                                        ctypes.POINTER(ctypes.c_float)], None)}
+        facade = cxgl.GlesModule(constants={}, signatures=signatures, library=library)
+        facade.glUniform4fv(2, 1, [0.1, 0.2, 0.3, 1.0])
+        self.assertEqual(calls[-1][0], 'glUniform4fv')
+
+    def test_matrix_uniform_accepts_numpy_array(self):
+        import ctypes
+        import numpy
+        library, calls = self._recording_library()
+        signatures = {'glUniformMatrix4fv': ([ctypes.c_int, ctypes.c_int, ctypes.c_ubyte,
+                                              ctypes.POINTER(ctypes.c_float)], None)}
+        facade = cxgl.GlesModule(constants={}, signatures=signatures, library=library)
+        matrix = numpy.eye(4, dtype=numpy.float32)
+        facade.glUniformMatrix4fv(3, 1, 0, matrix)
+        self.assertEqual(calls[-1][0], 'glUniformMatrix4fv')

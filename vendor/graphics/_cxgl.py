@@ -23,6 +23,12 @@ _STRING_RETURNING = {'glGetString', 'glGetStringi', 'glGetShaderInfoLog',
                      'glGetProgramInfoLog'}
 
 
+try:
+    from . import _cxgl_sigs as _DEFAULT_SIGNATURES
+except Exception:  # pragma: no cover - only on platforms without the generated table
+    _DEFAULT_SIGNATURES = None
+
+
 def _to_c(arg):
     if isinstance(arg, numpy.ndarray):
         return ctypes.c_void_p(arg.ctypes.data)
@@ -39,6 +45,13 @@ def _to_c(arg):
         return ctypes.c_int(int(arg))
     if isinstance(arg, (float, numpy.floating)):
         return ctypes.c_float(float(arg))
+    if isinstance(arg, (list, tuple)):
+        # Untyped calls still receive matrices/vectors as sequences; hand ctypes an array.
+        if arg and isinstance(arg[0], (list, tuple)):
+            flat = [float(v) for row in arg for v in row]
+        else:
+            flat = [float(v) for v in arg]
+        return (ctypes.c_float * len(flat))(*flat)
     if isinstance(arg, str):
         return ctypes.c_char_p(arg.encode())
     return arg
@@ -53,8 +66,16 @@ def _convert_for_type(arg, expected):
             return arg.ctypes.data_as(expected)
         except TypeError:
             return ctypes.cast(arg.ctypes.data, expected)
-    if expected in (ctypes.c_uint, ctypes.c_int, ctypes.c_uint64, ctypes.c_int64):
+    _INTEGRAL = (ctypes.c_uint, ctypes.c_int, ctypes.c_uint64, ctypes.c_int64,
+                 ctypes.c_ulong, ctypes.c_long, ctypes.c_ubyte, ctypes.c_byte,
+                 ctypes.c_ushort, ctypes.c_short)
+    if expected in _INTEGRAL:
+        # ChimeraX passes bools for GLboolean parameters and numpy scalars for counts.
         return int(arg)
+    if isinstance(expected, type) and issubclass(expected, ctypes._Pointer) and isinstance(
+            arg, (list, tuple)):
+        base = expected._type_
+        return (base * len(arg))(*arg)
     if expected in (ctypes.c_float, ctypes.c_double):
         return float(arg)
     if expected is ctypes.c_void_p:
@@ -312,9 +333,21 @@ class GlesModule:
         except AttributeError:
             pass
 
-        def call(*args, _raw=raw, _name=name):
+        declared = list(signature[0]) if signature is not None else None
+
+        def call(*args, _raw=raw, _name=name, _declared=declared):
+            # With argtypes set, ctypes type-checks every argument, so a bare c_int where the
+            # signature says c_long or c_void_p raises TypeError instead of converting. Convert
+            # position by position against the declared types.
+            if _declared:
+                converted = []
+                for index, value in enumerate(args):
+                    expected = _declared[index] if index < len(_declared) else None
+                    converted.append(_convert_for_type(value, expected))
+            else:
+                converted = [_to_c(a) for a in args]
             try:
-                return _raw(*[_to_c(a) for a in args])
+                return _raw(*converted)
             except Exception as error:
                 shapes = [type(a).__name__ for a in args]
                 raise RuntimeError("%s(%s): %s" % (_name, ", ".join(shapes),
@@ -388,6 +421,10 @@ def make_module(constants_module=None, signatures_module=None):
         import OpenGL.GLES3 as gles
     constants = {k: v for k, v in vars(gles).items() if k.startswith('GL_')}
     signatures = {}
+    if signatures_module is None:
+        # The generated table ships next to this module; using it by default is what makes
+        # pointer/array arguments convert correctly instead of raising ArgumentError.
+        signatures_module = _DEFAULT_SIGNATURES
     if signatures_module is not None:
         for key, value in vars(signatures_module).items():
             if key.startswith('gl') and hasattr(value, 'argtypes'):

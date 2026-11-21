@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'c00d9d0f1332';
+const RUNTIME_TAG = '1e735752b7b1';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -1499,7 +1499,7 @@ struct Index {
           const adopted: ScriptReport = native.runScript(adoptScript);
           this.renderResult = (adopted.ok ? adopted.output : adopted.error).trim();
           // The status row truncates this text; hilog keeps the whole diagnostic readable.
-          hilog.error(0x0000, 'CXPROBE', 'render=' + this.renderResult.slice(0, 900));
+          hilog.error(0x0000, 'CXPROBE', 'render=' + this.renderResult.slice(0, 2400));
           try {
             native.glReacquire();
           } catch (error) {

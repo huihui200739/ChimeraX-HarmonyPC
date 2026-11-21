@@ -1297,3 +1297,29 @@ buffers:vb=4,eb=ok,ninst=1    ← 缓冲区、element buffer、实例数都正�
    用 `(c_float * len(value))(*value)` 处理 2D 数组会得到错误布局
 
 修好后，`Drawing_State.draw()` → `eb.draw_elements()` → `glDrawElements` 才会真正提交几何。
+
+## 2026-11-22 04:30：门面转换缺陷已修（有测试覆盖），绘制批次仍不稳
+
+### 已修并测试（可长期保留）
+
+1. **按声明类型逐位转换**：`argtypes` 存在时，原来统一包成 `c_int` 会导致
+   `c_long`/`c_void_p`/`LP_c_float` 参数抛 `TypeError`。现用 `_convert_for_type`
+   按位置转换（`tests/test_cxgl_facade.py::DeclaredTypeTests`）
+2. **整型/布尔/指针序列**：`GLboolean`（Python bool）、`GLsizei`（numpy 标量）、
+   `(c_float*n)` 序列参数都能正确转换
+3. **签名表随包分发**：`vendor/graphics/_cxgl_sigs.py` 之前**没有**被 staging 复制到运行时，
+   导致门面完全没有签名表、所有调用走无类型路径。现已复制，并在 `make_module()` 里默认加载
+4. **无签名时的防御转换**：list/tuple（含二维矩阵）自动转 `c_float` 数组
+
+### 仍存在的设备错误
+
+```
+glUniformMatrix4fv(int, int, bool, tuple): ArgumentError
+```
+
+在设备上仍能复现（本地用 FakeLib 已验证通过），说明运行时实际走的不是上述路径，
+或该调用根本不经过门面（`_CX_FACADE_BATCH` 之外）。已回退绘制批次，设备恢复 26/27。
+
+### 下一步
+
+在 `RuntimeError` 消息里附带 `repr(args)` 与是否有签名，一次读取即可定位。

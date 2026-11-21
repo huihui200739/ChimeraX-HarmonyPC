@@ -447,6 +447,12 @@ def main() -> int:
     cxgl_target = args.output / 'chimerax/graphics/_cxgl.py'
     if cxgl_source.is_file() and cxgl_target.parent.is_dir():
         shutil.copy2(cxgl_source, cxgl_target)
+        # The generated ctypes signature table lives beside the facade and is what lets
+        # argument conversion match the declared types; without it every call falls back to
+        # untyped ctypes calls and pointer/array parameters raise ArgumentError.
+        sigs_source = ROOT / 'vendor/graphics/_cxgl_sigs.py'
+        if sigs_source.is_file():
+            shutil.copy2(sigs_source, cxgl_target.parent / '_cxgl_sigs.py')
 
     # PyOpenGL resolves libraries through ctypes.util.find_library, which does not know the
     # HarmonyOS layout; stub it before OpenGL is imported so the GLESv3 soname resolves to
@@ -571,6 +577,7 @@ def main() -> int:
                 "            # Minimal drawing probe: only the terminal draw calls are delegated here.\n"
                 "            # Buffer/attrib/uniform calls stay on PyOpenGL until this survives on device.\n"
                 "            'glDrawArrays', 'glDrawElements', 'glDrawElementsInstanced',\n"
+
 
                 "            # Framebuffer, renderbuffer and texture storage must also be real: a\n"
                 "            # silent no-op leaves the offscreen target incomplete (black image).\n"
