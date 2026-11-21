@@ -644,9 +644,21 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     models = []
     # Read the bundled protein directly: the "open" command depends on bundle registration that
     # the minimal session may not have, and a silent failure leaves nothing to draw.
-    if False and os.path.exists(path):
-        with open(path, "rb") as stream:
-            opened = open_pdb(session, stream, path)
+    # Drop the fallback probe from earlier runs so it cannot cover the structure.
+    for existing in list(session.models.list()):
+        if getattr(existing, "name", "") == "cx_frame_probe":
+            try:
+                session.models.remove([existing])
+            except Exception:
+                pass
+    open_error = ""
+    if os.path.exists(path):
+        try:
+            with open(path, "rb") as stream:
+                opened = open_pdb(session, stream, path)
+        except Exception as error:
+            opened = []
+            open_error = type(error).__name__ + ":" + str(error)[:50]
         stack = [opened]
         while stack:
             item = stack.pop()
@@ -658,9 +670,8 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             session.models.add(models)
         except Exception:
             pass
-    # Draw the probe triangle unconditionally: it is the geometry whose lighting was verified
-    # in the adopt probe, so it separates "renderer works" from "structure loading works".
-    if True:
+    # Fall back to the probe triangle only when no structure loaded, so the frame is never empty.
+    if not models:
         from chimerax.core.models import Model
         drawing = Model("cx_frame_probe", session)
         vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
@@ -701,7 +712,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             if bounds is not None:
                 blist.append(bounds)
         if blist:
-            view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=0.15)
+            view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=2.0)
     except Exception as error:
         return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
     try:
@@ -715,7 +726,8 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     # Pixel statistics travel with the frame so an empty render is distinguishable in the UI.
     flat = frame.reshape(-1, frame.shape[-1])[:, :3].astype("int32")
     lit = int((flat.sum(axis=1) > 12).sum())
-    debug = ""
+    debug = "|open=" + (open_error or "ok") + ",models=" + str(len(models)) + (
+        ",path=yes" if os.path.exists(path) else ",path=missing")
     if lit == 0:
         try:
             nmodels = len(session.models.list())
@@ -728,8 +740,9 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
                 campos = "%d,%d,%d" % (cam[0], cam[1], cam[2])
             except Exception:
                 campos = "?"
-            debug = "|dbg=models=%d,draw=%d,cam=%s,render=%s" % (
-                nmodels, ndraw, campos, type(getattr(view, "_render", None)).__name__)
+            debug = "|dbg=models=%d,draw=%d,cam=%s,open=%s,path=%s" % (
+                nmodels, ndraw, campos, open_error or "ok",
+                "yes" if os.path.exists(path) else "missing")
         except Exception as error:
             debug = "|dbg:" + type(error).__name__
     return "img:%d:%d:%d:%d:%s;%s" % (frame.shape[1], frame.shape[0], lit, len(flat),

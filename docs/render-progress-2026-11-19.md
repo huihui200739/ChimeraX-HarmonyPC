@@ -1071,3 +1071,25 @@ chimerax 256x256 lit=65536/65536     ← 界面「官方渲染」按钮旁的实
 
 `EGL 上下文接管 → ctypes GL 门面(30+ 入口) → 着色器编译(ES 300) → attach/link →
 UBO 绑定 → FBO/RBO 分配 → 绘制 → glReadPixels → base64 → ArkTS PixelMap → Image 显示`
+
+## 2026-11-21 22:50：蛋白已加载进渲染场景，但界面帧是纯色方块
+
+设备读回：
+
+```
+chimerax 256x256 lit=65536/65536 |open=ok,models=1,path=yes
+```
+
+- `open=ok`、`models=1`：`cx_demo.pdb`（1322 原子）确实通过 `open_pdb` 读入并加进会话
+- 但界面里的图像是一块**纯红色方块**，与相机 pad、场景几何无关
+
+两种可能：
+1. 帧内容确实是纯色（相机在分子内部/绘制异常）
+2. **PixelMap 解码/显示有问题**（例如 RGBA 通道或 stride 不匹配导致看起来是纯色）
+
+### 下一步（一次构建可分辨）
+
+在返回串里附带 **8×8 像素采样**（每个采样点一个 16 进制 RGB），直接用 dumpLayout 读取文本，
+不依赖 PixelMap 显示：
+- 采样值有变化 → 渲染正常，问题在 ArkUI 解码/显示
+- 采样全同 → 渲染内容真的纯色，继续查相机/绘制
