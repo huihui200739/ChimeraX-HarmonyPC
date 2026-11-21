@@ -961,9 +961,9 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 if _bounds is not None:
                     _blist.append(_bounds)
             if _blist:
-                view.camera.view_all(_cx_union(_blist), window_size=(64, 64), pad=0.3)
+                view.camera.view_all(_cx_union(_blist), window_size=(512, 512), pad=0.3)
         try:
-            _cached = view.image_rgba(width=64, height=64)
+            _cached = view.image_rgba(width=512, height=512)
         except BaseException as _draw_error:
             import traceback as _tb
             _where = _tb.format_exc().strip().splitlines()
