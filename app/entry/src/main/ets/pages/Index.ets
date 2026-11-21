@@ -669,6 +669,20 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
         view.set_rendering_options(background_color=(0.09, 0.12, 0.16, 1.0))
     except Exception:
         pass
+    # Frame the models: without this the camera sits at the origin and renders background only.
+    try:
+        from chimerax.geometry.bounds import union_bounds
+        blist = []
+        for m in session.models.list():
+            bounds = getattr(m, "bounds", None)
+            if callable(bounds):
+                bounds = bounds()
+            if bounds is not None:
+                blist.append(bounds)
+        if blist:
+            view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=0.15)
+    except Exception as error:
+        return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
     frame = view.image_rgba(width=size, height=size)
     if frame is None:
         return "error:no-frame"

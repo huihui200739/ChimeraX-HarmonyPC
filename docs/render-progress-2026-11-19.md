@@ -1008,3 +1008,18 @@ view=64x64|center=100,44,32
 - `OFFICIAL_RENDER` 脚本：接受 display/context/surface 指针 + 尺寸，返回 `img:W:H:<base64>`
 - `showOfficialFrame()`：ArkTS 侧解码并生成 `PixelMap`，`@State officialImage` 驱动 `Image` 显示
 - 渲染按钮 `cx-official-render`
+
+## 2026-11-21 20:10：相机取景已接上，渲染帧仍只有背景（缺几何体来源）
+
+- `view.camera.view_all(union_bounds(...), window_size, pad)` 已加入渲染脚本；
+  `bounds` 是方法还是值都处理了（之前 `AttributeError: 'function' object has no attribute 'xyz_'`）
+- 设备信息行显示 `chimerax 256x256`，说明渲染+编码+PixelMap 全链路成功
+- 但画面仍是纯背景：会话里只有 4 原子探针模型（`模型:1 原子:4`），
+  `run(session, "open path")` 没有真正加载蛋白（静默失败），也没有可绘制几何
+
+### 下一步
+
+在 `OFFICIAL_RENDER` 里像 adopt 探针那样**显式创建几何**：
+1. `open_pdb` 直接读 payload 里的 `cx_demo.pdb`（不走 `open` 命令）
+2. 若无原子，则建一个 `Model` 加三角形几何（确保一定有东西可画）
+3. 再加 `view.camera.view_all(...)` 取景 → `image_rgba()`
