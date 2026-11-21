@@ -571,6 +571,7 @@ def main() -> int:
                 "            # Minimal drawing probe: only the terminal draw calls are delegated here.\n"
                 "            # Buffer/attrib/uniform calls stay on PyOpenGL until this survives on device.\n"
                 "            'glDrawArrays', 'glDrawElements', 'glDrawElementsInstanced',\n"
+
                 "            # Framebuffer, renderbuffer and texture storage must also be real: a\n"
                 "            # silent no-op leaves the offscreen target incomplete (black image).\n"
                 "            'glGenFramebuffers', 'glGenRenderbuffers', 'glGenTextures',\n"

@@ -1274,3 +1274,26 @@ buffers:vb=4,eb=ok,ninst=1    ← 缓冲区、element buffer、实例数都正�
 2. 再单独加 `glVertexAttribPointer`（偏移包装）→ 验证
 3. 再单独加 `glUniformMatrix4fv`（序列包装，ChimeraX 传 numpy 数组）→ 验证
 4. 三项都安全后，绘制链路应能真正提交几何
+
+## 2026-11-22 03:15：二分第一步结论——缓冲区/属性批次会破坏渲染路径
+
+二分 step A（在 30 个稳定入口点之上加入 `glBufferData`/`glBufferSubData`/
+`glEnableVertexAttribArray`/`glDisableVertexAttribArray`/`glVertexAttribPointer`）：
+
+- 应用**没有崩溃**，但 adopt 渲染路径报 `view!GLError`，`created=[]`（程序都没创建到）
+- 说明这批函数的 ctypes 转换有误，**破坏了更早的绘制准备阶段**，比"崩溃"更隐蔽
+
+已回退，设备恢复 26/27、批次 30 个入口点。
+
+### 给后续接手者的精确结论
+
+要真正画出几何，需要修好这三个函数的门面转换（按嫌疑排序）：
+
+1. `glVertexAttribPointer`：`(index, size, type, normalized, stride, offset)` —— offset 是
+   **字节偏移**（门面已有 `_OFFSET_FUNCS`，但 ChimeraX 可能传 numpy 整数或 None）
+2. `glBufferData`：`(target, size, data, usage)` —— `size` 与 `data` 必须一致，
+   ChimeraX 传的 data 已是 `c_void_p`
+3. `glUniformMatrix4fv`：ChimeraX 传 **numpy 2D 数组**，门面的 `_SEQUENCE_ARG_FUNCS`
+   用 `(c_float * len(value))(*value)` 处理 2D 数组会得到错误布局
+
+修好后，`Drawing_State.draw()` → `eb.draw_elements()` → `glDrawElements` 才会真正提交几何。

@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T18:33:10.185467+00:00",
+  "created_at_utc": "2026-11-21T19:02:48.999757+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
     "bytes": 155090824,
-    "sha256": "5dcf68907ae3b5c37045e4036dcf67e7d6a361faa16c3f6b51b4a55d09d07fd4"
+    "sha256": "47c26f0991b0f5b675cef99056f7381d966d9ca78b244dd9aa799d3a1bb039f3"
   },
   "checks": [
     {
@@ -185,11 +185,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546044664080/547768379328",
+    "cx-viewer-status": "handles=548096257912/545982774576/547768821392",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546044664080/547768379328",
+    "cx-status-view": "视图: handles=548096257912/545982774576/547768821392",
     "cx-view-reset": "重置视角",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
