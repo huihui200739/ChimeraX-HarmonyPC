@@ -855,3 +855,31 @@ block=4294967295; glerr=0; fallbacks=
 - 若 `len` 正常（数千字符）→ 说明编译确实通过，转向 GLSL ES 方言适配
 
 同时补上 `glGetProgramInfoLog` 的读取（用门面的 `_STRING_RETURNING` 路径，避免裸 CDLL）。
+
+## 🎯 2026-11-21 17:15：排除门面转换问题，锁定"着色器源码传到 GL 后丢失/变形"
+
+设备读回：
+
+```
+created=[2]; link=1; skip=True
+block=4294967295 (门面查询)  rawblock=4294967295 (裸 CDLL 查询), glerr=0
+src=VERTEX:5830 chars '#version 300 es ...' | FRAGMENT:14561 chars '#version 300 es ...'
+```
+
+**关键结论：**
+
+1. 程序**链接成功**（`link=1`）
+2. 门面查询与裸 CDLL 查询结果**完全一致**（都是 0xFFFFFFFF）→ 不是参数转换问题
+3. Python 侧源码是**真实、完整**的 GLSL ES 3.00（5830 / 14561 字符，含 `#version 300 es`）
+4. 但驱动认为程序里**没有 `lighting_block`**
+
+因此问题只可能在"源码从 Python 传进 GL 的过程中"：`glShaderSource` 的参数（指针/长度数组）
+传得不正确，驱动收到空或截断的源码。
+
+### 下一步（一次构建定性）
+
+用 `glGetShaderSource`（或 `glGetShaderiv(GL_SHADER_SOURCE_LENGTH)`）读回 GL 侧实际持有的源码长度，
+与 Python 侧的 5830/14561 对比：
+
+- 长度不匹配 → 修 `_shader_source` 的指针/数组传递（高概率一次修好）
+- 长度匹配 → 说明源码完整，则问题在 ES 驱动对 uniform block 的处理，转向 GLSL 方言语义
