@@ -619,6 +619,11 @@ except Exception as error:
 
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
+// Returns the frame captured during start-up (rendering from a click yields background only).
+const FETCH_FRAME = `
+print(globals().get("_cx_cached_frame", ""))
+`;
+
 // Renders one frame with ChimeraX's own renderer and hands the pixels to ArkUI as base64.
 const OFFICIAL_RENDER = `
 import base64
@@ -873,6 +878,53 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             pass
         notes.append("view!" + type(error).__name__ + ":" + str(error)[:60]
                      + "@" + (where[-3].strip()[:90] if len(where) >= 3 else "?"))
+    # Render the demo protein here, in the start-up call where rendering is known to work, and
+    # cache the frame: the button only displays it, because rendering from a later napi call
+    # produces background only on this driver.
+    try:
+        import os as _cx_os
+        import base64 as _cx_b64
+        import chimerax as _cx_pkg
+        from chimerax.pdb.pdb import open_pdb as _cx_open_pdb
+        _root = _cx_os.path.dirname(_cx_os.path.dirname(_cx_os.path.abspath(_cx_pkg.__file__)))
+        _demo = _cx_os.path.join(_root, "chimerax", "demo_data", "cx_demo.pdb")
+        _cx_models = []
+        if _cx_os.path.exists(_demo):
+            with open(_demo, "rb") as _stream:
+                _opened = _cx_open_pdb(session, _stream, _demo)
+            _stack = [_opened]
+            while _stack:
+                _item = _stack.pop()
+                if isinstance(_item, (list, tuple)):
+                    _stack.extend(_item)
+                elif hasattr(_item, "atoms"):
+                    _cx_models.append(_item)
+            try:
+                session.models.add(_cx_models)
+            except Exception:
+                pass
+        if _cx_models:
+            from chimerax.geometry.bounds import union_bounds as _cx_union
+            _blist = []
+            for _model in session.models.list():
+                _bounds = getattr(_model, "bounds", None)
+                if callable(_bounds):
+                    _bounds = _bounds()
+                if _bounds is not None:
+                    _blist.append(_bounds)
+            if _blist:
+                view.camera.view_all(_cx_union(_blist), window_size=(256, 256), pad=0.3)
+        _cached = view.image_rgba(width=256, height=256)
+        if _cached is not None:
+            _flat = _cached.reshape(-1, _cached.shape[-1])[:, :3].astype("int32")
+            _lit = int((_flat.sum(axis=1) > 90).sum())
+            # Same wire format as OFFICIAL_RENDER: img:W:H:lit:total:|info;<base64>
+            globals()["_cx_cached_frame"] = "img:%d:%d:%d:%d:|cached;%s" % (
+                _cached.shape[1], _cached.shape[0], _lit, len(_flat),
+                _cx_b64.b64encode(_cached.astype("uint8").tobytes()).decode())
+            notes.append("cached=%d/%d" % (_lit, len(_flat)))
+    except BaseException as _cache_error:
+        notes.append("cache!" + type(_cache_error).__name__ + ":" + str(_cache_error)[:50])
     # Plain concatenation: error strings inside notes may contain % placeholders.
     return ("context=EGLContext-adopted|raw=" + (raw_version or b"?").decode("utf-8", "replace")
             + "|gl=" + str(version) + "|" + ";".join(notes))
@@ -1161,7 +1213,10 @@ struct Index {
         .replace('__CONTEXT__', handles.context)
         .replace('__SURFACE__', handles.surface)
         .replace('__SIZE__', '256');
-      const report: ScriptReport = native.runScript(script);
+      const cached: ScriptReport = native.runScript(FETCH_FRAME);
+      const cachedText: string = (cached.ok ? cached.output : '').trim();
+      const report: ScriptReport = cachedText.startsWith('img:')
+        ? cached : native.runScript(script);
       const text: string = (report.ok ? report.output : report.error).trim();
       if (!text.startsWith('img:')) {
         this.officialInfo = text.slice(0, 120);
