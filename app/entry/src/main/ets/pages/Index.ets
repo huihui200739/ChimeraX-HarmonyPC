@@ -8,7 +8,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = '572cbb5c2fd2';
+const RUNTIME_TAG = 'ab4ee3332fe7';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -945,9 +945,61 @@ try:
         except Exception as _cx_mini_error:
             _cx_diag += ";mini:" + type(_cx_mini_error).__name__ + ":" + str(
                 _cx_mini_error)[:40]
+        # Recompile ChimeraX's exact shader text on this driver and read the logs, so a compile
+        # or link rejection explains itself instead of showing up as a missing uniform block.
+        try:
+            _nl = chr(10)
+            _gz = ctypes.CDLL("libGLESv3.so")
+            _gz.glCreateShader.argtypes = [ctypes.c_uint]
+            _gz.glCreateShader.restype = ctypes.c_uint
+            _gz.glShaderSource.argtypes = [ctypes.c_uint, ctypes.c_int,
+                                           ctypes.POINTER(ctypes.c_char_p),
+                                           ctypes.POINTER(ctypes.c_int)]
+            _gz.glShaderSource.restype = None
+            _gz.glCompileShader.argtypes = [ctypes.c_uint]
+            _gz.glCompileShader.restype = None
+            _gz.glGetShaderiv.argtypes = [ctypes.c_uint, ctypes.c_uint,
+                                          ctypes.POINTER(ctypes.c_int)]
+            _gz.glGetShaderiv.restype = None
+            _gz.glGetShaderInfoLog.argtypes = [ctypes.c_uint, ctypes.c_int,
+                                               ctypes.POINTER(ctypes.c_int),
+                                               ctypes.c_char_p]
+            _gz.glGetShaderInfoLog.restype = None
+            _gz.glCreateProgram.argtypes = []
+            _gz.glCreateProgram.restype = ctypes.c_uint
+            _gz.glAttachShader.argtypes = [ctypes.c_uint, ctypes.c_uint]
+            _gz.glAttachShader.restype = None
+            _gz.glLinkProgram.argtypes = [ctypes.c_uint]
+            _gz.glLinkProgram.restype = None
+            _gz.glGetUniformBlockIndex.argtypes = [ctypes.c_uint, ctypes.c_char_p]
+            _gz.glGetUniformBlockIndex.restype = ctypes.c_uint
+            _cx_rebuilt = []
+            for _sid, _count, _text in _cx_src[:2]:
+                _sh = _gz.glCreateShader(0x8B31 if "VERTEX" in str(_sid) else 0x8B30)
+                _holder = ctypes.c_char_p(_text.encode())
+                _arr = (ctypes.c_char_p * 1)(_holder)
+                _gz.glShaderSource(_sh, 1, _arr, None)
+                _gz.glCompileShader(_sh)
+                _st = ctypes.c_int(-1)
+                _gz.glGetShaderiv(_sh, 0x8B81, ctypes.byref(_st))
+                _ln = ctypes.c_int(0)
+                _buf = ctypes.create_string_buffer(200)
+                _gz.glGetShaderInfoLog(_sh, 199, ctypes.byref(_ln), _buf)
+                _log = _buf.value.decode("utf-8", "replace").replace(_nl, " ")[:60]
+                _cx_rebuilt.append((_sh, _st.value, _log))
+            _dprog = _gz.glCreateProgram()
+            for _sh, _st, _log in _cx_rebuilt:
+                _gz.glAttachShader(_dprog, _sh)
+            _gz.glLinkProgram(_dprog)
+            _dblock = _gz.glGetUniformBlockIndex(_dprog, b"lighting_block")
+            _cx_diag += ";recompiled=%d/block=%d/%s" % (
+                _dprog, _dblock,
+                ",".join("s%d:%d:%s" % (sh, st, log) for sh, st, log in _cx_rebuilt))
+        except Exception as _cx_recomp_error:
+            _cx_diag += ";recompiled:" + type(_cx_recomp_error).__name__ + ":" + str(
+                _cx_recomp_error)[:60]
         _cx_diag += ";src=" + "|".join(
-            "%s:%s:%s" % (sid, count, txt.replace(chr(10), " "))
-            for sid, count, txt in _cx_src[:2])
+            "%s:%s" % (sid, count) for sid, count, txt in _cx_src[:2])
     except BaseException as _cx_diag_error:
         _cx_diag += ";diagstop=" + _cx_step + ":" + type(_cx_diag_error).__name__
     _cx_result = _cx_diag + ";" + _cx_result

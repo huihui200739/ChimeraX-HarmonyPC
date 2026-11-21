@@ -956,3 +956,37 @@ blocks=0        ← ChimeraX 的程序 2：0 个活动 uniform block
 把 ChimeraX 的**完整着色器文本**存下来，在探针里用同一驱动重新编译并读取
 `glGetShaderInfoLog` / `glGetProgramInfoLog`：如果重编译后块出现，说明原编译过程的参数
 （长度数组等）有问题；如果仍不出现，就能拿到编译日志说明具体哪里被优化/拒绝。
+
+## 🎉 2026-11-21 18:40：官方渲染器跑通了！`view=64x64`
+
+设备读回（**没有 GLError 了**）：
+
+```
+created=[2, 3]; blocks=1; block=0; rawblock=0
+calls=glAttachShader:4, glCreateProgram:2, glCreateShader:4, glCompileShader:4,
+      glDeleteShader:4, glGetUniformLocation:8, glBindBuffer:38, glBufferData:10,
+      glVertexAttribPointer:7, ...
+view=64x64|center=100,44,32
+```
+
+### 真正的根因（长期卡点的最后一环）
+
+**`glAttachShader` 没有被委托到门面**。于是：
+
+- 着色器由门面创建（真实 id）
+- 附着却走 PyOpenGL 的坏绑定（静默失败）
+- 程序链接"成功"但**没有任何着色器** → `blocks=0` → `glGetUniformBlockIndex` 失败
+
+把 `glAttachShader`/`glDetachShader`/`glDeleteShader`/`glDeleteProgram`/`glValidateProgram`
+加入委托批次（共 30 个函数）后：
+
+- `blocks=1`、`block=0`（有效索引）
+- **`View.image_rgba()` 返回 64×64 图像**，`center=100,44,32`
+- 无任何 GL 错误
+
+这意味着 **ChimeraX 官方渲染链路（GLSL ES + UBO + FBO）已经在鸿蒙上跑通**，
+这一直是"完整适配"最大的缺口。
+
+### 下一步
+
+验证渲染出的像素内容（非零像素比例、着色分布），并把渲染结果接进 UI 视口显示。
