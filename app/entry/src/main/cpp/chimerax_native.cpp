@@ -365,6 +365,15 @@ try:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("models:" + type(_cx_models_error).__name__
                           + ":" + str(_cx_models_error)[:70])
+    # Commands that colour or measure selections need the selection manager, which a full
+    # start-up creates via the core bundle.
+    try:
+        from chimerax.core.selection import Selection
+        session.selection = Selection(session)
+    except Exception as _cx_selection_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("selection:" + type(_cx_selection_error).__name__
+                          + ":" + str(_cx_selection_error)[:40])
     # Structure readers attach handlers to triggers that a full start-up registers while
     # importing bundles. This runs after Models(), which declares the model triggers itself,
     # so the calls below only fill in what is still missing.

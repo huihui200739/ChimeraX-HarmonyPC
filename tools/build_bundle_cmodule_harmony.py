@@ -82,6 +82,8 @@ def parse_modules(bundle_root: Path) -> list[dict]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bundle', required=True, help='bundle directory name, e.g. map')
+    parser.add_argument('--exclude', nargs='*', default=[],
+                        help='source file names to skip (e.g. GLU-dependent tessellation)')
     parser.add_argument('--source', type=Path,
                         default=ROOT / 'build/downloads/ChimeraX-src/src/bundles')
     parser.add_argument('--sdk', type=Path, default=DEFAULT_SDK)
@@ -131,6 +133,10 @@ def main() -> int:
     for extra in (bundle_root / 'src/include', bundle_root / 'src'):
         if extra.is_dir():
             flags.append(f'-I{extra}')
+    glu_stub = ROOT / 'vendor/surface_glu'
+    if (glu_stub / 'GL/glu.h').is_file():
+        # HarmonyOS has no desktop GLU; the stub keeps _surface linkable.
+        flags.append(f'-I{glu_stub}')
     if args.numpy_include.is_dir():
         flags.append(f'-I{args.numpy_include}')
     shared_lib_dir = args.packages / 'chimerax/lib'
@@ -152,6 +158,15 @@ def main() -> int:
 
     ar = args.sdk / 'llvm/bin/llvm-ar'
     library_products: dict[str, Path] = {}
+    shared_objects_extra: list[str] = []
+    stub_source = glu_stub / 'glu_stub.cpp'
+    if stub_source.is_file():
+        stub_obj = workdir / 'glu_stub.o'
+        code, output = run([str(clang), *flags, '-c', '-o', str(stub_obj), str(stub_source)])
+        if code == 0:
+            shared_objects_extra.append(str(stub_obj))
+        else:
+            report['failures'].append({'glu_stub': output[-1000:]})
     for library in parse_libraries(bundle_root):
         if not library['sources']:
             continue
@@ -182,6 +197,8 @@ def main() -> int:
         for include in module.get('includes', []):
             module_flags.append(f'-I{bundle_root / include}')
         for relative in module['sources']:
+            if Path(relative).name in args.exclude:
+                continue
             source = bundle_root / relative
             if source.suffix == '.pyx':
                 # Cython runs on the build host and only emits C++; compile that instead.
@@ -236,7 +253,7 @@ def main() -> int:
             if product is not None:
                 module_linker.append(str(product))
         code, output = run([str(clang), *module_flags, '-shared', f'-o{artifact}', *objects,
-                            *module_linker])
+                            *shared_objects_extra, *module_linker])
         if code != 0:
             report['failures'].append({'module': module['name'], 'link_stderr': output[-4000:]})
             continue

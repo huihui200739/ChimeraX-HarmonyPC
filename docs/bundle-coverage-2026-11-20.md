@@ -666,3 +666,27 @@ mlp=NotImplementedError:chimerax.surface._surface.connected_pieces is unavailabl
 
 - 设备断言 **26/27**（`info probe` 项因 1322 原子加载超时暂失败，已把等待放宽仍偶发）
 - 本地测试 **130 OK**
+
+## ✅ `_surface` C 扩展编译成功（用 GLU 桩），共 14 个 bundle 扩展
+
+方案：**自己提供 GLU tessellator 桩**（`vendor/surface_glu/`：`GL/glu.h` + `glu_stub.cpp`），
+让 `triangulate.cpp` 能编译链接，但 `gluTess*` 不产生三角形（封盖几何为空，其余网格功能正常）。
+
+- 产物：`chimerax/surface/_surface.cpython-311-aarch64-linux-ohos.so`
+- 批次构建：14 个 bundle 扩展全部成功
+- payload 5433 文件
+
+### `mlp` 继续推进
+
+设备读回（探针第一行）：
+
+```
+mlp=AttributeError:'Session' object has no attribute 'selection'
+```
+
+已在引导里创建 `session.selection = Selection(session)`。开发运行时进一步验证显示，
+`mlp` 后续还需要 UI 侧对象（`register_available_commands`），说明这条命令依赖图形界面部件，
+在无 GUI 的最小会话里还需要更多桩。
+
+**判断**：`mlp` 属于"需要 UI 部件"的命令，投入产出比低，先搁置；`_surface` 扩展本身
+（面积/法线/连通性等）已可被其它功能使用。

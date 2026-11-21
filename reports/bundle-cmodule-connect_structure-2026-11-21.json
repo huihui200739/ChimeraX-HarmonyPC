@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T01:02:18.085672+00:00",
+  "created_at_utc": "2026-11-21T01:44:43.021599+00:00",
   "bundle": "connect_structure",
   "modules": [
     "_cs"
@@ -9,7 +9,7 @@
     {
       "module": "_cs",
       "path": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/connect_structure/_cs.cpython-311-aarch64-linux-ohos.so",
-      "bytes": 603824
+      "bytes": 604992
     }
   ],
   "failures": []
