@@ -889,8 +889,8 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 if _bounds is not None:
                     _blist.append(_bounds)
             if _blist:
-                view.camera.view_all(_cx_union(_blist), window_size=(256, 256), pad=0.3)
-        _cached = view.image_rgba(width=256, height=256)  # the single capture
+                view.camera.view_all(_cx_union(_blist), window_size=(64, 64), pad=0.3)
+        _cached = view.image_rgba(width=64, height=64)  # the single capture, proven size
         if _cached is not None:
             _flat = _cached.reshape(-1, _cached.shape[-1])[:, :3].astype("int32")
             _lit = int((_flat.sum(axis=1) > 90).sum())
