@@ -365,6 +365,7 @@ FALLBACK_ERRORS = []
 
 # Programs created through the facade; probes read this to inspect link status.
 CREATED_PROGRAMS = []
+CREATED_SHADERS = []
 
 
 def make_module(constants_module=None, signatures_module=None):

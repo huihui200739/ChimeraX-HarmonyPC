@@ -832,3 +832,26 @@ block=4294967295; glerr=0; fallbacks=
 - `glGetProgramInfoLog(2)` / `glGetShaderInfoLog(vs/fs)` 的文本（截断显示）
 
 这能直接告诉我们 GLSL ES 编译/链接是否真的成功，以及需要做什么方言适配。
+
+## 🔍 2026-11-21 16:50：uniform block 缺失的根因假设——着色器源码没有真正传进去
+
+关键事实：
+
+- ChimeraX 的着色器是 **`#version 330 core` + `layout(std140) uniform lighting_block`**
+  （`src/bundles/graphics/src/fragmentShader.txt`），即桌面 GLSL
+- 设备上 `glCreateShader:2`、`glCompileShader:2`、`glGetShaderiv:2` 都发生，
+  且我们的 `_cx_compile_shader_gl` **没有抛"编译失败"** → 状态查询返回非 0
+- 但链接后的程序**没有** `lighting_block`（`block=0xFFFFFFFF`）
+
+最合理的解释：**`glShaderSource` 实际传入的源码是空的/无效的**。GL 允许编译空着色器
+（成功但无内容），于是程序链接成功却没有任何 uniform block —— 与观测完全吻合。
+桌面 GLSL 330 在这块 ES3 驱动上本应编译失败，若真编译了 330 源码就不会"成功"。
+
+### 下一步（一次构建）
+
+在 `_cx_compile_shader_gl` 里记录 `len(source)` 与源码前 40 字符到 `_cxgl.CSHADERS`，
+设备读回即可确认：
+- 若 `len` 为 0 或为 `None` → 修 `glShaderSource` 参数传递
+- 若 `len` 正常（数千字符）→ 说明编译确实通过，转向 GLSL ES 方言适配
+
+同时补上 `glGetProgramInfoLog` 的读取（用门面的 `_STRING_RETURNING` 路径，避免裸 CDLL）。

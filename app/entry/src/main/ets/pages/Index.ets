@@ -8,7 +8,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = '4bd38673e1dc';
+const RUNTIME_TAG = '7b3e0e527d7d';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -843,6 +843,42 @@ try:
         # linked program has no active uniform block, which is what makes the binding fail.
         _cx_block = _cx_opengl.GL.glGetUniformBlockIndex(2, b"lighting_block")
         _cx_diag += ";block=" + str(_cx_block) + ";glerr=" + str(_cx_opengl.GL.glGetError())
+        _cx_diag += ";block=" + str(_cx_block) + ";glerr=" + str(_cx_opengl.GL.glGetError())
+        _cx_step = "7"
+        # Read the program's link status and the shader compile logs so a GLSL ES dialect
+        # problem explains itself instead of only showing up as an invalid block index.
+        _g = ctypes.CDLL("libGLESv3.so")
+        _g.glGetProgramiv.argtypes = [ctypes.c_uint, ctypes.c_uint,
+                                      ctypes.POINTER(ctypes.c_int)]
+        _g.glGetProgramiv.restype = None
+        _g.glGetShaderiv.argtypes = [ctypes.c_uint, ctypes.c_uint,
+                                     ctypes.POINTER(ctypes.c_int)]
+        _g.glGetShaderiv.restype = None
+        _g.glGetProgramInfoLog.argtypes = [ctypes.c_uint, ctypes.c_int,
+                                           ctypes.POINTER(ctypes.c_int),
+                                           ctypes.c_char_p]
+        _g.glGetProgramInfoLog.restype = None
+        _g.glGetShaderInfoLog.argtypes = [ctypes.c_uint, ctypes.c_int,
+                                          ctypes.POINTER(ctypes.c_int),
+                                          ctypes.c_char_p]
+        _g.glGetShaderInfoLog.restype = None
+        _cx_link = ctypes.c_int(-1)
+        _g.glGetProgramiv(2, 0x8B82, ctypes.byref(_cx_link))
+        _cx_diag += ";link=" + str(_cx_link.value)
+        _cx_log_len = ctypes.c_int(0)
+        _cx_buf = ctypes.create_string_buffer(256)
+        _g.glGetProgramInfoLog(2, 255, ctypes.byref(_cx_log_len), _cx_buf)
+        _cx_diag += ";plog=" + _cx_buf.value.decode("utf-8", "replace").replace(
+            chr(10), " ")[:90]
+        _cx_shaders = list(getattr(_cxgl_facade, "CREATED_SHADERS", []) or [])
+        for _cx_sid in _cx_shaders[:2]:
+            _cx_cst = ctypes.c_int(-1)
+            _g.glGetShaderiv(int(_cx_sid), 0x8B81, ctypes.byref(_cx_cst))
+            _cx_buf2 = ctypes.create_string_buffer(256)
+            _g.glGetShaderInfoLog(int(_cx_sid), 255, ctypes.byref(_cx_log_len), _cx_buf2)
+            _cx_diag += ";s%s=%d:%s" % (
+                _cx_sid, _cx_cst.value,
+                _cx_buf2.value.decode("utf-8", "replace").replace(chr(10), " ")[:70])
         _cx_diag += ";fallbacks=" + "|".join(
             list(getattr(_cxgl_facade, "FALLBACK_ERRORS", []) or [])[:3])[:160]
         _cx_step = "5"
