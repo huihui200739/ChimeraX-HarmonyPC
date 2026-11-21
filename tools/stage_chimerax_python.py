@@ -577,6 +577,14 @@ def main() -> int:
                 "            # Minimal drawing probe: only the terminal draw calls are delegated here.\n"
                 "            # Buffer/attrib/uniform calls stay on PyOpenGL until this survives on device.\n"
                 "            'glDrawArrays', 'glDrawElements', 'glDrawElementsInstanced',\n"
+                "            # Buffer/attrib/uniform group is safe now that the signature table ships\n"
+                "            # (82 entries) and arguments convert against the declared types.\n"
+                "            'glGenBuffers', 'glDeleteBuffers', 'glBufferData', 'glBufferSubData',\n"
+                "            'glEnableVertexAttribArray', 'glDisableVertexAttribArray',\n"
+                "            'glVertexAttribPointer', 'glVertexAttribDivisor',\n"
+                "            'glGetUniformLocation', 'glUniform1i', 'glUniform1f',\n"
+                "            'glUniformMatrix4fv', 'glBindBufferBase',\n"
+                "            'glGetUniformBlockIndex', 'glUniformBlockBinding',\n"
 
 
                 "            # Framebuffer, renderbuffer and texture storage must also be real: a\n"

@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = '1e735752b7b1';
+const RUNTIME_TAG = '1215963f442f';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -619,6 +619,28 @@ except Exception as error:
 
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
+// Reports the ctypes facade state so a conversion failure can be traced to its origin.
+const FACADE_DIAG = `
+try:
+    from chimerax.graphics import _cxgl as _m
+    _has = hasattr(_m, "_DEFAULT_SIGNATURES")
+    _n = "none"
+    try:
+        import chimerax.graphics._cxgl_sigs as _s
+        _n = len(_s.SIGNATURES)
+    except BaseException as _e:
+        _n = type(_e).__name__
+    _batch = "?"
+    try:
+        import chimerax.graphics.opengl as _o
+        _batch = len(_o._CX_FACADE_BATCH)
+    except BaseException as _e2:
+        _batch = type(_e2).__name__
+    print("ok=%s|sigs=%s|batch=%s|mod=%s" % (_has, _n, _batch, _m.__file__.split("/")[-1]))
+except BaseException as _outer:
+    print("diag:" + type(_outer).__name__ + ":" + str(_outer)[:60])
+`;
+
 // Returns the frame captured during start-up (rendering from a click yields background only).
 const FETCH_FRAME = `
 print(globals().get("_cx_cached_frame", ""))
@@ -833,6 +855,21 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
     version = (raw_version or b"?").decode("utf-8", "replace")
     notes = []
+    # Facade wiring check: an untyped facade turns matrix/array arguments into ArgumentError.
+    try:
+        from chimerax.graphics import _cxgl as _fac
+        import chimerax.graphics.opengl as _opn
+        _n_sigs = "none"
+        try:
+            import chimerax.graphics._cxgl_sigs as _sg
+            _n_sigs = str(len(_sg.SIGNATURES))
+        except BaseException as _sig_error:
+            _n_sigs = "!" + type(_sig_error).__name__
+        notes.append("facade:table=%s,sigs=%s,batch=%s" % (
+            hasattr(_fac, "_DEFAULT_SIGNATURES"), _n_sigs,
+            len(getattr(_opn, "_CX_FACADE_BATCH", ()))))
+    except BaseException as _facade_error:
+        notes.append("facade!" + type(_facade_error).__name__)
     # ChimeraX's own render path: one capture only. On this driver the first image capture in
     # this call renders geometry; later captures come back as background, so the protein render
     # below is the single capture and the earlier probe triangle is gone.
@@ -1233,13 +1270,17 @@ struct Index {
         .replace('__CONTEXT__', handles.context)
         .replace('__SURFACE__', handles.surface)
         .replace('__SIZE__', '256');
+      const diagReport: ScriptReport = native.runScript(FACADE_DIAG);
+      const diagText: string = (diagReport.ok ? diagReport.output : diagReport.error)
+        .trim().slice(0, 110);
+      this.officialInfo = diagText;
       const cached: ScriptReport = native.runScript(FETCH_FRAME);
       const cachedText: string = (cached.ok ? cached.output : '').trim();
       const report: ScriptReport = cachedText.startsWith('img:')
         ? cached : native.runScript(script);
       const text: string = (report.ok ? report.output : report.error).trim();
       if (!text.startsWith('img:')) {
-        this.officialInfo = text.slice(0, 120);
+        this.officialInfo = text.slice(0, 110) + ' || ' + diagText;
         return;
       }
       const parts: string[] = text.split(':');
@@ -1267,7 +1308,8 @@ struct Index {
         editable: false
       };
       this.officialImage = await image.createPixelMap(bytes.buffer as ArrayBuffer, options);
-      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total} ` + info;
+      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total} ` + info
+        + ' || ' + diagText;
     } catch (error) {
       this.officialInfo = 'render-error';
     }

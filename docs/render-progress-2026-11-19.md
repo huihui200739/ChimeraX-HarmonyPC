@@ -1323,3 +1323,30 @@ glUniformMatrix4fv(int, int, bool, tuple): ArgumentError
 ### 下一步
 
 在 `RuntimeError` 消息里附带 `repr(args)` 与是否有签名，一次读取即可定位。
+
+# 🎉 2026-11-22 05:45：官方渲染器真正画出几何体了
+
+设备读回（干净安装 + 完整管线）：
+
+```
+view!          → 消失（渲染无异常）
+triangle=2224/4096     ← 三角形真的被画出来（54% 像素非背景）
+cached=1523/4096       ← 蛋白帧也画出内容（37% 像素非背景）
+drawcalls=glGetUniformLocation:8, glUniformMatrix4fv:4, glUseProgram:2
+geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False
+buffers:vb=4,eb=ok,ninst=1
+facade:table=True,sigs=82
+```
+
+## 真正的根因链（按发现顺序）
+
+1. `glAttachShader` 未委托 → 程序链接后没有着色器（已修）
+2. `vertex_colors` 必须是 **uint8 0-255**，float alpha=1.0 被判为全透明（已修）
+3. **`vendor/graphics/_cxgl_sigs.py` 从未随包分发** → 门面没有签名表 → 所有指针/数组参数
+   走无类型 ctypes 路径并抛 `ArgumentError`（已修：staging 复制 + `make_module()` 默认加载）
+4. **参数必须按声明类型逐位转换**（统一包 `c_int` 会让 `c_long`/`c_void_p`/`LP_c_float` 失配）
+   （已修，并有 5 个单测覆盖）
+5. **缓冲区/属性/统一变量这批调用也必须在门面里**：PyOpenGL 的实现返回 0，
+   导致 VBO/IBO 无效、draw 被跳过（已修）
+
+第 3+4+5 条一起修好后，绘制链路第一次真正提交了几何并产出非背景像素。

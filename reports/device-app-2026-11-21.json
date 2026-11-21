@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T20:19:56.731535+00:00",
+  "created_at_utc": "2026-11-21T21:18:45.656321+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 155143204,
-    "sha256": "ea27169a7afcf58d3918df2a455abbf152a0a310a393a9759916001137e72779"
+    "bytes": 155145327,
+    "sha256": "42ad4d96925d042619f67baead6b8e36ac9c5a997a8891173b765ef05c211ecc"
   },
   "checks": [
     {
       "name": "HAP installs",
       "passed": true,
-      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:error: failed to install bundle. code:9568288 error: install failed due to insufficient disk memory. \nAppMod finish\n"
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
     },
     {
       "name": "Application starts",
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glAttachShader:2,glBindBuffer:23,glBindBufferBase:2,glBindFramebuffer:6,glBindRenderbuffer:6,glBindVertexArray:3,glBufferData:6,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:2,glCreateProgram:1,glCreateShader:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=3/0;recompiled=4/block=0/s7:1:,s8:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - "
+      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:72,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:9,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2,glDeleteRenderbuffers:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=Open"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -185,15 +185,15 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546037798256/547769843360",
+    "cx-viewer-status": "handles=548096257912/546026493568/547768412112",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546037798256/547769843360",
+    "cx-status-view": "视图: handles=548096257912/546026493568/547768412112",
     "cx-view-reset": "重置视角",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glAttachShader:2,glBindBuffer:23,glBindBufferBase:2,glBindFramebuffer:6,glBindRenderbuffer:6,glBindVertexArray:3,glBufferData:6,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:2,glCreateProgram:1,glCreateShader:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=3/0;recompiled=4/block=0/s7:1:,s8:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);view!RuntimeError:glUniformMatrix4fv(int, int, bool, tuple): ArgumentError;geom!AttributeError:'NoneType' object has no attribute 'inst;drawcalls=glGetUniformLocation:3,glUniformMatrix4fv:1,glUseProgram:1;draw!RuntimeError:glUniformMatrix4fv(int, int, bool, tuple@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-;log=;calls=15;top=glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glGenVertexArrays:2:int,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant,glUniformBlockBinding:1:int/int/int",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:72,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:9,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2,glDeleteRenderbuffers:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=0/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glUseProgram:2;cached=0/4096;log=;calls=120;top=glGenBuffers:15:int,glBufferData:15:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:14:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:14:int,glVertexAttribDivisor:14:int/int,glUniformMatrix4fv:11:int/int/bool/tuple",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -203,7 +203,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glAttachShader:2,glBindBuffer:23,glBindBufferBase:2,glBindFramebuffer:6,glBindRenderbuffer:6,glBindVertexArray:3,glBufferData:6,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:2,glCreateProgram:1,glCreateShader:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=3/0;recompiled=4/block=0/s7:1:,s8:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);view!RuntimeError:glUniformMatrix4fv(int, int, bool, tuple): ArgumentError;geom!AttributeError:'NoneType' object has no attribute 'inst;drawcalls=glGetUniformLocation:3,glUniformMatrix4fv:1,glUseProgram:1;draw!RuntimeError:glUniformMatrix4fv(int, int, bool, tuple@File \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-;log=;calls=15;top=glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glGenVertexArrays:2:int,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant,glUniformBlockBinding:1:int/int/int",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:72,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:9,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2,glDeleteRenderbuffers:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=0/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glUseProgram:2;cached=0/4096;log=;calls=120;top=glGenBuffers:15:int,glBufferData:15:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:14:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:14:int,glVertexAttribDivisor:14:int/int,glUniformMatrix4fv:11:int/int/bool/tuple",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 31",
