@@ -665,6 +665,40 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         globals()["_cx_gl_log"] = _cx_log
     except Exception as error:
         print("recorder:" + type(error).__name__ + ":" + str(error)[:50])
+    # Incremental GL substitution: only state-setting entry points are taken from the ctypes
+    # facade for now. These take plain integers, so the risk of a bad pointer is minimal, and a
+    # crash here would be a clear signal to narrow the batch further.
+    try:
+        from chimerax.graphics import _cxgl
+        import OpenGL.GLES3 as _cx_gles
+        _cx_original = object.__getattribute__(cxgl.GL, "_module")
+        _cx_direct = _cxgl.make_module(constants_module=_cx_gles)
+        _cx_batch = ('glBindBuffer', 'glBindVertexArray', 'glBindTexture', 'glBindFramebuffer',
+                     'glBindRenderbuffer', 'glUseProgram', 'glEnable', 'glDisable',
+                     'glViewport', 'glClear', 'glClearColor', 'glDepthFunc', 'glDepthMask',
+                     'glBlendFunc', 'glActiveTexture', 'glPixelStorei',
+                     # batch 2: program/shader creation, uniforms and draws
+                     'glCreateProgram', 'glCreateShader', 'glShaderSource', 'glCompileShader',
+                     'glAttachShader', 'glLinkProgram', 'glDeleteShader', 'glDeleteProgram',
+                     'glGetShaderiv', 'glGetProgramiv', 'glGetShaderInfoLog',
+                     'glGetProgramInfoLog', 'glGetUniformLocation', 'glGetUniformBlockIndex',
+                     'glGetActiveUniform', 'glUniformBlockBinding', 'glUniform1i', 'glUniform1f',
+                     'glUniform2fv', 'glUniform3fv', 'glUniform4fv', 'glUniformMatrix4fv',
+                     'glGenBuffers', 'glDeleteBuffers', 'glBufferData', 'glBufferSubData',
+                     'glEnableVertexAttribArray', 'glDisableVertexAttribArray',
+                     'glVertexAttribPointer', 'glDrawArrays', 'glDrawElements', 'glGetString',
+                     'glGetError', 'glGenVertexArrays', 'glDeleteVertexArrays')
+
+        class _CxPartial:
+            def __getattr__(self, name):
+                if name in _cx_batch:
+                    return getattr(_cx_direct, name)
+                return getattr(_cx_original, name)
+
+        object.__setattr__(cxgl.GL, "_module", _CxPartial())
+        globals()["_cx_batch_size"] = len(_cx_batch)
+    except Exception as error:
+        print("partial-gl:" + type(error).__name__ + ":" + str(error)[:50])
     # ChimeraX's context wrapper, pointed at the adopted EGL objects.
     ctx = cxgl.OpenGLContext(None, None)
     ctx.display = ctypes.c_void_p(int(display_ptr))

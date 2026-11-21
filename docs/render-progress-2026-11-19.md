@@ -589,3 +589,23 @@ calls=88; top=glBindBuffer:23:IntConstant/uint32,
 此类实验必须在 App 内（有真实 EGL 表面）进行。
 
 后续若重试该思路，必须在 App 的 adopt 路径（上下文已 current）里做，且注意崩溃风险。
+
+## 2026-11-21 11:10：增量替换验证成功（应用不再崩溃）
+
+结论先行：**分批替换 GL 函数是安全的**。当前 adopt 路径替换了 **49 个入口点**：
+
+- 状态设置类 16 个（`glBindBuffer`、`glBindVertexArray`、`glViewport`、`glClear`、`glEnable`…）
+- 着色器/程序/绘制类 33 个（`glCreateProgram`、`glShaderSource`、`glLinkProgram`、
+  `glGetUniformLocation`、`glGetUniformBlockIndex`、`glUniform*`、`glBufferData`、
+  `glDrawArrays`、`glGetString`、`glGetError`…）
+
+设备表现：**应用存活**（进程数 1）、断言 26/27（`info probe` 项超时，与本次改动无关）。
+
+### 但渲染器仍报 `glGetUniformBlockIndex(0, 'lighting_block')`
+
+说明渲染器那条路径上的 `glCreateProgram` **没有走到我们的门面**（否则程序 id 不会为 0）。
+可能原因：ChimeraX 某处把 `GL` 或具体函数对象在导入期就缓存成了局部引用，
+`_module` 换绑对它们无效。
+
+下一步（有据可循）：在 `_cxgl` 里加调用计数，设备读回 `glCreateProgram` 被调用了几次、
+返回值是多少，判断是"没走门面"还是"走了但返回 0"。
