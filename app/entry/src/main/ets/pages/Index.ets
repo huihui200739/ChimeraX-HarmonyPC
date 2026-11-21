@@ -644,7 +644,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     models = []
     # Read the bundled protein directly: the "open" command depends on bundle registration that
     # the minimal session may not have, and a silent failure leaves nothing to draw.
-    if os.path.exists(path):
+    if False and os.path.exists(path):
         with open(path, "rb") as stream:
             opened = open_pdb(session, stream, path)
         stack = [opened]
@@ -658,8 +658,9 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             session.models.add(models)
         except Exception:
             pass
-    # Guarantee drawable geometry even when no structure loaded.
-    if not models:
+    # Draw the probe triangle unconditionally: it is the geometry whose lighting was verified
+    # in the adopt probe, so it separates "renderer works" from "structure loading works".
+    if True:
         from chimerax.core.models import Model
         drawing = Model("cx_frame_probe", session)
         vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
@@ -674,9 +675,15 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
         except Exception:
             pass
     view = session.main_view
-    # The adopt probe may already have initialised rendering on this view.
+    # Initialise rendering with an explicit EGL context wrapper, exactly like the adopt probe:
+    # initialize_rendering(None) leaves the view without a usable context and frames come back black.
+    ctx = cxopengl.OpenGLContext(None, None)
+    ctx.display = ctypes.c_void_p(int(display_ptr))
+    ctx.context = ctypes.c_void_p(int(context_ptr))
+    ctx.surface = ctypes.c_void_p(int(surface_ptr))
+    ctx._owns_context = False
     try:
-        view.initialize_rendering(None)
+        view.initialize_rendering(ctx)
     except Exception:
         pass
     try:
@@ -704,8 +711,18 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     # Pixel statistics travel with the frame so an empty render is distinguishable in the UI.
     flat = frame.reshape(-1, frame.shape[-1])[:, :3].astype("int32")
     lit = int((flat.sum(axis=1) > 12).sum())
-    return "img:%d:%d:%d:%d:%s" % (frame.shape[1], frame.shape[0], lit, len(flat),
-                                   base64.b64encode(raw).decode())
+    debug = ""
+    if lit == 0:
+        try:
+            same = [type(m).__name__ for m in session.models.list()]
+            debug = "|dbg=models=%d,render=%s,drawings=%d" % (
+                len(same),
+                type(getattr(view, "_render", None)).__name__,
+                len(getattr(getattr(view, "_render", None), "drawings", []) or []))
+        except Exception as error:
+            debug = "|dbg:" + type(error).__name__
+    return "img:%d:%d:%d:%d:%s;%s" % (frame.shape[1], frame.shape[0], lit, len(flat),
+                                      debug, base64.b64encode(raw).decode())
 
 print(render_frame("__DISPLAY__", "__CONTEXT__", "__SURFACE__", __SIZE__))
 `;
@@ -1189,14 +1206,16 @@ struct Index {
       const height: number = Number.parseInt(parts[2]);
       const lit: number = Number.parseInt(parts[3]);
       const total: number = Number.parseInt(parts[4]);
-      const bytes: Uint8Array = new util.Base64Helper().decodeSync(parts[5]);
+      const payload: string = text.slice(text.indexOf(';') + 1);
+      const bytes: Uint8Array = new util.Base64Helper().decodeSync(payload);
       const options: image.InitializationOptions = {
         size: { width: width, height: height },
         pixelFormat: image.PixelMapFormat.RGBA_8888,
         editable: false
       };
       this.officialImage = await image.createPixelMap(bytes.buffer as ArrayBuffer, options);
-      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total}`;
+      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total}`
+        + text.slice(text.indexOf('img:'), text.indexOf(';'));
     } catch (error) {
       this.officialInfo = 'render-error';
     }
