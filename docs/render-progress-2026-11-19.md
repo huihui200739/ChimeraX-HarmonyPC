@@ -1093,3 +1093,25 @@ chimerax 256x256 lit=65536/65536 |open=ok,models=1,path=yes
 不依赖 PixelMap 显示：
 - 采样值有变化 → 渲染正常，问题在 ArkUI 解码/显示
 - 采样全同 → 渲染内容真的纯色，继续查相机/绘制
+
+## 2026-11-21 22:50：帧内容确认是纯色（0000ff），不是分子
+
+8×8 采样（直接读 UI 文本）：
+
+```
+px=0000ff,0000ff,...（64 个采样全部 0000ff）
+```
+
+两条独立结论：
+
+1. **渲染结果本身是纯蓝**（R=0,G=0,B=255）。这是 ChimeraX 的**默认背景色**，
+   说明这一帧里没有任何几何被画出来
+2. **界面显示成红色**是 ArkTS 侧的问题：`Base64Helper.decodeSync` 返回的 `Uint8Array`
+   其 `buffer` 可能比视图大（池化 ArrayBuffer），直接传 `bytes.buffer` 会错位。
+   已改为传精确切片。
+
+### 下一步
+
+- 用切片后的 PixelMap 再看一次：应显示为蓝色背景（而不是红色），确认解码正确
+- 然后查为什么 protein 没进绘制：会话里 `models=1`，但绘制树里的 structure drawing 可能没有
+  对应的 `_graphics` 实例（需要 `structure._graphics` 在 add 时创建）

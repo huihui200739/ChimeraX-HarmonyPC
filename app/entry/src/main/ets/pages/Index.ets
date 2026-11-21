@@ -728,6 +728,17 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     lit = int((flat.sum(axis=1) > 12).sum())
     debug = "|open=" + (open_error or "ok") + ",models=" + str(len(models)) + (
         ",path=yes" if os.path.exists(path) else ",path=missing")
+    # 8x8 sample of the frame as hex RGB, readable straight from the UI dump.
+    try:
+        step = max(1, frame.shape[0] // 8)
+        rows = []
+        for gy in range(0, frame.shape[0], step):
+            for gx in range(0, frame.shape[1], step):
+                pixel = frame[gy, gx]
+                rows.append("%02x%02x%02x" % (pixel[0], pixel[1], pixel[2]))
+        debug += "|px=" + ",".join(rows[:64])
+    except Exception as error:
+        debug += "|px:" + type(error).__name__
     if lit == 0:
         try:
             nmodels = len(session.models.list())
@@ -1231,7 +1242,12 @@ struct Index {
       const lit: number = Number.parseInt(parts[3]);
       const total: number = Number.parseInt(parts[4]);
       const payload: string = text.slice(text.indexOf(';') + 1);
-      const bytes: Uint8Array = new util.Base64Helper().decodeSync(payload);
+      const decoded: Uint8Array = new util.Base64Helper().decodeSync(payload);
+      // The decoded buffer may be a larger pooled ArrayBuffer; hand the image its own slice.
+      const bytes: Uint8Array = decoded.buffer.byteLength === decoded.byteLength
+        ? decoded
+        : new Uint8Array(decoded.buffer.slice(decoded.byteOffset,
+            decoded.byteOffset + decoded.byteLength));
       const options: image.InitializationOptions = {
         size: { width: width, height: height },
         pixelFormat: image.PixelMapFormat.RGBA_8888,
