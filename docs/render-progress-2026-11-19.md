@@ -1023,3 +1023,26 @@ view=64x64|center=100,44,32
 1. `open_pdb` 直接读 payload 里的 `cx_demo.pdb`（不走 `open` 命令）
 2. 若无原子，则建一个 `Model` 加三角形几何（确保一定有东西可画）
 3. 再加 `view.camera.view_all(...)` 取景 → `image_rgba()`
+
+## 2026-11-21 21:00：UI 渲染帧仍为黑，但场景其实是有内容的
+
+设备诊断（按钮旁直接显示）：
+
+```
+chimerax 256x256 lit=0/65536 |dbg=models=3,draw=6,cam=4,4,22,render=Render
+```
+
+- **`draw=6`**：View 的绘制树里有 6 个 drawing（之前 `drawings=0` 是我取错了属性，
+  `Render` 没有 `.drawings`）
+- **`cam=4,4,22`**：相机在原点前方 22 单位，三角形边长 10，本应可见
+- 但 `lit=0` → 输出帧全黑
+
+说明"场景/相机都对"，问题在 **离屏渲染本身**（帧缓冲绑定、视口、或 clears 颜色）。
+adopt 探针的 64×64 能出图（`lit=4039/4096`），差异在于那条路径是自己新建的
+framebuffer 且渲染后立刻回读；按钮路径可能复用了残留的 FBO/视口状态。
+
+### 下一步
+
+1. 渲染前显式 `view.draw()` 一次，再 `image_rgba()`
+2. 检查 `glGetError()` 与 `view.render.current_framebuffer()` 的尺寸是否等于 256×256
+3. 必要时在渲染脚本里手动创建 256×256 的 `Framebuffer` 并绑定后绘制

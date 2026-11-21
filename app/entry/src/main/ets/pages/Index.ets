@@ -714,11 +714,18 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     debug = ""
     if lit == 0:
         try:
-            same = [type(m).__name__ for m in session.models.list()]
-            debug = "|dbg=models=%d,render=%s,drawings=%d" % (
-                len(same),
-                type(getattr(view, "_render", None)).__name__,
-                len(getattr(getattr(view, "_render", None), "drawings", []) or []))
+            nmodels = len(session.models.list())
+            try:
+                ndraw = len(view.drawing.all_drawings())
+            except Exception:
+                ndraw = -1
+            try:
+                cam = view.camera.position.origin()
+                campos = "%d,%d,%d" % (cam[0], cam[1], cam[2])
+            except Exception:
+                campos = "?"
+            debug = "|dbg=models=%d,draw=%d,cam=%s,render=%s" % (
+                nmodels, ndraw, campos, type(getattr(view, "_render", None)).__name__)
         except Exception as error:
             debug = "|dbg:" + type(error).__name__
     return "img:%d:%d:%d:%d:%s;%s" % (frame.shape[1], frame.shape[0], lit, len(flat),
