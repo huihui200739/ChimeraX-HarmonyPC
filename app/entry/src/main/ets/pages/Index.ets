@@ -776,9 +776,16 @@ try:
         _cx_counts[_name] = _cx_counts.get(_name, 0) + 1
         _cx_shapes.setdefault(_name, "/".join(_types) or "-")
     _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:18]
+    try:
     _cx_stats = globals().get("_cx_gl_stats") or {}
-_cx_result += ";stats=" + ",".join(
-    "%s:%dx:%s" % (name, entry[0], entry[1]) for name, entry in _cx_stats.items())
+    _cx_stats_text = ",".join(
+        "%s:%dx:%s" % (name, entry[0], entry[1]) for name, entry in _cx_stats.items())
+    if not _cx_stats_text:
+        _cx_stats_text = "none"
+except BaseException:
+    _cx_stats_text = "error"
+# Prefix so UI truncation can never hide it.
+_cx_result = "stats=" + _cx_stats_text + ";" + _cx_result
 _cx_result += ";calls=%d;top=%s" % (
         len(_cx_log),
         ",".join("%s:%d:%s" % (name, count, _cx_shapes[name]) for name, count in _cx_top))
