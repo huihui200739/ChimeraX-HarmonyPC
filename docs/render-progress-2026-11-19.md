@@ -990,3 +990,21 @@ view=64x64|center=100,44,32
 ### 下一步
 
 验证渲染出的像素内容（非零像素比例、着色分布），并把渲染结果接进 UI 视口显示。
+
+## 🖼️ 2026-11-21 19:40：官方渲染帧已送进 ArkUI 视口
+
+链路打通：**Python 渲染 → base64 → ArkTS 解码 → PixelMap → Image 组件**
+
+设备表现：
+
+- 点「官方渲染」按钮后，信息行显示 `chimerax 256x256`
+- 视口区域被官方渲染帧覆盖（背景色正是脚本设置的 `0.09,0.12,0.16`）
+
+当前画面里几何体未入镜（相机没对准模型），说明**帧是真实渲染出来的空背景**，
+下一步只需在渲染前把相机对准模型（`view.camera` 或 `zoom_to` 类调用）。
+
+### 已可复用组件
+
+- `OFFICIAL_RENDER` 脚本：接受 display/context/surface 指针 + 尺寸，返回 `img:W:H:<base64>`
+- `showOfficialFrame()`：ArkTS 侧解码并生成 `PixelMap`，`@State officialImage` 驱动 `Image` 显示
+- 渲染按钮 `cx-official-render`

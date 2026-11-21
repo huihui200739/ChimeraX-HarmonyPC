@@ -1,6 +1,8 @@
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { zlib } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { image } from '@kit.ImageKit';
+import { util } from '@kit.ArkTS';
 import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, GLReport, GLHandlesReport, EvalProbeReport, DrawAtomsReport } from 'libchimerax_native.so';
 
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
@@ -617,6 +619,66 @@ except Exception as error:
 
 // Adopts the EGL context the native surface created, renders offscreen through
 // ChimeraX's own OpenGLContext and reads the pixel back.
+// Renders one frame with ChimeraX's own renderer and hands the pixels to ArkUI as base64.
+const OFFICIAL_RENDER = `
+import base64
+import ctypes
+
+def render_frame(display_ptr, context_ptr, surface_ptr, size):
+    egl = ctypes.CDLL("libEGL.so")
+    egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
+    egl.eglMakeCurrent.restype = ctypes.c_uint
+    display = ctypes.c_void_p(int(display_ptr))
+    context = ctypes.c_void_p(int(context_ptr))
+    surface = ctypes.c_void_p(int(surface_ptr))
+    if not egl.eglMakeCurrent(display, surface, surface, context):
+        return "error:make-current"
+    import os
+    import chimerax
+    from chimerax.graphics import opengl as cxopengl
+    cxopengl._initialize_pyopengl()
+    from chimerax.pdb.pdb import open_pdb
+    root = os.path.dirname(os.path.dirname(os.path.abspath(chimerax.__file__)))
+    path = os.path.join(root, "chimerax", "demo_data", "cx_demo.pdb")
+    models = []
+    if os.path.exists(path):
+        from chimerax.core.commands import run
+        try:
+            run(session, "open " + path)
+        except Exception:
+            with open(path, "rb") as stream:
+                opened = open_pdb(session, stream, path)
+            stack = [opened]
+            while stack:
+                item = stack.pop()
+                if isinstance(item, (list, tuple)):
+                    stack.extend(item)
+                elif hasattr(item, "atoms"):
+                    models.append(item)
+            try:
+                session.models.add(models)
+            except Exception:
+                pass
+    view = session.main_view
+    # The adopt probe may already have initialised rendering on this view.
+    try:
+        view.initialize_rendering(None)
+    except Exception:
+        pass
+    try:
+        view.set_rendering_options(background_color=(0.09, 0.12, 0.16, 1.0))
+    except Exception:
+        pass
+    frame = view.image_rgba(width=size, height=size)
+    if frame is None:
+        return "error:no-frame"
+    raw = frame.astype("uint8").tobytes()
+    return "img:%d:%d:%s" % (frame.shape[1], frame.shape[0],
+                             base64.b64encode(raw).decode())
+
+print(render_frame("__DISPLAY__", "__CONTEXT__", "__SURFACE__", __SIZE__))
+`;
+
 const ADOPT_SCRIPT = `
 import ctypes
 
@@ -1064,10 +1126,47 @@ struct Index {
   @State fileListState: string = '';
   @State fileNames: string[] = [];
   @State renderResult: string = '';
+  @State officialImage: image.PixelMap | undefined = undefined;
+  @State officialInfo: string = '';
   @State failed: string = '';
 
   aboutToAppear(): void {
     this.bootstrap();
+  }
+
+
+  // Decode the renderer's base64 frame into a PixelMap the Image component can show.
+  private async showOfficialFrame(): Promise<void> {
+    try {
+      const handles: GLHandlesReport | null = native.glHandles();
+      if (handles === null || handles.context === '0') {
+        this.officialInfo = 'no-context';
+        return;
+      }
+      const script: string = OFFICIAL_RENDER.replace('__DISPLAY__', handles.display)
+        .replace('__CONTEXT__', handles.context)
+        .replace('__SURFACE__', handles.surface)
+        .replace('__SIZE__', '256');
+      const report: ScriptReport = native.runScript(script);
+      const text: string = (report.ok ? report.output : report.error).trim();
+      if (!text.startsWith('img:')) {
+        this.officialInfo = text.slice(0, 120);
+        return;
+      }
+      const parts: string[] = text.split(':');
+      const width: number = Number.parseInt(parts[1]);
+      const height: number = Number.parseInt(parts[2]);
+      const bytes: Uint8Array = new util.Base64Helper().decodeSync(parts[3]);
+      const options: image.InitializationOptions = {
+        size: { width: width, height: height },
+        pixelFormat: image.PixelMapFormat.RGBA_8888,
+        editable: false
+      };
+      this.officialImage = await image.createPixelMap(bytes.buffer as ArrayBuffer, options);
+      this.officialInfo = `chimerax ${width}x${height}`;
+    } catch (error) {
+      this.officialInfo = 'render-error';
+    }
   }
 
   private filesDir(): string {
@@ -1608,6 +1707,17 @@ struct Index {
             }
           })
       }.width('100%')
+      Row() {
+        Button('官方渲染').id('cx-official-render').fontSize(12).height(32)
+          .onClick(() => { this.showOfficialFrame(); })
+        Text(this.officialInfo).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
+          .margin({ left: 8 })
+      }.width('100%').margin({ top: 6 })
+      if (this.officialImage !== undefined) {
+        Image(this.officialImage).id('cx-official-image')
+          .width('100%').height(360).objectFit(ImageFit.Contain)
+          .backgroundColor('#16212F')
+      }
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
         .id('cx-gl-surface').width('100%').height(360).backgroundColor('#16212F')
         .onTouch((event: TouchEvent) => {
