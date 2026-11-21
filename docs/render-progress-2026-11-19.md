@@ -919,3 +919,21 @@ uniform block 未成为活动块 —— 这正是需要真正方言适配的地�
 
 - 我们自己的 ctypes GL 门面：程序创建、着色器创建/编译、链接、查询全部真实工作
 - 应用内 1322 原子蛋白可用自建渲染器绘制（球体/着色/景深/键/旋转缩放）
+
+## 🔬 2026-11-21 18:10：程序的活动 uniform block 数量为 0
+
+设备读回：
+
+```
+link=1; blocks=0; aftercurrent=4294967295; mini:TypeError(...)
+```
+
+- **`blocks=0`**：驱动认为程序有 **0 个活动 uniform block**
+- 先 `glUseProgram(2)` 再查询仍是 `0xFFFFFFFF`（排除"需要 program current"的猜测）
+- 本地复现着色器文本：`#version 300 es` + `#define USE_LIGHTING 1` +
+  `layout(std140) uniform lighting_block {...}` 都在，文本本身没问题
+
+这说明：着色器虽然"编译链接成功"，但 `lighting_block` 没有成为活动块。
+下一个实验（探针已写好，下一轮跑）：用**最小 ES 3.00 UBO 程序**（自己写的几十行着色器）
+在同一驱动上验证 —— 若最小程序也拿不到 block，则是驱动/UBO 支持层面的问题；
+若最小程序正常，则问题只在 ChimeraX 的着色器文本。

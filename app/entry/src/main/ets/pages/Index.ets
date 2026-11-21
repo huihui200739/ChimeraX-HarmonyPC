@@ -879,6 +879,72 @@ try:
             _cx_diag += ";gllen=" + ",".join(_cx_lens)
         except Exception as _cx_len_error:
             _cx_diag += ";gllen:" + type(_cx_len_error).__name__
+        # How many uniform blocks does the driver think the program has, and does making the
+        # program current change the block lookup?
+        try:
+            _gp = ctypes.CDLL("libGLESv3.so")
+            _gp.glGetProgramiv.argtypes = [ctypes.c_uint, ctypes.c_uint,
+                                           ctypes.POINTER(ctypes.c_int)]
+            _gp.glGetProgramiv.restype = None
+            _gp.glUseProgram.argtypes = [ctypes.c_uint]
+            _gp.glUseProgram.restype = None
+            _gp.glGetUniformBlockIndex.argtypes = [ctypes.c_uint, ctypes.c_char_p]
+            _gp.glGetUniformBlockIndex.restype = ctypes.c_uint
+            _nblocks = ctypes.c_int(-1)
+            _gp.glGetProgramiv(2, 0x8A36, ctypes.byref(_nblocks))
+            _gp.glUseProgram(2)
+            _after_current = _gp.glGetUniformBlockIndex(2, b"lighting_block")
+            _cx_diag += ";blocks=%d;aftercurrent=%d" % (_nblocks.value, _after_current)
+        except Exception as _cx_block_error:
+            _cx_diag += ";blocks:" + type(_cx_block_error).__name__
+        # Isolate driver support from ChimeraX's shader text: compile a minimal ES 3.00 program
+        # whose fragment stage really uses a std140 uniform block.
+        try:
+            _gu = ctypes.CDLL("libGLESv3.so")
+            for _fn, _args in (('glCreateShader', [ctypes.c_uint]),
+                               ('glShaderSource', [ctypes.c_uint, ctypes.c_int,
+                                                   ctypes.POINTER(ctypes.c_char_p),
+                                                   ctypes.POINTER(ctypes.c_int)]),
+                               ('glCompileShader', [ctypes.c_uint]),
+                               ('glCreateProgram', []),
+                               ('glAttachShader', [ctypes.c_uint, ctypes.c_uint]),
+                               ('glLinkProgram', [ctypes.c_uint]),
+                               ('glGetUniformBlockIndex', [ctypes.c_uint, ctypes.c_char_p])):
+                _getattr = getattr(_gu, _fn)
+                _getattr.argtypes = _args
+            _gu.glCreateShader.restype = ctypes.c_uint
+            _gu.glCreateProgram.restype = ctypes.c_uint
+            _gu.glGetUniformBlockIndex.restype = ctypes.c_uint
+            _gu.glUseProgram.argtypes = [ctypes.c_uint]
+            _nl = chr(10)
+            _vsrc = ctypes.c_char_p(_nl.join([
+                "#version 300 es",
+                "in vec3 p;",
+                "void main(){gl_Position=vec4(p,1.0);}"]).encode())
+            _fsrc_text = _nl.join([
+                "#version 300 es",
+                "precision highp float;",
+                "layout(std140) uniform lighting_block { vec3 key_light_direction; };",
+                "out vec4 frag;",
+                "void main(){frag=vec4(key_light_direction,1.0);}"])
+            _fsrc = ctypes.c_char_p(_fsrc_text.encode())
+            _vs = _gu.glCreateShader(0x8B31)
+            _arr = ctypes.pointer(_vsrc)
+            _gu.glShaderSource(_vs, 1, ctypes.cast(_arr, ctypes.POINTER(ctypes.c_char_p)), None)
+            _gu.glCompileShader(_vs)
+            _fs = _gu.glCreateShader(0x8B30)
+            _arr2 = ctypes.pointer(_fsrc)
+            _gu.glShaderSource(_fs, 1, ctypes.cast(_arr2, ctypes.POINTER(ctypes.c_char_p)), None)
+            _gu.glCompileShader(_fs)
+            _p2 = _gu.glCreateProgram()
+            _gu.glAttachShader(_p2, _vs)
+            _gu.glAttachShader(_p2, _fs)
+            _gu.glLinkProgram(_p2)
+            _mini_block = _gu.glGetUniformBlockIndex(_p2, b"lighting_block")
+            _cx_diag += ";mini=%d/%d" % (_p2, _mini_block)
+        except Exception as _cx_mini_error:
+            _cx_diag += ";mini:" + type(_cx_mini_error).__name__ + ":" + str(
+                _cx_mini_error)[:40]
         _cx_diag += ";src=" + "|".join(
             "%s:%s:%s" % (sid, count, txt.replace(chr(10), " "))
             for sid, count, txt in _cx_src[:2])

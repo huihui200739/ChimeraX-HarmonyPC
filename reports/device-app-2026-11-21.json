@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T05:52:38.573596+00:00",
+  "created_at_utc": "2026-11-21T09:23:09.254493+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 155059637,
-    "sha256": "6b8705d988fea73ae0709cbdb763f868d0c53173d4c8aaeefc4fa721d271c48d"
+    "bytes": 155063853,
+    "sha256": "cf303bede7a64df38b300677269795664e3706cdde88385172601096326bbb70"
   },
   "checks": [
     {
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "stats=none;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1281,\\n\\tbaseOperation = glUniformBlockBinding@baseOperation = glUniformBlockBinding,;log=;calls=48;top=glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant"
+      "detail": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glBindBuffer:23,glBindFramebuffer:3,glBindRenderbuffer:3,glBindVertexArray:3,glClear:1,glClearColor:2,glCompileShader:2,glCreateProgram:1,glCreateShader:2,glEnable:1,glGetProgramiv:1,glGetShaderiv:2,glGetUniformBlockIndex:1,glLinkProgram:1;block=4294967295;glerr=0;link=1;skip=True;rawblock=4294967295;rawerr=0;gllen=s3=5844,s4=14575;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830:#version 300 es #define USE_LIGHTING 1 #|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561:#version 300 es #define USE_LIGHTING 1 #;context=EGLContext-adopted|raw=Open"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -185,14 +185,14 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547770749632/547767759120",
+    "cx-viewer-status": "handles=548096257912/547770665680/547767868688",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547770749632/547767759120",
+    "cx-status-view": "视图: handles=548096257912/547770665680/547767868688",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "stats=none;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1281,\\n\\tbaseOperation = glUniformBlockBinding@baseOperation = glUniformBlockBinding,;log=;calls=48;top=glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glBindBuffer:23,glBindFramebuffer:3,glBindRenderbuffer:3,glBindVertexArray:3,glClear:1,glClearColor:2,glCompileShader:2,glCreateProgram:1,glCreateShader:2,glEnable:1,glGetProgramiv:1,glGetShaderiv:2,glGetUniformBlockIndex:1,glLinkProgram:1;block=4294967295;glerr=0;link=1;skip=True;rawblock=4294967295;rawerr=0;gllen=s3=5844,s4=14575;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830:#version 300 es #define USE_LIGHTING 1 #|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561:#version 300 es #define USE_LIGHTING 1 #;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1281,\\n\\tbaseOperation = glUniformBlockBinding@baseOperation = glUniformBlockBinding,;log=;calls=48;top=glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -202,7 +202,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "stats=none;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1281,\\n\\tbaseOperation = glUniformBlockBinding@baseOperation = glUniformBlockBinding,;log=;calls=48;top=glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2];links=p2:?;calls=glBindBuffer:23,glBindFramebuffer:3,glBindRenderbuffer:3,glBindVertexArray:3,glClear:1,glClearColor:2,glCompileShader:2,glCreateProgram:1,glCreateShader:2,glEnable:1,glGetProgramiv:1,glGetShaderiv:2,glGetUniformBlockIndex:1,glLinkProgram:1;block=4294967295;glerr=0;link=1;skip=True;rawblock=4294967295;rawerr=0;gllen=s3=5844,s4=14575;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830:#version 300 es #define USE_LIGHTING 1 #|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561:#version 300 es #define USE_LIGHTING 1 #;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1281,\\n\\tbaseOperation = glUniformBlockBinding@baseOperation = glUniformBlockBinding,;log=;calls=48;top=glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 31",
