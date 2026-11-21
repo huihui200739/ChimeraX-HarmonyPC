@@ -1,27 +1,27 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T09:01:31.881954+00:00",
+  "created_at_utc": "2026-11-21T09:11:59.744521+00:00",
   "scope": "harmony_app_entry_build",
   "steps": [
     "ohpm install",
     "hvigor assembleHap"
   ],
-  "stage": "/tmp/cx-hap-xrbvcez6/app",
+  "stage": "/tmp/cx-hap-jfmu_b0d/app",
   "build_tail": [
-    "> hvigor \u001b[32mFinished :entry:default@PackageHap... after 382 ms \u001b[39m",
-    "> hvigor \u001b[32mFinished :entry:default@PackingCheck... after 1 ms \u001b[39m",
+    "> hvigor \u001b[32mFinished :entry:default@PackageHap... after 430 ms \u001b[39m",
+    "> hvigor \u001b[32mFinished :entry:default@PackingCheck... after 2 ms \u001b[39m",
     "> hvigor \u001b[32mFinished :entry:default@SignHap... after 1 ms \u001b[39m",
     "> hvigor \u001b[32mFinished :entry:default@CollectDebugSymbol... after 1 ms \u001b[39m",
     "> hvigor \u001b[32mFinished :entry:assembleHap... after 1 ms \u001b[39m",
-    "> hvigor \u001b[32mBUILD SUCCESSFUL in 4 s 192 ms \u001b[39m"
+    "> hvigor \u001b[32mBUILD SUCCESSFUL in 4 s 183 ms \u001b[39m"
   ],
   "artifacts": [
     {
       "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-      "bytes": 155063002,
-      "sha256": "eed30d44ac5739aded65098eeb5798e8eb118778f75453f7af9b353d5c21aa79"
+      "bytes": 155063853,
+      "sha256": "cf303bede7a64df38b300677269795664e3706cdde88385172601096326bbb70"
     }
   ],
   "status": "hap_built",
-  "finished_at_utc": "2026-11-21T09:01:37.900128+00:00"
+  "finished_at_utc": "2026-11-21T09:12:05.609912+00:00"
 }

@@ -864,6 +864,21 @@ try:
             _cx_raw_block = type(_cx_raw_error).__name__
             _cx_glerr_raw = -1
         _cx_diag += ";rawblock=" + str(_cx_raw_block) + ";rawerr=" + str(_cx_glerr_raw)
+        # Read back the source length GL actually holds: a mismatch with len(source) means the
+        # glShaderSource hand-off lost the text.
+        try:
+            _gs = ctypes.CDLL("libGLESv3.so")
+            _gs.glGetShaderiv.argtypes = [ctypes.c_uint, ctypes.c_uint,
+                                          ctypes.POINTER(ctypes.c_int)]
+            _gs.glGetShaderiv.restype = None
+            _cx_lens = []
+            for _sid in list(getattr(_cxgl_facade, "CREATED_SHADERS", []) or [])[:2]:
+                _n = ctypes.c_int(-1)
+                _gs.glGetShaderiv(int(_sid), 0x8B88, ctypes.byref(_n))
+                _cx_lens.append("s%s=%d" % (_sid, _n.value))
+            _cx_diag += ";gllen=" + ",".join(_cx_lens)
+        except Exception as _cx_len_error:
+            _cx_diag += ";gllen:" + type(_cx_len_error).__name__
         _cx_diag += ";src=" + "|".join(
             "%s:%s:%s" % (sid, count, txt.replace(chr(10), " "))
             for sid, count, txt in _cx_src[:2])
