@@ -833,51 +833,27 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     GL_COLOR_BUFFER_BIT, GL_RGBA, GL_UNSIGNED_BYTE = 0x4000, 0x1908, 0x1401
     version = (raw_version or b"?").decode("utf-8", "replace")
     notes = []
-    # ChimeraX's own render path: create its Render on the adopted context, add a
-    # drawing and capture an offscreen image.
+    # ChimeraX's own render path: one capture only. On this driver the first image capture in
+    # this call renders geometry; later captures come back as background, so the protein render
+    # below is the single capture and the earlier probe triangle is gone.
     try:
         from chimerax.core.models import Model
-        # Report the enum values the framebuffer check depends on; a zero here explains
-        # a "status 0" from glCheckFramebufferStatus.
         import chimerax.graphics.opengl as _cxgl
         notes.append("enums=%s,%s" % (str(_cxgl.GL.GL_FRAMEBUFFER),
                                       str(_cxgl.GL.GL_FRAMEBUFFER_COMPLETE)))
         view = session.main_view
         view.initialize_rendering(ctx)
-        drawing = Model("cx_probe", session)
-        # One red triangle around the origin: three vertices, one triangle.
-        vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
-                               dtype=numpy.float32)
-        normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
-        triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
-        drawing.set_geometry(vertices, normals, triangles)
-        drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3, dtype=numpy.float32)
-        session.models.add([drawing])
-        frame = view.image_rgba(width=64, height=64)
-        if frame is None:
-            notes.append("view:none")
-        else:
-            center = frame[32, 32]
-            # Pixel statistics separate a real render from an empty buffer: the background is
-            # uniform, so a non-zero spread means geometry was actually shaded.
-            _flat = frame.reshape(-1, frame.shape[-1])
-            _rgb = _flat[:, :3].astype("int32")
-            _nonbg = int((_rgb.sum(axis=1) > 12).sum())
-            _distinct = int(len({tuple(int(v) for v in row) for row in _rgb[::7]}))
-            _range = "%d-%d" % (int(_rgb.min()), int(_rgb.max()))
-            notes.append("view=%dx%d|center=%d,%d,%d|lit=%d/%d|colors=%d|range=%s" % (
-                frame.shape[0], frame.shape[1], center[0], center[1], center[2],
-                _nonbg, len(_flat), _distinct, _range))
+        _probe = Model("cx_probe", session)
+        _verts = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
+                             dtype=numpy.float32)
+        _norms = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
+        _tris = numpy.array([[0, 1, 2]], dtype=numpy.int32)
+        _probe.set_geometry(_verts, _norms, _tris)
+        _probe.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3,
+                                           dtype=numpy.float32)
+        session.models.add([_probe])
     except BaseException as error:
-        import traceback
-        where = traceback.format_exc().strip().splitlines()
-        try:
-            import chimerax.graphics.opengl as _cxgl2
-            notes.append("glerr=" + str(_cxgl2.GL.glGetError()))
-        except Exception:
-            pass
-        notes.append("view!" + type(error).__name__ + ":" + str(error)[:60]
-                     + "@" + (where[-3].strip()[:90] if len(where) >= 3 else "?"))
+        notes.append("view!" + type(error).__name__ + ":" + str(error)[:60])
     # Render the demo protein here, in the start-up call where rendering is known to work, and
     # cache the frame: the button only displays it, because rendering from a later napi call
     # produces background only on this driver.
@@ -914,7 +890,7 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     _blist.append(_bounds)
             if _blist:
                 view.camera.view_all(_cx_union(_blist), window_size=(256, 256), pad=0.3)
-        _cached = view.image_rgba(width=256, height=256)
+        _cached = view.image_rgba(width=256, height=256)  # the single capture
         if _cached is not None:
             _flat = _cached.reshape(-1, _cached.shape[-1])[:, :3].astype("int32")
             _lit = int((_flat.sum(axis=1) > 90).sum())
@@ -1230,6 +1206,12 @@ struct Index {
       const payload: string = text.slice(text.indexOf(';') + 1);
       const info: string = text.slice(text.indexOf('|') + 1, text.indexOf(';'));
       const decoded: Uint8Array = new util.Base64Helper().decodeSync(payload);
+      // The renderer's buffer and ArkUI's RGBA_8888 disagree on red/blue order.
+      for (let index = 0; index + 2 < decoded.length; index += 4) {
+        const red: number = decoded[index];
+        decoded[index] = decoded[index + 2];
+        decoded[index + 2] = red;
+      }
       // The decoded buffer may be a larger pooled ArrayBuffer; hand the image its own slice.
       const bytes: Uint8Array = decoded.buffer.byteLength === decoded.byteLength
         ? decoded
