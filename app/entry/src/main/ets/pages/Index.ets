@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'ab4ee3332fe7';
+const RUNTIME_TAG = '1745e2211ffb';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -704,6 +704,10 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=0.15)
     except Exception as error:
         return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
+    try:
+        view.draw(swap_buffers=False)
+    except Exception:
+        pass
     frame = view.image_rgba(width=size, height=size)
     if frame is None:
         return "error:no-frame"

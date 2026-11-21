@@ -1046,3 +1046,28 @@ framebuffer 且渲染后立刻回读；按钮路径可能复用了残留的 FBO/
 1. 渲染前显式 `view.draw()` 一次，再 `image_rgba()`
 2. 检查 `glGetError()` 与 `view.render.current_framebuffer()` 的尺寸是否等于 256×256
 3. 必要时在渲染脚本里手动创建 256×256 的 `Framebuffer` 并绑定后绘制
+
+## 🎉 2026-11-21 21:40：官方渲染器在界面里画出内容！
+
+截图：`reports/big-update-2026-11-21-official-render-in-ui.jpeg`
+
+设备读数：
+
+```
+chimerax 256x256 lit=65536/65536     ← 界面「官方渲染」按钮旁的实时统计
+```
+
+### 从黑屏到出图的两处关键修复
+
+1. **渲染前先 `view.draw(swap_buffers=False)`** —— 否则离屏捕获拿到的是未绘制的帧
+2. **把帧缓冲/纹理存储类调用也委托给门面**：
+   `glGenFramebuffers`/`glGenRenderbuffers`/`glGenTextures`/`glRenderbufferStorage`/
+   `glFramebufferRenderbuffer`/`glFramebufferTexture2D`/`glCheckFramebufferStatus`/
+   `glTexImage2D`/`glTexParameteri`/`glBindBufferBase`/`glReadPixels` 等
+   —— 这些调用若走 PyOpenGL 坏绑定会静默失效，导致 >64px 的离屏目标不完整（黑帧）。
+   修好后 64×64 与 256×256 都能正确渲染。
+
+### 现在的渲染链路（全部真机验证）
+
+`EGL 上下文接管 → ctypes GL 门面(30+ 入口) → 着色器编译(ES 300) → attach/link →
+UBO 绑定 → FBO/RBO 分配 → 绘制 → glReadPixels → base64 → ArkTS PixelMap → Image 显示`
