@@ -730,3 +730,21 @@ _cx_diag += ";created=" + str(len(getattr(_cxgl_facade, "CREATED_PROGRAMS", []))
 _cx_diag += ";err=" + str(gles.glGetError())
 ```
 每步单独 try，失败标记 `step=N`。一次就能看出在哪一步断掉。
+
+## 🔑 2026-11-21 14:45：hilog 通道验证成功，两个关键事实确定
+
+设备日志（`hilog.error` 通道，不再被截断）：
+
+```
+gltype=_GlesProxy;created=[];links=;fallbacks=
+```
+
+1. **渲染器确实使用 `_GlesProxy`** → 我们的委托点位置正确
+2. **但没有任何程序由门面创建**（`created=[]`），也没有委托异常的记录（`fallbacks=`）
+
+也就是说：委托代码在里面，但 `_CX_FACADE_BATCH` 中 `glCreateProgram` 的那条分支**根本没被触发**。
+结合 `glUniformBlockBinding` 报 1281（参数不合法，典型是 program=0）—— 程序很可能是
+**PyOpenGL 路径创建的 0**，而渲染器拿到 0 之后所有调用都在报错。
+
+下一步（一次构建定性）：在门面里给**所有委托函数加调用计数**（`_cxgl.CALLS`），
+设备读回后即可判定"委托究竟有没有被调用"，以及被调用了哪些函数。

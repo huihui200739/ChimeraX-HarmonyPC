@@ -328,6 +328,10 @@ _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteShader')
 
 
+# Problems the renderer hit while delegating to the facade; probes read this to see why a
+# call fell back to PyOpenGL.
+FALLBACK_ERRORS = []
+
 # Programs created through the facade; probes read this to inspect link status.
 CREATED_PROGRAMS = []
 

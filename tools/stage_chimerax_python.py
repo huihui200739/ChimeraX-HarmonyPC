@@ -527,8 +527,13 @@ def main() -> int:
                 "                                return program\n"
                 "                            return create\n"
                 "                        return target\n"
-                "                    except Exception:\n"
-                "                        pass\n"
+                "                    except Exception as _cx_fallback:\n"
+                "                        try:\n"
+                "                            _cxgl_module.FALLBACK_ERRORS.append(\n"
+                "                                name + ':' + type(_cx_fallback).__name__\n"
+                "                                + ':' + str(_cx_fallback)[:40])\n"
+                "                        except Exception:\n"
+                "                            pass\n"
                 "                module = object.__getattribute__(self, '_module')")
             text = text.replace(old_head, new_head, 1)
             # The batch is grown only after earlier entries are verified on device.

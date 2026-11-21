@@ -809,25 +809,35 @@ try:
     except BaseException:
         _cx_stats_text = "error"
     # Prefix so UI truncation can never hide it.
+    # Diagnostic steps, each guarded separately so a failure names the step instead of hiding.
+    _cx_diag = ""
+    _cx_step = "0"
     try:
-        # Report the link status of every program the renderer created: a failed link leaves
-        # no active uniform blocks, which is what makes glUniformBlockBinding fail.
+        _cx_step = "1"
+        # cxgl was a local name inside adopt_and_render; import the module here instead.
+        import chimerax.graphics.opengl as _cx_opengl
+        _cx_diag += "gltype=" + type(_cx_opengl.GL).__name__
+        _cx_step = "2"
         from chimerax.graphics import _cxgl as _cxgl_facade
-        _cx_programs = list(getattr(_cxgl_facade, "CREATED_PROGRAMS", []) or [])
-        _cx_parts = []
-        for _cx_pid in _cx_programs[:4]:
-            _cx_out = ctypes.c_int(0)
+        _cx_created = list(getattr(_cxgl_facade, "CREATED_PROGRAMS", []) or [])
+        _cx_step = "3"
+        _cx_diag += ";created=" + str(_cx_created)[:60]
+        _cx_step = "4"
+        _cx_links = []
+        for _cx_pid in _cx_created[:4]:
+            _cx_out = ctypes.c_int(-1)
             try:
                 gles.glGetProgramiv(int(_cx_pid), 0x8B82, ctypes.byref(_cx_out))
-                _cx_parts.append("prog%s:link=%d" % (_cx_pid, _cx_out.value))
+                _cx_links.append("p%s:link=%d" % (_cx_pid, _cx_out.value))
             except Exception:
-                _cx_parts.append("prog%s:?" % _cx_pid)
-        _cx_result = ("gltype=" + type(cxgl.GL).__name__
-                      + ";programs=" + ",".join(_cx_parts)
-                      + ";created=" + str(getattr(_cxgl_facade, "CREATED_PROGRAMS", []))[:40]
-                      + ";" + _cx_result)
-    except BaseException:
-        pass
+                _cx_links.append("p%s:?" % _cx_pid)
+        _cx_diag += ";links=" + ",".join(_cx_links)
+        _cx_diag += ";fallbacks=" + "|".join(
+            list(getattr(_cxgl_facade, "FALLBACK_ERRORS", []) or [])[:3])[:160]
+        _cx_step = "5"
+    except BaseException as _cx_diag_error:
+        _cx_diag += ";diagstop=" + _cx_step + ":" + type(_cx_diag_error).__name__
+    _cx_result = _cx_diag + ";" + _cx_result
     try:
         _cx_result += ";log=" + "|".join(globals().get("_cx_log_lines") or [])
     except BaseException:
