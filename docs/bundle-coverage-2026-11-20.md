@@ -605,3 +605,23 @@ mlp #1: UserError: mlp: no amino acids specified
 
 后续若要继续这条线，更可行的方向是：**把示例结构直接写进运行时目录**（打包时放进 payload），
 完全不经过 ArkTS 资源复制。
+
+## ✅ 突破：真实蛋白进入模型层，`mlp` 通过氨基酸校验
+
+关键修正：**示例结构现在随运行时 payload 一起分发**（`chimerax/demo_data/cx_demo.pdb`），
+Python 直接读自己的包目录，不再依赖 ArkTS 复制 rawfile。
+
+设备读回：
+
+```
+source=demo
+models=#(3,),1322,1322          ← 1322 原子、1322 条链
+res=MET:1;MET:1;MET:1           ← 残基 MET，polymer_type = 1 = PT_AMINO ✓
+mlp #3: ModuleNotFoundError: ...
+```
+
+**`mlp` 已经越过了"no amino acids specified"这一步**，进入实现内部，当前卡在缺失模块。
+这是从"命令不可用"到"命令执行中"的实质跨越。
+
+下一步：把探针输出压缩（先只打印 `mlp` 结果），拿到具体缺失模块名后补齐依赖。
+断言 **27/27**、本地测试 **130 OK**。

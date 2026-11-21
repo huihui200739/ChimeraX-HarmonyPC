@@ -402,17 +402,34 @@ import os
 from chimerax.pdb.pdb import open_pdb
 from chimerax.core.commands import run
 
-# Prefer the real protein asset when it is present (the 示例 button copies it here).
-# Report the choice so a missing asset is obvious instead of looking like a command failure.
-_cx_real = os.path.join("/data/storage/el2/base/haps/entry/files", "cx_demo.pdb")
+# The demo structures ship inside the runtime tree, so Python can always read them.
+import chimerax as _cx_pkg
+_cx_runtime = os.path.dirname(os.path.dirname(os.path.abspath(_cx_pkg.__file__)))
+_cx_real = os.path.join(_cx_runtime, "chimerax", "demo_data", "cx_demo.pdb")
+if not os.path.exists(_cx_real):
+    _cx_real = "/data/storage/el2/base/haps/entry/files/cx_demo.pdb"
 path = _cx_real if os.path.exists(_cx_real) else os.path.join(
     "/data/storage/el2/base/haps/entry/files", "cx_probe.pdb")
+print("source=" + ("demo" if "demo_data" in path else "probe"))
 if not os.path.exists(path):
     print("info-models:no-pdb")
 else:
     with open(path, "rb") as stream:
         opened = open_pdb(session, stream, path)
-    models = list(session.models.list())
+    # Use the models this open produced: the session list only holds earlier ones.
+    models = []
+    _cx_stack = [opened]
+    while _cx_stack:
+        _item = _cx_stack.pop()
+        if isinstance(_item, (list, tuple)):
+            _cx_stack.extend(_item)
+        elif hasattr(_item, "atoms"):
+            models.append(_item)
+    # Register the opened models so they get ids that atom specs can reference.
+    try:
+        session.models.add(models)
+    except Exception as error:
+        print("add:" + type(error).__name__)
     # Target the largest model this probe opened (the protein), not an earlier probe model.
     # Per-model shape: id, atoms, chains — tells us whether the reader created chains at all.
     try:

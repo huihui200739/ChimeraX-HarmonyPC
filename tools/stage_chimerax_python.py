@@ -532,6 +532,17 @@ def main() -> int:
                 shutil.copy2(info, target_pkg / 'bundle_info.xml')
                 copied_infos += 1
 
+    # Ship the demo structures inside the runtime tree: copying them from ArkTS resources at
+    # start-up never took effect on device, while Python can always read its own package tree.
+    demo_source = ROOT / 'app/entry/src/main/resources/rawfile'
+    demo_target = args.output / 'chimerax/demo_data'
+    if demo_source.is_dir():
+        demo_target.mkdir(parents=True, exist_ok=True)
+        for name in ('cx_demo.pdb', 'cx_demo.sdf'):
+            candidate = demo_source / name
+            if candidate.is_file():
+                shutil.copy2(candidate, demo_target / name)
+
     # molc.py loads libmolc with ctypes from the package directory; ELF objects in
     # the app data directory cannot be dlopen'ed, so prefer the native library dir.
     molc = args.output / 'chimerax/atomic/molc.py'
