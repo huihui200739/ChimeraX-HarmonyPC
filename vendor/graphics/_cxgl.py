@@ -328,6 +328,9 @@ _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteShader')
 
 
+# Entry points actually exercised, counted at the facade boundary.
+CALLS = {}
+
 # Problems the renderer hit while delegating to the facade; probes read this to see why a
 # call fell back to PyOpenGL.
 FALLBACK_ERRORS = []

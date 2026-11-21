@@ -6,6 +6,9 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 // Keep in sync with the packaged rawfile name: a stale copy in the sandbox
 // would otherwise be reused after the runtime contents change.
 const ARCHIVE = 'cx-runtime.zip';
+// Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
+// so changed Python code is always unpacked instead of reusing a stale tree.
+const RUNTIME_TAG = '23094939e721';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -832,6 +835,9 @@ try:
             except Exception:
                 _cx_links.append("p%s:?" % _cx_pid)
         _cx_diag += ";links=" + ",".join(_cx_links)
+        _cx_calls = getattr(_cxgl_facade, "CALLS", {}) or {}
+        _cx_diag += ";calls=" + ",".join(
+            "%s:%d" % (k, v) for k, v in sorted(_cx_calls.items())[:6])
         _cx_diag += ";fallbacks=" + "|".join(
             list(getattr(_cxgl_facade, "FALLBACK_ERRORS", []) or [])[:3])[:160]
         _cx_step = "5"
@@ -1014,7 +1020,7 @@ struct Index {
       const file = fs.openSync(archivePath, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
       fs.writeSync(file.fd, packed.buffer as ArrayBuffer);
       fs.closeSync(file);
-      const store = `${files}/cx-runtime-v5-${packed.byteLength}`;
+      const store = `${files}/cx-runtime-v6-${RUNTIME_TAG}`;
       const runtimeDir = `${store}/${RUNTIME_DIR}`;
       const ready = fs.accessSync(`${runtimeDir}/lib/python3.11/os.py`) &&
         fs.accessSync(`${runtimeDir}/lib/python3.11/chimerax/version.py`) &&

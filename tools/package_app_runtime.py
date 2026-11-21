@@ -89,7 +89,18 @@ def main() -> int:
                 continue
             bundle.write(path, 'cx-generic-runtime/' + str(relative))
             count += 1
-    record = {'created_at_utc': datetime.now(timezone.utc).isoformat(),
+    # Name the on-device extraction directory after the payload: byte length alone collides
+    # often enough that a stale runtime tree survives an update.
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()[:12]
+    page = ROOT / 'app/entry/src/main/ets/pages/Index.ets'
+    if page.is_file():
+        text = page.read_text()
+        import re
+        updated = re.sub(r"const RUNTIME_TAG = '[^']*';",
+                         "const RUNTIME_TAG = '%s';" % digest, text, count=1)
+        if updated != text:
+            page.write_text(updated)
+    record = {'created_at_utc': datetime.now(timezone.utc).isoformat(), 'runtime_tag': digest,
               'runtime': str(args.runtime), 'files': count,
               'archive': str(archive), 'archive_bytes': archive.stat().st_size,
               'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest(),

@@ -748,3 +748,28 @@ gltype=_GlesProxy;created=[];links=;fallbacks=
 
 下一步（一次构建定性）：在门面里给**所有委托函数加调用计数**（`_cxgl.CALLS`），
 设备读回后即可判定"委托究竟有没有被调用"，以及被调用了哪些函数。
+
+## 🔧 2026-11-21 15:20：发现"陈旧运行时"问题（很可能是多轮无进展的真因）
+
+设备读回 `calls=`（门面调用计数）为空 —— 门面**一次都没被调用**，而 `gltype=_GlesProxy` 是对的。
+
+根因怀疑：运行时解包目录名是
+
+```ts
+const store = `${files}/cx-runtime-v5-${packed.byteLength}`;
+```
+
+**只按字节长度区分版本**。Python 代码改动往往不改变压缩包总字节数（或差几十字节后又被别的变化抵消），
+于是 App 一直复用**旧的解包目录**，我们改了 `opengl.py` 的委托代码但设备上跑的还是旧文件。
+这可以同时解释：`created=[]`、`calls={}`、`fallbacks=[]`，以及多轮"改了没反应"。
+
+修复：**用 payload 的 sha256 前 12 位作为目录名**：
+
+```ts
+const store = `${files}/cx-runtime-v6-${RUNTIME_TAG}`;   // RUNTIME_TAG 由打包脚本写入
+```
+
+`tools/package_app_runtime.py` 打完包后会把哈希写进 `Index.ets` 的 `RUNTIME_TAG`。
+这样任何 payload 变化都会触发重新解包。
+
+下一轮：清装验证 —— 若委托代码真正生效，`calls=` 应出现数据，`created=` 应包含程序 id。
