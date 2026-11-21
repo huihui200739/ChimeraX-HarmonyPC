@@ -937,3 +937,22 @@ link=1; blocks=0; aftercurrent=4294967295; mini:TypeError(...)
 下一个实验（探针已写好，下一轮跑）：用**最小 ES 3.00 UBO 程序**（自己写的几十行着色器）
 在同一驱动上验证 —— 若最小程序也拿不到 block，则是驱动/UBO 支持层面的问题；
 若最小程序正常，则问题只在 ChimeraX 的着色器文本。
+
+## ✅ 2026-11-21 18:20：最小 UBO 程序成功 —— 驱动支持 uniform block！
+
+设备读回：
+
+```
+mini=3/0        ← 我们手写的最小 ES 3.00 UBO 程序：program 3，lighting_block 索引 0（有效！）
+blocks=0        ← ChimeraX 的程序 2：0 个活动 uniform block
+```
+
+**结论：这块驱动（Apple Metal 之上的 ES 3.0）完全支持 uniform block**，
+问题**不在驱动**，而在 ChimeraX 的着色器程序本身 —— 它的源码里虽然有
+`layout(std140) uniform lighting_block`，但编译链接后该块不活跃。
+
+### 下一步
+
+把 ChimeraX 的**完整着色器文本**存下来，在探针里用同一驱动重新编译并读取
+`glGetShaderInfoLog` / `glGetProgramInfoLog`：如果重编译后块出现，说明原编译过程的参数
+（长度数组等）有问题；如果仍不出现，就能拿到编译日志说明具体哪里被优化/拒绝。
