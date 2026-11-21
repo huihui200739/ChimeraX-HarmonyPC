@@ -634,6 +634,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     if not egl.eglMakeCurrent(display, surface, surface, context):
         return "error:make-current"
     import os
+    import numpy
     import chimerax
     from chimerax.graphics import opengl as cxopengl
     cxopengl._initialize_pyopengl()
@@ -641,24 +642,37 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     root = os.path.dirname(os.path.dirname(os.path.abspath(chimerax.__file__)))
     path = os.path.join(root, "chimerax", "demo_data", "cx_demo.pdb")
     models = []
+    # Read the bundled protein directly: the "open" command depends on bundle registration that
+    # the minimal session may not have, and a silent failure leaves nothing to draw.
     if os.path.exists(path):
-        from chimerax.core.commands import run
+        with open(path, "rb") as stream:
+            opened = open_pdb(session, stream, path)
+        stack = [opened]
+        while stack:
+            item = stack.pop()
+            if isinstance(item, (list, tuple)):
+                stack.extend(item)
+            elif hasattr(item, "atoms"):
+                models.append(item)
         try:
-            run(session, "open " + path)
+            session.models.add(models)
         except Exception:
-            with open(path, "rb") as stream:
-                opened = open_pdb(session, stream, path)
-            stack = [opened]
-            while stack:
-                item = stack.pop()
-                if isinstance(item, (list, tuple)):
-                    stack.extend(item)
-                elif hasattr(item, "atoms"):
-                    models.append(item)
-            try:
-                session.models.add(models)
-            except Exception:
-                pass
+            pass
+    # Guarantee drawable geometry even when no structure loaded.
+    if not models:
+        from chimerax.core.models import Model
+        drawing = Model("cx_frame_probe", session)
+        vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
+                               dtype=numpy.float32)
+        normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
+        triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
+        drawing.set_geometry(vertices, normals, triangles)
+        drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3,
+                                            dtype=numpy.float32)
+        try:
+            session.models.add([drawing])
+        except Exception:
+            pass
     view = session.main_view
     # The adopt probe may already have initialised rendering on this view.
     try:
@@ -687,8 +701,11 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     if frame is None:
         return "error:no-frame"
     raw = frame.astype("uint8").tobytes()
-    return "img:%d:%d:%s" % (frame.shape[1], frame.shape[0],
-                             base64.b64encode(raw).decode())
+    # Pixel statistics travel with the frame so an empty render is distinguishable in the UI.
+    flat = frame.reshape(-1, frame.shape[-1])[:, :3].astype("int32")
+    lit = int((flat.sum(axis=1) > 12).sum())
+    return "img:%d:%d:%d:%d:%s" % (frame.shape[1], frame.shape[0], lit, len(flat),
+                                   base64.b64encode(raw).decode())
 
 print(render_frame("__DISPLAY__", "__CONTEXT__", "__SURFACE__", __SIZE__))
 `;
@@ -1170,14 +1187,16 @@ struct Index {
       const parts: string[] = text.split(':');
       const width: number = Number.parseInt(parts[1]);
       const height: number = Number.parseInt(parts[2]);
-      const bytes: Uint8Array = new util.Base64Helper().decodeSync(parts[3]);
+      const lit: number = Number.parseInt(parts[3]);
+      const total: number = Number.parseInt(parts[4]);
+      const bytes: Uint8Array = new util.Base64Helper().decodeSync(parts[5]);
       const options: image.InitializationOptions = {
         size: { width: width, height: height },
         pixelFormat: image.PixelMapFormat.RGBA_8888,
         editable: false
       };
       this.officialImage = await image.createPixelMap(bytes.buffer as ArrayBuffer, options);
-      this.officialInfo = `chimerax ${width}x${height}`;
+      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total}`;
     } catch (error) {
       this.officialInfo = 'render-error';
     }
