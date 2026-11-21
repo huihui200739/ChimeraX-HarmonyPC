@@ -1129,3 +1129,23 @@ px=0000ff,0000ff,...（64 个采样全部 0000ff）
 1. 渲染脚本里**跳过 view_all**（用默认相机 + 已知可渲染的三角形）验证是否出图
 2. 若默认相机能出图 → 再研究 `view_all` 的正确用法（参数语义/窗口尺寸）
 3. 之后再把蛋白放进场景并取景
+
+## 2026-11-21 23:20：受控实验结论——UI 路径即使三角形+默认相机也不出图
+
+受控实验（关闭蛋白加载、只放已知可渲染的三角形、默认相机）：
+
+```
+mc=ok,open=fresh:AttributeError,models=0
+px=0000ff ×64（仍是纯背景）
+```
+
+- 已再次 `eglMakeCurrent`（`mc=ok`），排除"上下文未 current"
+- 仍无几何 → 说明**UI 按钮路径与 adopt 探针路径在渲染状态上有本质差异**
+
+adopt 探针能出图（64×64、lit=4039）；UI 路径不能。两者差别目前只剩：
+
+1. adopt 在启动流程中执行（同一 native 调用内 initialize_rendering + draw + capture）
+2. UI 按钮是**另一次 native 调用**（`runScript` from click）
+
+**下一步**：把 adopt 探针里那段"能出图"的渲染代码**整段搬进按钮脚本**（包括它自己
+`initialize_rendering(ctx)` 与 capture 的先后顺序），逐行对齐，而不是复用 session 主视图。

@@ -633,6 +633,12 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     surface = ctypes.c_void_p(int(surface_ptr))
     if not egl.eglMakeCurrent(display, surface, surface, context):
         return "error:make-current"
+    # The click runs in a separate native call, so the adopted EGL context must be made current
+    # again before any GL work (the adopt probe did this and its frames rendered).
+    egl = ctypes.CDLL("libEGL.so")
+    egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
+    egl.eglMakeCurrent.restype = ctypes.c_uint
+    made_current = egl.eglMakeCurrent(display, surface, surface, context)
     import os
     import numpy
     import chimerax
@@ -652,7 +658,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             except Exception:
                 pass
     open_error = ""
-    if os.path.exists(path):
+    if False and os.path.exists(path):
         try:
             with open(path, "rb") as stream:
                 opened = open_pdb(session, stream, path)
@@ -670,8 +676,9 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             session.models.add(models)
         except Exception:
             pass
-    # Fall back to the probe triangle only when no structure loaded, so the frame is never empty.
-    if not models:
+    # Controlled experiment: the probe triangle with the default camera, exactly like the adopt
+    # probe that successfully rendered lit pixels.
+    if True:
         from chimerax.core.models import Model
         drawing = Model("cx_frame_probe", session)
         vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
@@ -711,7 +718,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
                 bounds = bounds()
             if bounds is not None:
                 blist.append(bounds)
-        if blist:
+        if False and blist:
             view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=2.0)
     except Exception as error:
         return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
@@ -752,7 +759,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     # Pixel statistics travel with the frame so an empty render is distinguishable in the UI.
     flat = frame.reshape(-1, frame.shape[-1])[:, :3].astype("int32")
     lit = int((flat.sum(axis=1) > 12).sum())
-    debug = "|open=" + (open_error or "ok") + ",models=" + str(len(models)) + (
+    debug = "|mc=" + ("ok" if made_current else "fail") + ",open=" + (open_error or "ok") + ",models=" + str(len(models)) + (
         ",path=yes" if os.path.exists(path) else ",path=missing")
     # 8x8 sample of the frame as hex RGB, readable straight from the UI dump.
     try:
