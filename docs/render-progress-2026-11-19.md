@@ -646,3 +646,22 @@ GL = _GlesProxy(_gles_module, _ctypes.CDLL('libGLESv3.so'))
 
 同时本轮确认：把着色器批次装到 `cxgl.GL` 上会导致启动期 adopt 崩溃（进程退出），
 已用 `_CX_PARTIAL_GL=False` 开关停用，设备恢复 **27/27**。
+
+## 🔬 2026-11-21 12:30：门面接入点已正确，批次二分定位进行中
+
+把委托点放进 `_GlesProxy`（渲染器实际使用的对象）后：
+
+| 批次 | 结果 |
+|---|---|
+| 16 个状态设置函数 | **设备 27/27，应用存活**（可用组合） |
+| 再加 33 个着色器/绘制函数（共 49） | **设备 2/27 —— 应用崩溃** |
+
+结论：接入点正确了（这批函数确实被渲染器调用到），但其中**至少一个函数的签名/转换不对**，
+导致原生崩溃。因为崩溃发生在渲染器真实路径上，只能靠二分定位。
+
+回退到 16 个函数后设备恢复 **27/27**。
+
+下一步（二分，每轮一次构建）：
+1. 只加着色器创建链（`glCreateProgram`/`glCreateShader`/`glShaderSource`/`glCompileShader`/
+   `glGetShaderiv`/`glGetProgramiv`/`glGetShaderInfoLog`/`glLinkProgram`/`glGetUniformBlockIndex`）
+2. 崩 → 继续二分；稳 → 再加 uniform/绘制组

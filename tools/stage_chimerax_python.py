@@ -486,6 +486,54 @@ def main() -> int:
             lines.insert(insert_at, stub)
             gl_top.write_text('\n'.join(lines))
 
+    # On HarmonyOS PyOpenGL's GLES entry points return zero, while the ctypes facade in
+    # chimerax/graphics/_cxgl.py really calls libGLESv3.so. Route the renderer's validated
+    # functions through the facade inside _GlesProxy, which is the object ChimeraX actually
+    # uses on this platform.
+    opengl_target = args.output / 'chimerax/graphics/opengl.py'
+    if opengl_target.is_file():
+        text = opengl_target.read_text()
+        if 'CX_FACADE_DELEGATION' not in text:
+            helper = (
+                "        # CX_FACADE_DELEGATION: entry points validated on device come from the\n"
+                "        # ctypes facade; everything else keeps the existing PyOpenGL behaviour.\n"
+                "        _CX_FACADE_STATE = {'module': None}\n"
+                "\n"
+                "        def _cx_facade_module():\n"
+                "            module = _CX_FACADE_STATE['module']\n"
+                "            if module is None:\n"
+                "                from chimerax.graphics import _cxgl as _cxgl_module\n"
+                "                module = _cxgl_module.make_module()\n"
+                "                _CX_FACADE_STATE['module'] = module\n"
+                "            return module\n"
+                "\n"
+                "        class _GlesProxy:")
+            text = text.replace('        class _GlesProxy:', helper, 1)
+            old_head = (
+                "            def __getattr__(self, name):\n"
+                "                module = object.__getattribute__(self, '_module')")
+            new_head = (
+                "            def __getattr__(self, name):\n"
+                "                if name in _CX_FACADE_BATCH:\n"
+                "                    try:\n"
+                "                        return getattr(_cx_facade_module(), name)\n"
+                "                    except Exception:\n"
+                "                        pass\n"
+                "                module = object.__getattribute__(self, '_module')")
+            text = text.replace(old_head, new_head, 1)
+            # The batch is grown only after earlier entries are verified on device.
+            text = text.replace(
+                "        class _GlesProxy:",
+                "        _CX_FACADE_BATCH = (\n"
+                "            'glBindBuffer', 'glBindVertexArray', 'glBindTexture', 'glBindFramebuffer',\n"
+                "            'glBindRenderbuffer', 'glUseProgram', 'glEnable', 'glDisable',\n"
+                "            'glViewport', 'glClear', 'glClearColor', 'glDepthFunc', 'glDepthMask',\n"
+                "            'glBlendFunc', 'glActiveTexture', 'glPixelStorei',\n"
+                "        )\n"
+                "\n"
+                "        class _GlesProxy:", 1)
+            opengl_target.write_text(text)
+
     # chimerax.core.commands._atomspec is generated from a PEG grammar by grako; ship the
     # generated module (see vendor/core) so atom specifications work in the app.
     # The generated atomspec module needs grako's runtime at import time.
