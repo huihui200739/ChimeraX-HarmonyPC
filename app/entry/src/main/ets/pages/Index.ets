@@ -634,6 +634,27 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
     gles.glGetString.argtypes = [ctypes.c_uint]
     raw_version = gles.glGetString(0x1F02)
     raw_renderer = gles.glGetString(0x1F01)
+    # Capture ChimeraX's log output: shader compile/link failures are reported there rather
+    # than raised, so this is how a render failure explains itself.
+    _cx_log_lines = []
+    try:
+        _cx_logger = session.logger
+
+        def _cx_capture(kind):
+            def record(message, *args, **kwargs):
+                if len(_cx_log_lines) < 6:
+                    _cx_log_lines.append(kind + ":" + str(message)[:120])
+            return record
+
+        for _cx_level in ('error', 'warning', 'info'):
+            try:
+                object.__setattr__(_cx_logger, _cx_level, _cx_capture(_cx_level))
+            except Exception:
+                pass
+        globals()["_cx_log_lines"] = _cx_log_lines
+    except Exception as _cx_log_error:
+        globals()["_cx_log_lines"] = [type(_cx_log_error).__name__]
+
     import numpy
     from chimerax.graphics import opengl as cxgl
     # Re-resolve PyOpenGL's entry points now that the adopted context is current.
@@ -778,7 +799,7 @@ try:
     for _name, _types in _cx_log:
         _cx_counts[_name] = _cx_counts.get(_name, 0) + 1
         _cx_shapes.setdefault(_name, "/".join(_types) or "-")
-    _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:18]
+    _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:6]
     try:
         _cx_stats = globals().get("_cx_gl_stats") or {}
         _cx_stats_text = ",".join(
@@ -788,6 +809,29 @@ try:
     except BaseException:
         _cx_stats_text = "error"
     # Prefix so UI truncation can never hide it.
+    try:
+        # Report the link status of every program the renderer created: a failed link leaves
+        # no active uniform blocks, which is what makes glUniformBlockBinding fail.
+        from chimerax.graphics import _cxgl as _cxgl_facade
+        _cx_programs = list(getattr(_cxgl_facade, "CREATED_PROGRAMS", []) or [])
+        _cx_parts = []
+        for _cx_pid in _cx_programs[:4]:
+            _cx_out = ctypes.c_int(0)
+            try:
+                gles.glGetProgramiv(int(_cx_pid), 0x8B82, ctypes.byref(_cx_out))
+                _cx_parts.append("prog%s:link=%d" % (_cx_pid, _cx_out.value))
+            except Exception:
+                _cx_parts.append("prog%s:?" % _cx_pid)
+        _cx_result = ("gltype=" + type(cxgl.GL).__name__
+                      + ";programs=" + ",".join(_cx_parts)
+                      + ";created=" + str(getattr(_cxgl_facade, "CREATED_PROGRAMS", []))[:40]
+                      + ";" + _cx_result)
+    except BaseException:
+        pass
+    try:
+        _cx_result += ";log=" + "|".join(globals().get("_cx_log_lines") or [])
+    except BaseException:
+        pass
     _cx_result = "stats=" + _cx_stats_text + ";" + _cx_result
     _cx_result += ";calls=%d;top=%s" % (
         len(_cx_log),

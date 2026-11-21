@@ -516,7 +516,17 @@ def main() -> int:
                 "            def __getattr__(self, name):\n"
                 "                if name in _CX_FACADE_BATCH:\n"
                 "                    try:\n"
-                "                        return getattr(_cx_facade_module(), name)\n"
+                "                        target = getattr(_cx_facade_module(), name)\n"
+                "                        if name == 'glCreateProgram':\n"
+                "                            def create(*args):\n"
+                "                                program = target(*args)\n"
+                "                                try:\n"
+                "                                    _cxgl_module.CREATED_PROGRAMS.append(program)\n"
+                "                                except Exception:\n"
+                "                                    pass\n"
+                "                                return program\n"
+                "                            return create\n"
+                "                        return target\n"
                 "                    except Exception:\n"
                 "                        pass\n"
                 "                module = object.__getattribute__(self, '_module')")
@@ -524,6 +534,7 @@ def main() -> int:
             # The batch is grown only after earlier entries are verified on device.
             text = text.replace(
                 "        class _GlesProxy:",
+
                 "        _CX_FACADE_BATCH = (\n"
                 "            'glBindBuffer', 'glBindVertexArray', 'glBindTexture', 'glBindFramebuffer',\n"
                 "            'glBindRenderbuffer', 'glUseProgram', 'glEnable', 'glDisable',\n"

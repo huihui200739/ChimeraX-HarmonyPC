@@ -328,6 +328,10 @@ _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteShader')
 
 
+# Programs created through the facade; probes read this to inspect link status.
+CREATED_PROGRAMS = []
+
+
 def make_module(constants_module=None, signatures_module=None):
     """Build the GL facade. Pass the already-imported PyOpenGL module for enum constants;
     importing it here would happen too early in ChimeraX's own import sequence."""
