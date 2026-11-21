@@ -1,4 +1,5 @@
 import ctypes
+import re
 import numpy
 
 def _open_gles_library():
@@ -81,6 +82,7 @@ class GlesModule:
         # PyOpenGL's raw module carries the correct ctypes argtypes for every entry point;
         # copying them is what keeps bad pointers from turning into a segfault.
         self._signatures = signatures or {}
+        self._signatures.update(_EXTRA_SIGNATURES)
         # Adapters for calls whose Python signature differs from the C one.
         self._adapters = {
             'glShaderSource': self._shader_source,
@@ -250,8 +252,12 @@ class GlesModule:
                 return 0
             self._cache[name] = desktop_only
             return desktop_only
-        raw = getattr(self._lib, name)
         signature = self._signatures.get(name)
+        if signature is None and _POINTER_ARG_PATTERN.match(name):
+            # Falling back to the original PyOpenGL entry point is far safer than handing an
+            # integer to a parameter that expects an address.
+            raise AttributeError(name)
+        raw = getattr(self._lib, name)
         if signature is not None:
             argtypes, restype = signature
             try:
@@ -307,6 +313,16 @@ _SEQUENCE_ARG_FUNCS = {'glUniform1fv', 'glUniform2fv', 'glUniform3fv', 'glUnifor
 # "offset" style parameters: an integer is a byte offset, not an address.
 _OFFSET_FUNCS = {'glVertexAttribPointer': -1, 'glDrawElements': -1,
                  'glDrawElementsInstanced': -1}
+# Signatures for calls the generated table misses. Without argtypes ctypes passes a Python int
+# as a 32-bit value, so an output parameter becomes address 0x1 and the process segfaults.
+_EXTRA_SIGNATURES = {
+    'glGetShaderiv': ([ctypes.c_uint, ctypes.c_uint, ctypes.POINTER(ctypes.c_int)], None),
+    'glGetShaderSource': ([ctypes.c_uint, ctypes.c_int, ctypes.POINTER(ctypes.c_int),
+                           ctypes.c_char_p], None),
+}
+# Calls that take output pointers; when no signature is known they must not be called blindly.
+_POINTER_ARG_PATTERN = re.compile(r'^glGet[A-Z][A-Za-z0-9]*(iv|fv|bv|InfoLog|Source|Binary)$')
+
 _DELETE_FAMILY = ('glDeleteBuffers', 'glDeleteTextures', 'glDeleteFramebuffers',
                   'glDeleteRenderbuffers', 'glDeleteVertexArrays', 'glDeleteProgram',
                   'glDeleteShader')

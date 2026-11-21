@@ -529,6 +529,10 @@ def main() -> int:
                 "            'glBindRenderbuffer', 'glUseProgram', 'glEnable', 'glDisable',\n"
                 "            'glViewport', 'glClear', 'glClearColor', 'glDepthFunc', 'glDepthMask',\n"
                 "            'glBlendFunc', 'glActiveTexture', 'glPixelStorei',\n"
+                "            # bisect step 1: shader and program creation chain\n"
+                "            'glCreateProgram', 'glCreateShader', 'glShaderSource',\n"
+                "            'glCompileShader', 'glGetShaderiv', 'glGetProgramiv',\n"
+                "            'glGetShaderInfoLog', 'glLinkProgram', 'glGetUniformBlockIndex',\n"
                 "        )\n"
                 "\n"
                 "        class _GlesProxy:", 1)

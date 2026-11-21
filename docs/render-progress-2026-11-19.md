@@ -665,3 +665,30 @@ GL = _GlesProxy(_gles_module, _ctypes.CDLL('libGLESv3.so'))
 1. 只加着色器创建链（`glCreateProgram`/`glCreateShader`/`glShaderSource`/`glCompileShader`/
    `glGetShaderiv`/`glGetProgramiv`/`glGetShaderInfoLog`/`glLinkProgram`/`glGetUniformBlockIndex`）
 2. 崩 → 继续二分；稳 → 再加 uniform/绘制组
+
+## 🎯 2026-11-21 13:00：渲染器第一次越过着色器创建！
+
+分批委托加入"着色器创建链"后（并列修了两个真实缺陷）：
+
+1. `glGetShaderiv` 没有 ctypes 签名 → 之前把 Python int 当指针传 → **原生崩溃**（这正是二分的
+   结果，已补签名）
+2. 门面新增**安全规则**：无签名的 `glGet*iv/fv/InfoLog` 一律抛 `AttributeError`，让
+   `_GlesProxy` 回退到原 PyOpenGL，而不是冒崩溃风险
+
+设备读回：
+
+```
+err=1281, baseOperation=glUniformBlockBinding
+```
+
+对比之前：
+
+```
+err=1282, baseOperation=glGetUniformBlockIndex   ← 程序 id 为 0
+```
+
+**错误码从 1282(INVALID_OPERATION) 变成 1281(INVALID_VALUE)，卡点也从
+"程序创建失败"前进到"UBO 绑定参数不合法"** —— 说明 `glCreateProgram`/`glGetUniformBlockIndex`
+已经真正经过门面并返回了有效值。应用存活、26/27（info 探针超时项）。
+
+下一步：把 `glUniformBlockBinding` 及 UBO 相关调用加入委托批次。

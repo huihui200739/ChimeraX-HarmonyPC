@@ -154,3 +154,21 @@ class ReachabilityTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PointerSafetyTests(unittest.TestCase):
+    def test_untyped_pointer_calls_raise_instead_of_crashing(self):
+        facade = cxgl.GlesModule(constants={}, library=FakeLib())
+        # glGetShaderiv is typed explicitly; an entry point outside the table must not be
+        # handed a Python int as an address.
+        for name in ('glGetVertexAttribiv', 'glGetFramebufferAttachmentParameteriv'):
+            with self.assertRaises(AttributeError):
+                facade.__getattr__(name)
+
+    def test_shader_query_is_typed(self):
+        # The generated table only covers calls ChimeraX makes directly; shader queries come
+        # from the renderer, so the facade carries their ctypes signatures explicitly.
+        self.assertIn('glGetShaderiv', cxgl._EXTRA_SIGNATURES)
+        argtypes, restype = cxgl._EXTRA_SIGNATURES['glGetShaderiv']
+        self.assertEqual(len(argtypes), 3)
+        self.assertIsNone(restype)
