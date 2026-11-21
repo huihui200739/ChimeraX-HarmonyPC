@@ -609,3 +609,17 @@ calls=88; top=glBindBuffer:23:IntConstant/uint32,
 
 下一步（有据可循）：在 `_cxgl` 里加调用计数，设备读回 `glCreateProgram` 被调用了几次、
 返回值是多少，判断是"没走门面"还是"走了但返回 0"。
+
+## 2026-11-21 11:20：门面调用计数已加入，但设备读数里没显示
+
+在 `_CxPartial` 里对 `glCreateProgram`/`glCreateShader`/`glLinkProgram`/
+`glGetUniformBlockIndex`/`glGetError` 加了调用计数与最后返回值，并把
+`stats=...` 拼进 adopt 返回串。
+
+设备读回**没有出现 `stats=` 段**（输出仍以 `;calls=88;top=...` 结束），说明该拼接在
+外层 `try/except` 里抛了异常被吞掉，或计数表为空导致格式串异常。
+
+**下一步**：把 stats 拼接本身也包 try/except 并降级成常量文本，确认是"没被调用"还是
+"拼接失败"；这决定后续是去查引用缓存还是查返回值。
+
+状态：设备 27/27、本地 130 OK、49 个入口点仍由门面提供、应用存活。

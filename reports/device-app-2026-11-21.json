@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T02:49:56.779003+00:00",
+  "created_at_utc": "2026-11-21T03:00:34.933614+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 157114709,
-    "sha256": "8042b191ade3188ed64fc82255a6845038553364bc249db2f2fee22dbf62eeda"
+    "bytes": 157115538,
+    "sha256": "1a69701968750d4274e60fa8eebfedc1d5838c04c7f545de00fa7a3b00cf2196"
   },
   "checks": [
     {
@@ -141,8 +141,8 @@
     },
     {
       "name": "Bundle commands run against the opened protein",
-      "passed": false,
-      "detail": ""
+      "passed": true,
+      "detail": "source=demo\\nmlp=AttributeError:'Session' object has no attribute 'selection'\\ncoulombic-#3:"
     }
   ],
   "ui": {
@@ -185,11 +185,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547769352960/547766654896",
+    "cx-viewer-status": "handles=548096257912/546021083536/547768612176",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547769352960/547766654896",
+    "cx-status-view": "视图: handles=548096257912/546021083536/547768612176",
     "cx-view-reset": "重置视角",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
     "cx-render": "context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);glerr=0;view!GLError:GLError(\\n\\terr = 1282,\\n\\tbaseOperation = glGetUniformBlockInde@cArguments = (0, b'lighting_block'),;calls=88;top=glBindBuffer:23:IntConstant/uint32,glGenBuffers:6:int,glBufferData:6:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:4:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:4:int,glVertexAttribDivisor:4:int/int,glGetString:3:IntConstant,glBindVertexArray:3:uint32,glBindRenderbuffer:3:IntConstant/uint32,glBindFramebuffer:3:IntConstant/uint32,glClearColor:2:int/int/int/int,glGenVertexArrays:2:int,glViewport:2:int/int/int/int,glGenRenderbuffers:2:int,glRenderbufferStorage:2:IntConstant/IntConstant/int/int,glFramebufferRenderbuffer:2:IntConstant/IntConstant/IntConstant/uint32,glAttachShader:2:int/int,glDeleteShader:2:int",
@@ -206,11 +206,11 @@
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 30",
-  "info_probe_output": "",
+  "info_probe_output": "source=demo\\nmlp=AttributeError:'Session' object has no attribute 'selection'\\ncoulombic-#3:",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 26,
-    "failed": 1
+    "passed": 27,
+    "failed": 0
   },
-  "status": "app_runtime_incomplete"
+  "status": "app_runtime_verified"
 }

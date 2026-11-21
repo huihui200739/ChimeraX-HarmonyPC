@@ -689,14 +689,28 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                      'glVertexAttribPointer', 'glDrawArrays', 'glDrawElements', 'glGetString',
                      'glGetError', 'glGenVertexArrays', 'glDeleteVertexArrays')
 
+        _cx_stats = {}
+        _cx_watched = ('glCreateProgram', 'glCreateShader', 'glLinkProgram',
+                       'glGetUniformBlockIndex', 'glGetError')
+
         class _CxPartial:
             def __getattr__(self, name):
                 if name in _cx_batch:
-                    return getattr(_cx_direct, name)
+                    target = getattr(_cx_direct, name)
+                    if name in _cx_watched:
+                        def counted(*args, _t=target, _n=name):
+                            result = _t(*args)
+                            entry = _cx_stats.setdefault(_n, [0, None])
+                            entry[0] += 1
+                            entry[1] = result
+                            return result
+                        return counted
+                    return target
                 return getattr(_cx_original, name)
 
         object.__setattr__(cxgl.GL, "_module", _CxPartial())
         globals()["_cx_batch_size"] = len(_cx_batch)
+        globals()["_cx_gl_stats"] = _cx_stats
     except Exception as error:
         print("partial-gl:" + type(error).__name__ + ":" + str(error)[:50])
     # ChimeraX's context wrapper, pointed at the adopted EGL objects.
@@ -762,7 +776,10 @@ try:
         _cx_counts[_name] = _cx_counts.get(_name, 0) + 1
         _cx_shapes.setdefault(_name, "/".join(_types) or "-")
     _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:18]
-    _cx_result += ";calls=%d;top=%s" % (
+    _cx_stats = globals().get("_cx_gl_stats") or {}
+_cx_result += ";stats=" + ",".join(
+    "%s:%dx:%s" % (name, entry[0], entry[1]) for name, entry in _cx_stats.items())
+_cx_result += ";calls=%d;top=%s" % (
         len(_cx_log),
         ",".join("%s:%d:%s" % (name, count, _cx_shapes[name]) for name, count in _cx_top))
 except Exception as _cx_dump_error:
