@@ -1371,3 +1371,28 @@ chimerax 512x512 lit=99575/262144 cached
 ### 剩余
 
 把 `cx_demo.pdb` 的结构加入渲染场景并取景，即可得到"官方渲染器画分子"的图。
+
+## 2026-11-22 06:50：官方渲染器在界面里显示结构（最终形态）
+
+截图：`reports/molecule-render-final.jpeg`
+
+设备读数：`chimerax 512x512 lit=26803/262144 cached`
+
+画面：**ChimeraX 官方渲染器**在鸿蒙 PC 上绘制出 512×512 帧并显示在 ArkUI 视口里
+（蓝色背景 + 结构轮廓）。结构目前渲染为**黑色剪影**，因为结构绘制路径的
+光照/颜色 uniforms 还未完全走通（同一 shader 下的探针三角形已能正确着色）。
+
+### 完整可用链路
+
+```
+EGL 上下文接管 → ctypes GL 门面（30 入口点）
+→ 着色器编译（GLSL ES 300）+ 程序链接 + UBO 绑定
+→ FBO/RBO 分配 + 绘制 + glReadPixels
+→ base64 → ArkTS → PixelMap（通道校正）→ Image 显示
+```
+
+### 已知剩余
+
+1. 结构绘制的光照/颜色：目前是黑色剪影，需要让 `set_lighting_shader_capabilities`
+   与材质 uniforms 也走门面
+2. 视口尺寸：Image 组件按 Contain 显示 512×512，两侧留空

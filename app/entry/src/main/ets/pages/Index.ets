@@ -952,6 +952,13 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except Exception:
                 pass
         if _cx_models:
+            # Drop the probe triangle so the frame shows the structure itself.
+            for _stale in list(session.models.list()):
+                if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):
+                    try:
+                        session.models.remove([_stale])
+                    except Exception:
+                        pass
             from chimerax.geometry.bounds import union_bounds as _cx_union
             _blist = []
             for _model in session.models.list():
@@ -961,7 +968,7 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 if _bounds is not None:
                     _blist.append(_bounds)
             if _blist:
-                view.camera.view_all(_cx_union(_blist), window_size=(512, 512), pad=0.3)
+                view.camera.view_all(_cx_union(_blist), window_size=(512, 512), pad=0.8)
         try:
             _cached = view.image_rgba(width=512, height=512)
         except BaseException as _draw_error:
@@ -1861,7 +1868,7 @@ struct Index {
       }.width('100%').margin({ top: 6 })
       if (this.officialImage !== undefined) {
         Image(this.officialImage).id('cx-official-image')
-          .width('100%').height(360).objectFit(ImageFit.Contain)
+          .width('100%').height(480).objectFit(ImageFit.Contain)
           .backgroundColor('#16212F')
       }
       XComponent({ id: 'cx-gl-surface', type: XComponentType.SURFACE, libraryname: 'chimerax_native' })
