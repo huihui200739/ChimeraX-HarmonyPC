@@ -1149,3 +1149,22 @@ adopt 探针能出图（64×64、lit=4039）；UI 路径不能。两者差别目
 
 **下一步**：把 adopt 探针里那段"能出图"的渲染代码**整段搬进按钮脚本**（包括它自己
 `initialize_rendering(ctx)` 与 capture 的先后顺序），逐行对齐，而不是复用 session 主视图。
+
+## 2026-11-22 00:00：UI 路径出图仍未解决（已连续多轮）
+
+尝试记录（每次均为一次构建+设备验证）：
+
+1. 复制 adopt 探针的完整序列到按钮脚本（eglMakeCurrent、OpenGLContext 包装、
+   Model+三角形、image_rgba）→ 仍 `0000ff` 纯背景
+2. `init=ValueError`：按钮路径里 `initialize_rendering` 因上下文已设置而抛错（adopt 时已初始化），
+   但 `add=ok`、三角形确实加进了会话
+3. 强制 `view._opengl_initialized = False` 让延迟初始化重跑 → 仍纯背景
+
+**当前判断**：adopt 探针的渲染发生在启动期同一 native 调用内；按钮路径是后续 `runScript`
+调用，尽管 `eglMakeCurrent` 成功，渲染仍只输出背景色。可能与 ChimeraX 的
+`Framebuffer`/`Render` 状态绑定在首次调用时的上下文句柄有关。
+
+### 可行的替代方案（若继续攻）
+
+在**启动期 adopt 阶段**就把"蛋白 + 相机 + 帧"渲染好并缓存，按钮只负责把缓存帧显示出来；
+即渲染时机前移到已知可用的调用内，而不是在点击回调里重新渲染。

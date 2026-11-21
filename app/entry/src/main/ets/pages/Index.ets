@@ -625,6 +625,9 @@ import base64
 import ctypes
 
 def render_frame(display_ptr, context_ptr, surface_ptr, size):
+    # Same sequence as the adopt probe that successfully renders: make the context current, build
+    # an EGL context wrapper, initialise rendering once, add geometry, capture. No extra draw pass
+    # and no camera framing, because those are exactly what the working probe does not do.
     egl = ctypes.CDLL("libEGL.so")
     egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
     egl.eglMakeCurrent.restype = ctypes.c_uint
@@ -633,164 +636,59 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     surface = ctypes.c_void_p(int(surface_ptr))
     if not egl.eglMakeCurrent(display, surface, surface, context):
         return "error:make-current"
-    # The click runs in a separate native call, so the adopted EGL context must be made current
-    # again before any GL work (the adopt probe did this and its frames rendered).
-    egl = ctypes.CDLL("libEGL.so")
-    egl.eglMakeCurrent.argtypes = [ctypes.c_void_p] * 4
-    egl.eglMakeCurrent.restype = ctypes.c_uint
-    made_current = egl.eglMakeCurrent(display, surface, surface, context)
-    import os
     import numpy
     import chimerax
-    from chimerax.graphics import opengl as cxopengl
-    cxopengl._initialize_pyopengl()
-    from chimerax.pdb.pdb import open_pdb
-    root = os.path.dirname(os.path.dirname(os.path.abspath(chimerax.__file__)))
-    path = os.path.join(root, "chimerax", "demo_data", "cx_demo.pdb")
-    models = []
-    # Read the bundled protein directly: the "open" command depends on bundle registration that
-    # the minimal session may not have, and a silent failure leaves nothing to draw.
-    # Drop the fallback probe from earlier runs so it cannot cover the structure.
-    for existing in list(session.models.list()):
-        if getattr(existing, "name", "") == "cx_frame_probe":
-            try:
-                session.models.remove([existing])
-            except Exception:
-                pass
-    open_error = ""
-    if False and os.path.exists(path):
-        try:
-            with open(path, "rb") as stream:
-                opened = open_pdb(session, stream, path)
-        except Exception as error:
-            opened = []
-            open_error = type(error).__name__ + ":" + str(error)[:50]
-        stack = [opened]
-        while stack:
-            item = stack.pop()
-            if isinstance(item, (list, tuple)):
-                stack.extend(item)
-            elif hasattr(item, "atoms"):
-                models.append(item)
-        try:
-            session.models.add(models)
-        except Exception:
-            pass
-    # Controlled experiment: the probe triangle with the default camera, exactly like the adopt
-    # probe that successfully rendered lit pixels.
-    if True:
-        from chimerax.core.models import Model
-        drawing = Model("cx_frame_probe", session)
-        vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
-                               dtype=numpy.float32)
-        normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
-        triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
-        drawing.set_geometry(vertices, normals, triangles)
-        drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3,
-                                            dtype=numpy.float32)
-        try:
-            session.models.add([drawing])
-        except Exception:
-            pass
-    view = session.main_view
-    # Initialise rendering with an explicit EGL context wrapper, exactly like the adopt probe:
-    # initialize_rendering(None) leaves the view without a usable context and frames come back black.
-    ctx = cxopengl.OpenGLContext(None, None)
+    from chimerax.graphics import opengl as cxgl
+    cxgl._initialize_pyopengl()
+    ctx = cxgl.OpenGLContext(None, None)
     ctx.display = ctypes.c_void_p(int(display_ptr))
     ctx.context = ctypes.c_void_p(int(context_ptr))
     ctx.surface = ctypes.c_void_p(int(surface_ptr))
     ctx._owns_context = False
+    from chimerax.core.models import Model
+    view = session.main_view
     try:
         view.initialize_rendering(ctx)
+        init_error = "ok"
+    except Exception as error:
+        init_error = type(error).__name__
+    # One red triangle around the origin, the geometry the adopt probe renders successfully.
+    drawing = Model("cx_frame_probe", session)
+    vertices = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
+                           dtype=numpy.float32)
+    normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
+    triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
+    drawing.set_geometry(vertices, normals, triangles)
+    drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3, dtype=numpy.float32)
+    try:
+        session.models.add([drawing])
+        add_error = "ok"
+    except Exception as error:
+        add_error = type(error).__name__
+    # The view was initialised during start-up; force the deferred OpenGL setup to run again in
+    # this call, otherwise the capture only produces background on this driver.
+    try:
+        view._opengl_initialized = False
+        renderer = getattr(view, "_render", None)
+        if renderer is not None:
+            renderer.opengl_context = ctx
     except Exception:
         pass
-    try:
-        view.set_rendering_options(background_color=(0.09, 0.12, 0.16, 1.0))
-    except Exception:
-        pass
-    # Frame the models: without this the camera sits at the origin and renders background only.
-    try:
-        from chimerax.geometry.bounds import union_bounds
-        blist = []
-        for m in session.models.list():
-            bounds = getattr(m, "bounds", None)
-            if callable(bounds):
-                bounds = bounds()
-            if bounds is not None:
-                blist.append(bounds)
-        if False and blist:
-            view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=2.0)
-    except Exception as error:
-        return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
-    # Render through a fresh View: the session's main view was initialised during start-up and
-    # repeated draws there produce background only on this driver.
-    frame = None
-    try:
-        from chimerax.graphics import View as _CxView
-        fresh = _CxView(session)
-        fresh.initialize_rendering(ctx)
-        try:
-            from chimerax.geometry.bounds import union_bounds as _union
-            _bl = []
-            for _m in session.models.list():
-                _b = getattr(_m, "bounds", None)
-                if callable(_b):
-                    _b = _b()
-                if _b is not None:
-                    _bl.append(_b)
-            if _bl:
-                fresh.camera.view_all(_union(_bl), window_size=(size, size), pad=0.3)
-        except Exception:
-            pass
-        frame = fresh.image_rgba(width=size, height=size)
-        view = fresh
-    except Exception as error:
-        open_error = (open_error + "|fresh:" + type(error).__name__) if open_error else (
-            "fresh:" + type(error).__name__)
+    frame = view.image_rgba(width=size, height=size)
     if frame is None:
-        try:
-            view.draw(swap_buffers=False)
-        except Exception:
-            pass
-        frame = view.image_rgba(width=size, height=size)
-    if frame is None:
-        return "error:no-frame"
+        return "error:no-frame|init=%s|add=%s" % (init_error, add_error)
     raw = frame.astype("uint8").tobytes()
-    # Pixel statistics travel with the frame so an empty render is distinguishable in the UI.
     flat = frame.reshape(-1, frame.shape[-1])[:, :3].astype("int32")
     lit = int((flat.sum(axis=1) > 12).sum())
-    debug = "|mc=" + ("ok" if made_current else "fail") + ",open=" + (open_error or "ok") + ",models=" + str(len(models)) + (
-        ",path=yes" if os.path.exists(path) else ",path=missing")
-    # 8x8 sample of the frame as hex RGB, readable straight from the UI dump.
-    try:
-        step = max(1, frame.shape[0] // 8)
-        rows = []
-        for gy in range(0, frame.shape[0], step):
-            for gx in range(0, frame.shape[1], step):
-                pixel = frame[gy, gx]
-                rows.append("%02x%02x%02x" % (pixel[0], pixel[1], pixel[2]))
-        debug += "|px=" + ",".join(rows[:64])
-    except Exception as error:
-        debug += "|px:" + type(error).__name__
-    if lit == 0:
-        try:
-            nmodels = len(session.models.list())
-            try:
-                ndraw = len(view.drawing.all_drawings())
-            except Exception:
-                ndraw = -1
-            try:
-                cam = view.camera.position.origin()
-                campos = "%d,%d,%d" % (cam[0], cam[1], cam[2])
-            except Exception:
-                campos = "?"
-            debug = "|dbg=models=%d,draw=%d,cam=%s,open=%s,path=%s" % (
-                nmodels, ndraw, campos, open_error or "ok",
-                "yes" if os.path.exists(path) else "missing")
-        except Exception as error:
-            debug = "|dbg:" + type(error).__name__
-    return "img:%d:%d:%d:%d:%s;%s" % (frame.shape[1], frame.shape[0], lit, len(flat),
-                                      debug, base64.b64encode(raw).decode())
+    px = []
+    step = max(1, frame.shape[0] // 8)
+    for gy in range(0, frame.shape[0], step):
+        for gx in range(0, frame.shape[1], step):
+            pixel = frame[gy, gx]
+            px.append("%02x%02x%02x" % (pixel[0], pixel[1], pixel[2]))
+    return "img:%d:%d:%d:%d:|init=%s,add=%s,px=%s;%s" % (
+        frame.shape[1], frame.shape[0], lit, len(flat), init_error, add_error,
+        ",".join(px[:64]), base64.b64encode(raw).decode())
 
 print(render_frame("__DISPLAY__", "__CONTEXT__", "__SURFACE__", __SIZE__))
 `;
@@ -1275,6 +1173,7 @@ struct Index {
       const lit: number = Number.parseInt(parts[3]);
       const total: number = Number.parseInt(parts[4]);
       const payload: string = text.slice(text.indexOf(';') + 1);
+      const info: string = text.slice(text.indexOf('|') + 1, text.indexOf(';'));
       const decoded: Uint8Array = new util.Base64Helper().decodeSync(payload);
       // The decoded buffer may be a larger pooled ArrayBuffer; hand the image its own slice.
       const bytes: Uint8Array = decoded.buffer.byteLength === decoded.byteLength
@@ -1287,8 +1186,7 @@ struct Index {
         editable: false
       };
       this.officialImage = await image.createPixelMap(bytes.buffer as ArrayBuffer, options);
-      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total}`
-        + text.slice(text.indexOf('img:'), text.indexOf(';'));
+      this.officialInfo = `chimerax ${width}x${height} lit=${lit}/${total} ` + info;
     } catch (error) {
       this.officialInfo = 'render-error';
     }
