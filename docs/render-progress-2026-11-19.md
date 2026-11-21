@@ -575,3 +575,17 @@ calls=88; top=glBindBuffer:23:IntConstant/uint32,
 
 据此新增 `tests/test_cxgl_replay.py`：把这些**记录下来的调用形状**合成参数后回放给门面，
 断言全部通过。本地测试 128 → **130**。
+
+## 2026-11-21 11:20：一次无效实验（记录以免重复）
+
+思路：与其替换 `GL` 模块，不如在 `import OpenGL` **之前**把
+`OpenGL.platform.egl.EGLPlatform.GL/GLES3` 指向 `libGLESv3.so`，并清空
+`OpenGL.platform.PLATFORM.__dict__` 的缓存与 `OpenGL.raw.*` 模块，让 PyOpenGL 重新生成函数。
+
+结果：`glCreateProgram()` 仍返回 0。
+
+**但这次实验本身是无效的**：它跑在开发运行时里，那个进程**没有 current EGL 上下文**，
+裸 ctypes 调用同样返回 0。因此**开发运行时不能用来判断 GL 绑定问题**，
+此类实验必须在 App 内（有真实 EGL 表面）进行。
+
+后续若重试该思路，必须在 App 的 adopt 路径（上下文已 current）里做，且注意崩溃风险。
