@@ -715,11 +715,37 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
             view.camera.view_all(union_bounds(blist), window_size=(size, size), pad=2.0)
     except Exception as error:
         return "error:view-all:" + type(error).__name__ + ":" + str(error)[:40]
+    # Render through a fresh View: the session's main view was initialised during start-up and
+    # repeated draws there produce background only on this driver.
+    frame = None
     try:
-        view.draw(swap_buffers=False)
-    except Exception:
-        pass
-    frame = view.image_rgba(width=size, height=size)
+        from chimerax.graphics import View as _CxView
+        fresh = _CxView(session)
+        fresh.initialize_rendering(ctx)
+        try:
+            from chimerax.geometry.bounds import union_bounds as _union
+            _bl = []
+            for _m in session.models.list():
+                _b = getattr(_m, "bounds", None)
+                if callable(_b):
+                    _b = _b()
+                if _b is not None:
+                    _bl.append(_b)
+            if _bl:
+                fresh.camera.view_all(_union(_bl), window_size=(size, size), pad=0.3)
+        except Exception:
+            pass
+        frame = fresh.image_rgba(width=size, height=size)
+        view = fresh
+    except Exception as error:
+        open_error = (open_error + "|fresh:" + type(error).__name__) if open_error else (
+            "fresh:" + type(error).__name__)
+    if frame is None:
+        try:
+            view.draw(swap_buffers=False)
+        except Exception:
+            pass
+        frame = view.image_rgba(width=size, height=size)
     if frame is None:
         return "error:no-frame"
     raw = frame.astype("uint8").tobytes()

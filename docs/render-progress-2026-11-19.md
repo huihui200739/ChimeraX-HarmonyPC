@@ -1115,3 +1115,17 @@ px=0000ff,0000ff,...（64 个采样全部 0000ff）
 - 用切片后的 PixelMap 再看一次：应显示为蓝色背景（而不是红色），确认解码正确
 - 然后查为什么 protein 没进绘制：会话里 `models=1`，但绘制树里的 structure drawing 可能没有
   对应的 `_graphics` 实例（需要 `structure._graphics` 在 add 时创建）
+
+## 2026-11-21 23:20：UI 渲染帧仍是纯背景；新线索——可能是取景把相机放错位置
+
+- 尝试用**新的 View 实例**绕开会话主视图的状态，但 `View(session)` 构造抛 `AttributeError`
+  （`open=fresh:AttributeError`），回退到原路径后帧仍是 `0000ff` 纯背景
+- 已确认：会话里 `models=1`、绘制树有 drawing、渲染管道本身可用（adopt 探针 64×64 出过图）
+- **新假设**：UI 路径每次都调用 `view.camera.view_all(...)` 取景；adopt 探针用的是
+  **默认相机**且出图成功。可能 `view_all` 把相机放到了看不到几何的位置。
+
+### 下一步
+
+1. 渲染脚本里**跳过 view_all**（用默认相机 + 已知可渲染的三角形）验证是否出图
+2. 若默认相机能出图 → 再研究 `view_all` 的正确用法（参数语义/窗口尺寸）
+3. 之后再把蛋白放进场景并取景
