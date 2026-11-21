@@ -425,29 +425,16 @@ else:
             _cx_stack.extend(_item)
         elif hasattr(_item, "atoms"):
             models.append(_item)
-    # Register the opened models so they get ids that atom specs can reference.
-    try:
-        session.models.add(models)
-    except Exception as error:
-        print("add:" + type(error).__name__)
-    # Target the largest model this probe opened (the protein), not an earlier probe model.
-    # Per-model shape: id, atoms, chains — tells us whether the reader created chains at all.
-    try:
-        _cx_shapes = []
-        for _m in models:
-            try:
-                _cx_shapes.append("#%s,%d,%d" % (_m.id, len(_m.atoms),
-                                                 len(list(_m.atoms.residues.chains))))
-            except Exception:
-                _cx_shapes.append("#%s,?," % getattr(_m, "id", "?"))
-        print("models=" + ";".join(_cx_shapes))
-    except Exception as error:
-        print("models:" + type(error).__name__)
-    # Prefer a model that actually contains standard amino-acid residues.
+    # Target the model with the most standard amino-acid residues; report the command result
+    # first so UI truncation can never hide the one line we care about.
     _CX_AMINO = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY", "HIS", "ILE",
                  "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"}
-    _cx_big = None
     _cx_spec = "#1"
+    # Registering gives the models ids that atom specs can reference (best effort).
+    try:
+        session.models.add(models)
+    except Exception:
+        pass
     try:
         def _cx_amino_score(model):
             try:
@@ -458,22 +445,21 @@ else:
 
         _cx_candidates = [m for m in models if getattr(m, "atoms", None) is not None]
         if _cx_candidates:
-            _cx_big = max(_cx_candidates, key=_cx_amino_score)
-            if _cx_amino_score(_cx_big) == 0:
-                _cx_big = max(_cx_candidates, key=lambda m: len(m.atoms))
-            _cx_spec = "#%d" % _cx_big.id
+            _cx_best = max(_cx_candidates, key=_cx_amino_score)
+            _cx_id = _cx_best.id
+            if isinstance(_cx_id, tuple):
+                _cx_id = _cx_id[0]
+            if _cx_id is not None:
+                _cx_spec = "#%s" % _cx_id
     except Exception as error:
         print("target:" + type(error).__name__ + ":" + str(error)[:30])
-    # mlp needs polymer_type == PT_AMINO; report what the target model's residues say.
     try:
-        if _cx_big is not None:
-            _cx_res = list(_cx_big.atoms.residues)[:3]
-            print("res=" + (";".join("%s:%d" % (r.name, r.polymer_type) for r in _cx_res) or "none"))
-        else:
-            print("res=no-target")
+        run(session, "mlp " + _cx_spec)
+        _cx_mlp = "ok"
     except Exception as error:
-        print("res:" + type(error).__name__ + ":" + str(error)[:30])
-    for command in ("mlp " + _cx_spec, "coulombic " + _cx_spec, "info chains"):
+        _cx_mlp = type(error).__name__ + ":" + str(error)[:70]
+    print("mlp=" + _cx_mlp)
+    for command in ("coulombic " + _cx_spec, "info chains"):
         try:
             run(session, command)
             print(command.replace(" ", "-") + ":ok")

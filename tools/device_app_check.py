@@ -222,7 +222,8 @@ def main() -> int:
         info_output = ''
         if info_box:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(info_box[0]), str(info_box[1])])
-            time.sleep(18)
+            # Opening a 1300-atom protein and running commands on it takes a while.
+            time.sleep(40)
             dump()
             info_output = dump()[1].get('cx-viewer-status', '')
         report['info_probe_output'] = info_output

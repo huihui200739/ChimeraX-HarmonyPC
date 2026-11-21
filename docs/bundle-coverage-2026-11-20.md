@@ -625,3 +625,26 @@ mlp #3: ModuleNotFoundError: ...
 
 下一步：把探针输出压缩（先只打印 `mlp` 结果），拿到具体缺失模块名后补齐依赖。
 断言 **27/27**、本地测试 **130 OK**。
+
+## ✅ 拿到 `mlp` 的确切缺失依赖：`chimerax.surface`
+
+设备读回（探针现在把 `mlp` 结果放在第一行）：
+
+```
+source=demo
+mlp=ModuleNotFoundError:No module named 'chimerax.surface'
+coulombic-#3:ImportError:...
+```
+
+配合上一轮的 `models=#(3,),1322,1322`、`res=MET:1`，链路已经完全打通到"命令实现内部"：
+
+1. 真实蛋白从 payload 读取 ✅
+2. 模型注册、原子选择符 `#3` 可用 ✅
+3. 残基 `polymer_type = PT_AMINO` ✅（`mlp` 前置校验通过）
+4. 命令执行到 `chimerax.surface` 缺失 ❌ ← 当前唯一卡点
+
+`surface` bundle 的 C 模块 `_surface` 依赖 GLU 的 `gluTess*`（桌面 OpenGL Utility），
+鸿蒙没有；但 `mlp` 很可能只需要 **surface 的 Python 层**（给已有表面着色），不需要三角化。
+下一步：暂存 `surface` 的 Python 树并提供一个最小 `_surface` 桩，看 `mlp` 能否跑通。
+
+断言 **27/27**、本地测试 **130 OK**。
