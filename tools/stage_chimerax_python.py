@@ -61,7 +61,7 @@ def main() -> int:
                    'items_inspection', 'list_info', 'zone', 'sdf', 'mol2', 'mouse_modes', 'label', 'map', 'map_filter',
                    'mask', 'stl', 'morph', 'coulombic', 'mlp', 'segment', 'dssp',
                    'connect_structure', 'match_align', 'alignment_algs', 'atom_search',
-                   'add_charge'):
+                   'add_charge', 'surface'):
         source_bundle = args.source / 'src/bundles' / bundle / 'src'
         if source_bundle.is_dir():
             shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)
@@ -531,6 +531,13 @@ def main() -> int:
             if target_pkg.is_dir():
                 shutil.copy2(info, target_pkg / 'bundle_info.xml')
                 copied_infos += 1
+
+    # chimerax.surface imports its compiled sibling at module import; without GLU we cannot
+    # build it, so ship the explicit stand-in that raises only when tessellation is needed.
+    surface_stub = ROOT / 'vendor/surface_stub/_surface_stub.py'
+    surface_pkg = args.output / 'chimerax/surface'
+    if surface_stub.is_file() and surface_pkg.is_dir():
+        shutil.copy2(surface_stub, surface_pkg / '_surface.py')
 
     # Ship the demo structures inside the runtime tree: copying them from ArkTS resources at
     # start-up never took effect on device, while Python can always read its own package tree.

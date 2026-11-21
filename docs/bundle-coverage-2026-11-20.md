@@ -648,3 +648,21 @@ coulombic-#3:ImportError:...
 下一步：暂存 `surface` 的 Python 树并提供一个最小 `_surface` 桩，看 `mlp` 能否跑通。
 
 断言 **27/27**、本地测试 **130 OK**。
+
+## `mlp` 前进到 `_surface` 的具体函数
+
+暂存 `surface` 的 Python 树 + 提供最小 `_surface` 桩后，设备读回：
+
+```
+source=demo
+mlp=NotImplementedError:chimerax.surface._surface.connected_pieces is unavailable on HarmonyOS
+```
+
+**这说明 `mlp` 确实需要真实的 `_surface` 扩展**（不只是 Python 层），但它第一个用到的
+`connected_pieces` 属于**网格连通性**计算，**并不需要 GLU**。
+
+`_surface` 的 15 个源文件里，只有 `triangulate.cpp` 用 GLU（`gluTess*`：三角化多边形/封盖）。
+因此可行方案：**编译 `_surface` 但排除 GLU 相关函数**，只把那两个入口留桩。
+
+- 设备断言 **26/27**（`info probe` 项因 1322 原子加载超时暂失败，已把等待放宽仍偶发）
+- 本地测试 **130 OK**
