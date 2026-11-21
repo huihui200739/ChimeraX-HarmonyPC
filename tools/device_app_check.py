@@ -177,7 +177,8 @@ def main() -> int:
                # PyOpenGL's entry points are the remaining gap (recorded below).
                # Adoption is the verified half; PyOpenGL's framebuffer path is still
                # open (documented in docs/gles2-binding-2026-11-18.md).
-               cx_render.startswith('context=EGLContext-adopted')
+               # The probe prefixes diagnostic stats, so look for the marker anywhere.
+               'context=EGLContext-adopted' in cx_render
                and ('view=64x64' in cx_render or 'raw=OpenGL ES' in cx_render),
                cx_render)
         render = values.get('cx-gl-render', '')
@@ -223,7 +224,7 @@ def main() -> int:
         if info_box:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(info_box[0]), str(info_box[1])])
             # Opening a 1300-atom protein and running commands on it takes a while.
-            time.sleep(40)
+            time.sleep(60)
             dump()
             info_output = dump()[1].get('cx-viewer-status', '')
         report['info_probe_output'] = info_output

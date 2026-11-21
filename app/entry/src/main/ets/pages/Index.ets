@@ -708,7 +708,10 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     return target
                 return getattr(_cx_original, name)
 
-        object.__setattr__(cxgl.GL, "_module", _CxPartial())
+        # Disabled: with the shader/draw batch installed the process died during start-up adopt,
+        # so the substitution stays off until the crashing function is identified.
+        if globals().get("_CX_PARTIAL_GL", False):
+            object.__setattr__(cxgl.GL, "_module", _CxPartial())
         globals()["_cx_batch_size"] = len(_cx_batch)
         globals()["_cx_gl_stats"] = _cx_stats
     except Exception as error:
@@ -777,16 +780,16 @@ try:
         _cx_shapes.setdefault(_name, "/".join(_types) or "-")
     _cx_top = sorted(_cx_counts.items(), key=lambda item: -item[1])[:18]
     try:
-    _cx_stats = globals().get("_cx_gl_stats") or {}
-    _cx_stats_text = ",".join(
-        "%s:%dx:%s" % (name, entry[0], entry[1]) for name, entry in _cx_stats.items())
-    if not _cx_stats_text:
-        _cx_stats_text = "none"
-except BaseException:
-    _cx_stats_text = "error"
-# Prefix so UI truncation can never hide it.
-_cx_result = "stats=" + _cx_stats_text + ";" + _cx_result
-_cx_result += ";calls=%d;top=%s" % (
+        _cx_stats = globals().get("_cx_gl_stats") or {}
+        _cx_stats_text = ",".join(
+            "%s:%dx:%s" % (name, entry[0], entry[1]) for name, entry in _cx_stats.items())
+        if not _cx_stats_text:
+            _cx_stats_text = "none"
+    except BaseException:
+        _cx_stats_text = "error"
+    # Prefix so UI truncation can never hide it.
+    _cx_result = "stats=" + _cx_stats_text + ";" + _cx_result
+    _cx_result += ";calls=%d;top=%s" % (
         len(_cx_log),
         ",".join("%s:%d:%s" % (name, count, _cx_shapes[name]) for name, count in _cx_top))
 except Exception as _cx_dump_error:

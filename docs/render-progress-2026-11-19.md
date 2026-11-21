@@ -623,3 +623,26 @@ calls=88; top=glBindBuffer:23:IntConstant/uint32,
 "拼接失败"；这决定后续是去查引用缓存还是查返回值。
 
 状态：设备 27/27、本地 130 OK、49 个入口点仍由门面提供、应用存活。
+
+## 🔍 2026-11-21 12:20：找到渲染器绕过门面的真正原因
+
+设备读回（stats 已能显示）：
+
+```
+stats=none;context=EGLContext-adopted|raw=OpenGL ES 3.0 ...
+```
+
+`stats=none` 表示**渲染器从没调用到我们的门面**。查看
+`chimerax/graphics/opengl.py` 后原因明确：
+
+```python
+GL = _GlesProxy(_gles_module, _ctypes.CDLL('libGLESv3.so'))
+```
+
+鸿蒙分支下渲染器用的是 **`_GlesProxy`**，而我们替换的是 `cxgl.GL._module` —— 两者不是同一个对象。
+
+**正确切入点**：在 `_GlesProxy.__getattr__` 里，对"已验证批次"的函数改为委托给
+`_cxgl` 门面，其余保持现有行为。这样替换点就在渲染器真正使用的路径上。
+
+同时本轮确认：把着色器批次装到 `cxgl.GL` 上会导致启动期 adopt 崩溃（进程退出），
+已用 `_CX_PARTIAL_GL=False` 开关停用，设备恢复 **27/27**。
