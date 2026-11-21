@@ -801,3 +801,34 @@ calls=glBindBuffer:23,glBindFramebuffer:3,glBindRenderbuffer:3,glBindVertexArray
    `glShaderSource`/`glCompileShader`/`glLinkProgram`/`glGetUniformBlockIndex` 是否都被调到
 2. 在渲染失败处直接读回 `glGetUniformBlockIndex(2,'lighting_block')` 的返回值：
    若为 0xFFFFFFFF（无活动 uniform block）→ 说明着色器链接后没有该 block，下一步查 GLSL ES 方言
+
+## 🎯 2026-11-21 16:10：完整调用链打通，定位到 uniform block 未激活
+
+设备读回（完整）：
+
+```
+created=[2];
+calls=glBindBuffer:23, glBindFramebuffer:3, glBindRenderbuffer:3, glBindVertexArray:3,
+      glClear:1, glClearColor:2, glCompileShader:2, glCreateProgram:1, glCreateShader:2,
+      glEnable:1, glGetProgramiv:1, glGetShaderiv:2, glGetUniformBlockIndex:1, glLinkProgram:1
+block=4294967295; glerr=0; fallbacks=
+```
+
+**结论：**
+
+1. 门面全链路生效：创建程序(2)、创建/编译 2 个着色器、链接、查询 uniform block
+2. **`block=0xFFFFFFFF`（GL_INVALID_INDEX）** —— 链接后的程序里**没有活动的 `lighting_block`**
+3. `glerr=0` —— 没有 GL 错误，说明调用本身没问题，是"程序里没有这个 block"
+
+既然 `glCompileShader` 通过了我们的状态检查（否则会抛错），下一步要区分两种情况：
+
+- 着色器**编译成功但 GLSL 方言差异**导致 uniform block 被优化掉/未声明
+- 我们的 `glGetShaderiv` 状态读数不可靠（误判成功）
+
+### 下一步（一次构建）
+
+在探针里读回：
+- `glGetProgramiv(2, GL_LINK_STATUS)` 链接状态
+- `glGetProgramInfoLog(2)` / `glGetShaderInfoLog(vs/fs)` 的文本（截断显示）
+
+这能直接告诉我们 GLSL ES 编译/链接是否真的成功，以及需要做什么方言适配。

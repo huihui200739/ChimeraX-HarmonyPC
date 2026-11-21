@@ -8,7 +8,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'd6dfeadfa271';
+const RUNTIME_TAG = '4bd38673e1dc';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -837,7 +837,12 @@ try:
         _cx_diag += ";links=" + ",".join(_cx_links)
         _cx_calls = getattr(_cxgl_facade, "CALLS", {}) or {}
         _cx_diag += ";calls=" + ",".join(
-            "%s:%d" % (k, v) for k, v in sorted(_cx_calls.items())[:6])
+            "%s:%d" % (k, v) for k, v in sorted(_cx_calls.items())[:14])
+        _cx_step = "6"
+        # Ask the renderer's own GL object for the lighting block index: 0xFFFFFFFF means the
+        # linked program has no active uniform block, which is what makes the binding fail.
+        _cx_block = _cx_opengl.GL.glGetUniformBlockIndex(2, b"lighting_block")
+        _cx_diag += ";block=" + str(_cx_block) + ";glerr=" + str(_cx_opengl.GL.glGetError())
         _cx_diag += ";fallbacks=" + "|".join(
             list(getattr(_cxgl_facade, "FALLBACK_ERRORS", []) or [])[:3])[:160]
         _cx_step = "5"

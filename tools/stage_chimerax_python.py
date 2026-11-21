@@ -538,9 +538,10 @@ def main() -> int:
                 "                        return counted\n"
                 "                    except Exception as _cx_fallback:\n"
                 "                        try:\n"
-                "                            _cxgl_module.FALLBACK_ERRORS.append(\n"
+                "                            from chimerax.graphics import _cxgl as _m3\n"
+                "                            _m3.FALLBACK_ERRORS.append(\n"
                 "                                name + ':' + type(_cx_fallback).__name__\n"
-                "                                + ':' + str(_cx_fallback)[:40])\n"
+                "                                + ':' + str(_cx_fallback)[:60])\n"
                 "                        except Exception:\n"
                 "                            pass\n"
                 "                module = object.__getattribute__(self, '_module')")
@@ -561,6 +562,38 @@ def main() -> int:
                 "        )\n"
                 "\n"
                 "        class _GlesProxy:", 1)
+            opengl_target.write_text(text)
+
+    # PyOpenGL's own shaders module compiles through its broken GLES bindings on HarmonyOS, so
+    # the program links with no active uniform blocks. Compile through the ctypes facade instead.
+    if opengl_target.is_file():
+        text = opengl_target.read_text()
+        if 'CX_SHADER_COMPILE' not in text:
+            helper = (
+                "def _cx_compile_shader_gl(source, shader_type):\n"
+                "    # CX_SHADER_COMPILE: PyOpenGL's shaders module bypasses the facade; this\n"
+                "    # compiles through it so the linked program actually has its uniform blocks.\n"
+                "    try:\n"
+                "        shader = GL.glCreateShader(shader_type)\n"
+                "        if not shader:\n"
+                "            return 0\n"
+                "        GL.glShaderSource(shader, source)\n"
+                "        GL.glCompileShader(shader)\n"
+                "        status = GL.glGetShaderiv(shader, GL.GL_COMPILE_STATUS)\n"
+                "        if not status:\n"
+                "            raise OpenGLError('Shader compile failure')\n"
+                "        return shader\n"
+                "    except OpenGLError:\n"
+                "        raise\n"
+                "    except Exception as error:\n"
+                "        raise OpenGLError('Shader compile failure: %s' % error)\n"
+                "\n\n")
+            marker = "def _gl_string_text(value):"
+            text = text.replace(marker, helper + marker, 1)
+            text = text.replace("vs = shaders.compileShader(vshader, GL.GL_VERTEX_SHADER)",
+                                "vs = _cx_compile_shader_gl(vshader, GL.GL_VERTEX_SHADER)")
+            text = text.replace("fs = shaders.compileShader(fshader, GL.GL_FRAGMENT_SHADER)",
+                                "fs = _cx_compile_shader_gl(fshader, GL.GL_FRAGMENT_SHADER)")
             opengl_target.write_text(text)
 
     # chimerax.core.commands._atomspec is generated from a PEG grammar by grako; ship the

@@ -96,6 +96,29 @@ class GlesModule:
                                    ('glGenRenderbuffers', 'glGenRenderbuffers')):
             self._adapters[generator] = self._make_generator(creator)
 
+    def _make_object_status_getter(self, c_name):
+        """PyOpenGL returns the status directly: glGetShaderiv(shader, pname) -> int."""
+        raw = getattr(self._lib, c_name)
+        raw.argtypes = [ctypes.c_uint, ctypes.c_uint, ctypes.POINTER(ctypes.c_int)]
+        raw.restype = None
+
+        def getter(obj, pname, out=None):
+            holder = ctypes.c_int(0)
+            raw(int(obj), int(pname), ctypes.byref(holder))
+            value = holder.value
+            if out is not None:
+                try:
+                    out.value = value
+                except Exception:
+                    try:
+                        out[0] = value
+                    except Exception:
+                        pass
+                return None
+            return value
+
+        return getter
+
     def _make_single_value_getter(self, c_name):
         c_type, count = _SINGLE_VALUE_GETTERS[c_name]
         raw = getattr(self._lib, c_name)
@@ -229,6 +252,10 @@ class GlesModule:
             raise AttributeError(name)
         if name in self._adapters:
             return self._adapters[name]
+        if name in _OBJECT_STATUS_GETTERS:
+            getter = self._make_object_status_getter(name)
+            self._cache[name] = getter
+            return getter
         if name in _SINGLE_VALUE_GETTERS:
             getter = self._make_single_value_getter(name)
             self._cache[name] = getter
@@ -292,6 +319,7 @@ class GlesModule:
 
 # PyOpenGL conveniences that ChimeraX relies on: the renderer calls e.g.
 # GL.glGetIntegerv(pname) and expects a value back, while GLES needs an output buffer.
+_OBJECT_STATUS_GETTERS = {'glGetShaderiv', 'glGetProgramiv'}
 _SINGLE_VALUE_GETTERS = {
     'glGetIntegerv': (ctypes.c_int, 1),
     'glGetFloatv': (ctypes.c_float, 1),
