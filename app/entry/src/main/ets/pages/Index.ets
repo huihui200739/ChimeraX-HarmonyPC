@@ -852,6 +852,12 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         _probe.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3,
                                            dtype=numpy.float32)
         session.models.add([_probe])
+        _probe_frame = view.image_rgba(width=64, height=64)
+        if _probe_frame is not None:
+            _pf = _probe_frame.reshape(-1, _probe_frame.shape[-1])[:, :3].astype("int32")
+            _pbg = _pf[0]
+            notes.append("triangle=%d/%d" % (
+                int((numpy.abs(_pf - _pbg).sum(axis=1) > 6).sum()), len(_pf)))
     except BaseException as error:
         notes.append("view!" + type(error).__name__ + ":" + str(error)[:60])
     # Render the demo protein here, in the start-up call where rendering is known to work, and
@@ -890,10 +896,19 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     _blist.append(_bounds)
             if _blist:
                 view.camera.view_all(_cx_union(_blist), window_size=(64, 64), pad=0.3)
-        _cached = view.image_rgba(width=64, height=64)  # the single capture, proven size
+        try:
+            _cached = view.image_rgba(width=64, height=64)
+        except BaseException as _draw_error:
+            import traceback as _tb
+            _where = _tb.format_exc().strip().splitlines()
+            notes.append("draw!" + type(_draw_error).__name__ + ":"
+                         + str(_draw_error)[:40] + "@"
+                         + (_where[-3].strip()[:60] if len(_where) >= 3 else "?"))
+            _cached = None
         if _cached is not None:
             _flat = _cached.reshape(-1, _cached.shape[-1])[:, :3].astype("int32")
-            _lit = int((_flat.sum(axis=1) > 90).sum())
+            _cbg = _flat[0]
+            _lit = int((numpy.abs(_flat - _cbg).sum(axis=1) > 6).sum())
             # Same wire format as OFFICIAL_RENDER: img:W:H:lit:total:|info;<base64>
             globals()["_cx_cached_frame"] = "img:%d:%d:%d:%d:|cached;%s" % (
                 _cached.shape[1], _cached.shape[0], _lit, len(_flat),

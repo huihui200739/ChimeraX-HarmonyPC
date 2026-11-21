@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-21T13:37:22.105693+00:00",
+  "created_at_utc": "2026-11-21T16:55:14.130320+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 155086809,
-    "sha256": "324daf1dc9790baaa4aa60aa9fd7a81529f5e73d65a6d3e3d646992725c66f31"
+    "bytes": 155088772,
+    "sha256": "5b78dc67f19949e2b003c58155088e9146d730f6cc2a03a3a93b37cd88ac3174"
   },
   "checks": [
     {
@@ -97,7 +97,7 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:38,glBindBufferBase:1,glBindFramebuffer:4,glBindRenderbuffer:3,glBindVertexArray:6,glBlendFunc:1,glCheckFramebufferStatus:1,glClear:1,glClearColor:2,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:1;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 "
+      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:11,glBlendFunc:2,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0"
     },
     {
       "name": "A GLSL program renders on the device GPU",
@@ -185,15 +185,15 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547770519120/547767730080",
+    "cx-viewer-status": "handles=548096257912/547769385632/547765896032",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547770519120/547767730080",
+    "cx-status-view": "视图: handles=548096257912/547769385632/547765896032",
     "cx-view-reset": "重置视角",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:38,glBindBufferBase:1,glBindFramebuffer:4,glBindRenderbuffer:3,glBindVertexArray:6,glBlendFunc:1,glCheckFramebufferStatus:1,glClear:1,glClearColor:2,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:1;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);view=64x64|center=0,0,255|lit=4096/4096|colors=1|range=0-255;log=;calls=74;top=glGenBuffers:10:int,glBufferData:10:IntConstant/int/c_void_p/IntConstant,glGetUniformLocation:8:int/bytes,glVertexAttribPointer:7:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:7:int,glVertexAttribDivisor:7:int/int",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:11,glBlendFunc:2,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=0/4096;cached=0/4096;log=;calls=114;top=glGenBuffers:15:int,glBufferData:15:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:11:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:11:int,glVertexAttribDivisor:11:int/int,glUniformMatrix4fv:9:int/int/bool/tuple",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
@@ -203,7 +203,7 @@
     "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:38,glBindBufferBase:1,glBindFramebuffer:4,glBindRenderbuffer:3,glBindVertexArray:6,glBlendFunc:1,glCheckFramebufferStatus:1,glClear:1,glClearColor:2,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:1;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);view=64x64|center=0,0,255|lit=4096/4096|colors=1|range=0-255;log=;calls=74;top=glGenBuffers:10:int,glBufferData:10:IntConstant/int/c_void_p/IntConstant,glGetUniformLocation:8:int/bytes,glVertexAttribPointer:7:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:7:int,glVertexAttribDivisor:7:int/int",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:11,glBlendFunc:2,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4,glDeleteFramebuffers:2;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=0/4096;cached=0/4096;log=;calls=114;top=glGenBuffers:15:int,glBufferData:15:IntConstant/int/c_void_p/IntConstant,glVertexAttribPointer:11:int/int/IntConstant/IntConstant/int/NoneType,glEnableVertexAttribArray:11:int,glVertexAttribDivisor:11:int/int,glUniformMatrix4fv:9:int/int/bool/tuple",
   "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 31",

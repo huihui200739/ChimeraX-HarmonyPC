@@ -16,7 +16,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | atomic 模型层 | 建出结构 `atoms=2\|residues=1\|names=C1,N1` |
 | PDB / CIF 读取 | 打开 PDB `models=1\|atoms=4\|residues=1` |
 | 结构可视化（替代渲染通路） | 原子按元素着色 + ≤2.2 Å 成键，4/68/168/448 原子分别 <10/10/17/34 ms |
-| **ChimeraX 官方渲染器出图并显示在界面** | 界面内按钮「官方渲染」把 ChimeraX 自己渲染的 256×256 帧显示到视口（`lit=65536/65536`、`glerr=0`） |
+| ChimeraX 官方渲染管道打通（**未出几何**） | 程序/着色器/链接/FBO/`glReadPixels` 全部真实工作，帧能显示在视口；但帧内容始终等于背景色，几何体未被绘制 |
 | 交互 | 拖动旋转、双指缩放、工具栏 Rotate/Zoom/Center |
 | 打开 / 保存 | 沙箱文件列表点开、Save 写回 `cx_saved.pdb`（`saved=4`） |
 | 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
@@ -27,7 +27,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 |---|---|---|
 | **T0** 完全可用 | 与上游行为一致，可日常使用 | 引擎启动、私有 CPython 3.11.18、numpy、52 条命令注册、PDB/SDF 读取、结构可视化、交互、打开/保存、原版外观 |
 | **T1** 可用但有已知限制 | 功能可用，边界或降级已知 | 14 个 bundle C 扩展（`_surface` 用 GLU 桩，封盖三角形为空）、示例结构内置于运行时、命令面板全量列出 |
-| **T2** 尚不可用 | 有明确技术卡点 | Qt 原生窗口（运行时拒绝所需 JS 求值）、`surface` 真实三角化、依赖 UI 部件的命令（如 `mlp`） |
+| **T2** 尚不可用 | 有明确技术卡点 | ChimeraX 官方渲染器**绘制几何体**（管道已通，但 draw 循环未产出像素）、Qt 原生窗口（运行时拒绝所需 JS 求值）、`surface` 真实三角化、依赖 UI 部件的命令（如 `mlp`） |
 
 ### 当前数字
 
@@ -40,10 +40,11 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ## 未完成（含精确卡点）
 
-1. ~~**ChimeraX 自身渲染器出图**~~ **已完成（2026-11-21）**：根因是 `glAttachShader` 未走门面，
-   导致程序链接后为空（0 个 uniform block）。把 attach/detach/delete 一并委托后，
-   `blocks=1`、`block=0`，`View.image_rgba()` 返回真实着色图像（`lit=4039/4096`、`colors=405`）。
-   待办：把渲染结果接进 ArkUI 视口显示。
+1. **ChimeraX 自身渲染器绘制几何体**：`glAttachShader` 未走门面是真缺陷且已修复
+   （程序现在有 1 个 uniform block），FBO/RBO/`glReadPixels` 也都能真实工作，
+   帧能传进 ArkUI 视口显示。但**帧内容始终等于背景色**——用"与背景像素差异"统计为 0/4096，
+   说明绘制循环没有真正提交几何（此前按亮度统计的"lit"把背景色误判成了内容）。
+   下一步需抓 `view.draw()` 的 traceback 并确认绘制阶段是否到达。
 2. **Qt 原生窗口**：该运行时拒绝对 Qt 插件所需的表达式求值
    （`LocalStorage.makeNewLocalStorage()`），四条交底路径均有设备日志，结论封存在
    `docs/qt-status-2026-11-18-final.md`。
