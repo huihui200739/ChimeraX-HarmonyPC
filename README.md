@@ -3,7 +3,8 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 26 项设备断言（收据在 `reports/device-app-*.json`）
+**一键验收**：`python3 tools/device_app_check.py` → 27 项设备断言（收据在 `reports/device-app-*.json`）
+**一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
 
@@ -19,11 +20,30 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | 打开 / 保存 | 沙箱文件列表点开、Save 写回 `cx_saved.pdb`（`saved=4`） |
 | 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
 
+## 能力分级
+
+| 级别 | 含义 | 项目 |
+|---|---|---|
+| **T0** 完全可用 | 与上游行为一致，可日常使用 | 引擎启动、私有 CPython 3.11.18、numpy、52 条命令注册、PDB/SDF 读取、结构可视化、交互、打开/保存、原版外观 |
+| **T1** 可用但有已知限制 | 功能可用，边界或降级已知 | 14 个 bundle C 扩展（`_surface` 用 GLU 桩，封盖三角形为空）、示例结构内置于运行时、命令面板全量列出 |
+| **T2** 尚不可用 | 有明确技术卡点 | ChimeraX 官方渲染器（需 GLSL 330→ES 300 翻译层）、Qt 原生窗口（运行时拒绝所需 JS 求值）、`surface` 真实三角化、依赖 UI 部件的命令（如 `mlp`） |
+
+### 当前数字
+
+- 设备断言 **27/27**，本地测试 **132** 个用例
+- bundle C 扩展 **14** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
+  `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`
+- 命令 **52** 条（全部注册成功）
+- payload **5433** 文件，HAP ≈155 MB
+- 运行时目录按 payload 哈希命名（`cx-runtime-v6-<sha12>`），避免陈旧解包
+
 ## 未完成（含精确卡点）
 
-1. **ChimeraX 自身渲染器出图**：EGL 上下文、PyOpenGL 对齐、ES3 入口点、方言映射全通，
-   卡在它的 **UBO 着色器体系需移植到 GLSL ES**（`glGetUniformBlockIndex('lighting_block')`
-   返回 INVALID_OPERATION），以天计。
+1. **ChimeraX 自身渲染器出图**：自建 ctypes GL 门面已真实打通"创建程序 → 创建/编译着色器 →
+   链接 → 查询"，设备读回 `created=[2]`、`link=1`、源码完整（5844/14575 字符）。
+   最终卡点：`glGetUniformBlockIndex('lighting_block')` 返回 `0xFFFFFFFF` ——
+   `translate_shader_to_gles()` 只换了版本行与精度限定符，**GLSL 330 → ES 300 方言未真正翻译**，
+   需要一套完整翻译层（以周计）。
 2. **Qt 原生窗口**：该运行时拒绝对 Qt 插件所需的表达式求值
    （`LocalStorage.makeNewLocalStorage()`），四条交底路径均有设备日志，结论封存在
    `docs/qt-status-2026-11-18-final.md`。
