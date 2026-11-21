@@ -583,6 +583,7 @@ def main() -> int:
                 "            'glEnableVertexAttribArray', 'glDisableVertexAttribArray',\n"
                 "            'glVertexAttribPointer', 'glVertexAttribDivisor',\n"
                 "            'glGetUniformLocation', 'glUniform1i', 'glUniform1f',\n"
+                "            'glUniform1fv', 'glUniform2fv', 'glUniform3fv', 'glUniform4fv',\n"
                 "            'glUniformMatrix4fv', 'glBindBufferBase',\n"
                 "            'glGetUniformBlockIndex', 'glUniformBlockBinding',\n"
 

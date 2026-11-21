@@ -1396,3 +1396,19 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
 1. 结构绘制的光照/颜色：目前是黑色剪影，需要让 `set_lighting_shader_capabilities`
    与材质 uniforms 也走门面
 2. 视口尺寸：Image 组件按 Contain 显示 512×512，两侧留空
+
+## 2026-11-22 07:20：结构仍是黑色剪影（本轮尝试未解决）
+
+尝试把 `glUniform1fv/2fv/3fv/4fv` 加入委托批次，设备读数不变
+（`cached=26803/262144`，`drawcalls` 仍只有 glGetUniformLocation/glUniformMatrix4fv/glUseProgram）。
+
+说明结构黑色的原因不在这些 uniform 调用，更可能是**光照 UBO 数据没有被正确上传**
+（`lighting_block` 的 buffer 内容为 0 → 无光照 → 全黑）。同一 shader 下探针三角形使用了
+`vertex_colors`，不依赖光照，因此显示正常。
+
+### 明确的下一步（给后续接手）
+
+1. 检查 `Render.update_lighting_parameters()` 里 UBO 的初始化顺序：
+   需要 `glGenBuffers` → `glBindBuffer` → `glBufferData(size, None)` → `glBufferSubData`
+2. 读回 lighting UBO 的内容（`glGetBufferSubData`）确认是否为零
+3. 若为零，说明 `glBufferData` 的 `data=None` 分支转换有误（应传 NULL 指针）
