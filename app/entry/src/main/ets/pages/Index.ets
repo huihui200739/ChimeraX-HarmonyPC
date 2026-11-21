@@ -1112,6 +1112,8 @@ struct Index {
             .replace('__SURFACE__', handles.surface);
           const adopted: ScriptReport = native.runScript(adoptScript);
           this.renderResult = (adopted.ok ? adopted.output : adopted.error).trim();
+          // The status row truncates this text; hilog keeps the whole diagnostic readable.
+          hilog.error(0x0000, 'CXPROBE', 'render=' + this.renderResult.slice(0, 900));
           try {
             native.glReacquire();
           } catch (error) {
@@ -1495,7 +1497,7 @@ struct Index {
       Row() {
         Text('ChimeraX 渲染').fontSize(13).fontColor('#C9D6E5').width(80)
         Text(this.renderResult.length > 0 ? this.renderResult : '—').id('cx-render')
-          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(3)
+          .fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(10)
       }.width('100%')
       Row() {
         Text('打开文件').fontSize(13).fontColor('#C9D6E5').width(80)

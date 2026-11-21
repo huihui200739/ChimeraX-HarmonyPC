@@ -705,3 +705,28 @@ err=1282, baseOperation=glGetUniformBlockIndex   ← 程序 id 为 0
 - 当前设备 **26/27**（仅 `info probe` 超时项），应用稳定，25 个委托函数生效
 - 下一轮：把 `gltype/programs/created` 三段诊断输出到 `cx-open` 行，一次拿到
   "渲染器用的是不是 `_GlesProxy`" 与"程序是否由门面创建"这两个答案
+
+## ✅ 2026-11-21 14:15：诊断通道换成 hilog（可用）
+
+在 ArkTS 里把 `renderResult` 镜像到 `hilog.error(0x0000, 'CXPROBE', ...)`，设备日志可读：
+
+```
+E A00000/CXPROBE: render=stats=none;context=EGLContext-adopted|raw=OpenGL ES 3.0 ...
+```
+
+**这条通道验证可行**，从此不再受状态行 `maxLines` 截断的限制。
+
+但读数仍是 `stats=none;context=...`，没有 `gltype=` 前缀 —— 说明 adopt 脚本里
+"把 gltype/programs 前置"的那段 try 抛了异常被静默跳过。HAP 里确认字符串存在，
+所以是**运行时异常**，需在下一轮分段加标记定位（每次构建约 20 分钟，须一次打好标记）。
+
+### 下一轮计划（一次构建拿全部答案）
+
+在 adopt 脚本里用**分步字符串拼接**替代大 try：
+
+```
+_cx_diag = "gltype=" + type(cxgl.GL).__name__
+_cx_diag += ";created=" + str(len(getattr(_cxgl_facade, "CREATED_PROGRAMS", [])))
+_cx_diag += ";err=" + str(gles.glGetError())
+```
+每步单独 try，失败标记 `step=N`。一次就能看出在哪一步断掉。
