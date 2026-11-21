@@ -773,3 +773,31 @@ const store = `${files}/cx-runtime-v6-${RUNTIME_TAG}`;   // RUNTIME_TAG 由打�
 这样任何 payload 变化都会触发重新解包。
 
 下一轮：清装验证 —— 若委托代码真正生效，`calls=` 应出现数据，`created=` 应包含程序 id。
+
+## 🎉 2026-11-21 15:30：门面确认生效，GL 程序由门面创建！
+
+设备读回：
+
+```
+gltype=_GlesProxy;created=[2];links=p2:?;
+calls=glBindBuffer:23,glBindFramebuffer:3,glBindRenderbuffer:3,glBindVertexArray:3,glClear:1,glClearColor:2
+```
+
+**`created=[2]` —— `glCreateProgram()` 经过门面返回了真实的程序 id 2**，调用计数也显示状态批在跑。
+
+之前"看不到计数"的真因：`counted` 闭包引用了 `_cx_facade_module()` 的局部变量
+`_cxgl_module`（在该作用域不存在），计数写入一直抛 NameError 被静默吞掉。改为在 `counted`
+内部 `from chimerax.graphics import _cxgl`（模块缓存，零成本）后一切正常。
+
+### 当前状态
+
+- 门面已生效：程序创建成功、状态批与着色器批被调用
+- 渲染仍在 `glUniformBlockBinding` 报 1281（参数不合法）
+- 探针里 `links=p2:?` 是探针自身的问题（裸 CDLL 没设 argtypes），不是应用问题
+
+### 下一步（很接近了）
+
+1. 完整打印所有委托函数的调用计数（当前只显示排序前 6 个），确认
+   `glShaderSource`/`glCompileShader`/`glLinkProgram`/`glGetUniformBlockIndex` 是否都被调到
+2. 在渲染失败处直接读回 `glGetUniformBlockIndex(2,'lighting_block')` 的返回值：
+   若为 0xFFFFFFFF（无活动 uniform block）→ 说明着色器链接后没有该 block，下一步查 GLSL ES 方言
