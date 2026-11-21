@@ -33,12 +33,14 @@ bash scripts/verify.sh                    # 以上两件事的封装（加构建
 8. 52 条命令注册，命令面板可列可执行
 9. 14 个 bundle C 扩展加载（`map-ext:ok`）
 10. 原版图标、菜单栏与工具栏
+11. **ChimeraX 官方渲染器出图**：`View.image_rgba()` 返回 64×64 图像，
+    像素统计 `lit=4039/4096`、不同颜色 405 种、动态范围 0–248、`glerr=0`
 
 ## 四、未通过项（含精确定位）
 
 | 项 | 状态 | 卡点 |
 |---|---|---|
-| ChimeraX 官方渲染器出图 | ✗ | ctypes GL 门面全链路可用（程序创建/着色器编译/链接均成功），但 `lighting_block` 不在活动块中：`translate_shader_to_gles()` 未做真正的 GLSL 330→ES 300 方言翻译 |
+| ChimeraX 官方渲染器接进 UI | 待办 | 渲染本身已通（见通过项 11），尚需把图像数据传给 ArkUI 显示 |
 | Qt 原生窗口 | ✗ | 运行时拒绝对 Qt 插件所需的表达式求值（`LocalStorage.makeNewLocalStorage()`），四条路径日志见 `docs/qt-status-2026-11-18-final.md` |
 | `_surface` 三角化 | 降级 | GLU 用桩实现，封盖三角形为空；其余网格计算（连通性/法线/面积）真实可用 |
 | 依赖 UI 部件的命令（如 `mlp`） | ✗ | 无 GUI 的最小会话缺少 UI 对象（`register_available_commands`） |

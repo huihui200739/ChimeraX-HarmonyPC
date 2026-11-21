@@ -16,6 +16,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | atomic 模型层 | 建出结构 `atoms=2\|residues=1\|names=C1,N1` |
 | PDB / CIF 读取 | 打开 PDB `models=1\|atoms=4\|residues=1` |
 | 结构可视化（替代渲染通路） | 原子按元素着色 + ≤2.2 Å 成键，4/68/168/448 原子分别 <10/10/17/34 ms |
+| **ChimeraX 官方渲染器出图** | `view=64x64`、`lit=4039/4096`、`colors=405`、`range=0-248`、`glerr=0`（真实着色渲染，非空白） |
 | 交互 | 拖动旋转、双指缩放、工具栏 Rotate/Zoom/Center |
 | 打开 / 保存 | 沙箱文件列表点开、Save 写回 `cx_saved.pdb`（`saved=4`） |
 | 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
@@ -26,7 +27,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 |---|---|---|
 | **T0** 完全可用 | 与上游行为一致，可日常使用 | 引擎启动、私有 CPython 3.11.18、numpy、52 条命令注册、PDB/SDF 读取、结构可视化、交互、打开/保存、原版外观 |
 | **T1** 可用但有已知限制 | 功能可用，边界或降级已知 | 14 个 bundle C 扩展（`_surface` 用 GLU 桩，封盖三角形为空）、示例结构内置于运行时、命令面板全量列出 |
-| **T2** 尚不可用 | 有明确技术卡点 | ChimeraX 官方渲染器（需 GLSL 330→ES 300 翻译层）、Qt 原生窗口（运行时拒绝所需 JS 求值）、`surface` 真实三角化、依赖 UI 部件的命令（如 `mlp`） |
+| **T2** 尚不可用 | 有明确技术卡点 | Qt 原生窗口（运行时拒绝所需 JS 求值）、`surface` 真实三角化、依赖 UI 部件的命令（如 `mlp`） |
 
 ### 当前数字
 
@@ -39,11 +40,10 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ## 未完成（含精确卡点）
 
-1. **ChimeraX 自身渲染器出图**：自建 ctypes GL 门面已真实打通"创建程序 → 创建/编译着色器 →
-   链接 → 查询"，设备读回 `created=[2]`、`link=1`、源码完整（5844/14575 字符）。
-   最终卡点：`glGetUniformBlockIndex('lighting_block')` 返回 `0xFFFFFFFF` ——
-   `translate_shader_to_gles()` 只换了版本行与精度限定符，**GLSL 330 → ES 300 方言未真正翻译**，
-   需要一套完整翻译层（以周计）。
+1. ~~**ChimeraX 自身渲染器出图**~~ **已完成（2026-11-21）**：根因是 `glAttachShader` 未走门面，
+   导致程序链接后为空（0 个 uniform block）。把 attach/detach/delete 一并委托后，
+   `blocks=1`、`block=0`，`View.image_rgba()` 返回真实着色图像（`lit=4039/4096`、`colors=405`）。
+   待办：把渲染结果接进 ArkUI 视口显示。
 2. **Qt 原生窗口**：该运行时拒绝对 Qt 插件所需的表达式求值
    （`LocalStorage.makeNewLocalStorage()`），四条交底路径均有设备日志，结论封存在
    `docs/qt-status-2026-11-18-final.md`。

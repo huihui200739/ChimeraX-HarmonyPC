@@ -777,8 +777,16 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             notes.append("view:none")
         else:
             center = frame[32, 32]
-            notes.append("view=%dx%d|center=%d,%d,%d" % (
-                frame.shape[0], frame.shape[1], center[0], center[1], center[2]))
+            # Pixel statistics separate a real render from an empty buffer: the background is
+            # uniform, so a non-zero spread means geometry was actually shaded.
+            _flat = frame.reshape(-1, frame.shape[-1])
+            _rgb = _flat[:, :3].astype("int32")
+            _nonbg = int((_rgb.sum(axis=1) > 12).sum())
+            _distinct = int(len({tuple(int(v) for v in row) for row in _rgb[::7]}))
+            _range = "%d-%d" % (int(_rgb.min()), int(_rgb.max()))
+            notes.append("view=%dx%d|center=%d,%d,%d|lit=%d/%d|colors=%d|range=%s" % (
+                frame.shape[0], frame.shape[1], center[0], center[1], center[2],
+                _nonbg, len(_flat), _distinct, _range))
     except BaseException as error:
         import traceback
         where = traceback.format_exc().strip().splitlines()
