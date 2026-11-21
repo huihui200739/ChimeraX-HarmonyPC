@@ -140,6 +140,8 @@ class ReachabilityTests(unittest.TestCase):
         adapters |= set(cxgl._SEQUENCE_ARG_FUNCS) | set(cxgl._OFFSET_FUNCS)
         adapters |= {'glShaderSource', 'glGenBuffers', 'glGenTextures', 'glGenVertexArrays',
                      'glGenFramebuffers', 'glGenRenderbuffers'}
+        # Entry points the HarmonyOS patches introduce are declared in the facade itself.
+        adapters |= set(cxgl._EXTRA_SIGNATURES)
         unreachable = [name for name in self._used_functions()
                        if name not in sigs.SIGNATURES and name not in sigs.ALIASES
                        and name not in adapters and name not in cxgl._DESKTOP_ONLY]

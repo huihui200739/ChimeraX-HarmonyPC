@@ -1244,3 +1244,33 @@ cached=0/4096       （加入蛋白后同样）
 1. 直接给 `view.draw()` 包 try/except 抓 traceback（本轮已加，但需要把 notes 提取完整）
 2. 检查 `r.draw_opaque` 内部是否因 `glGetUniformLocation` 返回 -1 等静默跳过
 3. 用最小几何 + 强制 `glDrawArrays` 计数验证绘制阶段是否到达
+
+## 2026-11-22 02:45：根因确认——绘制调用从未被委托给门面
+
+门面调用计数给出决定性证据：
+
+```
+drawcalls=glUseProgram:2      ← 只有 glUseProgram，没有 glDrawArrays / glDrawElements
+geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False
+buffers:vb=4,eb=ok,ninst=1    ← 缓冲区、element buffer、实例数都正常
+```
+
+**结论：几何体、缓冲区、绘制状态全部就绪，但 `Drawing_State.draw()` 里真正提交
+`glDrawElements` 的那一步走的是 PyOpenGL 的坏绑定（静默无操作）。**
+
+同时发现并修复了另一个真实缺陷：`vertex_colors` 必须是 **uint8 0-255**，
+之前用 float32（alpha=1.0）会被判定为"全透明"（`oc=False, tc=True`），
+导致不透明绘制阶段直接跳过——这也是"从不出现几何体"的原因之一。已改为 uint8。
+
+### 提交批次的安全边界
+
+- 30 个入口点（含 `glDrawArrays`/`glDrawElements`/`glDrawElementsInstanced`）：**应用存活**
+- 49 个入口点（再加 `glBufferData`/`glVertexAttribPointer`/`glUniform*` 等）：**应用崩溃**
+  → 说明缓冲区/属性/统一变量这批里至少有一个函数的转换有缺陷，需要逐个二分
+
+### 下一步（明确的二分路线）
+
+1. 单独加 `glBufferData`（配合已有门面适配）→ 验证是否崩溃
+2. 再单独加 `glVertexAttribPointer`（偏移包装）→ 验证
+3. 再单独加 `glUniformMatrix4fv`（序列包装，ChimeraX 传 numpy 数组）→ 验证
+4. 三项都安全后，绘制链路应能真正提交几何

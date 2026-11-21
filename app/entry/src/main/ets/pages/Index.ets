@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = '1745e2211ffb';
+const RUNTIME_TAG = '948b41be9664';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -664,7 +664,7 @@ def render_frame(display_ptr, context_ptr, surface_ptr, size):
     normals = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
     triangles = numpy.array([[0, 1, 2]], dtype=numpy.int32)
     drawing.set_geometry(vertices, normals, triangles)
-    drawing.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3, dtype=numpy.float32)
+    drawing.vertex_colors = numpy.array([[255, 51, 51, 255]] * 3, dtype=numpy.uint8)
     try:
         session.models.add([drawing])
         add_error = "ok"
@@ -849,8 +849,7 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
         _norms = numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32)
         _tris = numpy.array([[0, 1, 2]], dtype=numpy.int32)
         _probe.set_geometry(_verts, _norms, _tris)
-        _probe.vertex_colors = numpy.array([[1.0, 0.2, 0.2, 1.0]] * 3,
-                                           dtype=numpy.float32)
+        _probe.vertex_colors = numpy.array([[255, 51, 51, 255]] * 3, dtype=numpy.uint8)
         session.models.add([_probe])
         _probe_frame = view.image_rgba(width=64, height=64)
         if _probe_frame is not None:
@@ -860,6 +859,36 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 int((numpy.abs(_pf - _pbg).sum(axis=1) > 6).sum()), len(_pf)))
     except BaseException as error:
         notes.append("view!" + type(error).__name__ + ":" + str(error)[:60])
+    # Did the draw loop actually submit geometry? The facade counts every delegated call.
+    try:
+        from chimerax.graphics import _cxgl as _cxg
+        _draws = {k: v for k, v in _cxg.CALLS.items()
+                  if k in ('glDrawArrays', 'glDrawElements', 'glUseProgram',
+                           'glUniformMatrix4fv', 'glGetUniformLocation')}
+        try:
+            _dv = numpy.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 0.0]],
+                              dtype=numpy.float32)
+            _dt = numpy.array([[0, 1, 2]], dtype=numpy.int32)
+            _probe.set_geometry(_dv, numpy.array([[0.0, 0.0, 1.0]] * 3, dtype=numpy.float32),
+                                _dt)
+            _probe.vertex_colors = numpy.array([[255, 51, 51, 255]] * 3,
+                                               dtype=numpy.uint8)
+            _oc, _tc = _probe._transparency()
+            _ds = _probe._draw_shape
+            _eb = getattr(_ds, "element_buffer", None)
+            notes.append("buffers:vb=%d,eb=%s,ninst=%s" % (
+                len(_probe._vertex_buffers), "none" if _eb is None else "ok",
+                _ds.instance_count()))
+            notes.append("geom:disp=%s,empty=%s,verts=%s,tris=%s,oc=%s,tc=%s" % (
+                _probe.display, _probe.empty_drawing(),
+                None if _probe.vertices is None else len(_probe.vertices),
+                None if _probe.triangles is None else len(_probe.triangles),
+                _oc, _tc))
+        except BaseException as _geom_error:
+            notes.append("geom!" + type(_geom_error).__name__ + ":" + str(_geom_error)[:40])
+        notes.append("drawcalls=" + ",".join("%s:%d" % kv for kv in sorted(_draws.items())))
+    except BaseException as _dc_error:
+        notes.append("drawcalls!" + type(_dc_error).__name__)
     # Render the demo protein here, in the start-up call where rendering is known to work, and
     # cache the frame: the button only displays it, because rendering from a later napi call
     # produces background only on this driver.

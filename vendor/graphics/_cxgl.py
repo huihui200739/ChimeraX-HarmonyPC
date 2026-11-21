@@ -13,6 +13,8 @@ def _open_gles_library():
 lib = _open_gles_library()
 
 _POINTER_RETURNING = {'glMapBufferRange', 'glMapBuffer'}
+# Signed-int returns: -1 is a valid "not found" answer (glGetUniformLocation).
+_INT_RETURNING = {'glGetUniformLocation', 'glGetAttribLocation', 'glGetFragDataLocation'}
 _DESKTOP_ONLY = {'glDrawBuffer', 'glReadBuffer', 'glPolygonMode', 'glPointSize', 'glLogicOp',
                  'glGetDoublev', 'glGetBooleanv', 'glPushAttrib', 'glPopAttrib',
                  'glClearDepth', 'glDepthRange', 'glPolygonStipple', 'glDrawPixels',
@@ -301,7 +303,12 @@ class GlesModule:
             self._cache[name] = lambda *a, _raw=raw: _raw(*[_to_c(x) for x in a])
             return self._cache[name]
         try:
-            raw.restype = ctypes.c_void_p if name in _POINTER_RETURNING else ctypes.c_uint
+            if name in _POINTER_RETURNING:
+                raw.restype = ctypes.c_void_p
+            elif name in _INT_RETURNING:
+                raw.restype = ctypes.c_int
+            else:
+                raw.restype = ctypes.c_uint
         except AttributeError:
             pass
 
@@ -347,6 +354,10 @@ _EXTRA_SIGNATURES = {
     'glGetShaderiv': ([ctypes.c_uint, ctypes.c_uint, ctypes.POINTER(ctypes.c_int)], None),
     'glGetShaderSource': ([ctypes.c_uint, ctypes.c_int, ctypes.POINTER(ctypes.c_int),
                            ctypes.c_char_p], None),
+    # Called by the HarmonyOS shader-compile helper; the generator only sees calls that exist
+    # in the upstream sources, so these are declared here.
+    'glCreateShader': ([ctypes.c_uint], ctypes.c_uint),
+    'glCompileShader': ([ctypes.c_uint], None),
 }
 # Calls that take output pointers; when no signature is known they must not be called blindly.
 _POINTER_ARG_PATTERN = re.compile(r'^glGet[A-Z][A-Za-z0-9]*(iv|fv|bv|InfoLog|Source|Binary)$')
