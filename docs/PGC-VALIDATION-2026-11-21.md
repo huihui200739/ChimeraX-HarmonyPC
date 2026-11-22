@@ -16,8 +16,8 @@
 ## 二、验证方式
 
 ```bash
-python3 -m unittest discover -s tests      # 132 个本地用例
-python3 tools/device_app_check.py         # 27 项设备断言，收据写入 reports/
+python3 -m unittest discover -s tests      # 137 个本地用例
+python3 tools/device_app_check.py         # 28 项设备断言（当前 27 通过），收据写入 reports/
 bash scripts/verify.sh                    # 以上两件事的封装（加构建）
 ```
 

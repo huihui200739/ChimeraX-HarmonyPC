@@ -16,7 +16,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | atomic 模型层 | 建出结构 `atoms=2\|residues=1\|names=C1,N1` |
 | PDB / CIF 读取 | 打开 PDB `models=1\|atoms=4\|residues=1` |
 | 结构可视化（替代渲染通路） | 原子按元素着色 + ≤2.2 Å 成键，4/68/168/448 原子分别 <10/10/17/34 ms |
-| **ChimeraX 官方渲染器画出带颜色的分子** | 视口内自动显示官方渲染器绘制的 512×512 彩色结构帧（`lit=20192/262144`，1326 原子按元素着色），截图 `reports/molecule-colors-2026-11-22-final.jpeg`；着色器/UBO/FBO/回读全部经 ctypes 门面 |
+| **ChimeraX 官方渲染器画出带颜色的分子** | 视口内自动显示官方渲染器绘制的 512×512 彩色结构帧（`lit=20192/262144`，1326 原子按元素着色），截图 `reports/molecule-lighting-2026-11-22.jpeg`；着色器/UBO/FBO/回读全部经 ctypes 门面 |
 | 交互 | 拖动旋转、双指缩放、工具栏 Rotate/Zoom/Center |
 | 打开 / 保存 | 沙箱文件列表点开、Save 写回 `cx_saved.pdb`（`saved=4`） |
 | 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
