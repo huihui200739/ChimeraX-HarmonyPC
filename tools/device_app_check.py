@@ -222,6 +222,12 @@ def main() -> int:
                match.group(0) if match else 'none')
 
         # A real bundle command (mlp) must run to completion against the loaded protein.
+        # Core command set: colouring, selection, display state, DSSP and camera commands run.
+        core_ok = all(marker in cx_render for marker in
+                      ('color=ok', 'select=ok', 'view=ok', 'turn=ok', 'zoom=ok', 'dssp=ok'))
+        record('The core command set executes on device', core_ok,
+               'color/select/view/turn/zoom/dssp=%s' % ('ok' if core_ok else 'failed'))
+
         record('The morph bundle command interpolates between two structures',
                'morph=ok' in cx_render,
                'morph=%s' % ('ok' if 'morph=ok' in cx_render else 'failed'))

@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 36 项设备断言（收据在 `reports/device-app-*.json`；当前 35/36，`info probe` 一次操作超时）
+**一键验收**：`python3 tools/device_app_check.py` → 37 项设备断言（收据在 `reports/device-app-*.json`；当前 36/37，`info probe` 一次操作超时）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -25,7 +25,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **日志面板**（对齐原版 Log） | 记录最近执行的命令及其输出，可清空（`> cxprobe ui-command · cxprobe:ui-command`） |
 | **选择联动**（对齐原版选择语义） | 通过原子 `selected` 标记选中 120 个原子，选择管理器汇总为 `sel=120|models=2` |
 | **上游科学命令端到端可用（3 个）** | `mlp`（脂溶性图）、`coulombic`（电荷着色）、`morph`（构象插值）全部 `=ok` |
-| **核心命令集已注册（81 条）** | 引导调用 `std_commands.register_commands`，注册 `select`/`color`/`style`/`coordset`/`view`/`turn`/`zoom` 等核心命令（单字命令 52 → **81**） |
+| **核心命令集已注册（81 条）且实测可执行** | `std_commands.register_commands`；设备实测 `select` `color` `view` `turn` `zoom` `dssp` 全部 `=ok` |
 | **编译扩展覆盖率（实测 8/8）** | 设备内探测 8 个 CompiledModule 全部可导入：`_arrays`、`ctypes_support`、`_geometry`、`_graphics`、`_pdbio`、`_mmcif`、`_profile_grids`、`_map` |
 
 ## 能力分级
@@ -38,7 +38,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **35/36**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
+- 设备断言 **36/37**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`
 - 命令 **52** 条（全部注册成功）

@@ -446,6 +446,13 @@ try:
             _cx_state = ("manager:" + _cx_name + ":" + type(_cx_manager_error).__name__
                          + ":" + str(_cx_manager_error)[:40])
 
+    # Session attributes a full start-up creates; command code (color, etc.) reads them directly.
+    try:
+        from chimerax.core import colors as _cx_colors
+        session.user_colors = _cx_colors.UserColors()
+    except Exception as _cx_colors_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("user_colors:" + type(_cx_colors_error).__name__)
     # The core command set (select/color/style/coordset/view/turn/zoom/... about sixty commands)
     # is normally registered by the std_commands bundle during start-up. Registering it unlocks
     # the commands that bundle code calls internally, e.g. morph's coordset.

@@ -1113,6 +1113,14 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _mlp_error:
                 notes.append("mlp:" + type(_mlp_error).__name__ + ":"
                              + str(_mlp_error)[:50])
+            # Why is "mask" unknown? Register it explicitly to capture the error.
+            try:
+                from chimerax.mask import _MaskBundleAPI as _MaskAPI
+                _MaskAPI().register_command("mask", session.logger)
+                notes.append("mask-reg=ok")
+            except BaseException as _mask_error:
+                notes.append("mask-reg:" + type(_mask_error).__name__ + ":"
+                             + str(_mask_error)[:50])
             # Why is "segmentation" unknown? Import and register it explicitly to capture the error.
             try:
                 from chimerax.segment import _SegmentBundle as _SegAPI
@@ -1142,7 +1150,11 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 notes.append("second=%s" % (_second[0].id if _second else "?"))
             except BaseException as _second_error:
                 notes.append("second:" + type(_second_error).__name__)
-            for _cmd in ("coulombic #3", "morph #3 #4", "segment #3", "segmentation #3"):
+            # Batch-verify the core command set plus remaining bundle commands in one pass.
+            for _cmd in ("coulombic #3", "morph #3 #4",
+                         "color #3 red", "style sphere #3", "select #3:1-5",
+                         "view orient", "turn y 30", "zoom 1.2", "rmsd #3 #4",
+                         "mask #3", "dssp #3", "zone #3:1-5", "align #3 #4"):
                 try:
                     from chimerax.core.commands import run as _run_more
                     _run_more(session, _cmd)
