@@ -984,6 +984,31 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     except Exception:
                         pass
             notes.append("flat=%d" % _flat)
+            # Report whether the drawings actually carry per-vertex colours, and try to colour the
+            # structure by element so the shader has something to show.
+            _withvc = 0
+            for _d in _all:
+                try:
+                    if getattr(_d, "vertex_colors", None) is not None:
+                        _withvc += 1
+                except Exception:
+                    pass
+            notes.append("vc=%d/%d" % (_withvc, len(_all)))
+            # The structure drawings carry no vertex colours (vc=1/8), so the shader falls back to
+            # the material colour. Colour atoms by element directly, which fills the vertex colours.
+            try:
+                from chimerax.atomic.colors import element_colors as _element_colors
+                _coloured = 0
+                for _m in session.models.list():
+                    _atoms = getattr(_m, "atoms", None)
+                    if _atoms is None or len(_atoms) == 0:
+                        continue
+                    _atoms.colors = _element_colors(_atoms.elements.numbers)
+                    _coloured += len(_atoms)
+                notes.append("colored=%d" % _coloured)
+            except BaseException as _color_error:
+                notes.append("color!" + type(_color_error).__name__ + ":"
+                             + str(_color_error)[:40])
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):
                 if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):

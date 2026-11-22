@@ -1493,3 +1493,23 @@ drawings=8, flat=8, cached=26803/262144
 检查 `Drawing._shader_options()` 里 `sopt |= Render.SHADER_VERTEX_COLORS` 的触发条件，
 确认结构 drawing 的 `vertex_colors` 是否为空；若为空，需要先 `structure.vertex_colors`
 计算一次（`chimerax.atomic` 在首次绘制时填充）。
+
+## 2026-11-22 10:40：原子已按元素着色（colored=1326），但帧仍是白色
+
+```
+drawings=8, flat=8, vc=1/8 (着色前), colored=1326, cached=26803/262144
+```
+
+- 通过 `chimerax.atomic.colors.element_colors(atoms.elements.numbers)` 给 **1326 个原子**
+  设置了元素颜色（`colored=1326` 证明 API 调用成功）
+- `vc=1/8` 是**着色前**的统计：8 个 drawing 里只有 1 个带 vertex_colors
+- 帧仍是白色 → 说明结构 drawing 的 vertex_colors 没有在本次绘制中生效，
+  渲染走的是材质色（`material`）
+
+### 结论与下一步
+
+结构 drawing 的 vertex_colors 更新是**延迟**的（trigger 驱动的缓冲刷新）。
+要拿到元素颜色，需要在着色后**再绘制一次**再捕获，或直接给 drawing 设
+`vertex_colors` 后调用 `drawing.update_vertex_colors()` / 触发 `graphics update`。
+
+当前交付状态：官方渲染器可见地绘制出结构（白色球体），元素颜色待最后一步。
