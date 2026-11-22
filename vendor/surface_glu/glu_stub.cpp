@@ -9,6 +9,7 @@
 #include "GL/glu.h"
 
 #include <cstddef>
+#include <cstdio>
 #include <vector>
 
 namespace {
@@ -40,6 +41,20 @@ namespace {
 
 /* Ear clipping in the plane whose dominant axis is dropped from the supplied normal. */
 void emit_triangles(GLUtesselator *tess) {
+    /* One line of diagnostics per polygon: the device log then shows whether the tessellator was
+     * reached at all, and with how many contours/vertices. */
+    int emitted = 0;
+    {
+        FILE *log = std::fopen("/data/storage/el2/base/haps/entry/files/cx_glu.log", "a");
+        if (log != nullptr) {
+            std::fprintf(log, "contours=%d verts=%d vcb=%d\n",
+                         static_cast<int>(tess->contours.size()),
+                         static_cast<int>(tess->contours.empty() ? 0
+                                                                : tess->contours[0].size()),
+                         tess->vertex_cb != nullptr ? 1 : 0);
+            std::fclose(log);
+        }
+    }
     if (tess->contours.empty() || tess->vertex_cb == nullptr) {
         return;
     }
@@ -142,6 +157,7 @@ void emit_triangles(GLUtesselator *tess) {
             tess->vertex_cb(outer[a].data, tess->polygon_data);
             tess->vertex_cb(outer[b].data, tess->polygon_data);
             tess->vertex_cb(outer[c].data, tess->polygon_data);
+            ++emitted;
             idx.erase(idx.begin() + i);
             clipped = true;
             break;
@@ -154,6 +170,14 @@ void emit_triangles(GLUtesselator *tess) {
         tess->vertex_cb(outer[idx[0]].data, tess->polygon_data);
         tess->vertex_cb(outer[idx[1]].data, tess->polygon_data);
         tess->vertex_cb(outer[idx[2]].data, tess->polygon_data);
+        ++emitted;
+    }
+    {
+        FILE *log = std::fopen("/data/storage/el2/base/haps/entry/files/cx_glu.log", "a");
+        if (log != nullptr) {
+            std::fprintf(log, "tris=%d\n", emitted);
+            std::fclose(log);
+        }
     }
 }
 

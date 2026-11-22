@@ -709,3 +709,14 @@ mlp=AttributeError:'Session' object has no attribute 'selection'
 2. C++ 包装层 `convert_loops` 的 stride 与实际数组不符
 
 下一步：在桩里加计数（contours/vertices/emitted），通过一个模块属性暴露给 Python 读回。
+
+### 2026-11-22 15:15：设备侧仍未产出三角形（诊断受限）
+
+- 桩内已加诊断：向 `/data/storage/el2/base/haps/entry/files/cx_glu.log` 追加
+  `contours/verts/vcb/tris` 计数
+- 设备重启后 `cat` 该文件**无输出** → 说明设备上 `emit_triangles` 可能**没有被执行到**，
+  或沙箱路径不可写
+- 同一份 `.cpp` 在主机上编译运行：`contours=1 verts=4 vcb=1` / `tris=2` ✅
+
+结论：实现本身正确（主机验证），设备侧需要更深的链接/符号定位。这是 `_surface` 的
+T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
