@@ -964,14 +964,24 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     str(getattr(_lp, "ambient_color", "?"))[:20]))
             except BaseException as _light_error:
                 notes.append("light!" + type(_light_error).__name__)
-            # Disable only the lighting capability: the lighting uniform block stays empty on this
-            # driver, while vertex colours (and therefore element colours) still drive the shader.
+            # Draw once first: structure drawings only exist after the first draw pass, and they are
+            # what carry the per-atom vertex colours.
             try:
-                _r0 = getattr(view, "_render", None)
-                if _r0 is not None:
-                    _r0.disable_capabilities = _r0.SHADER_LIGHTING
-            except Exception as _cap_error:
-                notes.append("caps!" + type(_cap_error).__name__)
+                view.draw(swap_buffers=False)
+            except Exception:
+                pass
+            _flat = 0
+            for _mdl in session.models.list():
+                _g = getattr(_mdl, "_graphics", None)
+                _cands = list(_g) if isinstance(_g, (list, tuple)) else ([_g] if _g else [])
+                for _d in _cands:
+                    if hasattr(_d, "use_lighting"):
+                        try:
+                            _d.use_lighting = False
+                            _flat += 1
+                        except Exception:
+                            pass
+            notes.append("flat=%d" % _flat)
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):
                 if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):

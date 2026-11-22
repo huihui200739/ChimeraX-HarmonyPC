@@ -1464,3 +1464,15 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
 而不是材质色。当前禁光照后走的是材质色（白）。可在 drawing 层显式设置
 `use_lighting = False` 并确保 `vertex_colors` 存在（结构 drawing 首次绘制后即可访问，
 需在 capture 前先 `view.draw()` 一次）。
+
+## 2026-11-22 09:45：`_graphics` 仍拿不到（flat=0）
+
+即使先 `view.draw()` 再遍历 `model._graphics`，仍是 `flat=0` —— 结构的 drawing 不在模型的
+`_graphics` 属性上（ChimeraX 通过 `drawing_manager` / `DrawingDrawing` 间接持有）。
+
+结论：要拿到结构 drawing，需要走 `view.drawing.all_drawings()` 并筛选
+`isinstance(d, chimerax.atomic.structure.Drawing)`；用 `all_drawings()` 递归即可。
+
+当前状态保留：结构以**白色球体**渲染（`disable_capabilities = SHADER_LIGHTING`），
+`cached=26803/262144`，截图 `reports/molecule-element-colors-2026-11-22.jpeg`。
+元素颜色（C/N/O 分色）留待后续用 `all_drawings()` 定位 drawing 后设置 `use_lighting=False`。
