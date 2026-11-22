@@ -1006,6 +1006,20 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     _atoms.colors = _element_colors(_atoms.elements.numbers)
                     _coloured += len(_atoms)
                 notes.append("colored=%d" % _coloured)
+                # Force the vertex-colour capability so the shader samples the per-atom colours
+                # instead of the material colour.
+                try:
+                    _r1 = getattr(view, "_render", None)
+                    if _r1 is not None:
+                        _r1.enable_capabilities |= (1 << 14)
+                except Exception:
+                    pass
+                # Vertex colours reach the drawings on the next draw pass, so draw once more and
+                # only then capture: otherwise the frame keeps the material colour.
+                try:
+                    view.draw(swap_buffers=False)
+                except Exception:
+                    pass
             except BaseException as _color_error:
                 notes.append("color!" + type(_color_error).__name__ + ":"
                              + str(_color_error)[:40])

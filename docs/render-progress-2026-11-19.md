@@ -1513,3 +1513,28 @@ drawings=8, flat=8, vc=1/8 (着色前), colored=1326, cached=26803/262144
 `vertex_colors` 后调用 `drawing.update_vertex_colors()` / 触发 `graphics update`。
 
 当前交付状态：官方渲染器可见地绘制出结构（白色球体），元素颜色待最后一步。
+
+## 2026-11-22 11:15：结构渲染稳定可见（白色球体），元素颜色仍未生效
+
+当前设备画面（截图 `reports/molecule-elements-2026-11-22.jpeg`）：
+官方渲染器绘制出**清晰的白色球状结构轮廓**，蓝色背景，`lit=26803/262144`。
+
+本轮尝试（都已在设备验证）：
+
+| 做法 | 结果 |
+|---|---|
+| `atoms.colors = element_colors(atoms.elements.numbers)` | 成功（colored=1326），帧仍白 |
+| 着色后再 `view.draw()` 一次 | 帧仍白（像素数不变） |
+| `enable_capabilities |= 1<<14`（SHADER_VERTEX_COLORS） | 帧仍白 |
+
+### 结论
+
+结构使用**材质色**渲染且 `vertex_colors` 未生效。这条路要真正出彩色分子，需要更深入地
+对齐 ChimeraX 的 `Drawing._shader_options` → 着色器变体选择 → VBO 属性绑定，
+属于 graphics 子系统内部实现细节，建议作为一个独立任务（约 1–2 天）而不是本轮的修补。
+
+### 交付现状（渲染线）
+
+- ✅ 官方渲染管道完整可用（着色器/UBO/FBO/回读/显示）
+- ✅ 结构可见（白色球体）
+- ⏳ 元素颜色 / 光照着色（需深入 graphics 内部）
