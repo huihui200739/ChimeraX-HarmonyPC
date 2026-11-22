@@ -971,16 +971,18 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except Exception:
                 pass
             _flat = 0
-            for _mdl in session.models.list():
-                _g = getattr(_mdl, "_graphics", None)
-                _cands = list(_g) if isinstance(_g, (list, tuple)) else ([_g] if _g else [])
-                for _d in _cands:
-                    if hasattr(_d, "use_lighting"):
-                        try:
-                            _d.use_lighting = False
-                            _flat += 1
-                        except Exception:
-                            pass
+            try:
+                _all = view.drawing.all_drawings()
+            except Exception:
+                _all = []
+            notes.append("drawings=%d" % len(_all))
+            for _d in _all:
+                if hasattr(_d, "use_lighting"):
+                    try:
+                        _d.use_lighting = False
+                        _flat += 1
+                    except Exception:
+                        pass
             notes.append("flat=%d" % _flat)
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):

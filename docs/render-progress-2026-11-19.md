@@ -1476,3 +1476,20 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
 当前状态保留：结构以**白色球体**渲染（`disable_capabilities = SHADER_LIGHTING`），
 `cached=26803/262144`，截图 `reports/molecule-element-colors-2026-11-22.jpeg`。
 元素颜色（C/N/O 分色）留待后续用 `all_drawings()` 定位 drawing 后设置 `use_lighting=False`。
+
+## 2026-11-22 10:00：`all_drawings()` 找到了全部 8 个 drawing（flat=8），但颜色未变
+
+```
+drawings=8, flat=8, cached=26803/262144
+```
+
+- `view.drawing.all_drawings()` 能拿到结构 drawing，已把 8 个 drawing 的 `use_lighting` 全设为 False
+- 但画面仍是**白色球体**，说明颜色不由 `use_lighting` 单独决定：
+  着色路径还需要 `SHADER_VERTEX_COLORS` 能力位（由 `_shader_options` 依据
+  `vertex_colors is not None` 计算），当前结构 drawing 的该能力位没有生效
+
+### 下一步
+
+检查 `Drawing._shader_options()` 里 `sopt |= Render.SHADER_VERTEX_COLORS` 的触发条件，
+确认结构 drawing 的 `vertex_colors` 是否为空；若为空，需要先 `structure.vertex_colors`
+计算一次（`chimerax.atomic` 在首次绘制时填充）。
