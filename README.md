@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 27 项设备断言（收据在 `reports/device-app-*.json`）
+**一键验收**：`python3 tools/device_app_check.py` → 27 项设备断言（收据在 `reports/device-app-*.json`；当前 26/27，`info probe` 一次操作超时）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -31,7 +31,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **27/27**，本地测试 **132** 个用例
+- 设备断言 **26/27**（`info probe` 超时），本地测试 **137** 个用例
 - bundle C 扩展 **14** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`
 - 命令 **52** 条（全部注册成功）
