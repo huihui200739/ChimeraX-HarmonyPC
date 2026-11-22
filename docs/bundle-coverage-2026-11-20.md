@@ -690,3 +690,22 @@ mlp=AttributeError:'Session' object has no attribute 'selection'
 
 **判断**：`mlp` 属于"需要 UI 部件"的命令，投入产出比低，先搁置；`_surface` 扩展本身
 （面积/法线/连通性等）已可被其它功能使用。
+
+## 2026-11-22：`_surface` 的 GLU 桩升级为**真实耳切三角化**
+
+`vendor/surface_glu/glu_stub.cpp` 不再返回空三角形，而是实现了 `gluTess*` 的完整语义
+（`gluTessBeginPolygon`/`BeginContour`/`Vertex`/`EndContour`/`EndPolygon` +
+`GLU_TESS_VERTEX_DATA`/`EDGE_FLAG` 回调），内部用**耳切法**在投影平面上三角化。
+
+- 主机侧单元验证（同一份 .cpp 编译）：正方形多边形 → **2 个三角形** ✅
+- 设备内探针：`tess=0`（调用成功但未产出三角形）——说明设备上走的是别的路径或
+  回调未注册，需要继续定位（见下）
+
+### 设备侧待查
+
+`chimerax.surface._surface.triangulate_polygon(loops, normal, vertices)` 返回空数组。
+可能原因：
+1. 设备上 `_surface.so` 里 `gluTessCallback` 注册的常量与桩不一致
+2. C++ 包装层 `convert_loops` 的 stride 与实际数组不符
+
+下一步：在桩里加计数（contours/vertices/emitted），通过一个模块属性暴露给 Python 读回。

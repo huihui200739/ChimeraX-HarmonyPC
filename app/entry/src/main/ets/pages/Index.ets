@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'fe6ede1a1511';
+const RUNTIME_TAG = '0663c05cfc0a';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -76,6 +76,19 @@ try:
 except Exception as error:
     summary.append("list-models:" + type(error).__name__ + ":" + str(error)[:60])
 _cx_notes = globals().get("_cx_notes") or []
+# The surface tessellator is our own ear-clipping implementation; a square polygon must produce
+# two triangles, which proves the GLU replacement really triangulates.
+try:
+    import numpy as _np
+    import chimerax.surface._surface as _surf
+    _loops = _np.array([[0, 3]], dtype=_np.int32)
+    _verts = _np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]],
+                       dtype=_np.float32)
+    _normal = _np.array([0.0, 0.0, 1.0], dtype=_np.float32)
+    _tris = _surf.triangulate_polygon(_loops, _normal, _verts)
+    summary.append("tess=%d" % (len(_tris) // 3))
+except Exception as error:
+    summary.append("tess:" + type(error).__name__ + ":" + str(error)[:40])
 print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s|notes=%s" % (
     hasattr(session, "tools"), hasattr(session, "toolshed"),
     globals().get("_cx_state", "?"), ",".join(_cx_notes)[:120] or "-"))

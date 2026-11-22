@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-22T05:07:59.594605+00:00",
+  "created_at_utc": "2026-11-22T06:18:42.404408+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 155150879,
-    "sha256": "15f76abd91d5334691d82be0fbde9e72216053abf0562de39dc11d5872f8c76d"
+    "bytes": 155353160,
+    "sha256": "eb632f18b5898ed28b35710df6e6bd2443dce07c0a8b1f0876d6fb6280e49690"
   },
   "checks": [
     {
@@ -127,12 +127,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -190,11 +190,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547770685088/547767894288",
+    "cx-viewer-status": "handles=548096257912/546034701376/547768951776",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547770685088/547767894288",
+    "cx-status-view": "视图: handles=548096257912/546034701376/547768951776",
     "cx-view-reset": "重置视角",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
@@ -205,11 +205,11 @@
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
   "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:99,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:15,glBufferData:20,glBufferSubData:7,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3740/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:8,glUniformMatrix4fv:4,glUseProgram:2;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=8;vc=1/8;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none;colored=1326;pushed=2;cached=20192/262144;log=;calls=12;top=glGenVertexArrays:5:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant,glDeleteVertexArrays:1:int/tuple",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tess=0|tools=True|toolshed=True|state=session-ready|notes=-",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 31",
   "info_probe_output": "",
