@@ -1586,3 +1586,20 @@ model._update_graphics()                                # 把颜色推进 AtomsD
 EGL 上下文 → ctypes GL 门面 → GLSL ES 着色器 → UBO → FBO
 → 绘制（结构 + 元素颜色）→ glReadPixels → base64 → PixelMap → ArkUI 显示
 ```
+
+## 2026-11-22 12:35：去掉"关光照"的变通，光照开启下仍正常出图
+
+移除 `use_lighting = False` 的变通后重新验证：
+
+```
+colored=1326, cached=20192/262144
+```
+
+画面（`reports/molecule-lighting-2026-11-22.jpeg`）与之前一致：**彩色结构正常渲染，无黑屏**。
+说明之前结构变黑的真正原因**不是** lighting UBO，而是**颜色没推到 drawing**
+（`_update_graphics()` 缺失）。修好颜色后，光照开启也能正常出图。
+
+### 结论修正
+
+早前记录的"lighting UBO 数据为空"推断**不成立**；`AtomsDrawing.colors` 缺失才是主因。
+当前实现不再需要"关光照"的特殊处理，代码更简洁、更接近上游行为。

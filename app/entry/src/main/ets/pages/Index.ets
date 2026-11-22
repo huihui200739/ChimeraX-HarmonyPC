@@ -976,14 +976,9 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except Exception:
                 _all = []
             notes.append("drawings=%d" % len(_all))
-            for _d in _all:
-                if hasattr(_d, "use_lighting"):
-                    try:
-                        _d.use_lighting = False
-                        _flat += 1
-                    except Exception:
-                        pass
-            notes.append("flat=%d" % _flat)
+            # Lighting stays ON now that colours are pushed: if the lighting uniform block is
+            # populated the structure gets shading, otherwise it falls back to black and this
+            # note records that.
             # Report whether the drawings actually carry per-vertex colours, and try to colour the
             # structure by element so the shader has something to show.
             _withvc = 0
