@@ -1016,6 +1016,18 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     _atoms.colors = _element_colors(_atoms.elements.numbers)
                     _coloured += len(_atoms)
                 notes.append("colored=%d" % _coloured)
+                # Push the new atom colours into the drawings: _update_graphics() copies
+                # atoms.colors into AtomsDrawing.colors, which is what the spheres shader samples.
+                _pushed = 0
+                for _m in session.models.list():
+                    _upd = getattr(_m, "_update_graphics", None)
+                    if callable(_upd):
+                        try:
+                            _upd()
+                            _pushed += 1
+                        except Exception:
+                            pass
+                notes.append("pushed=%d" % _pushed)
                 # Force the vertex-colour capability so the shader samples the per-atom colours
                 # instead of the material colour.
                 try:
@@ -1049,7 +1061,7 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 if _bounds is not None:
                     _blist.append(_bounds)
             if _blist:
-                view.camera.view_all(_cx_union(_blist), window_size=(512, 512), pad=0.8)
+                view.camera.view_all(_cx_union(_blist), window_size=(512, 512), pad=0.15)
         try:
             _cached = view.image_rgba(width=512, height=512)
         except BaseException as _draw_error:

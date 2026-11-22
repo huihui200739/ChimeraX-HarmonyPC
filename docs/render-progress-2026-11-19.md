@@ -1560,3 +1560,29 @@ types=Model:none, AtomicStructure:none, AtomsDrawing:none, RibbonsDrawing:none,
 3. 或直接给 `AtomsDrawing` 设置 `_colors`（内部 API，需按三角形顺序）
 
 这条属于 atomic ↔ graphics 的桥接，是"彩色分子"的最后一步。
+
+# 🎉 2026-11-22 12:00：官方渲染器画出**带颜色的结构**
+
+截图：`reports/molecule-colored-big.jpeg`
+设备读数：`colored=1326, pushed=2, cached=40813/262144`
+
+画面：ChimeraX 官方渲染器绘制的**带元素颜色的分子结构**（蓝色原子 + 灰白原子 + 连接的管状键），
+蓝色背景，512×512。
+
+## 决定性修复
+
+```python
+atoms.colors = element_colors(atoms.elements.numbers)   # 按元素着色 1326 个原子
+model._update_graphics()                                # 把颜色推进 AtomsDrawing.colors
+```
+
+**关键在第二步**：`AtomsDrawing` 不用 `vertex_colors`，而是用 `colors`（每实例颜色）。
+调用 `_update_graphics()` 才会执行 `p.colors = atoms.colors` 把颜色同步到绘制对象。
+只设置 `atoms.colors` 不够（之前帧一直是白球）。
+
+## 至此官方渲染链路完整可用
+
+```
+EGL 上下文 → ctypes GL 门面 → GLSL ES 着色器 → UBO → FBO
+→ 绘制（结构 + 元素颜色）→ glReadPixels → base64 → PixelMap → ArkUI 显示
+```
