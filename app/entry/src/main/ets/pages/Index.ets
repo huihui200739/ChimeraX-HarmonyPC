@@ -201,6 +201,21 @@ print("demo_atoms=%d" % len(lines))
 
 // Lists structure files the app itself wrote into the sandbox; the app has no system
 // file dialog yet, so this is the open path users can exercise today.
+// Selection linkage: select the first N atoms through the same selection manager the
+// commands use, then report what ended up selected.
+const SELECT_SCRIPT = `
+from chimerax.atomic import all_atoms
+atoms = all_atoms(session)
+session.selection.clear()
+# ChimeraX marks selection through the item flags; the manager aggregates them.
+picked = atoms[:120] if len(atoms) >= 120 else atoms
+if len(picked):
+    picked.selected = True
+items = session.selection.items("atoms")
+count = sum(len(a) for a in items)
+print("sel=%d|models=%d" % (count, len(items)))
+`;
+
 // Model Panel data: mirrors ChimeraX's Model Panel (id, name, atom and residue counts).
 const MODEL_PANEL_SCRIPT = `
 rows = []
@@ -1376,6 +1391,7 @@ struct Index {
   @State renderResult: string = '';
   @State modelRows: string[] = [];
   @State commandSuggestions: string[] = [];
+  @State selectionState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1455,6 +1471,18 @@ struct Index {
     this.commandSuggestions = pool
       .filter((name: string) => name.toLowerCase().startsWith(prefix))
       .slice(0, 8);
+  }
+
+  // Select atoms and report the result, exercising the selection manager end to end.
+  private selectSampleAtoms(): void {
+    try {
+      const report: ScriptReport = native.runScript(SELECT_SCRIPT);
+      const text: string = (report.ok ? report.output : report.error).trim();
+      this.selectionState = text;
+      this.appendLog('> select: ' + text);
+    } catch (error) {
+      this.selectionState = 'selection-error';
+    }
   }
 
   private refreshModelPanel(): void {
@@ -1723,6 +1751,7 @@ struct Index {
           setTimeout(() => {
             this.showOfficialFrame();
             this.refreshModelPanel();
+            this.selectSampleAtoms();
             // Seed the completion pool with the registered commands.
             try {
               const listed: ScriptReport = native.runScript(COMMANDS_SCRIPT);
@@ -2066,10 +2095,18 @@ struct Index {
       Column() {
         Row() {
           Text('模型面板').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('选择示例原子').id('cx-select-sample').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .margin({ right: 6 })
+            .onClick(() => { this.selectSampleAtoms(); })
           Button('刷新').id('cx-model-refresh').fontSize(10).height(24)
             .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
             .onClick(() => { this.refreshModelPanel(); })
         }.width('100%')
+        if (this.selectionState.length > 0) {
+          Text('选中: ' + this.selectionState).id('cx-selection-state')
+            .fontSize(10).fontColor('#7FB2E5').width('100%').margin({ top: 2 })
+        }
         if (this.modelRows.length === 0) {
           Text('（无模型）').id('cx-model-empty').fontSize(10).fontColor('#6F8296')
             .margin({ top: 4 })
