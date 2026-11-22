@@ -1412,3 +1412,19 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
    需要 `glGenBuffers` → `glBindBuffer` → `glBufferData(size, None)` → `glBufferSubData`
 2. 读回 lighting UBO 的内容（`glGetBufferSubData`）确认是否为零
 3. 若为零，说明 `glBufferData` 的 `data=None` 分支转换有误（应传 NULL 指针）
+
+## 2026-11-22 08:00：`view.lighting = None` 不可用（记录以免重复）
+
+尝试关闭光照让结构按模型颜色显示：`'NoneType' object has no attribute 'shadows'`
+—— `View.lighting` 不能置 None，渲染路径直接抛错。已回退，设备恢复
+`cached=26803/262144`、断言 26/27。
+
+### 结论
+
+结构变黑的正解只有一条路：**让 lighting UBO 的内容真正上传**。具体检查顺序：
+
+1. `Render.update_lighting_parameters()` 里 `_lighting_buffer` 的创建链是否完整执行
+2. `glBufferData(target, size, None, usage)` 的 `None` 是否被正确转成 NULL 指针
+3. 用 `glGetBufferSubData` 读回 UBO 内容确认非零
+4. 若数据为零，补 `glBufferData(size, None)` 的转换（当前 `_convert_for_type` 对
+   `c_void_p` + None 返回 None，理论正确，但需设备确认）
