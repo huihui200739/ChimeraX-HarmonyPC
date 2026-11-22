@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-22T00:15:47.919336+00:00",
+  "scope": "harmony_app_entry_with_embedded_runtime",
+  "target": "127.0.0.1:5555",
+  "hap": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
+    "bytes": 155145879,
+    "sha256": "4cb91cb5bfe7df732c429206964898b04d61dbdd081850d766fbb87387ccb673"
+  },
+  "checks": [
+    {
+      "name": "HAP installs",
+      "passed": true,
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
+    },
+    {
+      "name": "Application starts",
+      "passed": true,
+      "detail": "start ability successfully.\n"
+    },
+    {
+      "name": "Runtime reports a ready state",
+      "passed": true,
+      "detail": "运行环境就绪"
+    },
+    {
+      "name": "Embedded CPython reports its version",
+      "passed": true,
+      "detail": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]"
+    },
+    {
+      "name": "math.sqrt evaluates inside the app",
+      "passed": true,
+      "detail": "4.0"
+    },
+    {
+      "name": "ctypes reaches libc through libffi",
+      "passed": true,
+      "detail": "19"
+    },
+    {
+      "name": "Standard library probe matches",
+      "passed": true,
+      "detail": "2c1179ae"
+    },
+    {
+      "name": "Genuine ChimeraX version module loads",
+      "passed": true,
+      "detail": "v1.11.1"
+    },
+    {
+      "name": "numpy imports and computes in the app",
+      "passed": true,
+      "detail": "1.26.4|4.0|10"
+    },
+    {
+      "name": "numpy extension loads from the application native library directory",
+      "passed": true,
+      "detail": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so"
+    },
+    {
+      "name": "A minimal ChimeraX Session can be constructed in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX command subsystem imports in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX trigger dispatch runs in the app",
+      "passed": true,
+      "detail": "cx_app_probe|fired"
+    },
+    {
+      "name": "ChimeraX core modules import in the app",
+      "passed": true,
+      "detail": "chimerax.core.errors|UserError|Logger"
+    },
+    {
+      "name": "An EGL/GLES surface is created inside the app",
+      "passed": true,
+      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684"
+    },
+    {
+      "name": "A real PDB file is opened by the C++ reader in the app",
+      "passed": true,
+      "detail": "models=1|atoms=4|residues=1"
+    },
+    {
+      "name": "A real AtomicStructure with atoms is built in the app",
+      "passed": true,
+      "detail": "atoms=2|residues=1|names=C1,N1"
+    },
+    {
+      "name": "ChimeraX adopts the native EGL context and GLES answers on it",
+      "passed": true,
+      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:8,glBufferData:15,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4."
+    },
+    {
+      "name": "A GLSL program renders on the device GPU",
+      "passed": true,
+      "detail": "triangle:242,140,38,255"
+    },
+    {
+      "name": "PyOpenGL and the graphics Python layer load in the app",
+      "passed": true,
+      "detail": "3.1.10|chimerax.graphics.opengl|True"
+    },
+    {
+      "name": "The ChimeraX atomic layer imports in the app",
+      "passed": true,
+      "detail": "chimerax.atomic|Atom|AtomicStructure"
+    },
+    {
+      "name": "The graphics C++ extension loads and runs in the app",
+      "passed": true,
+      "detail": "chimerax.graphics._graphics|3"
+    },
+    {
+      "name": "Core built-in commands run in the app",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+    },
+    {
+      "name": "The persistent session keeps its tools and toolshed",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+    },
+    {
+      "name": "ChimeraX command syntax runs from the UI",
+      "passed": true,
+      "detail": "cxprobe:ui-command"
+    },
+    {
+      "name": "The Python sample runs from the UI",
+      "passed": true,
+      "detail": "ChimeraX 31"
+    },
+    {
+      "name": "Bundle commands run against the opened protein",
+      "passed": false,
+      "detail": ""
+    }
+  ],
+  "ui": {
+    "enhanceAppLabel": "ChimeraX",
+    "cx-menu-file": "File",
+    "cx-menu-tools": "Tools",
+    "cx-menu-actions": "Actions",
+    "cx-menu-presets": "Presets",
+    "cx-menu-help": "Help",
+    "cx-tool-open": "Open",
+    "cx-tool-save": "Save",
+    "cx-tool-undo": "Undo",
+    "cx-tool-redo": "Redo",
+    "cx-tool-rotate": "Rotate",
+    "cx-tool-zoom": "Zoom",
+    "cx-tool-center": "Center",
+    "cx-cmd-input": "cxprobe ui-command",
+    "cx-cmd-run": "执行命令",
+    "cx-cmd-py": "Python",
+    "cx-cmd-output": "ChimeraX 31",
+    "cx-status": "运行环境就绪",
+    "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16",
+    "cx-trigger": "cx_app_probe|fired",
+    "cx-version": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]",
+    "cx-math": "4.0",
+    "cx-ctypes": "19",
+    "cx-stdlib": "2c1179ae",
+    "cx-chimerax": "v1.11.1",
+    "cx-core": "chimerax.core.errors|UserError|Logger",
+    "cx-numpy": "1.26.4|4.0|10",
+    "cx-numpyc": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so",
+    "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
+    "cx-qt-mode": "启用 Qt 窗口模式",
+    "cx-demo2-run": "双螺旋示例",
+    "cx-demo3-run": "三螺旋束",
+    "cx-demo4-run": "大结构(448)",
+    "cx-real-run": "Ras 蛋白",
+    "cx-sdf-run": "打开 SDF",
+    "cx-info-run": "模型信息",
+    "cx-list-run": "沙箱结构文件",
+    "cx-demo-run": "示例螺旋",
+    "cx-viewer-run": "显示结构",
+    "cx-viewer-status": "handles=548096257912/547768461840/547765590688",
+    "cx-cmd-list": "命令清单",
+    "cx-status-model": "模型: 1",
+    "cx-status-atoms": "原子: 4",
+    "cx-status-view": "视图: handles=548096257912/547768461840/547765590688",
+    "cx-view-reset": "重置视角",
+    "cx-official-render": "官方渲染",
+    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:8,glBufferData:15,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3740/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:8,glUniformMatrix4fv:4,glUseProgram:2;cached=26803/262144;log=;calls=11;top=glGenVertexArrays:4:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant,glDeleteVertexArrays:1:int/tuple",
+    "cx-open": "models=1|atoms=4|residues=1",
+    "cx-model": "atoms=2|residues=1|names=C1,N1",
+    "cx-gl-render": "triangle:242,140,38,255",
+    "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
+    "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
+    "cx-graphics": "chimerax.graphics._graphics|3",
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-"
+  },
+  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:8,glBufferData:15,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3740/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:8,glUniformMatrix4fv:4,glUseProgram:2;cached=26803/262144;log=;calls=11;top=glGenVertexArrays:4:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant,glDeleteVertexArrays:1:int/tuple",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|tools=True|toolshed=True|state=session-ready|notes=-",
+  "command_output": "cxprobe:ui-command",
+  "python_output": "ChimeraX 31",
+  "info_probe_output": "",
+  "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
+  "result": {
+    "passed": 26,
+    "failed": 1
+  },
+  "status": "app_runtime_incomplete"
+}

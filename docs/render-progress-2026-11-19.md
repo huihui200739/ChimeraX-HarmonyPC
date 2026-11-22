@@ -1428,3 +1428,17 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
 3. 用 `glGetBufferSubData` 读回 UBO 内容确认非零
 4. 若数据为零，补 `glBufferData(size, None)` 的转换（当前 `_convert_for_type` 对
    `c_void_p` + None 返回 None，理论正确，但需设备确认）
+
+## 2026-11-22 08:30：结构光照的两条捷径都走不通（最终记录）
+
+| 尝试 | 结果 |
+|---|---|
+| `view.lighting = None` | `'NoneType' object has no attribute 'shadows'`，渲染路径抛错 |
+| 遍历模型把 drawing 的 `use_lighting` 置 False | `flat=0` —— 结构 drawing 是**首次绘制时才创建**的，取景前拿不到它们 |
+
+### 唯一正解（给后续接手）
+
+让 `Render._lighting_parameter_buffer()` 的 UBO 真正拿到数据：
+`glGenBuffers` → `glBindBuffer` → `glBufferData(size, NULL)` → `glBufferSubData(data)`，
+然后用 `glGetBufferSubData` 读回确认非零。当前几何绘制链路已完全可用，
+只差这一步光照数据，结构就会从黑色剪影变成有颜色/明暗的分子。
