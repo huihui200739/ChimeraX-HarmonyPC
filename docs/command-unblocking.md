@@ -27,6 +27,9 @@
 | 科学计算 | `coulombic` | 电荷着色（需要 `add_charge`/`addh`/`amber_info` 等 6 个 bundle + `app_bin_dir` + amber 占位） |
 | 科学计算 | `morph` | 构象插值（内部调用 `coordset`，需要核心命令集） |
 | 结构分析 | `dssp` | 二级结构（`_dssp` 扩展） |
+| 结构分析 | `rmsd #3 to #4` | 均方根偏差（实测 `rmsd=ok`） |
+| 结构分析 | `align #3 to #4` | 结构比对（实测 `align=ok`） |
+| 选择 | `zone #3:5` | 按残基球形选择（实测 `zone=ok`） |
 | 核心命令 | `select` `color` `style` `view` `turn` `zoom` `close` `show` `hide` `rmsd` `align` … | 由 `std_commands.register_commands` 注册，共 **81 条**单字命令 |
 | 会话 | `list models` `info models/chains/residues/polymers` | 上游 bundle 命令 |
 | 探针 | `cxprobe` | 适配自带探针 |
@@ -39,7 +42,7 @@
 
 | 命令 | 现象 | 下一步 |
 |---|---|---|
-| `mask` | `register_command` 报 ok 但执行仍 `Unknown command` | 检查该 bundle 的 `register()` 是否绑定到别的命令表 |
+| `mask` / `surface` | `register_command` 报 ok 但执行仍 `Unknown command` | 疑似注册到按需初始化的命令表；下一步在注册后立即 `registered_commands()` 里查名字是否存在 |
 | `segmentation` | 该名不是完整命令（真实命令是 `segmentation colors` / `segmentation surfaces`） | 用子命令名测试 |
 | `surface` 三角化 | 模块内 `triangulate_polygon` 设备返回 0 三角形（主机验证正确） | 需在设备侧定位符号/调用路径 |
 

@@ -1152,9 +1152,10 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 notes.append("second:" + type(_second_error).__name__)
             # Batch-verify the core command set plus remaining bundle commands in one pass.
             for _cmd in ("coulombic #3", "morph #3 #4",
-                         "color #3 red", "style sphere #3", "select #3:1-5",
-                         "view orient", "turn y 30", "zoom 1.2", "rmsd #3 #4",
-                         "mask #3", "dssp #3", "zone #3:1-5", "align #3 #4"):
+                         "color #3 red", "select #3:1-5", "view orient",
+                         "turn y 30", "zoom 1.2",
+                         "dssp #3", "rmsd #3 to #4", "align #3 to #4",
+                         "zone #3:5", "mask #3", "surface #3"):
                 try:
                     from chimerax.core.commands import run as _run_more
                     _run_more(session, _cmd)

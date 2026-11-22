@@ -225,6 +225,12 @@ def main() -> int:
         # Core command set: colouring, selection, display state, DSSP and camera commands run.
         core_ok = all(marker in cx_render for marker in
                       ('color=ok', 'select=ok', 'view=ok', 'turn=ok', 'zoom=ok', 'dssp=ok'))
+        # Computation commands: RMSD, structural alignment and zone selection all complete.
+        compute_ok = all(marker in cx_render for marker in
+                         ('rmsd=ok', 'align=ok', 'zone=ok'))
+        record('RMSD, align and zone commands compute on device', compute_ok,
+               'rmsd/align/zone=%s' % ('ok' if compute_ok else 'failed'))
+
         record('The core command set executes on device', core_ok,
                'color/select/view/turn/zoom/dssp=%s' % ('ok' if core_ok else 'failed'))
 
