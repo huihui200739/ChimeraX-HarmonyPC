@@ -201,6 +201,23 @@ print("demo_atoms=%d" % len(lines))
 
 // Lists structure files the app itself wrote into the sandbox; the app has no system
 // file dialog yet, so this is the open path users can exercise today.
+// Model Panel data: mirrors ChimeraX's Model Panel (id, name, atom and residue counts).
+const MODEL_PANEL_SCRIPT = `
+rows = []
+for model in session.models.list():
+    atoms = getattr(model, "atoms", None)
+    try:
+        count = len(atoms) if atoms is not None else 0
+        residues = len(atoms.residues) if atoms is not None else 0
+    except Exception:
+        count, residues = 0, 0
+    model_id = model.id
+    if isinstance(model_id, (tuple, list)):
+        model_id = model_id[0] if model_id else "?"
+    rows.append("%s|%s|%d|%d" % (model_id, getattr(model, "name", "?"), count, residues))
+print(";".join(rows))
+`;
+
 const LIST_SCRIPT = `
 import os
 root = "/data/storage/el2/base/haps/entry/files"
@@ -1357,6 +1374,7 @@ struct Index {
   @State fileListState: string = '';
   @State fileNames: string[] = [];
   @State renderResult: string = '';
+  @State modelRows: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
   @State failed: string = '';
@@ -1420,6 +1438,21 @@ struct Index {
         + ' || ' + diagText;
     } catch (error) {
       this.officialInfo = 'render-error';
+    }
+  }
+
+  // Refresh the Model Panel rows from the live session.
+  private refreshModelPanel(): void {
+    try {
+      const report: ScriptReport = native.runScript(MODEL_PANEL_SCRIPT);
+      const text: string = (report.ok ? report.output : report.error).trim();
+      if (!report.ok || text.length === 0) {
+        this.modelRows = [];
+        return;
+      }
+      this.modelRows = text.split(';').filter((row: string) => row.length > 0);
+    } catch (error) {
+      this.modelRows = [];
     }
   }
 
@@ -1659,6 +1692,7 @@ struct Index {
           // populated without the user pressing anything.
           setTimeout(() => {
             this.showOfficialFrame();
+            this.refreshModelPanel();
           }, 1500);
         } else {
           this.renderResult = 'handles:unavailable';
@@ -1966,6 +2000,25 @@ struct Index {
             }
           })
       }.width('100%')
+      // Model Panel (mirrors ChimeraX's own): id, name, atoms, residues.
+      Column() {
+        Row() {
+          Text('模型面板').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('刷新').id('cx-model-refresh').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .onClick(() => { this.refreshModelPanel(); })
+        }.width('100%')
+        if (this.modelRows.length === 0) {
+          Text('（无模型）').id('cx-model-empty').fontSize(10).fontColor('#6F8296')
+            .margin({ top: 4 })
+        } else {
+          Text(this.modelRows.join('   ;   ').split('|').join('   '))
+            .id('cx-model-rows').fontSize(10).fontColor('#DDE7F3').width('100%')
+            .margin({ top: 2 })
+        }
+      }.width('100%').padding(8).margin({ top: 6 })
+      .backgroundColor('#16212F').borderRadius(6)
+
       Row() {
         Button('官方渲染').id('cx-official-render').fontSize(12).height(32)
           .onClick(() => { this.showOfficialFrame(); })

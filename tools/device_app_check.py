@@ -122,7 +122,7 @@ def main() -> int:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
             time.sleep(4)
             ui_python_output = dump()[1].get('cx-cmd-output', '')
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -188,6 +188,13 @@ def main() -> int:
         lit = int(cached.group(1)) if cached else 0
         record('ChimeraX own renderer draws geometry into the captured frame',
                cached is not None and lit > 1000, 'cached=%s' % (cached.group(0) if cached else 'none'))
+
+        # Model Panel parity: the panel exists and lists the open model with its atom count.
+        rows_text = values.get('cx-model-rows', '')
+        # A row is "<id>|<name>|<atoms>|<residues>", rendered with the pipes replaced by spaces.
+        panel_ok = 'cx-model-refresh' in values and len(re.findall(r'\d+', rows_text)) >= 3
+        record('Model Panel lists the open models', panel_ok,
+               rows_text[:80])
 
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)
