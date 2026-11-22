@@ -24,7 +24,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **命令行补全**（对齐原版命令行） | 输入前缀即列出注册命令的匹配项（`补全: coulombic cxprobe …`） |
 | **日志面板**（对齐原版 Log） | 记录最近执行的命令及其输出，可清空（`> cxprobe ui-command · cxprobe:ui-command`） |
 | **选择联动**（对齐原版选择语义） | 通过原子 `selected` 标记选中 120 个原子，选择管理器汇总为 `sel=120|models=2` |
-| **编译扩展覆盖率（实测）** | 设备内探测 8 个 CompiledModule：**7/8 可导入**（`_arrays`/`ctypes_support`/`_geometry`/`_graphics`/`_pdbio`/`_mmcif`/`_map`），缺 `_profile_grids` |
+| **编译扩展覆盖率（实测 8/8）** | 设备内探测 8 个 CompiledModule 全部可导入：`_arrays`、`ctypes_support`、`_geometry`、`_graphics`、`_pdbio`、`_mmcif`、`_profile_grids`、`_map` |
 
 ## 能力分级
 
@@ -37,10 +37,10 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 ### 当前数字
 
 - 设备断言 **32/33**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
-- bundle C 扩展 **14** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
-  `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`
+- bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
+  `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`
 - 命令 **52** 条（全部注册成功）
-- payload **5433** 文件，HAP ≈155 MB
+- payload **5439** 文件，HAP ≈156 MB
 - 运行时目录按 payload 哈希命名（`cx-runtime-v6-<sha12>`），避免陈旧解包
 
 ## 未完成（含精确卡点）

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-22T11:37:30.882388+00:00",
+  "bundle": "profile_grids",
+  "modules": [
+    "_profile_grids"
+  ],
+  "products": [
+    {
+      "module": "_profile_grids",
+      "path": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/profile_grids/_profile_grids.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 623408
+    }
+  ],
+  "failures": []
+}

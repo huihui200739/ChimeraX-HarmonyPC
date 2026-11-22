@@ -720,3 +720,12 @@ mlp=AttributeError:'Session' object has no attribute 'selection'
 
 结论：实现本身正确（主机验证），设备侧需要更深的链接/符号定位。这是 `_surface` 的
 T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
+
+## 2026-11-22：新增 `_profile_grids`，编译模块覆盖率实测 8/8
+
+- `profile_grids` bundle 的 `_profile_grids` CModule（`_pg/pg.cpp`，依赖 arrays/atomstruct）
+  成功交叉编译，已进入 payload
+- 设备内探测：**8/8 CompiledModule 全部可导入**
+  （`_arrays`、`atomic.ctypes_support`、`_geometry`、`_graphics`、`_pdbio`、`_mmcif`、
+  `_profile_grids`、`_map`）
+- bundle C 扩展总数：**15 个**；payload 5439 文件
