@@ -1642,6 +1642,11 @@ struct Index {
           } catch (error) {
             this.renderResult += '|reacquire:failed';
           }
+          // Show the frame the official renderer captured during start-up, so the viewport is
+          // populated without the user pressing anything.
+          setTimeout(() => {
+            this.showOfficialFrame();
+          }, 1500);
         } else {
           this.renderResult = 'handles:unavailable';
         }
