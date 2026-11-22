@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = '349acc1c39b8';
+const RUNTIME_TAG = 'ce9bbbe99ae8';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -1113,9 +1113,36 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _mlp_error:
                 notes.append("mlp:" + type(_mlp_error).__name__ + ":"
                              + str(_mlp_error)[:50])
+            # Why is "segmentation" unknown? Import and register it explicitly to capture the error.
+            try:
+                from chimerax.segment import _SegmentBundle as _SegAPI
+                _SegAPI().register_command("segmentation", session.logger)
+                notes.append("seg-reg=ok")
+            except BaseException as _seg_error:
+                import traceback as _seg_tb
+                _seg_where = _seg_tb.format_exc().strip().splitlines()
+                notes.append("seg-reg:" + type(_seg_error).__name__ + ":"
+                             + str(_seg_error)[:40] + "@"
+                             + (_seg_where[-2].strip()[:50] if len(_seg_where) >= 2 else "?"))
             # Try the other scientific bundle commands in the same pass so one build reports all
             # missing dependencies at once.
-            for _cmd in ("coulombic #3", "morph #3", "segment #3"):
+            # Open the same structure a second time so morph has two models to interpolate.
+            try:
+                with open(_demo, "rb") as _stream2:
+                    _opened2 = _cx_open_pdb(session, _stream2, _demo)
+                _stack2 = [_opened2]
+                _second = []
+                while _stack2:
+                    _item2 = _stack2.pop()
+                    if isinstance(_item2, (list, tuple)):
+                        _stack2.extend(_item2)
+                    elif hasattr(_item2, "atoms"):
+                        _second.append(_item2)
+                session.models.add(_second)
+                notes.append("second=%s" % (_second[0].id if _second else "?"))
+            except BaseException as _second_error:
+                notes.append("second:" + type(_second_error).__name__)
+            for _cmd in ("coulombic #3", "morph #3 #4", "segment #3", "segmentation #3"):
                 try:
                     from chimerax.core.commands import run as _run_more
                     _run_more(session, _cmd)

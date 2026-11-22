@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-22T15:28:12.203721+00:00",
+  "created_at_utc": "2026-11-22T17:32:34.340388+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 157445996,
-    "sha256": "880bb3b7a3ee4169e2ccfc51739f72e047cc82d878d174909285014c0ec3a458"
+    "bytes": 158123084,
+    "sha256": "7f227ac123001dfd1475ffc394085a0e621c6c64c1047ea8515044ec5d575fa1"
   },
   "checks": [
     {
@@ -97,12 +97,12 @@
     {
       "name": "ChimeraX adopts the native EGL context and GLES answers on it",
       "passed": true,
-      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:21,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenG"
+      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:20,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenG"
     },
     {
       "name": "ChimeraX own renderer draws geometry into the captured frame",
       "passed": true,
-      "detail": "cached=cached=37114/262144"
+      "detail": "cached=cached=12400/262144"
     },
     {
       "name": "Model Panel lists the open models",
@@ -112,7 +112,7 @@
     {
       "name": "The command line offers completion from the registered commands",
       "passed": true,
-      "detail": "补全: coulombic   cxprobe   debug exception   debug sdump   devel alias   devel bu"
+      "detail": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   c"
     },
     {
       "name": "The Log panel records executed commands",
@@ -128,6 +128,11 @@
       "name": "Compiled bundle extensions import on device",
       "passed": true,
       "detail": "cmods=8/8"
+    },
+    {
+      "name": "The morph bundle command interpolates between two structures",
+      "passed": true,
+      "detail": "morph=ok"
     },
     {
       "name": "The coulombic bundle command assigns charges and colours the surface",
@@ -162,12 +167,12 @@
     {
       "name": "Core built-in commands run in the app",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
     },
     {
       "name": "The persistent session keeps its tools and toolshed",
       "passed": true,
-      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
     },
     {
       "name": "ChimeraX command syntax runs from the UI",
@@ -225,53 +230,53 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546018974784/547769860624",
-    "cx-cmd-suggest": "补全: coulombic   cxprobe   debug exception   debug sdump   devel alias   devel build   devel clean   devel dump",
+    "cx-viewer-status": "handles=548096257912/546020233456/547770860000",
+    "cx-cmd-suggest": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   cartoon",
     "cx-cmd-list": "命令清单",
-    "cx-cmdchip-coulombic": "coulombic",
-    "cx-cmdchip-cxprobe": "cxprobe",
-    "cx-cmdchip-debug exception": "debug exception",
-    "cx-cmdchip-debug sdump": "debug sdump",
-    "cx-cmdchip-devel alias": "devel alias",
-    "cx-cmdchip-devel build": "devel build",
-    "cx-cmdchip-devel clean": "devel clean",
-    "cx-cmdchip-devel dump": "devel dump",
-    "cx-cmdchip-devel install": "devel install",
-    "cx-cmdchip-devel pip": "devel pip",
-    "cx-cmdchip-devel unalias": "devel unalias",
-    "cx-cmdchip-info": "info",
-    "cx-cmdchip-info atomattr": "info atomattr",
+    "cx-cmdchip-alias": "alias",
+    "cx-cmdchip-alias delete": "alias delete",
+    "cx-cmdchip-alias list": "alias list",
+    "cx-cmdchip-alias usage": "alias usage",
+    "cx-cmdchip-align": "align",
+    "cx-cmdchip-angle": "angle",
+    "cx-cmdchip-camera": "camera",
+    "cx-cmdchip-cartoon": "cartoon",
+    "cx-cmdchip-cartoon byattribute": "cartoon byattribute",
+    "cx-cmdchip-cartoon byattribute off": "cartoon byattribute off",
+    "cx-cmdchip-cartoon byattribute on": "cartoon byattribute on",
+    "cx-cmdchip-cartoon hide": "cartoon hide",
+    "cx-cmdchip-cartoon style": "cartoon style",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546018974784/547769860624",
+    "cx-status-view": "视图: handles=548096257912/546020233456/547770860000",
     "cx-view-reset": "重置视角",
     "cx-log-clear": "清空",
     "cx-log-rows": "> select: sel=120|models=2  ·  > cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31",
     "cx-select-sample": "选择示例原子",
     "cx-model-refresh": "刷新",
     "cx-selection-state": "选中: sel=120|models=2",
-    "cx-model-rows": "1   /data/storage/el2/base/haps/entry/files/cx_probe.pdb   4   4   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-349acc1c39b8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-349acc1c39b8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb_  SES surface   1322   1322",
+    "cx-model-rows": "1   /data/storage/el2/base/haps/entry/files/cx_probe.pdb   4   4   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb_  SES surface   1322   1322   ;   4   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   5   Morph - /data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:21,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;coulombic=ok;morph:UserError:Require at least 2 structures for morph;segment:UserError:Unknown command: segmentation #3;cached=37114/262144;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-349acc1c39b8/cx-generic-runtime/lib/python|info:Executing: coulombic #3|warning:The following heavy (non-hydrogen) atoms are missing, which may result in inaccurate electrostatics:<br>/data/storage/el|info:\\n<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Startup Errors</th>\\n    </tr>\\n  <;calls=12;top=glGenVertexArrays:6:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:20,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;seg-reg=ok;second=4;coulombic=ok;morph=ok;segment:UserError:Unknown command: segmentation #3;segmentation:UserError:Unknown command: segmentation #3;cached=12400/262144;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python|info:FYI: command is replacing existing command: \\\"segmentation colors\\\"|info:FYI: command is replacing existing command: \\\"segmentation surfaces\\\"|info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag;calls=12;top=glGenVertexArrays:6:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
     "cx-open": "models=1|atoms=4|residues=1",
     "cx-model": "atoms=2|residues=1|names=C1,N1",
     "cx-gl-render": "triangle:242,140,38,255",
     "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
     "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
     "cx-graphics": "chimerax.graphics._graphics|3",
-    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=-"
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
   },
   "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
-  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:21,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;coulombic=ok;morph:UserError:Require at least 2 structures for morph;segment:UserError:Unknown command: segmentation #3;cached=37114/262144;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-349acc1c39b8/cx-generic-runtime/lib/python|info:Executing: coulombic #3|warning:The following heavy (non-hydrogen) atoms are missing, which may result in inaccurate electrostatics:<br>/data/storage/el|info:\\n<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Startup Errors</th>\\n    </tr>\\n  <;calls=12;top=glGenVertexArrays:6:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4];links=p2:?,p3:?,p4:?;calls=glAttachShader:6,glBindBuffer:125,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:20,glBufferData:23,glBufferSubData:11,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:6,glCreateProgram:3,glCreateShader:6;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=5/0;recompiled=6/block=0/s11:1:,s12:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;seg-reg=ok;second=4;coulombic=ok;morph=ok;segment:UserError:Unknown command: segmentation #3;segmentation:UserError:Unknown command: segmentation #3;cached=12400/262144;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-ce9bbbe99ae8/cx-generic-runtime/lib/python|info:FYI: command is replacing existing command: \\\"segmentation colors\\\"|info:FYI: command is replacing existing command: \\\"segmentation surfaces\\\"|info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag;calls=12;top=glGenVertexArrays:6:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
   "selection_output": "选中: sel=120|models=2",
-  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=-",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81",
   "command_output": "cxprobe:ui-command",
   "python_output": "ChimeraX 31",
   "info_probe_output": "",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 34,
+    "passed": 35,
     "failed": 1
   },
   "status": "app_runtime_incomplete"

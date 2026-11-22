@@ -62,7 +62,9 @@ def main() -> int:
                    'mask', 'stl', 'morph', 'coulombic', 'mlp', 'segment', 'dssp',
                    'connect_structure', 'match_align', 'alignment_algs', 'atom_search',
                    'add_charge', 'surface', 'profile_grids', 'map_data', 'addh',
-                   'color_key', 'amber_info', 'hbonds', 'mol2', 'std_commands', 'ui'):
+                   'color_key', 'amber_info', 'hbonds', 'mol2', 'std_commands', 'ui',
+                   'dist_monitor', 'axes_planes', 'markers', 'map_fit', 'md_crds',
+                   'save_command'):
         source_bundle = args.source / 'src/bundles' / bundle / 'src'
         if source_bundle.is_dir():
             shutil.copytree(source_bundle, package / bundle, dirs_exist_ok=True)

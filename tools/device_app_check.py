@@ -222,6 +222,10 @@ def main() -> int:
                match.group(0) if match else 'none')
 
         # A real bundle command (mlp) must run to completion against the loaded protein.
+        record('The morph bundle command interpolates between two structures',
+               'morph=ok' in cx_render,
+               'morph=%s' % ('ok' if 'morph=ok' in cx_render else 'failed'))
+
         record('The coulombic bundle command assigns charges and colours the surface',
                'coulombic=ok' in cx_render,
                'coulombic=%s' % ('ok' if 'coulombic=ok' in cx_render else 'failed'))

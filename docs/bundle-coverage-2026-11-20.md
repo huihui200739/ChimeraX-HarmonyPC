@@ -763,3 +763,12 @@ T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
 
 同时新增 `initialize_atomic` 与 `session.undo`，两者是多数建模/着色命令的公共前置。
 设备断言新增「coulombic 电荷着色」→ 通过；总数 **34/35**。
+
+## 2026-11-22 深夜：核心命令集注册 + morph 打通
+
+- 引导调用 `chimerax.std_commands.register_commands(session)`，注册核心命令集；
+  为此补齐依赖 bundle：`dist_monitor`、`axes_planes`、`markers`、`map_fit`、`md_crds`、`save_command`
+- 效果：单字命令 **52 → 81**（`select`/`color`/`style`/`coordset`/`view`/`turn`/`zoom`/`rmsd`/`align` 等）
+- `morph` 依赖内部的 `coordset` 命令，注册核心命令集后 **`morph=ok`**
+- 至此三个上游科学命令端到端可用：`mlp`、`coulombic`、`morph`
+- payload 5766 文件；设备断言 **35/36**

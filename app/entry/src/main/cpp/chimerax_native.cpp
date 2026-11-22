@@ -446,6 +446,19 @@ try:
             _cx_state = ("manager:" + _cx_name + ":" + type(_cx_manager_error).__name__
                          + ":" + str(_cx_manager_error)[:40])
 
+    # The core command set (select/color/style/coordset/view/turn/zoom/... about sixty commands)
+    # is normally registered by the std_commands bundle during start-up. Registering it unlocks
+    # the commands that bundle code calls internally, e.g. morph's coordset.
+    try:
+        import chimerax.std_commands as _cx_std
+        _cx_std.register_commands(session)
+        _cx_notes = globals().setdefault("_cx_notes", [])
+        from chimerax.core.commands.cli import registered_commands as _cx_reg
+        _cx_notes.append("std-commands=" + str(len([n for n in _cx_reg() if " " not in n])))
+    except Exception as _cx_std_error:
+        _cx_notes = globals().setdefault("_cx_notes", [])
+        _cx_notes.append("std-commands:" + type(_cx_std_error).__name__
+                         + ":" + str(_cx_std_error)[:50])
     # Bundle commands verified to work on this runtime.
     for _cx_module, _cx_attr, _cx_cmds in (
             ("chimerax.list_info", "_InfoAPI", ("list",)),
