@@ -215,6 +215,12 @@ def main() -> int:
                select_match is not None and int(select_match.group(1)) > 0,
                selection_text[:80])
 
+        # Compiled-extension matrix: at least six bundle C modules must import on device.
+        match = re.search(r'cmods=(\d+)/(\d+)', values.get('cx-builtin', ''))
+        record('Compiled bundle extensions import on device',
+               match is not None and int(match.group(1)) >= 6,
+               match.group(0) if match else 'none')
+
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)
         record('PyOpenGL and the graphics Python layer load in the app',

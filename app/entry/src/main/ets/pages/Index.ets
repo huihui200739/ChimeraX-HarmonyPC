@@ -76,6 +76,26 @@ try:
 except Exception as error:
     summary.append("list-models:" + type(error).__name__ + ":" + str(error)[:60])
 _cx_notes = globals().get("_cx_notes") or []
+# C-extension coverage: probe each compiled bundle module so the matrix is measured, not assumed.
+try:
+    _modules = ["chimerax.arrays._arrays", "chimerax.atomic.ctypes_support",
+                "chimerax.geometry._geometry", "chimerax.graphics._graphics",
+                "chimerax.pdb._pdbio", "chimerax.mmcif._mmcif",
+                "chimerax.profile_grids._profile_grids", "chimerax.map._map"]
+    _ok = []
+    _bad = []
+    for _name in _modules:
+        try:
+            __import__(_name)
+            _ok.append(_name.rsplit(".", 1)[1])
+        except Exception:
+            _bad.append(_name.rsplit(".", 1)[1])
+    summary.append("cmods=%d/%d:%s" % (len(_ok), len(_modules),
+                                       ("+" + ",".join(_ok))[:120]))
+    if _bad:
+        summary.append("cmodsfail=" + ",".join(_bad)[:80])
+except Exception as error:
+    summary.append("cmods:" + type(error).__name__)
 # The surface tessellator is our own ear-clipping implementation; a square polygon must produce
 # two triangles, which proves the GLU replacement really triangulates.
 try:
