@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 30 项设备断言（收据在 `reports/device-app-*.json`；当前 29/30，`info probe` 一次操作超时）
+**一键验收**：`python3 tools/device_app_check.py` → 31 项设备断言（收据在 `reports/device-app-*.json`；当前 30/31，`info probe` 一次操作超时）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -22,6 +22,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | 原版外观 | 原版图标、菜单栏 File/Tools/Actions/Presets/Help、工具栏 |
 | **模型面板**（1:1 对齐原版 Model Panel） | 启动后列出每个模型的 id / 名称 / 原子数 / 残基数，可手动刷新 |
 | **命令行补全**（对齐原版命令行） | 输入前缀即列出注册命令的匹配项（`补全: coulombic cxprobe …`） |
+| **日志面板**（对齐原版 Log） | 记录最近执行的命令及其输出，可清空（`> cxprobe ui-command · cxprobe:ui-command`） |
 
 ## 能力分级
 
@@ -33,7 +34,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **29/30**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板列出模型」「命令行补全」三项），本地测试 **137** 个用例
+- 设备断言 **30/31**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」四项），本地测试 **137** 个用例
 - bundle C 扩展 **14** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`
 - 命令 **52** 条（全部注册成功）

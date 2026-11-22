@@ -122,7 +122,7 @@ def main() -> int:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
             time.sleep(4)
             ui_python_output = dump()[1].get('cx-cmd-output', '')
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -202,6 +202,10 @@ def main() -> int:
         record('The command line offers completion from the registered commands',
                '补全' in suggest_text and len(suggest_text.split()) >= 4,
                suggest_text[:80])
+
+        # Log panel parity: the command that the checker typed above must appear in the log.
+        log_text = values.get('cx-log-rows', '')
+        record('The Log panel records executed commands', 'cxprobe' in log_text, log_text[:80])
 
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)

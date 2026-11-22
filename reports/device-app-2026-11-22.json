@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-22T09:14:09.308689+00:00",
+  "created_at_utc": "2026-11-22T09:46:10.254078+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 155368152,
-    "sha256": "654aea8c0b28c281681b4c2ae24c1201be7940f771080b99437aeccac6eaec10"
+    "bytes": 155374441,
+    "sha256": "22f383e267f8aae74195197c636d831c80a563b94bfd76bc32faeb2b249d0844"
   },
   "checks": [
     {
@@ -115,6 +115,11 @@
       "detail": "补全: coulombic   cxprobe   debug exception   debug sdump   devel alias   devel bu"
     },
     {
+      "name": "The Log panel records executed commands",
+      "passed": true,
+      "detail": "> cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31"
+    },
+    {
       "name": "A GLSL program renders on the device GPU",
       "passed": true,
       "detail": "triangle:242,140,38,255"
@@ -200,7 +205,7 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/546035854320/547769646400",
+    "cx-viewer-status": "handles=548096257912/546044877584/547770948176",
     "cx-cmd-suggest": "补全: coulombic   cxprobe   debug exception   debug sdump   devel alias   devel build   devel clean   devel dump",
     "cx-cmd-list": "命令清单",
     "cx-cmdchip-coulombic": "coulombic",
@@ -218,8 +223,10 @@
     "cx-cmdchip-info atomattr": "info atomattr",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/546035854320/547769646400",
+    "cx-status-view": "视图: handles=548096257912/546044877584/547770948176",
     "cx-view-reset": "重置视角",
+    "cx-log-clear": "清空",
+    "cx-log-rows": "> cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31",
     "cx-model-refresh": "刷新",
     "cx-model-rows": "1   /data/storage/el2/base/haps/entry/files/cx_probe.pdb   4   4   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-bb8c01ec9784/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322",
     "cx-official-render": "官方渲染",
@@ -241,7 +248,7 @@
   "info_probe_output": "",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 29,
+    "passed": 30,
     "failed": 1
   },
   "status": "app_runtime_incomplete"

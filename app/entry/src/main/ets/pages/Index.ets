@@ -1376,6 +1376,7 @@ struct Index {
   @State renderResult: string = '';
   @State modelRows: string[] = [];
   @State commandSuggestions: string[] = [];
+  @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
   @State failed: string = '';
@@ -1565,12 +1566,27 @@ struct Index {
   private executeCommand(): void {
     const report: ScriptReport = native.runChimeraCommand(this.commandText);
     this.commandOutput = (report.ok ? report.output : report.error).trim();
+    this.appendLog('> ' + this.commandText);
+    if (this.commandOutput.length > 0) {
+      this.appendLog(this.commandOutput);
+    }
+  }
+
+  // Keep the last entries only, like ChimeraX's Log panel.
+  private appendLog(line: string): void {
+    const next: string[] = this.logLines.slice();
+    next.push(line.split('\n').join(' ').slice(0, 160));
+    while (next.length > 12) {
+      next.shift();
+    }
+    this.logLines = next;
   }
 
   private executePythonSample(): void {
     const report: ScriptReport = native.runScript(
       'print(session.app_name, len(session.triggers.trigger_names()))');
     this.commandOutput = (report.ok ? report.output : report.error).trim();
+    this.appendLog('> python: ' + this.commandOutput);
   }
 
   private async bootstrap(): Promise<void> {
@@ -2032,6 +2048,20 @@ struct Index {
             }
           })
       }.width('100%')
+      // Log panel (mirrors ChimeraX's Log tool): recent command output.
+      Column() {
+        Row() {
+          Text('日志').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('清空').id('cx-log-clear').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .onClick(() => { this.logLines = []; })
+        }.width('100%')
+        Text(this.logLines.length > 0 ? this.logLines.join('  ·  ') : '（暂无输出）')
+          .id('cx-log-rows').fontSize(10).fontColor('#DDE7F3').width('100%')
+          .maxLines(4).margin({ top: 4 })
+      }.width('100%').padding(8).margin({ top: 6 })
+      .backgroundColor('#16212F').borderRadius(6)
+
       // Model Panel (mirrors ChimeraX's own): id, name, atoms, residues.
       Column() {
         Row() {
