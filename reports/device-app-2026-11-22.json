@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-22T00:15:47.919336+00:00",
+  "created_at_utc": "2026-11-22T00:34:57.628229+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
@@ -100,6 +100,11 @@
       "detail": "stats=none;gltype=_GlesProxy;created=[2, 3];links=p2:?,p3:?;calls=glAttachShader:4,glBindBuffer:57,glBindBufferBase:2,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:8,glBufferData:15,glBufferSubData:1,glCheckFramebufferStatus:2,glClear:2,glClearColor:3,glCompileShader:4,glCreateProgram:2,glCreateShader:4;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=4/0;recompiled=5/block=0/s9:1:,s10:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4."
     },
     {
+      "name": "ChimeraX own renderer draws geometry into the captured frame",
+      "passed": true,
+      "detail": "cached=cached=26803/262144"
+    },
+    {
       "name": "A GLSL program renders on the device GPU",
       "passed": true,
       "detail": "triangle:242,140,38,255"
@@ -185,11 +190,11 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=548096257912/547768461840/547765590688",
+    "cx-viewer-status": "handles=548096257912/547769269824/547764618304",
     "cx-cmd-list": "命令清单",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=548096257912/547768461840/547765590688",
+    "cx-status-view": "视图: handles=548096257912/547769269824/547764618304",
     "cx-view-reset": "重置视角",
     "cx-official-render": "官方渲染",
     "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
@@ -210,7 +215,7 @@
   "info_probe_output": "",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 26,
+    "passed": 27,
     "failed": 1
   },
   "status": "app_runtime_incomplete"

@@ -182,6 +182,13 @@ def main() -> int:
                and ('view=64x64' in cx_render or 'raw=OpenGL ES' in cx_render),
                cx_render)
         render = values.get('cx-gl-render', '')
+        # The official renderer must actually produce non-background pixels, not just a frame.
+        import re as _re
+        cached = _re.search(r'cached=(\d+)/(\d+)', cx_render)
+        lit = int(cached.group(1)) if cached else 0
+        record('ChimeraX own renderer draws geometry into the captured frame',
+               cached is not None and lit > 1000, 'cached=%s' % (cached.group(0) if cached else 'none'))
+
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)
         record('PyOpenGL and the graphics Python layer load in the app',
