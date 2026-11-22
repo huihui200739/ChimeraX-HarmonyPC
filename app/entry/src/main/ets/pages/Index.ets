@@ -952,6 +952,26 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except Exception:
                 pass
         if _cx_models:
+            # Lighting diagnostics: a zero/unbound parameter buffer renders the structure black.
+            try:
+                _r = getattr(view, "_render", None)
+                _lp = getattr(_r, "lighting", None)
+                notes.append("light:buf=%s,block=%s,caps=%s,shadows=%s,amb=%s" % (
+                    getattr(_r, "_lighting_buffer", "?"),
+                    getattr(_r, "_lighting_block", "?"),
+                    getattr(_r, "enable_capabilities", "?"),
+                    getattr(_lp, "shadows", "?"),
+                    str(getattr(_lp, "ambient_color", "?"))[:20]))
+            except BaseException as _light_error:
+                notes.append("light!" + type(_light_error).__name__)
+            # Disable only the lighting capability: the lighting uniform block stays empty on this
+            # driver, while vertex colours (and therefore element colours) still drive the shader.
+            try:
+                _r0 = getattr(view, "_render", None)
+                if _r0 is not None:
+                    _r0.disable_capabilities = _r0.SHADER_LIGHTING
+            except Exception as _cap_error:
+                notes.append("caps!" + type(_cap_error).__name__)
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):
                 if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):

@@ -1442,3 +1442,25 @@ EGL 上下文接管 → ctypes GL 门面（30 入口点）
 `glGenBuffers` → `glBindBuffer` → `glBufferData(size, NULL)` → `glBufferSubData(data)`，
 然后用 `glGetBufferSubData` 读回确认非零。当前几何绘制链路已完全可用，
 只差这一步光照数据，结构就会从黑色剪影变成有颜色/明暗的分子。
+
+## 2026-11-22 09:30：结构从"黑色剪影"变成"可见的球体"
+
+做法：`view.render.disable_capabilities = SHADER_LIGHTING` —— **只关光照能力**，
+不再动 `View.lighting` 对象。设备读数 `cached=26803/262144`，截图
+`reports/molecule-element-colors-2026-11-22.jpeg`：结构以白色/浅灰球体显示，轮廓清晰。
+
+对照实验记录（都已验证）：
+
+| 做法 | 结果 |
+|---|---|
+| 不动（默认） | 黑色剪影（lighting UBO 为空） |
+| `view.lighting = None` | 抛 `'NoneType' has no attribute 'shadows'` |
+| `enable_capabilities = 0` | 白色球体（但连深度/纹理能力一起去掉） |
+| **`disable_capabilities = SHADER_LIGHTING`** | **白色球体，其余能力保留** ← 当前采用 |
+
+### 下一步（得到元素颜色）
+
+结构要显示元素颜色（C 灰、N 蓝、O 红），需要让 shader 走 `SHADER_VERTEX_COLORS`
+而不是材质色。当前禁光照后走的是材质色（白）。可在 drawing 层显式设置
+`use_lighting = False` 并确保 `vertex_colors` 存在（结构 drawing 首次绘制后即可访问，
+需在 capture 前先 `view.draw()` 一次）。
