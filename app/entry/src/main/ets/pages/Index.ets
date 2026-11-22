@@ -1375,6 +1375,7 @@ struct Index {
   @State fileNames: string[] = [];
   @State renderResult: string = '';
   @State modelRows: string[] = [];
+  @State commandSuggestions: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
   @State failed: string = '';
@@ -1442,6 +1443,19 @@ struct Index {
   }
 
   // Refresh the Model Panel rows from the live session.
+  // Command completion, mirroring ChimeraX's command line: prefix matches from the registered set.
+  private updateSuggestions(value: string): void {
+    const prefix: string = value.trim().toLowerCase();
+    const pool: string[] = this.commandNames;
+    if (prefix.length === 0) {
+      this.commandSuggestions = pool.slice(0, 8);
+      return;
+    }
+    this.commandSuggestions = pool
+      .filter((name: string) => name.toLowerCase().startsWith(prefix))
+      .slice(0, 8);
+  }
+
   private refreshModelPanel(): void {
     try {
       const report: ScriptReport = native.runScript(MODEL_PANEL_SCRIPT);
@@ -1693,6 +1707,18 @@ struct Index {
           setTimeout(() => {
             this.showOfficialFrame();
             this.refreshModelPanel();
+            // Seed the completion pool with the registered commands.
+            try {
+              const listed: ScriptReport = native.runScript(COMMANDS_SCRIPT);
+              const text: string = (listed.ok ? listed.output : '').trim();
+              const parts: string[] = text.split('|');
+              if (parts.length > 1 && parts[1].length > 0) {
+                this.commandNames = parts[1].split(',');
+                this.updateSuggestions('');
+              }
+            } catch (error) {
+              this.commandNames = [];
+            }
           }, 1500);
         } else {
           this.renderResult = 'handles:unavailable';
@@ -1759,6 +1785,7 @@ struct Index {
       Row({ space: 6 }) {
         TextInput({ text: this.commandText, placeholder: '输入 ChimeraX 命令，例如 cxprobe ui-command' })
           .id('cx-cmd-input').height(32).fontSize(11).layoutWeight(1)
+          .onChange((value: string) => this.updateSuggestions(value))
           .onChange((value: string) => { this.commandText = value; })
           .onSubmit(() => this.executeCommand())
         Button('执行命令').id('cx-cmd-run').height(32).fontSize(11)
@@ -1953,6 +1980,11 @@ struct Index {
              : (this.viewerResult.length > 0 ? this.viewerResult : this.atomsDumpResult))
           .id('cx-viewer-status').fontSize(10).fontColor('#FFFFFF').layoutWeight(1).maxLines(2)
       }.width('100%')
+      if (this.commandSuggestions.length > 0) {
+        Text('补全: ' + this.commandSuggestions.join('   '))
+          .id('cx-cmd-suggest').fontSize(10).fontColor('#7FB2E5').width('100%')
+          .maxLines(2)
+      }
       Row({ space: 8 }) {
         Button('命令清单').id('cx-cmd-list').fontSize(11).height(28)
           .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
