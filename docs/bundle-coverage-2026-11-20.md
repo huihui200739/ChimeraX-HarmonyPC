@@ -746,3 +746,20 @@ T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
 - 引导创建 `chimerax.core.undo.Undo`，供所有建模命令使用
 
 设备断言新增「mlp 计算脂溶性图」→ 通过；总断言 **33/34**。
+
+## 2026-11-22：`coulombic` 也端到端跑通（第二个上游科学命令）
+
+错误驱动推进链（全部设备实测）：
+
+| 阶段 | 错误 | 修法 |
+|---|---|---|
+| 1 | `ModuleNotFoundError: chimerax.add_charge` | 暂存 `add_charge` |
+| 2 | `ImportError: cannot import name settings` | 引导调用 `initialize_atomic(session)` |
+| 3 | `No module named chimerax.addh` | 暂存 `addh`（含 amber 参数数据） |
+| 4 | `No module named chimerax.amber_info` | 暂存 `amber_info`/`hbonds`/`mol2`/`std_commands`/`ui` |
+| 5 | `module 'chimerax' has no attribute 'app_bin_dir'` | 引导设置 `chimerax.app_bin_dir` |
+| 6 | `AssertionError: No amberXX subdirectory` | 在 `app_bin_dir` 下建占位目录 `amber18/bin` |
+| 7 | — | **`coulombic=ok`** |
+
+同时新增 `initialize_atomic` 与 `session.undo`，两者是多数建模/着色命令的公共前置。
+设备断言新增「coulombic 电荷着色」→ 通过；总数 **34/35**。

@@ -342,8 +342,15 @@ try:
     _cx_root = os.path.dirname(os.path.dirname(os.path.abspath(chimerax.__file__)))
     chimerax.app_data_dir = os.path.join(_cx_root, "share")
     chimerax.app_lib_dir = os.path.join(_cx_root, "lib")
+    # Full start-up also exposes app_bin_dir; some bundle code (add_charge) looks tools up there.
+    chimerax.app_bin_dir = os.path.join(_cx_root, "bin")
     os.makedirs(chimerax.app_data_dir, exist_ok=True)
     os.makedirs(chimerax.app_lib_dir, exist_ok=True)
+    os.makedirs(chimerax.app_bin_dir, exist_ok=True)
+    # chimerax.amber_info raises at import time unless an amberXX directory exists under bin.
+    # Amber itself is not shipped, but the placeholder lets the module import so that command
+    # paths which do not need Amber (the default charge methods) can run.
+    os.makedirs(os.path.join(chimerax.app_bin_dir, "amber18", "bin"), exist_ok=True)
     from chimerax.core.session import Session
     from chimerax.core import core_settings
     from chimerax.core.commands import CmdDesc, StringArg, register
@@ -374,6 +381,15 @@ try:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("selection:" + type(_cx_selection_error).__name__
                           + ":" + str(_cx_selection_error)[:40])
+    # Full-startup step for the atomic layer: sets up its settings object and residue templates,
+    # which bundle commands (e.g. coulombic) rely on.
+    try:
+        from chimerax.atomic import initialize_atomic as _cx_init_atomic
+        _cx_init_atomic(session)
+    except Exception as _cx_atomic_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("atomic-init:" + type(_cx_atomic_error).__name__
+                          + ":" + str(_cx_atomic_error)[:40])
     # Commands that record undo state (any modelling command) need the undo manager, which a full
     # start-up creates in the core bundle.
     try:
