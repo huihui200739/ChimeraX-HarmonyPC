@@ -1538,3 +1538,25 @@ drawings=8, flat=8, vc=1/8 (着色前), colored=1326, cached=26803/262144
 - ✅ 官方渲染管道完整可用（着色器/UBO/FBO/回读/显示）
 - ✅ 结构可见（白色球体）
 - ⏳ 元素颜色 / 光照着色（需深入 graphics 内部）
+
+## 2026-11-22 11:30：定位到"白色"的确切原因
+
+设备读回 drawing 列表与颜色状态：
+
+```
+types=Model:none, AtomicStructure:none, AtomsDrawing:none, RibbonsDrawing:none,
+      Model:3, AtomicStructure:none, AtomsDrawing:none, RibbonsDrawing:none
+```
+
+**关键：`AtomsDrawing.vertex_colors = none`。** ChimeraX 的原子球使用
+**per-instance 颜色属性**（来自 `drawing._colors`，不是 `vertex_colors`），
+所以在我们的最小会话里该属性没有被填充 → shader 走材质色（白）。
+
+### 真正需要的动作
+
+1. 确认 `StructureGraphicsChangeManager` 是否在引导里注册（原子颜色变更靠它把
+   `atoms.colors` 同步到 drawing 的 `_colors`）
+2. 若缺失，补上 `chimerax.atomic` 的 change manager 注册
+3. 或直接给 `AtomsDrawing` 设置 `_colors`（内部 API，需按三角形顺序）
+
+这条属于 atomic ↔ graphics 的桥接，是"彩色分子"的最后一步。

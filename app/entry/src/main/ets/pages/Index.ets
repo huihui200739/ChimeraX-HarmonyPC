@@ -994,6 +994,16 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 except Exception:
                     pass
             notes.append("vc=%d/%d" % (_withvc, len(_all)))
+            # Which drawings are these, and do they have colours after colouring the atoms?
+            _info = []
+            for _d in _all[:8]:
+                try:
+                    _vc = getattr(_d, "vertex_colors", None)
+                    _info.append("%s:%s" % (type(_d).__name__[:14],
+                                            "none" if _vc is None else str(len(_vc))))
+                except Exception as _e:
+                    _info.append("?" + type(_e).__name__)
+            notes.append("types=" + ",".join(_info))
             # The structure drawings carry no vertex colours (vc=1/8), so the shader falls back to
             # the material colour. Colour atoms by element directly, which fills the vertex colours.
             try:
