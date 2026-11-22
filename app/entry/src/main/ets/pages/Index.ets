@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'd82042d2db95';
+const RUNTIME_TAG = '08c91843b022';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -1105,6 +1105,14 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _color_error:
                 notes.append("color!" + type(_color_error).__name__ + ":"
                              + str(_color_error)[:40])
+            # Bundle command execution against a real protein: mlp needs amino-acid residues.
+            try:
+                from chimerax.core.commands import run as _run_mlp
+                _run_mlp(session, "mlp #3")
+                notes.append("mlp=ok")
+            except BaseException as _mlp_error:
+                notes.append("mlp:" + type(_mlp_error).__name__ + ":"
+                             + str(_mlp_error)[:50])
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):
                 if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):

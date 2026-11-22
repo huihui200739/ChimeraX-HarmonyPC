@@ -374,6 +374,15 @@ try:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("selection:" + type(_cx_selection_error).__name__
                           + ":" + str(_cx_selection_error)[:40])
+    # Commands that record undo state (any modelling command) need the undo manager, which a full
+    # start-up creates in the core bundle.
+    try:
+        from chimerax.core import undo as _cx_undo
+        session.undo = _cx_undo.Undo(session, first=True)
+    except Exception as _cx_undo_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("undo:" + type(_cx_undo_error).__name__
+                          + ":" + str(_cx_undo_error)[:40])
     # Structure readers attach handlers to triggers that a full start-up registers while
     # importing bundles. This runs after Models(), which declares the model triggers itself,
     # so the calls below only fill in what is still missing.

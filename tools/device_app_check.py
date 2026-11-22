@@ -221,6 +221,10 @@ def main() -> int:
                match is not None and int(match.group(1)) >= 6,
                match.group(0) if match else 'none')
 
+        # A real bundle command (mlp) must run to completion against the loaded protein.
+        record('The mlp bundle command computes a lipophilicity map',
+               'mlp=ok' in cx_render, 'mlp=%s' % ('ok' if 'mlp=ok' in cx_render else 'failed'))
+
         record('A GLSL program renders on the device GPU',
                render.startswith('triangle:') and render.split(':')[1].split(',')[0] != '0', render)
         record('PyOpenGL and the graphics Python layer load in the app',

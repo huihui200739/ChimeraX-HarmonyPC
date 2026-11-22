@@ -729,3 +729,20 @@ T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
   （`_arrays`、`atomic.ctypes_support`、`_geometry`、`_graphics`、`_pdbio`、`_mmcif`、
   `_profile_grids`、`_map`）
 - bundle C 扩展总数：**15 个**；payload 5439 文件
+
+## 2026-11-22：`mlp` 端到端跑通（上游科学命令首个成功案例）
+
+推进过程（每步都是设备实测的错误信息驱动）：
+
+| 阶段 | 结果 |
+|---|---|
+| 直接在空会话跑 `mlp` | `mlp: no amino acids specified`（正确校验） |
+| 在已加载蛋白后跑 | `ModuleNotFoundError: chimerax.map_data` |
+| 暂存 `map_data` bundle 后 | `'Session' object has no attribute 'undo'` |
+| 引导里补 `session.undo = Undo(session, first=True)` | **`mlp=ok`**，输出 `Map values for surface …` |
+
+新增基础设施：
+- staging 增补 `map_data`（纯 Python bundle，payload 5439 → **5575** 文件）
+- 引导创建 `chimerax.core.undo.Undo`，供所有建模命令使用
+
+设备断言新增「mlp 计算脂溶性图」→ 通过；总断言 **33/34**。
