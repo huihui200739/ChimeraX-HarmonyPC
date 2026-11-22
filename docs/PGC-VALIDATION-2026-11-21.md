@@ -33,15 +33,15 @@ bash scripts/verify.sh                    # 以上两件事的封装（加构建
 8. 52 条命令注册，命令面板可列可执行
 9. 14 个 bundle C 扩展加载（`map-ext:ok`）
 10. 原版图标、菜单栏与工具栏
-11. **ChimeraX 官方渲染器出图**：`View.image_rgba()` 返回 512×512 RGBA 帧，
-    非背景像素 `lit=26803/262144`，帧经 base64 → PixelMap 显示在 ArkUI 视口
-    （截图 `reports/molecule-render-final.jpeg`）；结构目前渲染为黑色剪影
+11. **ChimeraX 官方渲染器画出带颜色的分子**：`View.image_rgba()` 返回 512×512 RGBA 帧，
+    1326 个原子按元素着色后 `lit=20192/262144`，帧经 base64 → PixelMap 显示在 ArkUI 视口
+    （截图 `reports/molecule-delivery-final.jpeg`）
 
 ## 四、未通过项（含精确定位）
 
 | 项 | 状态 | 卡点 |
 |---|---|---|
-| 结构绘制的光照着色 | ✗ | 结构以黑色剪影显示；同一 shader 下用 vertex_colors 的探针三角形着色正常，怀疑 lighting UBO 数据为零 |
+| 结构的光照明暗 | ✗ | 元素颜色已正确显示；明暗（lighting UBO）尚未上传，画面为平光着色 |
 | Qt 原生窗口 | ✗ | 运行时拒绝对 Qt 插件所需的表达式求值（`LocalStorage.makeNewLocalStorage()`），四条路径日志见 `docs/qt-status-2026-11-18-final.md` |
 | `_surface` 三角化 | 降级 | GLU 用桩实现，封盖三角形为空；其余网格计算（连通性/法线/面积）真实可用 |
 | 依赖 UI 部件的命令（如 `mlp`） | ✗ | 无 GUI 的最小会话缺少 UI 对象（`register_available_commands`） |
