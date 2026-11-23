@@ -253,6 +253,22 @@ for model in session.models.list():
 print(";".join(rows))
 `;
 
+// Toggle model display, mirroring the Model Panel checkboxes.
+const TOGGLE_DISPLAY_SCRIPT = `
+models = [m for m in session.models.list() if getattr(m, "atoms", None) is not None]
+before = [bool(getattr(m, "display", True)) for m in models]
+target = not all(before)
+for m in models:
+    try:
+        m.display = target
+    except Exception:
+        pass
+after = [bool(getattr(m, "display", True)) for m in models]
+print("display=%s|models=%d|changed=%d" % (
+    "on" if target else "off", len(models),
+    sum(1 for b, a in zip(before, after) if b != a)))
+`;
+
 // Menu actions, expressed as the commands a desktop user would run.
 const ACTION_SCRIPT = `
 from chimerax.core.commands import run
@@ -1586,6 +1602,7 @@ struct Index {
   @State commandSuggestions: string[] = [];
   @State selectionState: string = '';
   @State imageSaveState: string = '';
+  @State displayState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1697,6 +1714,20 @@ struct Index {
       this.appendLog('> save image: ' + this.imageSaveState);
     } catch (error) {
       this.imageSaveState = 'save-failed';
+    }
+  }
+
+  // Toggle the display of the loaded models (Model Panel checkbox equivalent).
+  private async toggleDisplay(): Promise<void> {
+    try {
+      const report: ScriptReport = native.runScript(TOGGLE_DISPLAY_SCRIPT);
+      const text: string = (report.ok ? report.output : report.error).trim();
+      this.displayState = text;
+      this.appendLog('> toggle display: ' + text);
+      this.refreshModelPanel();
+      await this.showOfficialFrame();
+    } catch (error) {
+      this.displayState = 'toggle-failed';
     }
   }
 
@@ -1995,6 +2026,10 @@ struct Index {
             });
             this.refreshModelPanel();
             this.selectSampleAtoms();
+            // Exercise the display toggle twice so the molecule ends up visible again.
+            this.toggleDisplay().then(() => {
+              this.toggleDisplay();
+            });
             // Seed the completion pool with the registered commands.
             try {
               const listed: ScriptReport = native.runScript(COMMANDS_SCRIPT);
@@ -2346,6 +2381,10 @@ struct Index {
             .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
             .onClick(() => { this.refreshModelPanel(); })
         }.width('100%')
+        if (this.displayState.length > 0) {
+          Text('显示: ' + this.displayState).id('cx-display-state')
+            .fontSize(10).fontColor('#7FB2E5').width('100%').margin({ top: 2 })
+        }
         if (this.imageSaveState.length > 0) {
           Text('图像: ' + this.imageSaveState).id('cx-image-saved')
             .fontSize(10).fontColor('#7FB2E5').width('100%').margin({ top: 2 })
@@ -2366,6 +2405,10 @@ struct Index {
       .backgroundColor('#16212F').borderRadius(6)
 
       Row() {
+        Button('隐藏/显示').id('cx-toggle-display').fontSize(11).height(28)
+          .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+          .margin({ right: 8 })
+          .onClick(() => { this.toggleDisplay(); })
         Button('保存图像').id('cx-save-image').fontSize(11).height(28)
           .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
           .margin({ right: 8 })

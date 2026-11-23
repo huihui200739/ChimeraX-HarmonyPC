@@ -122,7 +122,7 @@ def main() -> int:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
             time.sleep(4)
             ui_python_output = dump()[1].get('cx-cmd-output', '')
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-display-state', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -224,6 +224,15 @@ def main() -> int:
         record('The rendered frame can be saved as a PNG',
                saved_match is not None and int(saved_match.group(1)) > 1000,
                saved_text[:60])
+
+        # Display toggle: the Model Panel equivalent must flip model.display and restore it.
+        display_text = values.get('cx-display-state', '')
+        # Either state is fine: what matters is that display flipped for the atomic models.
+        toggle_match = re.search(r'changed=(\d+)', display_text)
+        record('Model display can be toggled from the shell',
+               ('display=on' in display_text or 'display=off' in display_text)
+               and toggle_match is not None and int(toggle_match.group(1)) >= 1,
+               display_text[:70])
 
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))

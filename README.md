@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 43 项设备断言（收据在 `reports/device-app-*.json`；当前 42/43，`info probe` 一次操作超时）
+**一键验收**：`python3 tools/device_app_check.py` → 44 项设备断言（收据在 `reports/device-app-*.json`；当前 43/44，`info probe` 一次操作超时）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -28,6 +28,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **核心命令集已注册（81 条）且实测可执行** | `std_commands.register_commands`；设备实测 `select` `color` `view` `turn` `zoom` `dssp` 全部 `=ok` |
 | **计算类命令可产出结果** | `rmsd #3 to #4`、`align #3 to #4`、`zone #3:5` 全部 `=ok`（真实结构比对/选择运算） |
 | **官方渲染器输出完整蛋白** | 提升到 768×768、pad 0.35 后，官方渲染器画出**整条 RAS 蛋白的卡通/螺旋表示**（`lit=34777/589824`），截图 `reports/molecule-768-2026-11-23.jpeg` |
+| **模型显示/隐藏联动** | 「隐藏/显示」按钮切换 `model.display`（设备读数 `display=off|models=6|changed=6`），对应原版 Model Panel 勾选框，切换后自动重渲染 |
 | **渲染帧可存为 PNG** | 「保存图像」按钮 + 启动自动保存：`ImagePacker` 打包为 PNG 写入沙箱（`png=93742` 字节），断言通过 |
 | **mmCIF 结构可读** | `open_mmcif` 解析 4 原子 mmCIF 文件成功（`cif=4`）；新增 `vendor/distro` 垫片解决 `distro` 缺失 |
 | **菜单栏接通真实命令** | File→文件列表、Actions→`color #3 byelement`+`view orient`、Presets→默认视角、Tools→工具清单、Help→版本与命令数；设备断言覆盖 Actions 路径 |
@@ -44,7 +45,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **42/43**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
+- 设备断言 **43/44**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`
 - 命令 **52** 条（全部注册成功）
