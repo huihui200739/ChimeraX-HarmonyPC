@@ -212,6 +212,12 @@ def main() -> int:
         report['selection_output'] = selection_text
         select_match = re.search(r'sel=(\d+)', selection_text)
         # Menu parity: the Actions menu path runs colour + reframe through the command system.
+        # mmCIF reading: a synthetic four-atom file must parse into a structure.
+        cif_match = re.search(r'cif=(\d+)', cx_render)
+        record('mmCIF files open into structures',
+               cif_match is not None and int(cif_match.group(1)) >= 4,
+               'cif=%s' % (cif_match.group(1) if cif_match else 'none'))
+
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))
 

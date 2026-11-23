@@ -647,6 +647,12 @@ def main() -> int:
     # chimerax.core.commands._atomspec is generated from a PEG grammar by grako; ship the
     # generated module (see vendor/core) so atom specifications work in the app.
     # The generated atomspec module needs grako's runtime at import time.
+    # ChimeraX describes the host through the `distro` package when it builds fetch user agents
+    # and platform tags; OpenHarmony does not ship it, so vendor a small implementation.
+    distro_source = ROOT / 'vendor/distro/distro.py'
+    if distro_source.is_file():
+        shutil.copy2(distro_source, args.output / 'distro.py')
+
     grako_source = ROOT / 'vendor/grako'
     if grako_source.is_dir():
         shutil.copytree(grako_source, args.output / 'grako', dirs_exist_ok=True)

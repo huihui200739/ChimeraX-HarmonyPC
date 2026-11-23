@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'ce9bbbe99ae8';
+const RUNTIME_TAG = 'e4c84868dafa';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -1274,6 +1274,45 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 _cached.shape[1], _cached.shape[0], _lit, len(_flat),
                 _cx_b64.b64encode(_cached.astype("uint8").tobytes()).decode())
             notes.append("cached=%d/%d" % (_lit, len(_flat)))
+            # mmCIF reading: the other format a desktop user opens constantly.
+            try:
+                _cif_path = "/data/storage/el2/base/haps/entry/files/cx_probe.cif"
+                _cif_text = chr(10).join([
+                    "data_cxprobe",
+                    "loop_",
+                    "_atom_site.group_PDB",
+                    "_atom_site.id",
+                    "_atom_site.type_symbol",
+                    "_atom_site.label_atom_id",
+                    "_atom_site.label_comp_id",
+                    "_atom_site.label_asym_id",
+                    "_atom_site.label_seq_id",
+                    "_atom_site.Cartn_x",
+                    "_atom_site.Cartn_y",
+                    "_atom_site.Cartn_z",
+                    "ATOM 1 N N ALA A 1 0.000 0.000 0.000",
+                    "ATOM 2 C CA ALA A 1 1.458 0.000 0.000",
+                    "ATOM 3 C C ALA A 1 2.009 1.420 0.000",
+                    "ATOM 4 O O ALA A 1 1.251 2.392 0.000",
+                    ""])
+                with open(_cif_path, "w") as _cif_file:
+                    _cif_file.write(_cif_text)
+                from chimerax.mmcif import open_mmcif as _open_cif
+                # open_mmcif takes a filesystem path (it parses the file itself).
+                _cif_opened = _open_cif(session, _cif_path)
+                _cif_models = []
+                _cif_stack = [_cif_opened]
+                while _cif_stack:
+                    _it = _cif_stack.pop()
+                    if isinstance(_it, (list, tuple)):
+                        _cif_stack.extend(_it)
+                    elif hasattr(_it, "atoms"):
+                        _cif_models.append(_it)
+                session.models.add(_cif_models)
+                notes.append("cif=%d" % sum(len(m.atoms) for m in _cif_models))
+            except BaseException as _cif_error:
+                notes.append("cif:" + type(_cif_error).__name__ + ":"
+                             + str(_cif_error)[:40])
     except BaseException as _cache_error:
         notes.append("cache!" + type(_cache_error).__name__ + ":" + str(_cache_error)[:50])
     # Plain concatenation: error strings inside notes may contain % placeholders.
