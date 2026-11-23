@@ -556,7 +556,9 @@ try:
             ("chimerax.morph", "_MorphAPI", ("morph",)),
             ("chimerax.mask", "_MaskBundleAPI", ("mask",)),
             ("chimerax.segment", "_SegmentBundle", ("segmentation",)),
-            ("chimerax.save_command", "_OpenBundleAPI", ("save",))):
+            ("chimerax.save_command", "_OpenBundleAPI", ("save",)),
+            ("chimerax.surface", "_SurfaceBundle", ("surface",)),
+            ("chimerax.map", "_MapBundle", ("volume", "vop"))):
         try:
             _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
             if _cx_module == "chimerax.zone":

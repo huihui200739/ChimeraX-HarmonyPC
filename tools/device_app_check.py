@@ -234,6 +234,14 @@ def main() -> int:
                and toggle_match is not None and int(toggle_match.group(1)) >= 1,
                display_text[:70])
 
+        # Volume pipeline: a synthetic density map must surface.
+        vol_match = re.search(r'vol=(\S+)', cx_render)
+        surf_match = re.search(r'surf=(\d+)', cx_render)
+        record('A synthetic density map can be built and surfaced',
+               vol_match is not None and surf_match is not None and int(surf_match.group(1)) >= 1,
+               'vol=%s surf=%s' % (vol_match.group(1) if vol_match else 'none',
+                                   surf_match.group(1) if surf_match else '0'))
+
         # Model information panel: atoms/residues/chains must be reported.
         info_text = values.get('cx-model-info', '')
         record('The model information panel summarises the structure',
