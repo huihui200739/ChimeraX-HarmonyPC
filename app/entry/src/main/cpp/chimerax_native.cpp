@@ -453,45 +453,74 @@ try:
     except Exception as _cx_colors_error:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("user_colors:" + type(_cx_colors_error).__name__)
-    # The save manager normally comes from save_command's init_manager; the save command reads it
-    # off the session.
+    # Structure export. The save command looks formats up in session.data_formats and asks the
+    # save manager for a SaverInfo; the tool shed normally wires both from bundle_info.xml, but a
+    # staged bundle tree has no BundleInfo objects, so provide minimal stand-ins.
     try:
+        from chimerax.save_command import SaverInfo as _cx_SaverInfo
         from chimerax.save_command import manager as _cx_save_manager
+        from chimerax.data_formats.manager import FormatsManager as _cx_formats
+        from chimerax.core.commands import ModelsArg, BoolArg
+
+        class _CxStagedBundle:
+            """Minimal BundleInfo stand-in for a staged (not tool-shed-installed) bundle."""
+            installed = True
+
+            def __init__(self, name, saver):
+                self.name = name
+                self._saver = saver
+
+            def run_provider(self, session, provider_name, mgr, **kw):
+                return self._saver
+
+        class _CxSaver(_cx_SaverInfo):
+            def __init__(self, fn):
+                self._fn = fn
+
+            def save(self, session, path, **kw):
+                return self._fn(session, path, **kw)
+
+            @property
+            def save_args(self):
+                return {"models": ModelsArg, "selected_only": BoolArg,
+                        "displayed_only": BoolArg}
+
+        session.data_formats = _cx_formats(session, "data formats")
         session.save_command = _cx_save_manager.SaveManager(session, "save")
-        # The tool shed normally feeds the savers from each bundle's bundle_info.xml
-        # <Providers manager="save command">; do that by hand for the two structure formats.
-        # Data-format providers live on session.data_formats; the save command looks formats up
-        # there before asking the save manager for the writer.
+
+        from chimerax.pdb.pdb import save_pdb as _cx_save_pdb
+
         try:
-            from chimerax.data_formats.manager import FormatsManager as _cx_formats
-            session.data_formats = _cx_formats(session, "data formats")
-        except Exception as _cx_df_error:
-            _cx_errors = globals().setdefault("_cx_errors", [])
-            _cx_errors.append("data-formats:" + type(_cx_df_error).__name__)
-        for _cx_bundle, _cx_format, _cx_suffixes in (
-                ("ChimeraX-PDB", "PDB", ["pdb", "ent"]),
-                ("ChimeraX-mmCIF", "mmCIF", ["cif", "mmcif"])):
-            try:
-                _cx_bi = session.toolshed.find_bundle(_cx_bundle, session.logger)
-                if _cx_bi is None:
-                    # The bundle tree is staged, not installed through the tool shed, so there is no
-                    # BundleInfo object to hand to the managers; record it and move on.
-                    _cx_errors = globals().setdefault("_cx_errors", [])
-                    _cx_errors.append("no-bundle-info:" + _cx_bundle)
-                    continue
-                session.data_formats.add_provider(_cx_bi, _cx_format,
-                                                  category="Molecular structure",
-                                                  suffixes=_cx_suffixes)
-                session.save_command.add_provider(_cx_bi, _cx_format, compression_okay=False)
-            except Exception as _cx_fmt_error:
-                _cx_errors = globals().setdefault("_cx_errors", [])
-                _cx_errors.append("saver-" + _cx_format + ":"
-                                  + type(_cx_fmt_error).__name__ + ":"
-                                  + str(_cx_fmt_error)[:30])
+            from chimerax.mmcif.mmcif_write import write_mmcif as _cx_write_mmcif
+        except Exception:
+            # mmcif_write is a Cython module and is not part of the compiled _mmcif extension,
+            # so mmCIF export may be unavailable; PDB export must still work.
+            _cx_write_mmcif = None
+
+        def _cx_pdb_saver(session, path, **kw):
+            return _cx_save_pdb(session, path, models=kw.get("models"),
+                                selected_only=kw.get("selected_only", False),
+                                displayed_only=kw.get("displayed_only", False))
+
+        def _cx_cif_saver(session, path, **kw):
+            return _cx_write_mmcif(session, path, models=kw.get("models"),
+                                   selected_only=kw.get("selected_only", False),
+                                   displayed_only=kw.get("displayed_only", False))
+
+        _cx_formats_to_register = [("PDB", _cx_pdb_saver, ["pdb", "ent"])]
+        if _cx_write_mmcif is not None:
+            _cx_formats_to_register.append(("mmCIF", _cx_cif_saver, ["cif", "mmcif"]))
+        for _cx_fmt, _cx_saver, _cx_suffixes in _cx_formats_to_register:
+            _cx_bi = _CxStagedBundle("ChimeraX-" + _cx_fmt, _CxSaver(_cx_saver))
+            session.data_formats.add_provider(_cx_bi, _cx_fmt,
+                                              category="Molecular structure",
+                                              suffixes=_cx_suffixes)
+            session.save_command.add_provider(_cx_bi, _cx_fmt, compression_okay=False)
     except Exception as _cx_save_error:
         _cx_errors = globals().setdefault("_cx_errors", [])
-        _cx_errors.append("save-mgr:" + type(_cx_save_error).__name__
-                          + ":" + str(_cx_save_error)[:40])
+        _cx_errors.append("save-setup:" + type(_cx_save_error).__name__
+                          + ":" + str(_cx_save_error)[:50])
+
     # The core command set (select/color/style/coordset/view/turn/zoom/... about sixty commands)
     # is normally registered by the std_commands bundle during start-up. Registering it unlocks
     # the commands that bundle code calls internally, e.g. morph's coordset.

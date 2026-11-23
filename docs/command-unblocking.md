@@ -51,8 +51,13 @@
 - 格式查找走 `session.data_formats`，因此还要创建 `FormatsManager` 并登记 PDB/mmCIF 格式
 - 登记需要 `BundleInfo` 对象，而我们的树是**暂存**的（非 toolshed 安装），`find_bundle` 返回
   `None` → `add_provider(None, ...)` 触发 `'NoneType' object has no attribute 'installed'`
-- 下一步：为暂存 bundle 构造最小 `BundleInfo` 垫片（`installed=True` + `run_provider`），
-  或直接调用 `save_pdb(session, path, models=[m])` 写出 PDB（读回验证）
+- 已为暂存 bundle 构造最小 `BundleInfo`+`SaverInfo` 垫片（`installed=True` + `run_provider`），
+  PDB/mmCIF 格式已登记进 `session.data_formats`
+- 随后 `save ... format pdb` 进入 `_pdbio.write_pdb_file`，但在
+  `PythonInstance<Atom>::get_py_attr` 处抛 **未捕获的 NoPyAttrError → SIGABRT（进程崩溃）**
+- 结论：PDB 写出需要原子属性注册（occupancy/bfactor 等 default attrs）已初始化；
+  在补齐之前不能把 save 放回启动流程
+- 下一步：`chimerax.atomic.attr` 的属性默认值初始化（`set_default_attr` 系列）
 
 ## 已知仍需处理
 
