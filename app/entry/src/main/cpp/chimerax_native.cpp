@@ -458,6 +458,36 @@ try:
     try:
         from chimerax.save_command import manager as _cx_save_manager
         session.save_command = _cx_save_manager.SaveManager(session, "save")
+        # The tool shed normally feeds the savers from each bundle's bundle_info.xml
+        # <Providers manager="save command">; do that by hand for the two structure formats.
+        # Data-format providers live on session.data_formats; the save command looks formats up
+        # there before asking the save manager for the writer.
+        try:
+            from chimerax.data_formats.manager import FormatsManager as _cx_formats
+            session.data_formats = _cx_formats(session, "data formats")
+        except Exception as _cx_df_error:
+            _cx_errors = globals().setdefault("_cx_errors", [])
+            _cx_errors.append("data-formats:" + type(_cx_df_error).__name__)
+        for _cx_bundle, _cx_format, _cx_suffixes in (
+                ("ChimeraX-PDB", "PDB", ["pdb", "ent"]),
+                ("ChimeraX-mmCIF", "mmCIF", ["cif", "mmcif"])):
+            try:
+                _cx_bi = session.toolshed.find_bundle(_cx_bundle, session.logger)
+                if _cx_bi is None:
+                    # The bundle tree is staged, not installed through the tool shed, so there is no
+                    # BundleInfo object to hand to the managers; record it and move on.
+                    _cx_errors = globals().setdefault("_cx_errors", [])
+                    _cx_errors.append("no-bundle-info:" + _cx_bundle)
+                    continue
+                session.data_formats.add_provider(_cx_bi, _cx_format,
+                                                  category="Molecular structure",
+                                                  suffixes=_cx_suffixes)
+                session.save_command.add_provider(_cx_bi, _cx_format, compression_okay=False)
+            except Exception as _cx_fmt_error:
+                _cx_errors = globals().setdefault("_cx_errors", [])
+                _cx_errors.append("saver-" + _cx_format + ":"
+                                  + type(_cx_fmt_error).__name__ + ":"
+                                  + str(_cx_fmt_error)[:30])
     except Exception as _cx_save_error:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("save-mgr:" + type(_cx_save_error).__name__

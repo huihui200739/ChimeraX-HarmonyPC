@@ -46,9 +46,13 @@
 2. 注册 `save_command` 的 `save` → `'Session' object has no attribute 'save_command'`
 3. 引导里创建 `SaveManager` → **`Unknown data format: 'pdb'`**
 
-结论：`save` 本体与 save manager 都已就位，剩下的是**格式提供者**（PDB/mmCIF 的 saver）
-尚未登记到 toolshed 的 provider 表。下一步：手动把 `chimerax.pdb` / `chimerax.mmcif` 的
-saver 注册进 `session.save_command`，或补 tool shed 的 provider 初始化。
+结论与后续（设备实测）：
+- `save` 本体与 save manager 已就位（第 2 步已修）
+- 格式查找走 `session.data_formats`，因此还要创建 `FormatsManager` 并登记 PDB/mmCIF 格式
+- 登记需要 `BundleInfo` 对象，而我们的树是**暂存**的（非 toolshed 安装），`find_bundle` 返回
+  `None` → `add_provider(None, ...)` 触发 `'NoneType' object has no attribute 'installed'`
+- 下一步：为暂存 bundle 构造最小 `BundleInfo` 垫片（`installed=True` + `run_provider`），
+  或直接调用 `save_pdb(session, path, models=[m])` 写出 PDB（读回验证）
 
 ## 已知仍需处理
 
