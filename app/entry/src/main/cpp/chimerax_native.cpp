@@ -453,6 +453,15 @@ try:
     except Exception as _cx_colors_error:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("user_colors:" + type(_cx_colors_error).__name__)
+    # The save manager normally comes from save_command's init_manager; the save command reads it
+    # off the session.
+    try:
+        from chimerax.save_command import manager as _cx_save_manager
+        session.save_command = _cx_save_manager.SaveManager(session, "save")
+    except Exception as _cx_save_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("save-mgr:" + type(_cx_save_error).__name__
+                          + ":" + str(_cx_save_error)[:40])
     # The core command set (select/color/style/coordset/view/turn/zoom/... about sixty commands)
     # is normally registered by the std_commands bundle during start-up. Registering it unlocks
     # the commands that bundle code calls internally, e.g. morph's coordset.
@@ -475,7 +484,8 @@ try:
             ("chimerax.coulombic", "_CoulombicBundle", ("coulombic",)),
             ("chimerax.morph", "_MorphAPI", ("morph",)),
             ("chimerax.mask", "_MaskBundleAPI", ("mask",)),
-            ("chimerax.segment", "_SegmentBundle", ("segmentation",))):
+            ("chimerax.segment", "_SegmentBundle", ("segmentation",)),
+            ("chimerax.save_command", "_OpenBundleAPI", ("save",))):
         try:
             _cx_api = getattr(__import__(_cx_module, fromlist=["_cx"]), _cx_attr)
             if _cx_module == "chimerax.zone":

@@ -39,6 +39,17 @@
 
 `rmsd`（缺 `to`）、`align`（缺 `to_atoms`）、`zone`（需单残基）、`style`（需关键字）
 
+## `save` 命令：已注册但格式提供者未登记（下一步）
+
+推进过程（设备实测）：
+1. 未注册 → `UserError`（Unknown command）
+2. 注册 `save_command` 的 `save` → `'Session' object has no attribute 'save_command'`
+3. 引导里创建 `SaveManager` → **`Unknown data format: 'pdb'`**
+
+结论：`save` 本体与 save manager 都已就位，剩下的是**格式提供者**（PDB/mmCIF 的 saver）
+尚未登记到 toolshed 的 provider 表。下一步：手动把 `chimerax.pdb` / `chimerax.mmcif` 的
+saver 注册进 `session.save_command`，或补 tool shed 的 provider 初始化。
+
 ## 已知仍需处理
 
 | 命令 | 现象 | 下一步 |

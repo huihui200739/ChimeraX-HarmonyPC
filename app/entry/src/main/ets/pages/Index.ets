@@ -1274,6 +1274,24 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 _cached.shape[1], _cached.shape[0], _lit, len(_flat),
                 _cx_b64.b64encode(_cached.astype("uint8").tobytes()).decode())
             notes.append("cached=%d/%d" % (_lit, len(_flat)))
+            # Structure export in the formats a desktop user shares most: PDB and mmCIF.
+            try:
+                import os as _save_os
+                from chimerax.core.commands import run as _run_save
+                _save_dir = "/data/storage/el2/base/haps/entry/files"
+                _save_sizes = []
+                for _fmt, _name in (("pdb", "cx_out.pdb"), ("mmcif", "cx_out.cif")):
+                    _out_path = _save_os.path.join(_save_dir, _name)
+                    try:
+                        _run_save(session, 'save #3 "%s" format %s' % (_out_path, _fmt))
+                        _save_sizes.append("%s=%d" % (_fmt, _save_os.path.getsize(_out_path)))
+                    except BaseException as _save_one:
+                        _save_sizes.append("%s:%s:%s" % (_fmt, type(_save_one).__name__,
+                                                         str(_save_one)[:44]))
+                notes.append("save=%s" % ",".join(_save_sizes))
+            except BaseException as _save_error:
+                notes.append("save:" + type(_save_error).__name__ + ":"
+                             + str(_save_error)[:40])
             # mmCIF reading: the other format a desktop user opens constantly.
             try:
                 _cif_path = "/data/storage/el2/base/haps/entry/files/cx_probe.cif"
