@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 48 项设备断言（收据在 `reports/device-app-*.json`；当前 47/48，`info probe` 一次操作超时）
+**一键验收**：`python3 tools/device_app_check.py` → **48 项设备断言全部通过**（收据在 `reports/device-app-*.json`）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -51,7 +51,9 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **47/48**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
+- 设备断言 **48/48 全部通过**（`app_runtime_verified`），本地测试 **137** 个用例；
+  覆盖：官方渲染出几何、模型/结构信息/体积表面/日志四个面板、命令行补全、选择管理器与可见高亮、
+  显示切换、PNG 导出、mmCIF 读取、体积等值面、mlp/coulombic/morph/rmsd/align/zone 命令
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`
 - 命令 **52** 条（全部注册成功）

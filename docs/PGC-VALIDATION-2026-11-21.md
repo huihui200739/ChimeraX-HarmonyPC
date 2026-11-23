@@ -4,6 +4,10 @@
 
 ## 一、环境
 
+> **最新验收（自动更新）**：设备断言 **48/48 全部通过**（`app_runtime_verified`）、本地单测 **137 OK**、
+> payload **5767** 文件、HAP ≈158 MB。收据：`reports/device-app-2026-11-23.json`。
+
+
 | 项 | 值 |
 |---|---|
 | 设备 | HarmonyOS PC 模拟器（2in1，aarch64），`127.0.0.1:5555` |
@@ -17,7 +21,7 @@
 
 ```bash
 python3 -m unittest discover -s tests      # 137 个本地用例
-python3 tools/device_app_check.py         # 28 项设备断言（当前 27 通过），收据写入 reports/
+python3 tools/device_app_check.py         # 48 项设备断言（当前全部通过），收据写入 reports/
 bash scripts/verify.sh                    # 以上两件事的封装（加构建）
 ```
 
