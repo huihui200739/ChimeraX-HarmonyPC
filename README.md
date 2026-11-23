@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → 39 项设备断言（收据在 `reports/device-app-*.json`；当前 38/39，`info probe` 一次操作超时）
+**一键验收**：`python3 tools/device_app_check.py` → 40 项设备断言（收据在 `reports/device-app-*.json`；当前 39/40，`info probe` 一次操作超时）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -23,7 +23,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **模型面板**（1:1 对齐原版 Model Panel） | 启动后列出每个模型的 id / 名称 / 原子数 / 残基数，可手动刷新 |
 | **命令行补全**（对齐原版命令行） | 输入前缀即列出注册命令的匹配项（`补全: coulombic cxprobe …`） |
 | **日志面板**（对齐原版 Log） | 记录最近执行的命令及其输出，可清空（`> cxprobe ui-command · cxprobe:ui-command`） |
-| **选择联动**（对齐原版选择语义） | 通过原子 `selected` 标记选中 120 个原子，选择管理器汇总为 `sel=120|models=2` |
+| **选择联动**（对齐原版选择语义） | 选中 120 个原子 → 选择管理器汇总 `sel=120|models=2` → **高亮通道已填充**（`hl=1`，绘制对象拿到 `highlighted_positions`） |
 | **上游科学命令端到端可用（3 个）** | `mlp`（脂溶性图）、`coulombic`（电荷着色）、`morph`（构象插值）全部 `=ok` |
 | **核心命令集已注册（81 条）且实测可执行** | `std_commands.register_commands`；设备实测 `select` `color` `view` `turn` `zoom` `dssp` 全部 `=ok` |
 | **计算类命令可产出结果** | `rmsd #3 to #4`、`align #3 to #4`、`zone #3:5` 全部 `=ok`（真实结构比对/选择运算） |
@@ -40,7 +40,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **38/39**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
+- 设备断言 **39/40**（`info probe` 超时；含「官方渲染器真的画出几何」「模型面板」「命令行补全」「日志面板」「选择管理器」五项），本地测试 **137** 个用例
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`
 - 命令 **52** 条（全部注册成功）

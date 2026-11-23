@@ -211,6 +211,12 @@ def main() -> int:
         selection_text = values.get('cx-selection-state', '')
         report['selection_output'] = selection_text
         select_match = re.search(r'sel=(\d+)', selection_text)
+        # Highlight channel: the selected atoms must reach the drawing that the renderer paints.
+        hl_match = re.search(r'hl=(\d+)', cx_render)
+        record('Selection reaches the highlight channel of the drawings',
+               hl_match is not None and int(hl_match.group(1)) >= 1,
+               'hl=%s' % (hl_match.group(1) if hl_match else 'none'))
+
         record('Selecting atoms updates the selection manager',
                select_match is not None and int(select_match.group(1)) > 0,
                selection_text[:80])

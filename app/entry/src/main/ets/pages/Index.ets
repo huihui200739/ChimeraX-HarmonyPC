@@ -1113,6 +1113,34 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _mlp_error:
                 notes.append("mlp:" + type(_mlp_error).__name__ + ":"
                              + str(_mlp_error)[:50])
+            # Selection highlight: push the selection into the drawings and check the highlight
+            # channel is populated (that is what the renderer paints differently).
+            try:
+                # Select atoms in this call so the highlight channel has something to carry.
+                from chimerax.atomic import all_atoms as _hl_atoms
+                _hl_sel = _hl_atoms(session)
+                session.selection.clear()
+                _hl_pick = _hl_sel[:120] if len(_hl_sel) >= 120 else _hl_sel
+                if len(_hl_pick):
+                    _hl_pick.selected = True
+                for _m in session.models.list():
+                    _u = getattr(_m, "_update_graphics", None)
+                    if callable(_u):
+                        try:
+                            _u()
+                        except Exception:
+                            pass
+                _hl = 0
+                for _d in view.drawing.all_drawings():
+                    try:
+                        _pos = getattr(_d, "highlighted_positions", None)
+                        if _pos is not None and len(_pos) > 0:
+                            _hl += 1
+                    except Exception:
+                        pass
+                notes.append("hl=%d" % _hl)
+            except BaseException as _hl_error:
+                notes.append("hl!" + type(_hl_error).__name__)
             # Is the command actually in the registry after register_command reports success?
             try:
                 from chimerax.core.commands.cli import registered_commands as _cx_rc
