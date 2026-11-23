@@ -122,7 +122,7 @@ def main() -> int:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
             time.sleep(4)
             ui_python_output = dump()[1].get('cx-cmd-output', '')
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-display-state', 'cx-model-info', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-display-state', 'cx-model-info', 'cx-map-panel', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -240,6 +240,11 @@ def main() -> int:
                'atoms=' in info_text and 'residues=' in info_text and 'chains=' in info_text,
                info_text[:80])
 
+        # Volume/surface panel: reports the inventory (may legitimately be empty).
+        map_text = values.get('cx-map-panel', '')
+        record('The volume/surface panel reports its inventory',
+               'maps=' in map_text and 'surfaces=' in map_text, map_text[:70])
+
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))
 
@@ -346,7 +351,7 @@ def main() -> int:
 
         screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
         if screenshot.returncode == 0:
-            args.report.parent.mkdir(parents=True, exist_ok=True)
+            report_path.parent.mkdir(parents=True, exist_ok=True)
             run(hdc + ['file', 'recv', '/data/local/tmp/cx-app.jpeg',
                        str(ROOT / 'reports' / 'device-app-2026-11-17.jpeg')])
     except Exception as error:  # noqa: BLE001 - report the failure

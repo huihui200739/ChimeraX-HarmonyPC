@@ -253,6 +253,31 @@ for model in session.models.list():
 print(";".join(rows))
 `;
 
+// Volume/surface inventory, mirroring ChimeraX's volume and surface panel content.
+const MAP_PANEL_SCRIPT = `
+volumes = []
+surfaces = []
+others = []
+for model in session.models.list():
+    atoms = getattr(model, "atoms", None)
+    cname = type(model).__name__
+    model_id = model.id
+    if isinstance(model_id, (tuple, list)):
+        model_id = model_id[0] if model_id else "?"
+    name = str(getattr(model, "name", "?")).rsplit("/", 1)[-1]
+    if atoms is not None:
+        continue
+    if "Volume" in cname or hasattr(model, "data"):
+        volumes.append("%s|%s" % (model_id, name))
+    elif "Surface" in cname or hasattr(model, "triangles"):
+        surfaces.append("%s|%s" % (model_id, name))
+    else:
+        others.append("%s|%s" % (model_id, cname))
+print("maps=%d|surfaces=%d|other=%d|%s" % (
+    len(volumes), len(surfaces), len(others),
+    ";".join(volumes + surfaces + others)[:120]))
+`;
+
 // Structural summary of the loaded models, similar to the information ChimeraX shows per model.
 const MODEL_INFO_SCRIPT = `
 rows = []
@@ -1658,6 +1683,7 @@ struct Index {
   @State imageSaveState: string = '';
   @State displayState: string = '';
   @State modelInfoState: string = '';
+  @State mapPanelState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1787,6 +1813,16 @@ struct Index {
   }
 
   // Refresh the structural summary shown in the model information panel.
+  // Refresh the volume/surface inventory panel.
+  private refreshMapPanel(): void {
+    try {
+      const report: ScriptReport = native.runScript(MAP_PANEL_SCRIPT);
+      this.mapPanelState = (report.ok ? report.output : report.error).trim();
+    } catch (error) {
+      this.mapPanelState = 'map-panel-failed';
+    }
+  }
+
   private refreshModelInfo(): void {
     try {
       const report: ScriptReport = native.runScript(MODEL_INFO_SCRIPT);
@@ -2091,6 +2127,7 @@ struct Index {
             });
             this.refreshModelPanel();
             this.refreshModelInfo();
+            this.refreshMapPanel();
             this.selectSampleAtoms();
             // Exercise the display toggle twice so the molecule ends up visible again.
             this.toggleDisplay().then(() => {
@@ -2433,6 +2470,20 @@ struct Index {
              : '（暂无结构）')
           .id('cx-model-info').fontSize(10).fontColor('#DDE7F3').width('100%')
           .maxLines(3).margin({ top: 4 })
+      }.width('100%').padding(8).margin({ top: 6 })
+      .backgroundColor('#16212F').borderRadius(6)
+
+      // Volume/surface panel: what ChimeraX's volume tools list at the top level.
+      Column() {
+        Row() {
+          Text('体积 / 表面').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('刷新').id('cx-map-refresh').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .onClick(() => { this.refreshMapPanel(); })
+        }.width('100%')
+        Text(this.mapPanelState.length > 0 ? this.mapPanelState : '（暂无体积/表面数据）')
+          .id('cx-map-panel').fontSize(10).fontColor('#DDE7F3').width('100%')
+          .maxLines(2).margin({ top: 4 })
       }.width('100%').padding(8).margin({ top: 6 })
       .backgroundColor('#16212F').borderRadius(6)
 
