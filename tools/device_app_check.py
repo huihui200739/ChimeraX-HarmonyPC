@@ -239,6 +239,12 @@ def main() -> int:
 
         # Highlight channel: the selected atoms must reach the drawing that the renderer paints.
         hl_match = re.search(r'hl=(\d+)', cx_render)
+        # Selected atoms are repainted, so the frame itself shows the selection.
+        paint_match = re.search(r'selpaint=(\d+)', cx_render)
+        record('Selected atoms are painted in the rendered frame',
+               paint_match is not None and int(paint_match.group(1)) >= 1,
+               'selpaint=%s' % (paint_match.group(1) if paint_match else 'none'))
+
         record('Selection reaches the highlight channel of the drawings',
                hl_match is not None and int(hl_match.group(1)) >= 1,
                'hl=%s' % (hl_match.group(1) if hl_match else 'none'))

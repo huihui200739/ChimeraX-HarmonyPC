@@ -1194,6 +1194,27 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                     except Exception:
                         pass
                 notes.append("hl=%d" % _hl)
+                # Paint the selected atoms so the selection is visible in the rendered frame.
+                try:
+                    import numpy as _sel_np
+                    _sel_count = len(_hl_pick)
+                    if _sel_count:
+                        _sel_paint = _sel_np.empty((_sel_count, 4), _sel_np.uint8)
+                        _sel_paint[:, 0] = 255
+                        _sel_paint[:, 1] = 235
+                        _sel_paint[:, 2] = 59
+                        _sel_paint[:, 3] = 255
+                        _hl_pick.colors = _sel_paint
+                        for _m in session.models.list():
+                            _u = getattr(_m, "_update_graphics", None)
+                            if callable(_u):
+                                try:
+                                    _u()
+                                except Exception:
+                                    pass
+                    notes.append("selpaint=%d" % _sel_count)
+                except BaseException as _paint_error:
+                    notes.append("selpaint!" + type(_paint_error).__name__)
             except BaseException as _hl_error:
                 notes.append("hl!" + type(_hl_error).__name__)
             # Is the command actually in the registry after register_command reports success?
