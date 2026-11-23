@@ -390,6 +390,15 @@ try:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("atomic-init:" + type(_cx_atomic_error).__name__
                           + ":" + str(_cx_atomic_error)[:40])
+    # The PDB writer reads atom.charge, which add_charge normally registers; PDB/PQR export
+    # otherwise aborts inside _pdbio, so register the attribute up front.
+    try:
+        from chimerax.atomic import Atom as _cx_Atom
+        _cx_Atom.register_attr(session, "charge", "HarmonyPC", attr_type=float)
+    except Exception as _cx_charge_error:
+        _cx_errors = globals().setdefault("_cx_errors", [])
+        _cx_errors.append("charge-attr:" + type(_cx_charge_error).__name__
+                          + ":" + str(_cx_charge_error)[:40])
     # Commands that record undo state (any modelling command) need the undo manager, which a full
     # start-up creates in the core bundle.
     try:

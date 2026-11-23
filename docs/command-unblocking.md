@@ -57,7 +57,10 @@
   `PythonInstance<Atom>::get_py_attr` 处抛 **未捕获的 NoPyAttrError → SIGABRT（进程崩溃）**
 - 结论：PDB 写出需要原子属性注册（occupancy/bfactor 等 default attrs）已初始化；
   在补齐之前不能把 save 放回启动流程
-- 下一步：`chimerax.atomic.attr` 的属性默认值初始化（`set_default_attr` 系列）
+- 已注册 `Atom.charge`（`Atom.register_attr(session, "charge", "HarmonyPC", attr_type=float)`），
+  解决了 Python 侧缺属性问题，但 PDB 写出仍在 `get_py_int_attr`（**整型**属性缺失）处 abort
+- 下一步：在 `_pdbio` 里定位具体读取的整型属性名（serial_number/num_alt_locs/residue.number），
+  或给 `_pdbio` 补一次防御性默认值；在此之前 save 不进入启动流程
 
 ## 已知仍需处理
 
