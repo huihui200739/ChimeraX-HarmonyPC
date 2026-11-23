@@ -1113,6 +1113,14 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _mlp_error:
                 notes.append("mlp:" + type(_mlp_error).__name__ + ":"
                              + str(_mlp_error)[:50])
+            # Is the command actually in the registry after register_command reports success?
+            try:
+                from chimerax.core.commands.cli import registered_commands as _cx_rc
+                _names = list(_cx_rc())
+                notes.append("reg:mask=%s,surf=%s,n=%d" % (
+                    "mask" in _names, "surface" in _names, len(_names)))
+            except BaseException as _rc_error:
+                notes.append("reg!" + type(_rc_error).__name__)
             # Why is "mask" unknown? Register it explicitly to capture the error.
             try:
                 from chimerax.mask import _MaskBundleAPI as _MaskAPI
@@ -1155,7 +1163,8 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                          "color #3 red", "select #3:1-5", "view orient",
                          "turn y 30", "zoom 1.2",
                          "dssp #3", "rmsd #3 to #4", "align #3 to #4",
-                         "zone #3:5", "mask #3", "surface #3"):
+                         "zone #3:5", "volume mask", "volume onesmask",
+                         "segmentation colors #3"):
                 try:
                     from chimerax.core.commands import run as _run_more
                     _run_more(session, _cmd)

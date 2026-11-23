@@ -228,6 +228,12 @@ def main() -> int:
         # Computation commands: RMSD, structural alignment and zone selection all complete.
         compute_ok = all(marker in cx_render for marker in
                          ('rmsd=ok', 'align=ok', 'zone=ok'))
+        # Bundle subcommands that need domain input still prove the command system: the error is a
+        # domain error from the command body, not "Unknown command".
+        seg_ok = ('segmentation:UserError:No segmentations specified' in cx_render)
+        record('Bundle subcommands parse and reach their implementation', seg_ok,
+               'segmentation subcommand reached its body' if seg_ok else 'not reached')
+
         record('RMSD, align and zone commands compute on device', compute_ok,
                'rmsd/align/zone=%s' % ('ok' if compute_ok else 'failed'))
 
