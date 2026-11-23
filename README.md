@@ -31,7 +31,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **完整界面 + 蛋白 + 密度面** | 主图候选 `reports/viewport-protein-density-v2-2026-11-24.jpeg`：结构信息面板（1322 原子/1322 残基）、体积/表面面板（`maps=2\|surfaces=0`）、日志面板、模型面板、视口内**蛋白卡通 + 密度等值面**（`lit=36498/589824`）同框 |
 | **密度等值面进入渲染帧** | 体积/等值面在捕获前创建，官方渲染帧像素数 34777 → **36498**（`cached=36498/589824`），说明表面模型参与渲染 |
 | **体积数据 → 等值面链路可用** | 程序化生成 16³ 密度图（`ArrayGridData` → `volume_from_grid_data`），再用 `volume level 0.5` 生成等值面，设备读数 `vol=2;surf=2`（marching cubes 全流程） |
-| **体积/表面面板** | 列出体积/表面模型的清单（设备读数 `maps=0\|surfaces=0\|other=0`），空态有提示 |
+| **体积/表面面板** | 正确分类体积与表面（设备读数 `maps=1\|surfaces=1\|other=0\|6\|cx_density;6\|surface`），空态有提示 |
 | **结构信息面板** | 列出每个模型的原子数/残基数/链数/二级结构统计（设备读数 `1\|cx_probe.pdb\|atoms=4\|residues=4\|chains=1\|ss=?:4` …） |
 | **选择在画面中可见** | 选中 120 个原子后重涂为黄色并重推绘制（`selpaint=120`），官方渲染帧里能看到被选中原子，选择反馈闭环完成 |
 | **模型显示/隐藏联动** | 「隐藏/显示」按钮切换 `model.display`（设备读数 `display=off|models=6|changed=6`），对应原版 Model Panel 勾选框，切换后自动重渲染 |

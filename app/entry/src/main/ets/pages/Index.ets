@@ -267,10 +267,11 @@ for model in session.models.list():
     name = str(getattr(model, "name", "?")).rsplit("/", 1)[-1]
     if atoms is not None:
         continue
-    if "Volume" in cname or hasattr(model, "data"):
-        volumes.append("%s|%s" % (model_id, name))
-    elif "Surface" in cname or hasattr(model, "triangles"):
+    # Surface classes often carry a .data reference too, so test the class name first.
+    if "Surface" in cname:
         surfaces.append("%s|%s" % (model_id, name))
+    elif "Volume" in cname or hasattr(model, "data"):
+        volumes.append("%s|%s" % (model_id, name))
     else:
         others.append("%s|%s" % (model_id, cname))
 print("maps=%d|surfaces=%d|other=%d|%s" % (

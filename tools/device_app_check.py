@@ -250,8 +250,13 @@ def main() -> int:
 
         # Volume/surface panel: reports the inventory (may legitimately be empty).
         map_text = values.get('cx-map-panel', '')
+        # A surfaced density map must show up as one volume and at least one surface.
+        volume_count = re.search(r'maps=(\d+)', map_text)
+        surface_count = re.search(r'surfaces=(\d+)', map_text)
         record('The volume/surface panel reports its inventory',
-               'maps=' in map_text and 'surfaces=' in map_text, map_text[:70])
+               volume_count is not None and surface_count is not None
+               and int(volume_count.group(1)) >= 1 and int(surface_count.group(1)) >= 1,
+               map_text[:70])
 
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))
