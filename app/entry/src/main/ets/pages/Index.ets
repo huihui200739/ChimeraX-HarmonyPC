@@ -253,6 +253,39 @@ for model in session.models.list():
 print(";".join(rows))
 `;
 
+// Structural summary of the loaded models, similar to the information ChimeraX shows per model.
+const MODEL_INFO_SCRIPT = `
+rows = []
+for model in session.models.list():
+    atoms = getattr(model, "atoms", None)
+    if atoms is None or len(atoms) == 0:
+        continue
+    model_id = model.id
+    if isinstance(model_id, (tuple, list)):
+        model_id = model_id[0] if model_id else "?"
+    name = str(getattr(model, "name", "?")).rsplit("/", 1)[-1]
+    try:
+        residues = atoms.residues
+        chains = set()
+        ss = {}
+        for res in residues:
+            try:
+                chains.add(res.chain_id)
+            except Exception:
+                pass
+            try:
+                key = str(res.secondary_structure)[:1]
+            except Exception:
+                key = "?"
+            ss[key] = ss.get(key, 0) + 1
+        rows.append("%s|%s|atoms=%d|residues=%d|chains=%d|ss=%s" % (
+            model_id, name, len(atoms), len(residues), len(chains),
+            ",".join("%s:%d" % kv for kv in sorted(ss.items()))))
+    except Exception as error:
+        rows.append("%s|%s|error:%s" % (model_id, name, type(error).__name__))
+print(";".join(rows))
+`;
+
 // Toggle model display, mirroring the Model Panel checkboxes.
 const TOGGLE_DISPLAY_SCRIPT = `
 models = [m for m in session.models.list() if getattr(m, "atoms", None) is not None]
@@ -1624,6 +1657,7 @@ struct Index {
   @State selectionState: string = '';
   @State imageSaveState: string = '';
   @State displayState: string = '';
+  @State modelInfoState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1749,6 +1783,16 @@ struct Index {
       await this.showOfficialFrame();
     } catch (error) {
       this.displayState = 'toggle-failed';
+    }
+  }
+
+  // Refresh the structural summary shown in the model information panel.
+  private refreshModelInfo(): void {
+    try {
+      const report: ScriptReport = native.runScript(MODEL_INFO_SCRIPT);
+      this.modelInfoState = (report.ok ? report.output : report.error).trim();
+    } catch (error) {
+      this.modelInfoState = 'info-failed';
     }
   }
 
@@ -2046,6 +2090,7 @@ struct Index {
               this.saveFrameImage();
             });
             this.refreshModelPanel();
+            this.refreshModelInfo();
             this.selectSampleAtoms();
             // Exercise the display toggle twice so the molecule ends up visible again.
             this.toggleDisplay().then(() => {
@@ -2376,6 +2421,21 @@ struct Index {
             }
           })
       }.width('100%')
+      // Model information panel: atoms/residues/chains/secondary structure per model.
+      Column() {
+        Row() {
+          Text('结构信息').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('刷新').id('cx-info-refresh').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .onClick(() => { this.refreshModelInfo(); })
+        }.width('100%')
+        Text(this.modelInfoState.length > 0 ? this.modelInfoState.split(';').join('  ·  ')
+             : '（暂无结构）')
+          .id('cx-model-info').fontSize(10).fontColor('#DDE7F3').width('100%')
+          .maxLines(3).margin({ top: 4 })
+      }.width('100%').padding(8).margin({ top: 6 })
+      .backgroundColor('#16212F').borderRadius(6)
+
       // Log panel (mirrors ChimeraX's Log tool): recent command output.
       Column() {
         Row() {

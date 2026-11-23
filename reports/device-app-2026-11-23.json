@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-23T18:09:35.582060+00:00",
+  "created_at_utc": "2026-11-23T18:51:47.254362+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 158150528,
-    "sha256": "1a970ff36ed77411c910419bb71378a01eb7dee99ff5af2fa246acc2bede9ff6"
+    "bytes": 158157423,
+    "sha256": "b7467245adb89054425269eac280a09e63ea404ddf595be68591c63758624be4"
   },
   "checks": [
     {
@@ -133,6 +133,11 @@
       "name": "Model display can be toggled from the shell",
       "passed": true,
       "detail": "显示: display=off|models=6|changed=6"
+    },
+    {
+      "name": "The model information panel summarises the structure",
+      "passed": true,
+      "detail": "1|cx_probe.pdb|atoms=4|residues=4|chains=1|ss=?:4  ·  3|cx_demo.pdb|atoms=1322|r"
     },
     {
       "name": "The Actions menu commands run (colour by element + orient)",
@@ -275,7 +280,7 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=547510628216/545433954816/547177485760",
+    "cx-viewer-status": "handles=547510628216/545437422080/547178578048",
     "cx-cmd-suggest": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   cartoon",
     "cx-cmd-list": "命令清单",
     "cx-cmdchip-alias": "alias",
@@ -293,8 +298,10 @@
     "cx-cmdchip-cartoon style": "cartoon style",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=547510628216/545433954816/547177485760",
+    "cx-status-view": "视图: handles=547510628216/545437422080/547178578048",
     "cx-view-reset": "重置视角",
+    "cx-info-refresh": "刷新",
+    "cx-model-info": "1|cx_probe.pdb|atoms=4|residues=4|chains=1|ss=?:4  ·  3|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  3|cx_demo.pdb_  SES surface|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  4|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  5|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  2|cx_probe.cif|atoms=4|residues=4|chains=1|ss=?:4",
     "cx-log-clear": "清空",
     "cx-log-rows": "> select: sel=120|models=2  ·  > toggle display: display=on|models=6|changed=2  ·  > toggle display: display=off|models=6|changed=6  ·  > save image: png=93755  ·  > cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31",
     "cx-select-sample": "选择示例原子",
@@ -325,7 +332,7 @@
   "info_probe_output": "",
   "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
   "result": {
-    "passed": 44,
+    "passed": 45,
     "failed": 1
   },
   "status": "app_runtime_incomplete"
