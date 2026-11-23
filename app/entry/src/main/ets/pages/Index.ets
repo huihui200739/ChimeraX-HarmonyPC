@@ -1334,6 +1334,34 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 except BaseException as _cmd_error:
                     notes.append(_cmd.split()[0] + ":" + type(_cmd_error).__name__
                                  + ":" + str(_cmd_error)[:46])
+            # Volume pipeline: build a synthetic density map, then surface it. This exercises
+            # map_data -> Volume -> marching cubes in the same way a real MRC file would.
+            try:
+                import numpy as _vol_np
+                from chimerax.map_data.arraygrid import ArrayGridData as _ArrayGridData
+                from chimerax.map.volume import volume_from_grid_data as _volume_from_grid
+                _n = 16
+                _gx, _gy, _gz = _vol_np.mgrid[0:_n, 0:_n, 0:_n]
+                _center = (_n - 1) / 2.0
+                _r2 = ((_gx - _center) ** 2 + (_gy - _center) ** 2 + (_gz - _center) ** 2) / 12.0
+                _data = _vol_np.exp(-_r2).astype(_vol_np.float32)
+                _grid = _ArrayGridData(_data, name="cx_density")
+                # volume_from_grid_data already puts the model in the session.
+                _vol = _volume_from_grid(_grid, session)
+                _vol_id = _vol.id[0] if isinstance(_vol.id, (tuple, list)) else _vol.id
+                notes.append("vol=%s" % _vol_id)
+                from chimerax.core.commands import run as _run_surface
+                # The isosurface comes from the volume command (marching cubes), not "surface".
+                _run_surface(session, "volume #%s level 0.5" % _vol_id)
+                _surf = [m for m in session.models.list()
+                         if "Surface" in type(m).__name__]
+                notes.append("surf=%d" % len(_surf))
+            except BaseException as _vol_error:
+                import traceback as _vol_tb
+                _where = _vol_tb.format_exc().strip().splitlines()
+                notes.append("vol:" + type(_vol_error).__name__ + ":"
+                             + str(_vol_error)[:40] + "@"
+                             + (_where[-2].strip()[:40] if len(_where) >= 2 else "?"))
             # Drop the probe triangle so the frame shows the structure itself.
             for _stale in list(session.models.list()):
                 if getattr(_stale, "name", "") in ("cx_probe", "cx_frame_probe"):
@@ -1369,34 +1397,6 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 _cached.shape[1], _cached.shape[0], _lit, len(_flat),
                 _cx_b64.b64encode(_cached.astype("uint8").tobytes()).decode())
             notes.append("cached=%d/%d" % (_lit, len(_flat)))
-            # Volume pipeline: build a synthetic density map, then surface it. This exercises
-            # map_data -> Volume -> marching cubes in the same way a real MRC file would.
-            try:
-                import numpy as _vol_np
-                from chimerax.map_data.arraygrid import ArrayGridData as _ArrayGridData
-                from chimerax.map.volume import volume_from_grid_data as _volume_from_grid
-                _n = 16
-                _gx, _gy, _gz = _vol_np.mgrid[0:_n, 0:_n, 0:_n]
-                _center = (_n - 1) / 2.0
-                _r2 = ((_gx - _center) ** 2 + (_gy - _center) ** 2 + (_gz - _center) ** 2) / 12.0
-                _data = _vol_np.exp(-_r2).astype(_vol_np.float32)
-                _grid = _ArrayGridData(_data, name="cx_density")
-                # volume_from_grid_data already puts the model in the session.
-                _vol = _volume_from_grid(_grid, session)
-                _vol_id = _vol.id[0] if isinstance(_vol.id, (tuple, list)) else _vol.id
-                notes.append("vol=%s" % _vol_id)
-                from chimerax.core.commands import run as _run_surface
-                # The isosurface comes from the volume command (marching cubes), not "surface".
-                _run_surface(session, "volume #%s level 0.5" % _vol_id)
-                _surf = [m for m in session.models.list()
-                         if "Surface" in type(m).__name__]
-                notes.append("surf=%d" % len(_surf))
-            except BaseException as _vol_error:
-                import traceback as _vol_tb
-                _where = _vol_tb.format_exc().strip().splitlines()
-                notes.append("vol:" + type(_vol_error).__name__ + ":"
-                             + str(_vol_error)[:40] + "@"
-                             + (_where[-2].strip()[:40] if len(_where) >= 2 else "?"))
             # mmCIF reading: the other format a desktop user opens constantly.
             try:
                 _cif_path = "/data/storage/el2/base/haps/entry/files/cx_probe.cif"

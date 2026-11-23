@@ -28,6 +28,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **核心命令集已注册（81 条）且实测可执行** | `std_commands.register_commands`；设备实测 `select` `color` `view` `turn` `zoom` `dssp` 全部 `=ok` |
 | **计算类命令可产出结果** | `rmsd #3 to #4`、`align #3 to #4`、`zone #3:5` 全部 `=ok`（真实结构比对/选择运算） |
 | **官方渲染器输出完整蛋白** | 提升到 768×768、pad 0.35 后，官方渲染器画出**整条 RAS 蛋白的卡通/螺旋表示**（`lit=34777/589824`），截图 `reports/molecule-768-2026-11-23.jpeg` |
+| **密度等值面进入渲染帧** | 体积/等值面在捕获前创建，官方渲染帧像素数 34777 → **36498**（`cached=36498/589824`），说明表面模型参与渲染 |
 | **体积数据 → 等值面链路可用** | 程序化生成 16³ 密度图（`ArrayGridData` → `volume_from_grid_data`），再用 `volume level 0.5` 生成等值面，设备读数 `vol=2;surf=2`（marching cubes 全流程） |
 | **体积/表面面板** | 列出体积/表面模型的清单（设备读数 `maps=0\|surfaces=0\|other=0`），空态有提示 |
 | **结构信息面板** | 列出每个模型的原子数/残基数/链数/二级结构统计（设备读数 `1\|cx_probe.pdb\|atoms=4\|residues=4\|chains=1\|ss=?:4` …） |
