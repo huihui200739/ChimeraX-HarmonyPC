@@ -27,6 +27,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **上游科学命令端到端可用（3 个）** | `mlp`（脂溶性图）、`coulombic`（电荷着色）、`morph`（构象插值）全部 `=ok` |
 | **核心命令集已注册（81 条）且实测可执行** | `std_commands.register_commands`；设备实测 `select` `color` `view` `turn` `zoom` `dssp` 全部 `=ok` |
 | **计算类命令可产出结果** | `rmsd #3 to #4`、`align #3 to #4`、`zone #3:5` 全部 `=ok`（真实结构比对/选择运算） |
+| **官方渲染器输出完整蛋白** | 提升到 768×768、pad 0.35 后，官方渲染器画出**整条 RAS 蛋白的卡通/螺旋表示**（`lit=34777/589824`），截图 `reports/molecule-768-2026-11-23.jpeg` |
 | **mmCIF 结构可读** | `open_mmcif` 解析 4 原子 mmCIF 文件成功（`cif=4`）；新增 `vendor/distro` 垫片解决 `distro` 缺失 |
 | **菜单栏接通真实命令** | File→文件列表、Actions→`color #3 byelement`+`view orient`、Presets→默认视角、Tools→工具清单、Help→版本与命令数；设备断言覆盖 Actions 路径 |
 | **bundle 子命令到达实现层** | `volume mask`/`volume onesmask` 报"缺少 volumes 参数"、`segmentation colors` 报"未指定 segmentation"——均为**领域错误**而非 Unknown command，证明命令已注册且可解析 |
