@@ -59,8 +59,13 @@
   在补齐之前不能把 save 放回启动流程
 - 已注册 `Atom.charge`（`Atom.register_attr(session, "charge", "HarmonyPC", attr_type=float)`），
   解决了 Python 侧缺属性问题，但 PDB 写出仍在 `get_py_int_attr`（**整型**属性缺失）处 abort
-- 下一步：在 `_pdbio` 里定位具体读取的整型属性名（serial_number/num_alt_locs/residue.number），
-  或给 `_pdbio` 补一次防御性默认值；在此之前 save 不进入启动流程
+- 已从源码定位：`pdbio_cpp/PDBio.cpp:1914` 读取 **`formal_charge`**（`get_py_int_attr`），
+  且该调用**有** `catch (pyinstance::PyAttrError&)` 保护；但设备上抛出的是
+  `pyinstance::NoPyAttrError`，**未被这个 catch 捕获** → 进程 abort
+- 推断：`libcxatomstruct` 的异常类型层级与 `_pdbio` 期望的不一致（或属性注册未生效）
+- 已注册 `Atom.formal_charge`（int）后仍 abort → 注册未覆盖 C++ 层读取路径
+- **结论：冻结此项**。读（PDB/mmCIF/SDF）完整可用；写需要改 `_pdbio`/`libcxatomstruct`
+  的异常类型，属于跨模块一致性修复，优先级低于界面/渲染打磨
 
 ## 已知仍需处理
 

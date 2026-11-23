@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "created_at_utc": "2026-11-23T15:32:10.585085+00:00",
+  "created_at_utc": "2026-11-23T16:05:38.496966+00:00",
   "scope": "harmony_app_entry_with_embedded_runtime",
   "target": "127.0.0.1:5555",
   "hap": {
     "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
-    "bytes": 158137022,
-    "sha256": "ee230d211134576207fb4d88efa5b1a9d88e57aef4e63e16355dc9f801657d70"
+    "bytes": 158137278,
+    "sha256": "6c8ff6676a732ba8eafa6900f6fa59a506e626c1114510ea9a65c086c641ba54"
   },
   "checks": [
     {
@@ -260,7 +260,7 @@
     "cx-list-run": "沙箱结构文件",
     "cx-demo-run": "示例螺旋",
     "cx-viewer-run": "显示结构",
-    "cx-viewer-status": "handles=547510628216/545474825184/545472331392",
+    "cx-viewer-status": "handles=547510628216/545441352512/545438474512",
     "cx-cmd-suggest": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   cartoon",
     "cx-cmd-list": "命令清单",
     "cx-cmdchip-alias": "alias",
@@ -278,7 +278,7 @@
     "cx-cmdchip-cartoon style": "cartoon style",
     "cx-status-model": "模型: 1",
     "cx-status-atoms": "原子: 4",
-    "cx-status-view": "视图: handles=547510628216/545474825184/545472331392",
+    "cx-status-view": "视图: handles=547510628216/545441352512/545438474512",
     "cx-view-reset": "重置视角",
     "cx-log-clear": "清空",
     "cx-log-rows": "> select: sel=120|models=2  ·  > cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31",

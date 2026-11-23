@@ -395,6 +395,9 @@ try:
     try:
         from chimerax.atomic import Atom as _cx_Atom
         _cx_Atom.register_attr(session, "charge", "HarmonyPC", attr_type=float)
+        # The PDB writer reads formal_charge with get_py_int_attr; without the attribute the
+        # exception escapes and aborts the process, so register it as an int.
+        _cx_Atom.register_attr(session, "formal_charge", "HarmonyPC", attr_type=int)
     except Exception as _cx_charge_error:
         _cx_errors = globals().setdefault("_cx_errors", [])
         _cx_errors.append("charge-attr:" + type(_cx_charge_error).__name__
