@@ -1585,6 +1585,7 @@ struct Index {
   @State modelRows: string[] = [];
   @State commandSuggestions: string[] = [];
   @State selectionState: string = '';
+  @State imageSaveState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1675,6 +1676,27 @@ struct Index {
       this.appendLog('> select: ' + text);
     } catch (error) {
       this.selectionState = 'selection-error';
+    }
+  }
+
+  // Save the rendered frame as a PNG, the equivalent of ChimeraX's "save image" action.
+  private async saveFrameImage(): Promise<void> {
+    try {
+      if (this.officialImage === null) {
+        this.imageSaveState = 'no-frame';
+        return;
+      }
+      const packer: image.ImagePacker = image.createImagePacker();
+      const packed: ArrayBuffer = await packer.packToData(this.officialImage,
+        { format: 'image/png', quality: 100 });
+      const path: string = `${this.filesDir()}/cx_frame.png`;
+      const file = fs.openSync(path, fs.OpenMode.CREATE | fs.OpenMode.WRITE_ONLY | fs.OpenMode.TRUNC);
+      fs.writeSync(file.fd, packed);
+      fs.closeSync(file);
+      this.imageSaveState = `png=${packed.byteLength}`;
+      this.appendLog('> save image: ' + this.imageSaveState);
+    } catch (error) {
+      this.imageSaveState = 'save-failed';
     }
   }
 
@@ -1968,7 +1990,9 @@ struct Index {
           // Show the frame the official renderer captured during start-up, so the viewport is
           // populated without the user pressing anything.
           setTimeout(() => {
-            this.showOfficialFrame();
+            this.showOfficialFrame().then(() => {
+              this.saveFrameImage();
+            });
             this.refreshModelPanel();
             this.selectSampleAtoms();
             // Seed the completion pool with the registered commands.
@@ -2322,6 +2346,10 @@ struct Index {
             .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
             .onClick(() => { this.refreshModelPanel(); })
         }.width('100%')
+        if (this.imageSaveState.length > 0) {
+          Text('图像: ' + this.imageSaveState).id('cx-image-saved')
+            .fontSize(10).fontColor('#7FB2E5').width('100%').margin({ top: 2 })
+        }
         if (this.selectionState.length > 0) {
           Text('选中: ' + this.selectionState).id('cx-selection-state')
             .fontSize(10).fontColor('#7FB2E5').width('100%').margin({ top: 2 })
@@ -2338,6 +2366,10 @@ struct Index {
       .backgroundColor('#16212F').borderRadius(6)
 
       Row() {
+        Button('保存图像').id('cx-save-image').fontSize(11).height(28)
+          .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+          .margin({ right: 8 })
+          .onClick(() => { this.saveFrameImage(); })
         Button('官方渲染').id('cx-official-render').fontSize(12).height(32)
           .onClick(() => { this.showOfficialFrame(); })
         Text(this.officialInfo).fontSize(10).fontColor('#FFFFFF').layoutWeight(1)
