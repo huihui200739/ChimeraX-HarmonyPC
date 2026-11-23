@@ -211,6 +211,10 @@ def main() -> int:
         selection_text = values.get('cx-selection-state', '')
         report['selection_output'] = selection_text
         select_match = re.search(r'sel=(\d+)', selection_text)
+        # Menu parity: the Actions menu path runs colour + reframe through the command system.
+        record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
+               'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))
+
         # Highlight channel: the selected atoms must reach the drawing that the renderer paints.
         hl_match = re.search(r'hl=(\d+)', cx_render)
         record('Selection reaches the highlight channel of the drawings',

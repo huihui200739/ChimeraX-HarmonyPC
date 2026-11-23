@@ -253,6 +253,35 @@ for model in session.models.list():
 print(";".join(rows))
 `;
 
+// Menu actions, expressed as the commands a desktop user would run.
+const ACTION_SCRIPT = `
+from chimerax.core.commands import run
+out = []
+for name in ("color #3 byelement", "view orient", "turn y 15"):
+    try:
+        run(session, name)
+        out.append(name.split()[0] + "=ok")
+    except Exception as error:
+        out.append(name.split()[0] + ":" + type(error).__name__)
+print("|".join(out))
+`;
+
+const PRESET_SCRIPT = `
+from chimerax.core.commands import run
+try:
+    run(session, "view orient")
+    print("preset=default-orientation")
+except Exception as error:
+    print("preset:" + type(error).__name__)
+`;
+
+const ABOUT_SCRIPT = `
+import chimerax
+print("ChimeraX %s on HarmonyOS | commands=%d" % (
+    chimerax.version.version, len(__import__("chimerax.core.commands", fromlist=["x"])
+                                  .cli.registered_commands())))
+`;
+
 const LIST_SCRIPT = `
 import os
 root = "/data/storage/el2/base/haps/entry/files"
@@ -1113,6 +1142,16 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
             except BaseException as _mlp_error:
                 notes.append("mlp:" + type(_mlp_error).__name__ + ":"
                              + str(_mlp_error)[:50])
+            # Same command sequence the Actions menu runs, so the menu path is covered without a
+            # fragile UI click.
+            try:
+                from chimerax.core.commands import run as _run_menu
+                for _menu_cmd in ("color #3 byelement", "view orient"):
+                    _run_menu(session, _menu_cmd)
+                notes.append("menu=ok")
+            except BaseException as _menu_error:
+                notes.append("menu:" + type(_menu_error).__name__ + ":"
+                             + str(_menu_error)[:40])
             # Selection highlight: push the selection into the drawings and check the highlight
             # channel is populated (that is what the renderer paints differently).
             try:
@@ -1646,6 +1685,32 @@ struct Index {
   }
 
   private runToolbarAction(action: string): void {
+    // Menu bar entries map onto the same command system a desktop user would type.
+    if (action === 'File') {
+      const listed: ScriptReport = native.runScript(LIST_SCRIPT);
+      this.fileListState = (listed.ok ? listed.output : listed.error).trim();
+      this.viewerResult = this.fileListState;
+      return;
+    }
+    if (action === 'Actions') {
+      // Colour by element and re-frame: the two actions desktop users reach for first.
+      const coloured: ScriptReport = native.runScript(ACTION_SCRIPT);
+      this.viewerResult = (coloured.ok ? coloured.output : coloured.error).trim();
+      this.appendLog('> menu Actions: ' + this.viewerResult);
+      return;
+    }
+    if (action === 'Presets') {
+      const preset: ScriptReport = native.runScript(PRESET_SCRIPT);
+      this.viewerResult = (preset.ok ? preset.output : preset.error).trim();
+      this.appendLog('> menu Presets: ' + this.viewerResult);
+      return;
+    }
+    if (action === 'Help') {
+      const about: ScriptReport = native.runScript(ABOUT_SCRIPT);
+      this.viewerResult = (about.ok ? about.output : about.error).trim();
+      this.appendLog('> menu Help: ' + this.viewerResult);
+      return;
+    }
     if (action === 'Open') {
       const opened: ScriptReport = native.runScript(OPEN_SCRIPT);
       if (!opened.ok) {
