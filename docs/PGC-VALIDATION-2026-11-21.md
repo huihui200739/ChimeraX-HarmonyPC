@@ -42,6 +42,8 @@ bash scripts/verify.sh                    # 以上两件事的封装（加构建
 | 项 | 状态 | 卡点 |
 |---|---|---|
 | 结构的光照明暗 | ✗ | 元素颜色已正确显示；明暗（lighting UBO）尚未上传，画面为平光着色 |
+| 渲染帧导出 PNG | ✓ | `ImagePacker` 打包，设备读数 `png=93742` 字节 |
+| 模型显示/隐藏切换 | ✓ | `display=off\|models=6\|changed=6`（对应 Model Panel 勾选框） |
 | Qt 原生窗口 | ✗ | 运行时拒绝对 Qt 插件所需的表达式求值（`LocalStorage.makeNewLocalStorage()`），四条路径日志见 `docs/qt-status-2026-11-18-final.md` |
 | `_surface` 三角化 | 降级 | GLU 用桩实现，封盖三角形为空；其余网格计算（连通性/法线/面积）真实可用 |
 | 依赖 UI 部件的命令（如 `mlp`） | ✗ | 无 GUI 的最小会话缺少 UI 对象（`register_available_commands`） |
