@@ -1,0 +1,576 @@
+diff --git a/src/plugins/platforms/ohos/qohoslocalstorageprovider.h b/src/plugins/platforms/ohos/qohoslocalstorageprovider.h
+index 329c375..20d7cd4 100644
+--- a/src/plugins/platforms/ohos/qohoslocalstorageprovider.h
++++ b/src/plugins/platforms/ohos/qohoslocalstorageprovider.h
+@@ -16,7 +16,7 @@
+ //
+ 
+ // ArkTS hands a LocalStorage source over to C++ during setupQtApplication().
+-// It is resolved once, by name, without any script evaluation:
++// It is resolved once, without any script evaluation:
+ //
+ //   * appStartupObj.localStorageFactory  - function returning a LocalStorage
+ //                                          instance (or the module interface that
+@@ -28,18 +28,30 @@
+ //                                          a module factory whose result exposes
+ //                                          makeNewLocalStorage()
+ //
++// ArkTS static compilation does not necessarily expose those hand-offs as plain
++// napi properties: values may be closure/class objects whose named members are not
++// reachable through napi_has_named_property. Every candidate therefore gets a last
++// resort round-trip that enumerates own and inherited property names with
++// napi_get_all_property_names(), looks for a callable factory ("makeNewLocalStorage",
++// "invoke", "call", ...) or a nested LocalStorage instance ("setOrCreate"/"set"/"get"),
++// calls it with an explicit receiver, and logs the property name it actually used.
++//
+ // The resolved callable is then invoked as a plain napi function call, which works
+-// on the ability JS state where the module-path based expression evaluator used to
+-// reject "LocalStorage.makeNewLocalStorage()" with
++// on the ability JS state where the module-path based expression evaluator rejects
++// "LocalStorage.makeNewLocalStorage()" with
+ // "global expression doesn't start with known module path".
+ 
+ #include <QtCore/private/qnapi_p.h>
+ #include <QtCore/private/qohoslogger_p.h>
+ #include <QtCore/qglobal.h>
+ 
++#include <algorithm>
++#include <cctype>
++#include <cstdint>
+ #include <exception>
+ #include <memory>
+ #include <string>
++#include <vector>
+ 
+ #include <qohosplugincore.h>
+ 
+@@ -47,6 +59,299 @@ QT_BEGIN_NAMESPACE
+ 
+ namespace QtOhos {
+ 
++namespace LocalStorageDetail {
++
++// ArkTS reports "Need object" when a bridged function is called without a valid
++// receiver, so a failed call always leaves a pending exception behind that has to be
++// consumed before the next napi call.
++inline void clearPendingException(napi_env env, const std::string &context)
++{
++    bool pending = false;
++    if (napi_is_exception_pending(env, &pending) != napi_ok || !pending)
++        return;
++
++    napi_value exception = nullptr;
++    if (napi_get_and_clear_last_exception(env, &exception) != napi_ok || !exception) {
++        qOhosPrintfWarning("%s: cleared a pending JS exception (%s)", Q_FUNC_INFO, context.c_str());
++        return;
++    }
++
++    napi_value asString = nullptr;
++    if (napi_coerce_to_string(env, exception, &asString) != napi_ok || !asString) {
++        qOhosPrintfWarning("%s: cleared a pending JS exception (%s)", Q_FUNC_INFO, context.c_str());
++        return;
++    }
++
++    std::string message;
++    size_t length = 0;
++    if (napi_get_value_string_utf8(env, asString, nullptr, 0, &length) == napi_ok) {
++        message.resize(length + 1);
++        if (napi_get_value_string_utf8(env, asString, message.data(), message.size(), &length)
++            == napi_ok) {
++            message.resize(length);
++        } else {
++            message.clear();
++        }
++    }
++    qOhosPrintfWarning("%s: JS exception while probing (%s): %s", Q_FUNC_INFO,
++                       context.c_str(), message.c_str());
++}
++
++inline std::vector<std::string> enumeratePropertyNames(napi_env env, const QNapi::Object &object)
++{
++    std::vector<std::string> names;
++    napi_value rawNames = nullptr;
++
++    // own + inherited, including non-enumerable ones: ArkTS hides bridge members in
++    // every one of those buckets depending on the compiled form.
++    napi_status status = napi_get_all_property_names(
++        env, object, napi_key_include_prototypes, napi_key_all_properties,
++        napi_key_numbers_to_strings, &rawNames);
++    if (status != napi_ok || !rawNames) {
++        clearPendingException(env, "napi_get_all_property_names");
++        rawNames = nullptr;
++        status = napi_get_property_names(env, object, &rawNames);
++        if (status != napi_ok || !rawNames) {
++            clearPendingException(env, "napi_get_property_names");
++            return names;
++        }
++    }
++
++    uint32_t length = 0;
++    if (napi_get_array_length(env, rawNames, &length) != napi_ok)
++        return names;
++
++    names.reserve(length);
++    for (uint32_t i = 0; i < length; ++i) {
++        napi_value element = nullptr;
++        if (napi_get_element(env, rawNames, i, &element) != napi_ok || !element)
++            continue;
++
++        // Array indices/number keys are reported as numbers, so coerce first.
++        napi_value elementAsString = nullptr;
++        if (napi_coerce_to_string(env, element, &elementAsString) != napi_ok || !elementAsString) {
++            clearPendingException(env, "napi_coerce_to_string");
++            continue;
++        }
++
++        std::string name;
++        size_t elementLength = 0;
++        if (napi_get_value_string_utf8(env, elementAsString, nullptr, 0, &elementLength)
++            != napi_ok) {
++            continue;
++        }
++        name.resize(elementLength + 1);
++        if (napi_get_value_string_utf8(env, elementAsString, name.data(), name.size(),
++                                       &elementLength) != napi_ok) {
++            continue;
++        }
++        name.resize(elementLength);
++        if (!name.empty())
++            names.push_back(std::move(name));
++    }
++
++    return names;
++}
++
++inline std::string describePropertyNames(const std::vector<std::string> &names,
++                                         std::size_t maxNames = 10)
++{
++    if (names.empty())
++        return "<none>";
++
++    std::string result;
++    for (std::size_t i = 0; i < names.size() && i < maxNames; ++i) {
++        if (!result.empty())
++            result += ',';
++        result += names[i];
++    }
++    if (names.size() > maxNames)
++        result += ",...";
++    return result;
++}
++
++inline std::string toLower(std::string text)
++{
++    std::transform(text.begin(), text.end(), text.begin(),
++                   [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
++    return text;
++}
++
++inline bool nameMatches(const std::string &name, const char *needle)
++{
++    return toLower(name).find(toLower(needle)) != std::string::npos;
++}
++
++struct EnumeratedHit
++{
++    QNapi::Function maker;
++    QNapi::Object makerReceiver;
++    QNapi::Object instance;
++    std::string propName;
++    std::string how;
++
++    bool isValid() const { return !maker.IsEmpty() || !instance.IsEmpty(); }
++};
++
++inline bool callableReturnsObject(napi_env env, napi_value receiver, napi_value function,
++                                 const std::string &label)
++{
++    napi_value result = nullptr;
++    if (napi_call_function(env, receiver, function, 0, nullptr, &result) != napi_ok) {
++        clearPendingException(env, label);
++        return false;
++    }
++    if (!result) {
++        qOhosPrintfDebug("%s: '%s()' produced no value", Q_FUNC_INFO, label.c_str());
++        return false;
++    }
++
++    napi_valuetype type = napi_undefined;
++    if (napi_typeof(env, result, &type) != napi_ok) {
++        clearPendingException(env, label);
++        return false;
++    }
++    if (type != napi_object) {
++        qOhosPrintfDebug("%s: '%s()' returned a non-object (napi_typeof=%d)", Q_FUNC_INFO,
++                         label.c_str(), static_cast<int>(type));
++        return false;
++    }
++    return true;
++}
++
++inline bool objectOffersLocalStorageApi(const QNapi::Object &object)
++{
++    try {
++        return object.Has("setOrCreate") || (object.Has("set") && object.Has("get"));
++    } catch (const std::exception &e) {
++        qOhosPrintfDebug("%s: probing a nested object threw: %s", Q_FUNC_INFO, e.what());
++        return false;
++    }
++}
++
++inline EnumeratedHit findByEnumeration(napi_env env, const QNapi::Object &object,
++                                       const std::string &source)
++{
++    EnumeratedHit hit;
++
++    const std::vector<std::string> names = enumeratePropertyNames(env, object);
++    qOhosPrintfDebug("%s: '%s' exposes %zu propert(ies): %s", Q_FUNC_INFO, source.c_str(),
++                     names.size(), describePropertyNames(names).c_str());
++
++    // 1) callables that may produce a LocalStorage, best name first. A callable that
++    //    needs a receiver is retried with the global object and, as a last resort,
++    //    through napi_new_instance().
++    static const char *const makerNameHints[] = {
++        "makeNewLocalStorage", "invoke", "call", "apply", "factory", "constructor"
++    };
++    for (const char *hint : makerNameHints) {
++        for (const std::string &name : names) {
++            if (!nameMatches(name, hint))
++                continue;
++
++            napi_value rawFunction = nullptr;
++            if (napi_get_named_property(env, object, name.c_str(), &rawFunction) != napi_ok
++                || !rawFunction) {
++                clearPendingException(env, name);
++                continue;
++            }
++
++            napi_valuetype type = napi_undefined;
++            if (napi_typeof(env, rawFunction, &type) != napi_ok) {
++                clearPendingException(env, name);
++                continue;
++            }
++            if (type != napi_function) {
++                qOhosPrintfDebug("%s: '%s.%s' is not napi_function (napi_typeof=%d)", Q_FUNC_INFO,
++                                 source.c_str(), name.c_str(), static_cast<int>(type));
++                continue;
++            }
++
++            auto function = QNapi::Function(env, rawFunction);
++            if (callableReturnsObject(env, object, rawFunction, name + "(this=owner)")) {
++                hit.maker = function;
++                hit.makerReceiver = object;
++                hit.propName = name;
++                hit.how = "call(this=owner)";
++                return hit;
++            }
++
++            napi_value global = nullptr;
++            if (napi_get_global(env, &global) == napi_ok && global
++                && callableReturnsObject(env, global, rawFunction, name + "(this=global)")) {
++                hit.maker = function;
++                hit.makerReceiver = QNapi::Object(env, global);
++                hit.propName = name;
++                hit.how = "call(this=global)";
++                return hit;
++            }
++
++            napi_value constructed = nullptr;
++            if (napi_new_instance(env, rawFunction, 0, nullptr, &constructed) != napi_ok
++                || !constructed) {
++                clearPendingException(env, name + "(new)");
++                continue;
++            }
++
++            auto constructedObject = QNapi::Object(env, constructed);
++            if (objectOffersLocalStorageApi(constructedObject)) {
++                hit.instance = constructedObject;
++                hit.propName = name;
++                hit.how = "new";
++                return hit;
++            }
++        }
++    }
++
++    // 2) nested objects one level deep that look like a LocalStorage or like the
++    //    module interface object Qt's ArkTS template returns.
++    for (const std::string &name : names) {
++        if (name == "constructor" || name == "__proto__")
++            continue;
++
++        napi_value rawChild = nullptr;
++        if (napi_get_named_property(env, object, name.c_str(), &rawChild) != napi_ok || !rawChild) {
++            clearPendingException(env, name);
++            continue;
++        }
++
++        napi_valuetype type = napi_undefined;
++        if (napi_typeof(env, rawChild, &type) != napi_ok) {
++            clearPendingException(env, name);
++            continue;
++        }
++        if (type != napi_object)
++            continue;
++
++        auto child = QNapi::Object(env, rawChild);
++        try {
++            auto nestedMaker
++                = QNapi::getOptionalPropOrEmpty<QNapi::Function>(child, "makeNewLocalStorage");
++            if (!nestedMaker.IsEmpty()) {
++                hit.maker = nestedMaker;
++                hit.makerReceiver = child;
++                hit.propName = name + ".makeNewLocalStorage";
++                hit.how = "nested";
++                return hit;
++            }
++        } catch (const std::exception &e) {
++            qOhosPrintfDebug("%s: nested probe of '%s.%s' threw: %s", Q_FUNC_INFO, source.c_str(),
++                             name.c_str(), e.what());
++        }
++
++        if (objectOffersLocalStorageApi(child)) {
++            hit.instance = child;
++            hit.propName = name;
++            hit.how = "nested";
++            return hit;
++        }
++    }
++
++    return hit;
++}
++
++} // namespace LocalStorageDetail
++
+ class LocalStorageProvider
+ {
+ public:
+@@ -65,10 +370,18 @@ public:
+         Napi::HandleScope handleScope{env};
+         handoff.env = env;
+ 
++        const auto appStartupPropNames
++            = LocalStorageDetail::enumeratePropertyNames(env, appStartupObj);
++        qOhosPrintfDebug("%s: appStartupObj exposes %zu propert(ies): %s", Q_FUNC_INFO,
++                         appStartupPropNames.size(),
++                         LocalStorageDetail::describePropertyNames(appStartupPropNames).c_str());
++
+         static const char *const directPropNames[] = { "localStorageFactory", "localStorage" };
+         for (const char *propName : directPropNames) {
+-            if (!appStartupObj.Has(propName))
++            if (!appStartupObj.Has(propName)) {
++                qOhosPrintfDebug("%s: appStartupObj has no '%s'", Q_FUNC_INFO, propName);
+                 continue;
++            }
+             if (adopt(handoff, appStartupObj.Get(propName), propName))
+                 return;
+         }
+@@ -79,19 +392,29 @@ public:
+             QNapi::Value modulesFactoriesValue = appStartupObj.Get("modulesFactories");
+             if (modulesFactoriesValue.IsObject()) {
+                 auto modulesFactories = QNapi::checkedCast<QNapi::Object>(modulesFactoriesValue);
++                const auto factoryNames
++                    = LocalStorageDetail::enumeratePropertyNames(env, modulesFactories);
++                qOhosPrintfDebug("%s: modulesFactories exposes %zu propert(ies): %s", Q_FUNC_INFO,
++                                 factoryNames.size(),
++                                 LocalStorageDetail::describePropertyNames(factoryNames).c_str());
+                 if (modulesFactories.Has("LocalStorage")
+                     && adopt(handoff, modulesFactories.Get("LocalStorage"),
+                              "modulesFactories.LocalStorage")) {
+                     return;
+                 }
++                if (!modulesFactories.Has("LocalStorage")) {
++                    qOhosPrintfDebug("%s: modulesFactories has no 'LocalStorage'", Q_FUNC_INFO);
++                }
+             }
+         }
+ 
+         qOhosPrintfWarning(
+-            "%s: ArkTS provided no usable LocalStorage hand-off "
+-            "(checked appStartupObj.{localStorageFactory,localStorage,modulesFactories.LocalStorage}); "
++            "%s: ArkTS provided no usable LocalStorage hand-off; "
++            "appStartupObj properties: [%s]; modulesFactories properties: [%s]; "
+             "the plugin will fall back to script evaluation, which is known to fail on this runtime",
+-            Q_FUNC_INFO);
++            Q_FUNC_INFO,
++            LocalStorageDetail::describePropertyNames(appStartupPropNames).c_str(),
++            describeModulesFactoriesProperties(env, appStartupObj).c_str());
+     }
+ 
+     static bool isAvailable()
+@@ -109,26 +432,33 @@ public:
+         Napi::HandleScope handleScope{env};
+ 
+         if (handoff.maker && handoff.env == env) {
+-            try {
+-                QNapi::Value value = handoff.maker->Value().Call({});
+-                if (value.IsObject()) {
+-                    qOhosPrintfDebug("%s: created LocalStorage via ArkTS hand-off (%s)",
+-                                     callSite, handoff.source.c_str());
+-                    return QNapi::checkedCast<QNapi::Object>(value);
++            napi_value result = nullptr;
++            napi_value receiver = handoff.makerReceiver
++                ? static_cast<napi_value>(handoff.makerReceiver->Value())
++                : static_cast<napi_value>(handoff.maker->Value());
++            const napi_status status = napi_call_function(env, receiver,
++                                                          handoff.maker->Value(), 0, nullptr,
++                                                          &result);
++            if (status == napi_ok && result) {
++                napi_valuetype type = napi_undefined;
++                if (napi_typeof(env, result, &type) == napi_ok && type == napi_object) {
++                    qOhosPrintfDebug("%s: created LocalStorage via ArkTS hand-off (%s, %s)",
++                                     callSite, handoff.source.c_str(),
++                                     handoff.mechanism.c_str());
++                    return QNapi::Object(env, result);
+                 }
+-                qOhosPrintfWarning("%s: ArkTS LocalStorage hand-off (%s) returned a non-object",
+-                                   callSite, handoff.source.c_str());
+-            } catch (const std::exception &e) {
+-                qOhosPrintfWarning("%s: ArkTS LocalStorage hand-off (%s) threw: %s",
+-                                   callSite, handoff.source.c_str(), e.what());
+             }
++            LocalStorageDetail::clearPendingException(env, callSite);
++            qOhosPrintfWarning("%s: ArkTS LocalStorage hand-off (%s, %s) failed to produce an object",
++                               callSite, handoff.source.c_str(), handoff.mechanism.c_str());
+         }
+ 
+         if (handoff.instance && handoff.env == env) {
+             if (!handoff.instanceConsumed) {
+                 handoff.instanceConsumed = true;
+-                qOhosPrintfDebug("%s: using the LocalStorage instance handed over by ArkTS (%s)",
+-                                 callSite, handoff.source.c_str());
++                qOhosPrintfDebug("%s: using the LocalStorage instance handed over by ArkTS (%s, %s)",
++                                 callSite, handoff.source.c_str(),
++                                 handoff.mechanism.c_str());
+                 return handoff.instance->Value();
+             }
+             qOhosPrintfWarning(
+@@ -149,9 +479,11 @@ private:
+     {
+         napi_env env = nullptr;
+         std::shared_ptr<QNapi::Reference<QNapi::Function>> maker;
++        std::shared_ptr<QNapi::Reference<QNapi::Object>> makerReceiver;
+         std::shared_ptr<QNapi::Reference<QNapi::Object>> instance;
+         bool instanceConsumed = false;
+         std::string source;
++        std::string mechanism;
+     };
+ 
+     // Intentionally leaked: the persistent references must never be released after
+@@ -162,13 +494,34 @@ private:
+         return *handoff;
+     }
+ 
++    static std::string describeModulesFactoriesProperties(napi_env env,
++                                                          const QNapi::Object &appStartupObj)
++    {
++        if (!appStartupObj.Has("modulesFactories"))
++            return "absent";
++
++        QNapi::Value modulesFactoriesValue = appStartupObj.Get("modulesFactories");
++        if (!modulesFactoriesValue.IsObject())
++            return "<not an object>";
++
++        auto modulesFactories = QNapi::checkedCast<QNapi::Object>(modulesFactoriesValue);
++        return LocalStorageDetail::describePropertyNames(
++            LocalStorageDetail::enumeratePropertyNames(env, modulesFactories));
++    }
++
+     static bool adopt(Handoff &handoff, const QNapi::Value &candidate, const std::string &source)
+     {
+-        if (candidate.IsEmpty() || candidate.IsUndefined() || candidate.IsNull())
++        if (candidate.IsEmpty() || candidate.IsUndefined() || candidate.IsNull()) {
++            qOhosPrintfDebug("%s: hand-off '%s' is empty/undefined/null", Q_FUNC_INFO,
++                             source.c_str());
+             return false;
++        }
+ 
++        napi_env env = candidate.Env();
+         QNapi::Function maker;
++        QNapi::Object makerReceiver;
+         QNapi::Object instance;
++        std::string mechanism;
+ 
+         if (candidate.IsFunction()) {
+             auto function = QNapi::checkedCast<QNapi::Function>(candidate);
+@@ -180,34 +533,74 @@ private:
+                     auto probeObject = QNapi::checkedCast<QNapi::Object>(probeValue);
+                     maker = QNapi::getOptionalPropOrEmpty<QNapi::Function>(
+                         probeObject, "makeNewLocalStorage");
++                    if (!maker.IsEmpty()) {
++                        makerReceiver = probeObject;
++                        mechanism = "factory-interface:makeNewLocalStorage";
++                    }
+                 }
+             } catch (const std::exception &e) {
++                LocalStorageDetail::clearPendingException(env, "localStorageFactory probe");
+                 qOhosPrintfWarning("%s: probing the LocalStorage hand-off '%s' threw: %s",
+                                    Q_FUNC_INFO, source.c_str(), e.what());
+             }
+-            if (maker.IsEmpty())
++            if (maker.IsEmpty()) {
+                 maker = function;
++                mechanism = "factory";
++            }
+         } else if (candidate.IsObject()) {
+             auto object = QNapi::checkedCast<QNapi::Object>(candidate);
+-            maker = QNapi::getOptionalPropOrEmpty<QNapi::Function>(
++
++            auto optMaker = QNapi::getOptionalPropOrEmpty<QNapi::Function>(
+                 object, "makeNewLocalStorage");
+-            if (maker.IsEmpty() && object.Has("setOrCreate"))
++            if (!optMaker.IsEmpty()) {
++                maker = optMaker;
++                makerReceiver = object;
++                mechanism = "factory:makeNewLocalStorage";
++            } else if (object.Has("setOrCreate")) {
+                 instance = object;
++                mechanism = "instance:setOrCreate";
++            } else {
++                // Last resort: ArkTS may hide the bridge members behind closure/class
++                // objects that napi_has_named_property does not see.
++                auto hit = LocalStorageDetail::findByEnumeration(env, object, source);
++                if (hit.isValid()) {
++                    if (!hit.maker.IsEmpty()) {
++                        maker = hit.maker;
++                        makerReceiver = hit.makerReceiver;
++                        mechanism = "enumerated:" + hit.propName + " (" + hit.how + ")";
++                    } else {
++                        instance = hit.instance;
++                        mechanism = "enumerated:" + hit.propName + " (" + hit.how + ")";
++                    }
++                } else {
++                    const auto names = LocalStorageDetail::enumeratePropertyNames(env, object);
++                    qOhosPrintfWarning(
++                        "%s: hand-off '%s' exposed no LocalStorage API; properties: [%s]",
++                        Q_FUNC_INFO, source.c_str(),
++                        LocalStorageDetail::describePropertyNames(names).c_str());
++                }
++            }
+         }
+ 
+         if (maker.IsEmpty() && instance.IsEmpty())
+             return false;
+ 
+-        if (!maker.IsEmpty())
++        if (!maker.IsEmpty()) {
+             handoff.maker = std::make_shared<QNapi::Reference<QNapi::Function>>(
+                 QNapi::Reference<QNapi::Function>::makePersistentFrom(maker));
+-        else
++            if (!makerReceiver.IsEmpty()) {
++                handoff.makerReceiver = std::make_shared<QNapi::Reference<QNapi::Object>>(
++                    QNapi::Reference<QNapi::Object>::makePersistentFrom(makerReceiver));
++            }
++        } else {
+             handoff.instance = std::make_shared<QNapi::Reference<QNapi::Object>>(
+                 QNapi::Reference<QNapi::Object>::makePersistentFrom(instance));
++        }
+ 
+         handoff.source = source;
+-        qOhosPrintfDebug("%s: LocalStorage hand-off accepted from '%s' (%s)",
+-                         Q_FUNC_INFO, source.c_str(), handoff.maker ? "factory" : "instance");
++        handoff.mechanism = mechanism;
++        qOhosPrintfDebug("%s: LocalStorage hand-off accepted from '%s' (%s)", Q_FUNC_INFO,
++                         source.c_str(), mechanism.c_str());
+         return true;
+     }
+ };

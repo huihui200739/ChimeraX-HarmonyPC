@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-11-09",
+  "scope": "generic_libffi_dependency_only",
+  "version": "3.8.0",
+  "repository": "https://github.com/libffi/libffi",
+  "git_tag": "v3.8.0",
+  "git_tag_object": "c5da24920ba07a30a9e45e9dba27d7917cafb57a",
+  "git_commit": "12ffd1f9dc56fcea79d2f742f424301ae668d663",
+  "release_published_at": "2026-08-08T22:12:47Z",
+  "download_url": "https://github.com/libffi/libffi/releases/download/v3.8.0/libffi-3.8.0.tar.gz",
+  "archive": "build/downloads/libffi-3.8.0.tar.gz",
+  "download_sha256": "7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4",
+  "download_bytes": 1581626,
+  "checksum_kind": "GitHub_official_release_asset_digest_matched_local_SHA256",
+  "target_architecture": "aarch64-linux-ohos",
+  "upstream_readme_note": "README.md first line still says 3.7.1; configure package version must be checked separately",
+  "target_executed": false
+}

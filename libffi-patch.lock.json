@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "scope": "generic_libffi_target_identification_only",
+  "version": "3.8.0",
+  "patch": "patches/0003-libffi-ohos-triplet.patch",
+  "patch_sha256": "0208e82516156e906b0a76c77c4bb780e6a383eb1501cd30f30d1bf93f642e51",
+  "original_files": {
+    "config.sub": "deb02c26f43b2ea64276c9ede77ec0f53d08e6256710f3c0a12275712085c348"
+  },
+  "patched_files": {
+    "config.sub": "657581140d014d8d56f64ae0034c9ee4e970c6c224c4969e8a67429990c88cbe"
+  },
+  "note": "Recognizes linux-ohos without asserting GNU/libc ABI compatibility; no runtime behavior change"
+}

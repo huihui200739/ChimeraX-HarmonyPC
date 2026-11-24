@@ -1,0 +1,24 @@
+{
+  "audit_date": "2026-11-09",
+  "scope": "generic_CPython_platform_runtime_only",
+  "python_version": "3.11.18",
+  "repository": "https://github.com/python/cpython",
+  "git_tag": "v3.11.18",
+  "git_tag_object": "2f9ba98c40ef38e4fdd3875d686f6ba8deaef6ab",
+  "git_commit": "26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "download_url": "https://codeload.github.com/python/cpython/tar.gz/26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "download_sha256": "0c4539f499dcab2fd1441ccf3ec0912a47fbf2bb6bfa10fc43d4a9cd29f8207b",
+  "checksum_kind": "locally_recorded_GitHub_archive_not_python_org_release_archive",
+  "source_directory": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/cpython-26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "target_architecture": "aarch64-linux-ohos",
+  "source_acquisition_status": "source_acquired_and_version_checked",
+  "build_status_reference": "reports/cpython-local-2026-11-09.json",
+  "additional_build_profiles": {
+    "with-libffi": {
+      "report": "reports/cpython-local-with-libffi-2026-11-09.json",
+      "dependency_source_lock": "libffi-sources.lock.json",
+      "directory": "build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "target_tested": false
+    }
+  }
+}

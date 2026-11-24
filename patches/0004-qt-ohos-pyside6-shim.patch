@@ -1,0 +1,308 @@
+diff --git a/prereqs/qtshim/Qt/__init__.py b/prereqs/qtshim/Qt/__init__.py
+index 3f67a0d..2204424 100644
+--- a/prereqs/qtshim/Qt/__init__.py
++++ b/prereqs/qtshim/Qt/__init__.py
+@@ -40,27 +40,53 @@ more productive to use our own shim code.
+ 
+ """
+ 
+-# Choose between PyQt5 and PySide2
++import os
++import sys
++
++from .ohos import apply_platform_defaults as _apply_platform_defaults
++from .ohos import web_engine_enabled as _web_engine_enabled
++from .ohos import deployment_report, is_ohos
++
++# OpenHarmony: QT_QPA_PLATFORM=ohos and the QPA plugin path have to be in the
++# environment before the first QGuiApplication is constructed.  No-op on every
++# other platform.  See Qt/ohos.py for the full contract.
++_apply_platform_defaults()
++
++# Choose between PyQt6, PySide6, PyQt5 and PySide2
+ using_pyqt6 = using_pyqt5 = using_pyside2 = using_pyside6 = False
+ using_qt5 = using_qt6 = False
++_binding_import_errors = []
+ try:
+     import PyQt6
+     using_pyqt6 = True
+     using_qt6 = True
+-except ImportError:
++except ImportError as e:
++    _binding_import_errors.append('PyQt6: %s' % (e,))
+     try:
+         import PySide6
+         using_pyside6 = True
+         using_qt6 = True
+-    except ImportError:
++    except ImportError as e:
++        _binding_import_errors.append('PySide6: %s' % (e,))
+         try:
+             import PyQt5
+             using_pyqt5 = True
+             using_qt5 = True
+-        except ImportError:
+-            import PySide2
+-            using_pyside2 = True
+-            using_qt5 = True
++        except ImportError as e:
++            _binding_import_errors.append('PyQt5: %s' % (e,))
++            try:
++                import PySide2
++                using_pyside2 = True
++                using_qt5 = True
++            except ImportError as e:
++                _binding_import_errors.append('PySide2: %s' % (e,))
++
++if not (using_pyqt6 or using_pyside6 or using_pyqt5 or using_pyside2):
++    # Fail with the real reason instead of leaving an empty Qt namespace: every
++    # later ``from Qt.QtWidgets import QApplication`` otherwise only reports
++    # "cannot import name", which hides the cause.
++    raise ImportError('Qt shim: no Qt Python binding importable (tried PyQt6, '
++                      'PySide6, PyQt5, PySide2): %s' % '; '.join(_binding_import_errors))
+ 
+ import enum
+ qt_enum_as_int = lambda val: val if isinstance(val, int) else val.value
+@@ -128,6 +154,10 @@ if using_pyside6:
+     qt_enum_from_int = lambda enum_class, val: val.value if isinstance(val, enum.Enum) else val
+ 
+ def qt_have_web_engine():
++    # Qt WebEngine is not part of the Qt for HarmonyOS build; there the shim
++    # contract is "False and no exception", so don't touch the import machinery.
++    if not _web_engine_enabled():
++        return False
+     try:
+         from . import QtWebEngineWidgets
+     except Exception:
+diff --git a/prereqs/qtshim/Qt/ohos.py b/prereqs/qtshim/Qt/ohos.py
+new file mode 100644
+index 0000000..6df4567
+--- /dev/null
++++ b/prereqs/qtshim/Qt/ohos.py
+@@ -0,0 +1,193 @@
++# vim: set expandtab ts=4 sw=4:
++
++# === UCSF ChimeraX Copyright ===
++# Copyright 2016 Regents of the University of California.
++# All rights reserved.  This software provided pursuant to a
++# license agreement containing restrictions on its disclosure,
++# duplication and use.  For details see:
++# http://www.rbvi.ucsf.edu/chimerax/docs/licensing.html
++# This notice must be embedded in or attached to all copies,
++# including partial copies, of the software or any revisions
++# or derivations thereof.
++# === UCSF ChimeraX Copyright ===
++
++"""OpenHarmony / HarmonyOS PC platform glue for the Qt shim.
++
++ChimeraX on OpenHarmony runs against the official Qt for HarmonyOS build
++(``libqohos.so`` QPA plugin, ``ohos`` platform name).  Three things have to be
++true before a ``QApplication`` can be created on that platform, and all three
++are resolved here so that application code (``ui.gui.UI``) needs no change:
++
++1. ``QT_QPA_PLATFORM`` must be ``ohos``.  The plugin is only built for
++   HarmonyOS and Qt refuses to start with the default ``xcb``/``cocoa`` probe.
++2. ``QT_PLUGIN_PATH`` (and ``QT_QPA_PLATFORM_PLUGIN_PATH``) must point at a
++   directory whose ``platforms/`` subdirectory contains ``libqohos.so``.
++3. Qt WebEngine is not part of the HarmonyOS Qt build, so
++   ``Qt.qt_have_web_engine()`` has to answer ``False`` without ever attempting
++   ``import PySide6.QtWebEngineWidgets``.  A failed import is harmless but it
++   is slow (shiboken binding lookup per call) and on a stripped deployment it
++   also prints a traceback to stderr, which makes the ChimeraX logger noisy.
++
++Environment variables understood here (all optional):
++
++``CHIMERAX_QT_PLATFORM``
++    ``ohos`` forces OHOS mode even when ``sys.platform`` says otherwise
++    (useful for staging / host-side smoke tests); ``none`` disables it.
++``CHIMERAX_QT_PLUGIN_ROOT``
++    Directory that *contains* ``platforms/libqohos.so``.  Highest priority
++    when looking for the QPA plugin tree.
++``CHIMERAX_QT_NO_WEBENGINE``
++    ``1``/``0`` force the WebEngine answer instead of auto-detecting.
++``CHIMERAX_QT_OHOS_DEBUG``
++    ``1`` prints the decisions taken by :func:`apply_platform_defaults`.
++
++This module is imported from ``Qt/__init__.py`` *before* any binding is
++imported, because ``QT_PLUGIN_PATH`` has to be in the environment by the time
++the first ``QGuiApplication`` is constructed.
++"""
++
++import os
++import sys
++
++# Names of the environment variables we touch.
++ENV_QPA_PLATFORM = 'QT_QPA_PLATFORM'
++ENV_PLUGIN_PATH = 'QT_PLUGIN_PATH'
++ENV_QPA_PLUGIN_PATH = 'QT_QPA_PLATFORM_PLUGIN_PATH'
++ENV_PLUGIN_ROOT = 'CHIMERAX_QT_PLUGIN_ROOT'
++ENV_PLATFORM_OVERRIDE = 'CHIMERAX_QT_PLATFORM'
++ENV_NO_WEBENGINE = 'CHIMERAX_QT_NO_WEBENGINE'
++ENV_DEBUG = 'CHIMERAX_QT_OHOS_DEBUG'
++
++OHOS_QPA_PLATFORM = 'ohos'
++PLUGIN_SUBDIR = 'platforms'
++PLUGIN_LIBRARY = 'libqohos.so'
++
++#: Set to True by :func:`apply_platform_defaults` on platforms where the QPA
++#: plugin was actually located; left False when we only guessed.
++plugin_root = None
++#: Human readable records of what happened, consumed by the deployment report.
++diagnostics = []
++
++
++def _debug(message):
++    diagnostics.append(message)
++    if os.environ.get(ENV_DEBUG) == '1':
++        sys.stderr.write('[Qt.ohos] %s\n' % message)
++
++
++def is_ohos():
++    """Return True when the current interpreter targets OpenHarmony.
++
++    Our cross-compiled CPython is configured for the ``aarch64-linux-ohos``
++    triplet, so ``sys.platform`` is ``linux-ohos``.  ``CHIMERAX_QT_PLATFORM``
++    lets staging scripts opt in or out explicitly.
++    """
++    override = (os.environ.get(ENV_PLATFORM_OVERRIDE) or '').strip().lower()
++    if override:
++        return override == OHOS_QPA_PLATFORM
++    platform = (sys.platform or '').lower()
++    return 'ohos' in platform or 'harmony' in platform
++
++
++def _plugin_candidates():
++    """Directories that may contain ``platforms/libqohos.so``, best first."""
++    seen = []
++    def add(path):
++        if not path:
++            return
++        path = os.path.abspath(path)
++        if path not in seen:
++            seen.append(path)
++    add(os.environ.get(ENV_PLUGIN_ROOT))
++    for variable in ('LD_LIBRARY_PATH', 'QT_PLUGIN_PATH'):
++        for entry in (os.environ.get(variable) or '').split(os.pathsep):
++            add(entry)
++    # Deployed application layout: <app>/libs/arm64-v8a next to the Python
++    # tree, with the PySide6 package sitting in <site-packages>/PySide6.
++    package_dir = os.path.dirname(os.path.abspath(__file__))
++    site_packages = os.path.dirname(package_dir)
++    add(os.path.join(site_packages, 'lib'))
++    add(os.path.join(os.path.dirname(site_packages), 'libs'))
++    add(os.path.dirname(site_packages))
++    add(os.getcwd())
++    return seen
++
++
++def find_plugin_root():
++    """Return the first candidate holding ``platforms/libqohos.so``."""
++    for candidate in _plugin_candidates():
++        if os.path.isfile(os.path.join(candidate, PLUGIN_SUBDIR, PLUGIN_LIBRARY)):
++            return candidate
++    return None
++
++
++def _append_path(variable, value):
++    current = os.environ.get(variable) or ''
++    parts = [p for p in current.split(os.pathsep) if p]
++    if value not in parts:
++        parts.insert(0, value)
++        os.environ[variable] = os.pathsep.join(parts)
++        _debug('%s += %s' % (variable, value))
++
++
++def apply_platform_defaults(force=None):
++    """Install the OHOS Qt defaults into ``os.environ`` (idempotent).
++
++    ``force`` is only used by tests: ``True``/``False`` overrides the platform
++    detection.  Existing user values are never overwritten, so an operator can
++    still pin a different platform (``QT_QPA_PLATFORM=minimal`` for debugging).
++    """
++    platform_is_ohos = is_ohos() if force is None else bool(force)
++    if not platform_is_ohos:
++        _debug('not OpenHarmony (%s); leaving Qt environment alone' % sys.platform)
++        return False
++
++    global plugin_root
++    plugin_root = find_plugin_root()
++    if plugin_root is None:
++        _debug('libqohos.so not found in any candidate: %s'
++               % ', '.join(_plugin_candidates()))
++    else:
++        _debug('QPA plugin root: %s' % plugin_root)
++        _append_path(ENV_PLUGIN_PATH, plugin_root)
++        _append_path(ENV_QPA_PLUGIN_PATH, os.path.join(plugin_root, PLUGIN_SUBDIR))
++
++    if not (os.environ.get(ENV_QPA_PLATFORM) or '').strip():
++        os.environ[ENV_QPA_PLATFORM] = OHOS_QPA_PLATFORM
++        _debug('%s = %s' % (ENV_QPA_PLATFORM, OHOS_QPA_PLATFORM))
++    else:
++        _debug('%s kept as %s' % (ENV_QPA_PLATFORM, os.environ[ENV_QPA_PLATFORM]))
++    return True
++
++
++def web_engine_enabled():
++    """Whether ``Qt.QtWebEngineWidgets`` should be probed at all.
++
++    Qt WebEngine does not exist in the Qt for HarmonyOS build, so on OHOS the
++    answer is ``False`` without touching the import machinery.
++    """
++    override = (os.environ.get(ENV_NO_WEBENGINE) or '').strip()
++    if override in ('1', 'true', 'True', 'yes'):
++        _debug('QtWebEngine disabled by %s' % ENV_NO_WEBENGINE)
++        return False
++    if override in ('0', 'false', 'False', 'no'):
++        return True
++    if is_ohos():
++        _debug('QtWebEngine unavailable on OpenHarmony')
++        return False
++    return True
++
++
++def deployment_report():
++    """Machine readable snapshot for ``reports/qtshim-*.json``."""
++    return {
++        'sys.platform': sys.platform,
++        'is_ohos': is_ohos(),
++        'plugin_root': plugin_root,
++        'plugin_candidates': _plugin_candidates(),
++        'QT_QPA_PLATFORM': os.environ.get(ENV_QPA_PLATFORM),
++        'QT_PLUGIN_PATH': os.environ.get(ENV_PLUGIN_PATH),
++        'QT_QPA_PLATFORM_PLUGIN_PATH': os.environ.get(ENV_QPA_PLUGIN_PATH),
++        'web_engine_enabled': web_engine_enabled(),
++        'diagnostics': list(diagnostics),
++    }
+diff --git a/prereqs/qtshim/Qt/promote_enums.py b/prereqs/qtshim/Qt/promote_enums.py
+index 921e831..aca61e7 100644
+--- a/prereqs/qtshim/Qt/promote_enums.py
++++ b/prereqs/qtshim/Qt/promote_enums.py
+@@ -23,7 +23,12 @@ def promote_enums_pyqt(module):
+             if not isinstance(attrib, EnumMeta):
+                 continue
+             for name, value in attrib.__members__.items():
+-                setattr(klass, name, value)
++                try:
++                    setattr(klass, name, value)
++                except (AttributeError, TypeError):
++                    # Shiboken wrapper types are not always writable; skipping
++                    # one alias must not abort the whole shim import.
++                    pass
+ 
+ def promote_enums_pyside(module):
+     """
+@@ -32,7 +37,13 @@ def promote_enums_pyside(module):
+     """
+     from PySide6 import QtWidgets
+     wrappertype = type(QtWidgets.QWidget)
+-    from enum import EnumType
++    try:
++        from enum import EnumType
++    except ImportError:
++        # Python < 3.12: enum.EnumType does not exist yet, EnumMeta is the
++        # metaclass by that name (CPython 3.11 is what ChimeraX on OpenHarmony
++        # ships, so this branch is the normal one there).
++        from enum import EnumMeta as EnumType
+     class_names = [name for name in dir(module) if name.startswith('Q')]
+     for class_name in class_names:
+         klass = getattr(module, class_name)

@@ -1,0 +1,280 @@
+diff --git a/src/plugins/platforms/ohos/qohosjsmain.cpp b/src/plugins/platforms/ohos/qohosjsmain.cpp
+index 7c546b1..a78917c 100644
+--- a/src/plugins/platforms/ohos/qohosjsmain.cpp
++++ b/src/plugins/platforms/ohos/qohosjsmain.cpp
+@@ -55,6 +55,7 @@
+ #include "qohoseventdispatcher.h"
+ #include "qohosinputcontext.h"
+ #include "qohosjsutils.h"
++#include "qohoslocalstorageprovider.h"
+ #include "qohosnouichildprocess.h"
+ #include "qohosplatformintegration.h"
+ #include "qohosplatformwindow.h"
+@@ -1319,7 +1320,7 @@ void loadWindowStageContentPage(JsState &jsState, QNapi::Object &qAbility, const
+     auto qAbilityRef = moveToSharedPtr(QNapi::Reference<>::makePersistentFrom(qAbility));
+     auto windowStageRef = moveToSharedPtr(QNapi::Reference<>::makePersistentFrom(windowStage));
+ 
+-    auto localStorage = jsState.eval<QNapi::Object>("LocalStorage.makeNewLocalStorage()");
++    auto localStorage = QtOhos::LocalStorageProvider::makeNewLocalStorage(jsState, Q_FUNC_INFO);
+     localStorage.eval(
+         "setOrCreate(*)",
+         {
+@@ -1637,6 +1638,12 @@ void setupQtApplicationImpl(JsState &jsState, QNapi::Object appStartupObj, QtRun
+ 
+     auto jsModulesFactories = appStartupObj.get<QNapi::Object>("modulesFactories");
+ 
++    // Resolve the LocalStorage source handed over by ArkTS once, so that neither the
++    // main window page nor the window proxy paths have to evaluate
++    // "LocalStorage.makeNewLocalStorage()" (rejected by the ability JS state's
++    // module-path expression evaluator).
++    QtOhos::LocalStorageProvider::initFromAppStartupObject(jsState, appStartupObj);
++
+     qOhosPrintfDebug("%s: setting up Qt in %s mode", Q_FUNC_INFO, mapQtRunModeToString(qtRunMode));
+ 
+     getQAbilityInstancesManagerPtr() =
+diff --git a/src/plugins/platforms/ohos/qohoslocalstorageprovider.h b/src/plugins/platforms/ohos/qohoslocalstorageprovider.h
+new file mode 100644
+index 0000000..329c375
+--- /dev/null
++++ b/src/plugins/platforms/ohos/qohoslocalstorageprovider.h
+@@ -0,0 +1,219 @@
++// Copyright (C) 2025 The Qt Company Ltd.
++// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++
++#ifndef QOHOSLOCALSTORAGEPROVIDER_H
++#define QOHOSLOCALSTORAGEPROVIDER_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++// ArkTS hands a LocalStorage source over to C++ during setupQtApplication().
++// It is resolved once, by name, without any script evaluation:
++//
++//   * appStartupObj.localStorageFactory  - function returning a LocalStorage
++//                                          instance (or the module interface that
++//                                          exposes makeNewLocalStorage)
++//   * appStartupObj.localStorage         - ready-made LocalStorage instance
++//   * appStartupObj.modulesFactories.LocalStorage
++//                                        - Qt's own ArkTS template contract
++//                                          (QtUtils.getModulesFactoriesMapForQt()),
++//                                          a module factory whose result exposes
++//                                          makeNewLocalStorage()
++//
++// The resolved callable is then invoked as a plain napi function call, which works
++// on the ability JS state where the module-path based expression evaluator used to
++// reject "LocalStorage.makeNewLocalStorage()" with
++// "global expression doesn't start with known module path".
++
++#include <QtCore/private/qnapi_p.h>
++#include <QtCore/private/qohoslogger_p.h>
++#include <QtCore/qglobal.h>
++
++#include <exception>
++#include <memory>
++#include <string>
++
++#include <qohosplugincore.h>
++
++QT_BEGIN_NAMESPACE
++
++namespace QtOhos {
++
++class LocalStorageProvider
++{
++public:
++    // Resolves and remembers the ArkTS hand-off. Must run in the JS thread, with a
++    // live napi environment. Subsequent calls are no-ops.
++    static void initFromAppStartupObject(JsState &jsState, const QNapi::Object &appStartupObj)
++    {
++        auto &handoff = state();
++        if (handoff.maker || handoff.instance)
++            return;
++
++        napi_env env = jsState.env();
++        if (!env)
++            return;
++
++        Napi::HandleScope handleScope{env};
++        handoff.env = env;
++
++        static const char *const directPropNames[] = { "localStorageFactory", "localStorage" };
++        for (const char *propName : directPropNames) {
++            if (!appStartupObj.Has(propName))
++                continue;
++            if (adopt(handoff, appStartupObj.Get(propName), propName))
++                return;
++        }
++
++        // Qt's ArkTS template (and this app's QtUtils) already exposes a "LocalStorage"
++        // module factory. Read the property by name instead of evaluating an expression.
++        if (appStartupObj.Has("modulesFactories")) {
++            QNapi::Value modulesFactoriesValue = appStartupObj.Get("modulesFactories");
++            if (modulesFactoriesValue.IsObject()) {
++                auto modulesFactories = QNapi::checkedCast<QNapi::Object>(modulesFactoriesValue);
++                if (modulesFactories.Has("LocalStorage")
++                    && adopt(handoff, modulesFactories.Get("LocalStorage"),
++                             "modulesFactories.LocalStorage")) {
++                    return;
++                }
++            }
++        }
++
++        qOhosPrintfWarning(
++            "%s: ArkTS provided no usable LocalStorage hand-off "
++            "(checked appStartupObj.{localStorageFactory,localStorage,modulesFactories.LocalStorage}); "
++            "the plugin will fall back to script evaluation, which is known to fail on this runtime",
++            Q_FUNC_INFO);
++    }
++
++    static bool isAvailable()
++    {
++        const auto &handoff = state();
++        return handoff.maker || handoff.instance;
++    }
++
++    // Returns a fresh LocalStorage instance. Falls back to the legacy script
++    // evaluation only when ArkTS provided nothing usable.
++    static QNapi::Object makeNewLocalStorage(JsState &jsState, const char *callSite)
++    {
++        auto &handoff = state();
++        napi_env env = jsState.env();
++        Napi::HandleScope handleScope{env};
++
++        if (handoff.maker && handoff.env == env) {
++            try {
++                QNapi::Value value = handoff.maker->Value().Call({});
++                if (value.IsObject()) {
++                    qOhosPrintfDebug("%s: created LocalStorage via ArkTS hand-off (%s)",
++                                     callSite, handoff.source.c_str());
++                    return QNapi::checkedCast<QNapi::Object>(value);
++                }
++                qOhosPrintfWarning("%s: ArkTS LocalStorage hand-off (%s) returned a non-object",
++                                   callSite, handoff.source.c_str());
++            } catch (const std::exception &e) {
++                qOhosPrintfWarning("%s: ArkTS LocalStorage hand-off (%s) threw: %s",
++                                   callSite, handoff.source.c_str(), e.what());
++            }
++        }
++
++        if (handoff.instance && handoff.env == env) {
++            if (!handoff.instanceConsumed) {
++                handoff.instanceConsumed = true;
++                qOhosPrintfDebug("%s: using the LocalStorage instance handed over by ArkTS (%s)",
++                                 callSite, handoff.source.c_str());
++                return handoff.instance->Value();
++            }
++            qOhosPrintfWarning(
++                "%s: ArkTS handed over a single LocalStorage instance (%s) which is already in use; "
++                "a fresh instance is required here",
++                callSite, handoff.source.c_str());
++        }
++
++        qOhosPrintfWarning(
++            "%s: falling back to script evaluation of "
++            "\"LocalStorage.makeNewLocalStorage()\"; pass it from ArkTS to avoid this path",
++            callSite);
++        return jsState.eval<QNapi::Object>("LocalStorage.makeNewLocalStorage()");
++    }
++
++private:
++    struct Handoff
++    {
++        napi_env env = nullptr;
++        std::shared_ptr<QNapi::Reference<QNapi::Function>> maker;
++        std::shared_ptr<QNapi::Reference<QNapi::Object>> instance;
++        bool instanceConsumed = false;
++        std::string source;
++    };
++
++    // Intentionally leaked: the persistent references must never be released after
++    // the napi environment they belong to has been torn down.
++    static Handoff &state()
++    {
++        static Handoff *handoff = new Handoff;
++        return *handoff;
++    }
++
++    static bool adopt(Handoff &handoff, const QNapi::Value &candidate, const std::string &source)
++    {
++        if (candidate.IsEmpty() || candidate.IsUndefined() || candidate.IsNull())
++            return false;
++
++        QNapi::Function maker;
++        QNapi::Object instance;
++
++        if (candidate.IsFunction()) {
++            auto function = QNapi::checkedCast<QNapi::Function>(candidate);
++            // The hand-off can be the maker itself ("() => LocalStorage.makeNewLocalStorage()")
++            // or a module factory returning an interface object that exposes the maker.
++            try {
++                QNapi::Value probeValue = function.Call({});
++                if (probeValue.IsObject()) {
++                    auto probeObject = QNapi::checkedCast<QNapi::Object>(probeValue);
++                    maker = QNapi::getOptionalPropOrEmpty<QNapi::Function>(
++                        probeObject, "makeNewLocalStorage");
++                }
++            } catch (const std::exception &e) {
++                qOhosPrintfWarning("%s: probing the LocalStorage hand-off '%s' threw: %s",
++                                   Q_FUNC_INFO, source.c_str(), e.what());
++            }
++            if (maker.IsEmpty())
++                maker = function;
++        } else if (candidate.IsObject()) {
++            auto object = QNapi::checkedCast<QNapi::Object>(candidate);
++            maker = QNapi::getOptionalPropOrEmpty<QNapi::Function>(
++                object, "makeNewLocalStorage");
++            if (maker.IsEmpty() && object.Has("setOrCreate"))
++                instance = object;
++        }
++
++        if (maker.IsEmpty() && instance.IsEmpty())
++            return false;
++
++        if (!maker.IsEmpty())
++            handoff.maker = std::make_shared<QNapi::Reference<QNapi::Function>>(
++                QNapi::Reference<QNapi::Function>::makePersistentFrom(maker));
++        else
++            handoff.instance = std::make_shared<QNapi::Reference<QNapi::Object>>(
++                QNapi::Reference<QNapi::Object>::makePersistentFrom(instance));
++
++        handoff.source = source;
++        qOhosPrintfDebug("%s: LocalStorage hand-off accepted from '%s' (%s)",
++                         Q_FUNC_INFO, source.c_str(), handoff.maker ? "factory" : "instance");
++        return true;
++    }
++};
++
++} // namespace QtOhos
++
++QT_END_NAMESPACE
++
++#endif // QOHOSLOCALSTORAGEPROVIDER_H
+diff --git a/src/plugins/platforms/ohos/render/qohoswindowproxydatafactory.cpp b/src/plugins/platforms/ohos/render/qohoswindowproxydatafactory.cpp
+index 76ef4ac..486ff9a 100644
+--- a/src/plugins/platforms/ohos/render/qohoswindowproxydatafactory.cpp
++++ b/src/plugins/platforms/ohos/render/qohoswindowproxydatafactory.cpp
+@@ -6,6 +6,7 @@
+ #include <QtCore/qscopeguard.h>
+ #include <cstdint>
+ #include <qarkui/qxcomponentregistry.h>
++#include <qohoslocalstorageprovider.h>
+ #include <qohosutils.h>
+ #include <render/qohoswindowproxy.h>
+ #include <render/qxcomponent.h>
+@@ -85,7 +86,7 @@ QXComponentNode takeNodeXComponentFromRegistryOrFail(const QXComponentId &xCompo
+ 
+ QNapi::Object makeLocalStorage(QtOhos::JsState &jsState)
+ {
+-    return jsState.eval<QNapi::Object>("LocalStorage.makeNewLocalStorage()");
++    return QtOhos::LocalStorageProvider::makeNewLocalStorage(jsState, Q_FUNC_INFO);
+ }
+ 
+ QNapi::Object makeRectObject(Napi::Env env, const QRect &rect)
