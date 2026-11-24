@@ -53,8 +53,8 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **50/50 全部通过**（`app_runtime_verified`），本地测试 **137** 个用例；
-  覆盖：官方渲染出几何、模型/结构信息/体积表面/日志四个面板、命令行补全、选择管理器与可见高亮、
+- [上一版设备验收](https://github.com/huihui200739/ChimeraX-HarmonyPC/blob/eb3320234285413a1423caa246e08363b6a4553c/reports/device-app-2026-11-24.json) **50/50 通过**；当前 HAP 构建成功，但模拟器提示空间不足，未能安装，PDB 结构导出尚未对该包完成设备验收。详见 [最新设备记录](reports/device-app-2026-11-24.json)。
+  上一版覆盖：官方渲染出几何、模型/结构信息/体积表面/日志四个面板、命令行补全、选择管理器与可见高亮、
   显示切换、PNG 导出、mmCIF 读取、体积等值面、mlp/coulombic/morph/rmsd/align/zone 命令
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、
   `_dssp`、`_cs`、`_msa3d`、`_nw`、`_sw`、`ast`、`_surface`、`_profile_grids`

@@ -42,6 +42,17 @@ def main() -> int:
                        *(bundles / 'pdb/pdb_cpp').glob('*.cpp')],
         'mmcif/_mmcif': [*(bundles / 'mmcif/mmcif_cpp').glob('*.cpp')],
     }
+    # The PDB writer guards attribute reads with catch (pyinstance::PyAttrError&), but this build of
+    # libcxatomstruct throws pyinstance::NoPyAttrError, which that catch does not match, so the
+    # exception escapes and aborts the process. Widening the catch keeps the writer's own fallbacks.
+    for _cpp in list((bundles / 'pdb/pdbio_cpp').glob('*.cpp')):
+        _text = _cpp.read_text()
+        if 'CX_CATCHALL' not in _text and 'catch (pyinstance::PyAttrError&)' in _text:
+            _text = _text.replace('catch (pyinstance::PyAttrError&)', 'catch (...)')
+            _text = ('// CX_CATCHALL: widened from pyinstance::PyAttrError to catch-all; this build\n'
+                     '// throws NoPyAttrError, which escaped the original handler and aborted.\n'
+                     + _text)
+            _cpp.write_text(_text)
     includes = [
         args.cpython / 'source/Include', args.cpython / 'objects',
         args.packages / 'numpy/core/include',
@@ -58,11 +69,17 @@ def main() -> int:
                 raise RuntimeError(f'no C++ sources found for {module}')
             target = args.packages / 'chimerax' / (module + '.' + SUFFIX)
             target.parent.mkdir(parents=True, exist_ok=True)
+            # The shared support library ships as an app native library, not in the payload.
+            shared_lib_dir = args.packages / 'chimerax/lib'
+            if not (shared_lib_dir / 'libcxatomstruct.so').is_file():
+                candidate = ROOT / 'app/entry/libs/arm64-v8a/chimerax/lib'
+                if (candidate / 'libcxatomstruct.so').is_file():
+                    shared_lib_dir = candidate
             command = [str(clang), f'--target={TRIPLE}', f'--sysroot={args.sdk / "sysroot"}',
                        '-std=c++11', '-O2', '-fPIC', '-shared', '-w',
                        *[f'-I{path}' for path in includes],
                        '-o', str(target), *[str(path) for path in sources],
-                       f'-L{args.packages / "chimerax/lib"}', '-lcxatomstruct',
+                       f'-L{shared_lib_dir}', '-lcxatomstruct',
                        f'-L{args.cpython / "runtime/lib"}', '-l:libpython3.11.so.1.0',
                        '-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib']
             built = subprocess.run(command, capture_output=True, text=True)

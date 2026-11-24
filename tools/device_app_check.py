@@ -94,7 +94,13 @@ def main() -> int:
 
     try:
         install = run(hdc + ['install', '-r', str(args.hap)], timeout=600)
-        record('HAP installs', install.returncode == 0, (install.stdout + install.stderr)[-300:])
+        install_output = install.stdout + install.stderr
+        installed = (install.returncode == 0
+                     and 'install bundle successfully' in install_output.lower()
+                     and 'error:' not in install_output.lower())
+        record('HAP installs', installed, install_output[-300:])
+        if not installed:
+            raise RuntimeError('HAP installation not confirmed; refusing to test a previously installed build')
         run(hdc + ['shell', 'aa', 'force-stop', BUNDLE])
         start = run(hdc + ['shell', 'aa', 'start', '-a', 'EntryAbility', '-b', BUNDLE])
         record('Application starts', start.returncode == 0, (start.stdout + start.stderr)[-200:])
@@ -268,6 +274,12 @@ def main() -> int:
                'chains=' in seq_text and re.search(r'[A-Za-z?_-]:\d+', seq_text) is not None,
                seq_text[:70])
 
+        # Structure export: the save command must write a nontrivial PDB file.
+        save_match = re.search(r'save=(\d+)', cx_render)
+        record('Structures can be saved to a PDB file',
+               save_match is not None and int(save_match.group(1)) > 1000,
+               'save=%s' % (save_match.group(1) if save_match else 'none'))
+
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))
 
@@ -376,7 +388,8 @@ def main() -> int:
 
     passed = sum(1 for item in report['checks'] if item['passed'])
     report['result'] = {'passed': passed, 'failed': len(report['checks']) - passed}
-    report['status'] = 'app_runtime_verified' if report['checks'] and passed == len(report['checks']) else 'app_runtime_incomplete'
+    verified = bool(report['checks']) and passed == len(report['checks']) and 'error' not in report
+    report['status'] = 'app_runtime_verified' if verified else 'app_runtime_incomplete'
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps(report['result'], ensure_ascii=False), report['status'], report_path)

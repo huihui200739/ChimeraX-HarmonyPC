@@ -4,8 +4,8 @@
 
 ## 一、环境
 
-> **最新验收（自动更新）**：设备断言 **50/50 全部通过**（`app_runtime_verified`）、本地单测 **137 OK**、
-> payload **5767** 文件、HAP ≈158 MB。收据：`reports/device-app-2026-11-23.json`。
+> **当前 HAP（2026-11-24）**：构建成功；模拟器安装因空间不足（9568288）失败，未继续验收。
+> [本次设备记录](../reports/device-app-2026-11-24.json) · [上一版设备记录](https://github.com/huihui200739/ChimeraX-HarmonyPC/blob/eb3320234285413a1423caa246e08363b6a4553c/reports/device-app-2026-11-24.json)（50/50）。
 
 
 | 项 | 值 |
@@ -20,8 +20,8 @@
 ## 二、验证方式
 
 ```bash
-python3 -m unittest discover -s tests      # 137 个本地用例
-python3 tools/device_app_check.py         # 50 项设备断言（当前全部通过），收据写入 reports/
+python3 -m unittest discover -s tests     # 本地测试
+python3 tools/device_app_check.py         # 安装并运行设备断言，收据写入 reports/
 bash scripts/verify.sh                    # 以上两件事的封装（加构建）
 ```
 

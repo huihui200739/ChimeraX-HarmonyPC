@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'f416370e0258';
+const RUNTIME_TAG = 'dec0db8c2499';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -1440,6 +1440,19 @@ def adopt_and_render(display_ptr, context_ptr, surface_ptr):
                 _cached.shape[1], _cached.shape[0], _lit, len(_flat),
                 _cx_b64.b64encode(_cached.astype("uint8").tobytes()).decode())
             notes.append("cached=%d/%d" % (_lit, len(_flat)))
+            # Structure export through the save command (the PDB writer now catches all attribute
+            # exceptions, which used to abort the process).
+            try:
+                import os as _sv_os
+                from chimerax.core.commands import run as _sv_run
+                _sv_path = _sv_os.path.join("/data/storage/el2/base/haps/entry/files", "cx_export.pdb")
+                try:
+                    _sv_run(session, 'save "%s" #3 format pdb' % _sv_path)
+                    notes.append("save=%d" % _sv_os.path.getsize(_sv_path))
+                except BaseException as _sv_one:
+                    notes.append("save:" + type(_sv_one).__name__ + ":" + str(_sv_one)[:40])
+            except BaseException as _sv_error:
+                notes.append("save-setup:" + type(_sv_error).__name__)
             # mmCIF reading: the other format a desktop user opens constantly.
             try:
                 _cif_path = "/data/storage/el2/base/haps/entry/files/cx_probe.cif"
