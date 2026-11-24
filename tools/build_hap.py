@@ -36,7 +36,7 @@ def main() -> int:
     parser.add_argument('--keep-stage', action='store_true')
     args = parser.parse_args()
     day = datetime.now(timezone.utc).date().isoformat()
-    report_path = args.report or ROOT / f'reports/hap-build-{day}.json'
+    report_path = args.report or ROOT / f'build/reports/hap-build-{day}.json'
     report: dict = {'schema_version': 1, 'created_at_utc': datetime.now(timezone.utc).isoformat(),
                     'scope': 'harmony_app_entry_build', 'steps': []}
     stage = Path(tempfile.mkdtemp(prefix='cx-hap-', dir='/tmp')) / 'app'

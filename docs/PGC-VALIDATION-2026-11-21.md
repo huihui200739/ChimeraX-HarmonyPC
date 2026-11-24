@@ -1,71 +1,36 @@
-# PGC 验证记录（2026-11-21）
+# OpenHarmony PC 适配验收记录
 
-本文件记录当前可交付形态的能力边界与验证方式，供验收方核对。
+## 当前构建（2026-11-24）
 
-## 一、环境
+| 项目 | 记录 |
+| --- | --- |
+| 适配代码基线 | [`ca3330c`](https://github.com/huihui200739/ChimeraX-HarmonyPC/commit/ca3330cfb285c1710dc8b1d7226a8a60f42f9694) |
+| 上游与运行时 | ChimeraX v1.11.1（`60235d3`），CPython 3.11.18；运行时归档标签 `dec0db8c2499` |
+| 环境 | OpenHarmony 6.1.1 / API 24，aarch64 2-in-1 模拟器，`127.0.0.1:5555` |
+| HAP | `entry-default-unsigned.hap`，158658072 字节 |
+| HAP SHA-256 | `aa7f9a5d8a9df6b2663584d09d33f96c95ecee4236a50181df0f270d55b7d112` |
+| 结果 | 构建成功；模拟器安装返回空间不足 `9568288`。后续 UI 断言未执行，不能判定当前包通过。 |
 
-> **当前 HAP（2026-11-24）**：构建成功；模拟器安装因空间不足（9568288）失败，未继续验收。
-> [本次设备记录](../reports/device-app-2026-11-24.json) · [上一版设备记录](https://github.com/huihui200739/ChimeraX-HarmonyPC/blob/eb3320234285413a1423caa246e08363b6a4553c/reports/device-app-2026-11-24.json)（50/50）。
+证据：[运行时归档](../reports/app-runtime-2026-11-24.json) · [构建记录](../reports/hap-build-2026-11-24.json) · [设备记录](../reports/device-app-2026-11-24.json)。
 
+## 上一版模拟器验收
 
-| 项 | 值 |
-|---|---|
-| 设备 | HarmonyOS PC 模拟器（2in1，aarch64），`127.0.0.1:5555` |
-| 系统 | OpenHarmony 6.1.1 / API 24 |
-| 上游 | UCSF ChimeraX v1.11.1（`60235d3`） |
-| 引擎 | 私有 CPython 3.11.18（`Clang 15.0.4` 构建） |
-| 包名 | `com.example.chimeraxharmony` |
-| HAP | `build/hap/entry-default-unsigned.hap` ≈155 MB |
+[`eb33202` 的历史设备记录](https://github.com/huihui200739/ChimeraX-HarmonyPC/blob/eb3320234285413a1423caa246e08363b6a4553c/reports/device-app-2026-11-24.json)记载 **50/50**。覆盖运行时启动、结构读取、官方渲染、密度等值面、选择高亮、PNG 导出和几项面板与命令。`_surface` 耳切封盖探针中，正方形返回两个三角形；这不等于任意输入均已验证。
 
-## 二、验证方式
+[界面截图](../reports/viewport-protein-density-v2-2026-11-24.jpeg)是 2026-11-24 的历史示例，展示 ArkUI 界面、蛋白卡通和密度面；未作为当前 HAP 的验收证据。
+
+## 尚未验证
+
+- 当前 HAP 的 PDB `save` 导出：代码和原生库已更新，需安装同一构建后复验。
+- Qt 原生窗口：运行时拒绝 Qt 插件所需的 JS 求值，参见 [Qt 限制记录](qt-status-2026-11-18-final.md)。
+- 未完成实体鸿蒙 PC 验收或全量桌面插件、命令兼容性验证。
+
+## 复验
 
 ```bash
-python3 -m unittest discover -s tests     # 本地测试
-python3 tools/device_app_check.py         # 安装并运行设备断言，收据写入 reports/
-bash scripts/verify.sh                    # 以上两件事的封装（加构建）
+bash scripts/verify.sh --local
+bash scripts/verify.sh --build-only
+python3 tools/device_app_check.py --target 127.0.0.1:5555
 ```
 
-## 三、通过项（设备实测）
-
-1. 私有 CPython 3.11.18 启动并暴露 ChimeraX v1.11.1
-2. EGL 上下文被 ChimeraX 接管，GLES 在原生表面上应答
-3. `chimerax.core` / `commands` / `session` / `toolshed` 可用
-4. atomic 模型层可建结构（`AtomicStructure`、残基、链）
-5. 真实 PDB（1322 原子）与 SDF（48 原子）可读
-6. 结构可视化：按元素着色、成键、球体着色、景深、视图旋转/缩放/重置
-7. 打开/保存往返（`saved=4`）
-8. 52 条命令注册，命令面板可列可执行
-9. 14 个 bundle C 扩展加载（`map-ext:ok`）
-10. 原版图标、菜单栏与工具栏
-11. **ChimeraX 官方渲染器画出带颜色的分子**：`View.image_rgba()` 返回 512×512 RGBA 帧，
-    1326 个原子按元素着色后 `lit=20192/262144`，帧经 base64 → PixelMap 显示在 ArkUI 视口
-    （截图 `reports/molecule-delivery-final.jpeg`）
-
-## 四、未通过项（含精确定位）
-
-| 项 | 状态 | 卡点 |
-|---|---|---|
-| 结构的光照明暗 | ✗ | 元素颜色已正确显示；明暗（lighting UBO）尚未上传，画面为平光着色 |
-| 渲染帧导出 PNG | ✓ | `ImagePacker` 打包，设备读数 `png=93742` 字节 |
-| 体积数据 → 等值面 | ✓ | 合成 16³ 密度 → `volume level 0.5`（marching cubes），`vol=6; surf=2`，等值面进入渲染帧 |
-| 界面面板（模型/结构信息/体积表面/日志/链序列） | ✓ | 见 `reports/viewport-protein-density-v2-2026-11-24.jpeg` |
-| 表面封盖三角化 | ✓ | 内联耳切实现替换 `gluTess*`，设备实测 `tess=2`、`tshape=(2, 3)` |
-| 模型显示/隐藏切换 | ✓ | `display=off\|models=6\|changed=6`（对应 Model Panel 勾选框） |
-| Qt 原生窗口 | ✗ | 运行时拒绝对 Qt 插件所需的表达式求值（`LocalStorage.makeNewLocalStorage()`），四条路径日志见 `docs/qt-status-2026-11-18-final.md` |
-| `_surface` 三角化 | 降级 | GLU 用桩实现，封盖三角形为空；其余网格计算（连通性/法线/面积）真实可用 |
-| 依赖 UI 部件的命令（如 `mlp`） | ✗ | 无 GUI 的最小会话缺少 UI 对象（`register_available_commands`） |
-
-## 五、2026-11-22 渲染线突破记录
-
-官方渲染器出图需要连续修复五个缺陷（缺一不可）：
-
-1. `glAttachShader` 未委托门面 → 程序链接后没有着色器
-2. `vertex_colors` 必须是 uint8 0-255（float alpha=1.0 被判为全透明）
-3. `vendor/graphics/_cxgl_sigs.py` 未随包分发 → 门面没有签名表
-4. 参数必须按声明类型逐位转换（统一包 `c_int` 会让 `c_long`/`c_void_p` 失配）
-5. 缓冲区/属性/统一变量调用必须走门面（PyOpenGL 返回 0 → VBO/IBO 无效 → 绘制被跳过）
-
-## 六、结论
-
-当前形态是**引擎可用 + 结构可视化可用 + 界面接近原版**的适配版本（T0/T1 能力见 README）。
-"官方渲染器出图"与"Qt 原生窗口"是两项已定位但尚未完成的独立工程。
+新报告默认输出到 `build/reports/`。发布验收记录前，请核对 HAP SHA-256、设备环境和截图归属。

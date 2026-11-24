@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import time
 import xml.etree.ElementTree as ET
@@ -27,14 +28,15 @@ def run(argv: list[str], timeout: int = 120) -> subprocess.CompletedProcess:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--hdc', type=Path, default=DEFAULT_HDC)
+    parser.add_argument('--hdc', type=Path, default=DEFAULT_HDC if DEFAULT_HDC.is_file()
+                        else Path(shutil.which('hdc') or DEFAULT_HDC))
     parser.add_argument('--target', default='127.0.0.1:5555')
     parser.add_argument('--hap', type=Path, default=ROOT / 'build/hap/entry-default-unsigned.hap')
     parser.add_argument('--report', type=Path, default=None)
     parser.add_argument('--timeout', type=int, default=180)
     args = parser.parse_args()
     day = datetime.now(timezone.utc).date().isoformat()
-    report_path = args.report or ROOT / f'reports/device-app-{day}.json'
+    report_path = args.report or ROOT / f'build/reports/device-app-{day}.json'
     hdc = [str(args.hdc), '-t', args.target]
     report: dict = {'schema_version': 1, 'created_at_utc': datetime.now(timezone.utc).isoformat(),
                     'scope': 'harmony_app_entry_with_embedded_runtime', 'target': args.target,
@@ -378,11 +380,11 @@ def main() -> int:
         record('Bundle commands run against the opened protein', commands_ok,
                ('render notes: mlp/coulombic/morph=ok' if commands_ok else info_output)[:200])
 
-        screenshot = run(hdc + ['shell', 'snapshot_display', '-f', '/data/local/tmp/cx-app.jpeg'])
+        remote_screenshot = '/data/local/tmp/cx-app.jpeg'
+        screenshot = run(hdc + ['shell', 'snapshot_display', '-f', remote_screenshot])
         if screenshot.returncode == 0:
             report_path.parent.mkdir(parents=True, exist_ok=True)
-            run(hdc + ['file', 'recv', '/data/local/tmp/cx-app.jpeg',
-                       str(ROOT / 'reports' / 'device-app-2026-11-17.jpeg')])
+            run(hdc + ['file', 'recv', remote_screenshot, str(report_path.with_suffix('.jpeg'))])
     except Exception as error:  # noqa: BLE001 - report the failure
         report['error'] = f'{type(error).__name__}: {error}'
 

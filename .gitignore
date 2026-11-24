@@ -1,12 +1,13 @@
-# Build outputs and downloaded toolchains are reproducible from the locks.
+# Reproducible output, tool caches and local packaging artifacts.
 /build/
-/build/downloads/
-/build/cpython-3.11.18/
-/build/host-python/
-/build/libffi-3.8.0/
-/build/runtime-payload/
-build/**/*.tar.gz
-build/**/*.tar.xz
+/out/
+**/.hvigor/
+**/oh_modules/
+**/.cxx/
+/app/entry/build/
+*.hap
+
+# Keep published evidence in reports/ and packaged runtime inputs in app/ tracked.
 .DS_Store
 __pycache__/
-*.pyc
+*.py[cod]

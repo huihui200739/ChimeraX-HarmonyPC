@@ -1,27 +1,53 @@
-# ChimeraX × OpenHarmony PC 适配（中文说明）
+# OpenHarmony PC 构建与验证指南
 
-UCSF ChimeraX v1.11.1 的 OpenHarmony 6.1.1 / API 24（aarch64）移植。
+当前版本与支持范围以 [项目首页](README.md) 和 [设备验收记录](docs/PGC-VALIDATION-2026-11-21.md) 为准。
 
-## 形态
+## 环境
 
-ArkTS 应用外壳 + 内嵌私有 CPython 3.11.18 运行 ChimeraX 引擎；界面复刻原版（原版图标/菜单/工具栏）。
+| 项目 | 要求 |
+| --- | --- |
+| 主机 | 当前打包脚本面向 macOS，使用 `/Applications/DevEco-Studio.app` 下的 DevEco 工具 |
+| 本地测试 | Python 3.10+、Bash；不需要 DevEco、模拟器或上游源码目录 |
+| 设备验收 | OpenHarmony 6.1.1 / API 24、aarch64 的 2-in-1 模拟器；默认目标 `127.0.0.1:5555` |
 
-## 能力
+## 获取与构建
 
-- **T0 完全可用**：引擎启动、numpy、52 条命令、PDB/SDF 读取、结构可视化、交互、打开/保存、原版外观
-- **T1 可用但有降级**：14 个 bundle C 扩展（`_surface` 用 GLU 桩）、示例结构内置
-- **T2 尚不可用**：官方渲染器出图（需 GLSL 330→ES 300 翻译层）、Qt 原生窗口、真实三角化
-
-## 验证
+仓库入口为 [GitHub](https://github.com/huihui200739/ChimeraX-HarmonyPC)；目前没有已核实的 AtomGit 镜像。请在有使用权限的前提下获取仓库。
 
 ```bash
-python3 -m unittest discover -s tests   # 132 用例
-python3 tools/device_app_check.py       # 27 项设备断言
-bash scripts/verify.sh                  # 构建 + 验证一条命令
+git clone https://github.com/huihui200739/ChimeraX-HarmonyPC.git
+cd ChimeraX-HarmonyPC
+bash scripts/verify.sh --local
+bash scripts/verify.sh --build-only
 ```
 
-详细验证记录见 `docs/PGC-VALIDATION-2026-11-21.md`。
+打包使用仓库内已有的原生库和运行时 ZIP，不重新交叉编译。HAP 位于 `build/hap/`；构建报告默认写到 `build/reports/`。若要重建运行时，先读 [文档索引](docs/README.md) 中的运行时和扩展构建记录，不要把仅构建 HAP 误当成从上游源码重建。
 
-## 许可证
+## 模拟器安装与验收
 
-遵循上游 UCSF ChimeraX 许可证（学术/商业使用条款见上游 `LICENSE`）。
+```bash
+bash scripts/verify.sh
+```
+
+如果已生成 HAP，可单独验收，并显式指定设备：
+
+```bash
+python3 tools/device_app_check.py --target 127.0.0.1:5555 \
+  --hap build/hap/entry-default-unsigned.hap
+```
+
+- 使用非默认 DevEco 安装位置时，可给设备脚本传 `--hdc`，它也会尝试从 `PATH` 查找 `hdc`；打包仍使用上述默认 DevEco 路径。
+- 遇到 `9568288`，先检查模拟器磁盘容量；脚本会停止，不会误验上一次已安装的应用。
+- 默认生成的是调试用未签名 HAP，不等于可以在实体设备上安装或对外分发。
+- 验收报告默认写到 `build/reports/`，设备截图与报告同名、扩展名为 `.jpeg`。入库记录在 `reports/`，仅在核对构建与范围后手动更新。
+
+## 目录
+
+| 路径 | 用途 |
+| --- | --- |
+| `app/` | DevEco 工程、ArkUI/N-API 入口及打包所需原生库和运行时 |
+| `harmony/`、`patches/`、`*.lock.json` | 平台源码、适配补丁、版本与哈希锁定 |
+| `vendor/`、`snippets/` | 兼容垫片、依赖和探针样例 |
+| `scripts/`、`tools/`、`tests/` | 验证入口、构建/诊断工具、单元测试 |
+| `docs/`、`reports/` | 设计说明、历史验收报告、筛选过的证据与截图 |
+| `build/` | 构建输出、下载缓存和新报告，不入库 |

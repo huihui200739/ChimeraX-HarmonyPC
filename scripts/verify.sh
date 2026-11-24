@@ -1,27 +1,25 @@
 #!/usr/bin/env bash
-# One-shot verification for the ChimeraX HarmonyOS port.
-#
-#   bash scripts/verify.sh            # local tests, then build and check on a running device
-#   bash scripts/verify.sh --local    # local tests only
-#
-# The device step needs the emulator (127.0.0.1:5555) and DevEco's hdc on PATH or in its
-# default location; the check itself is tools/device_app_check.py.
+# Verify the checkout without overwriting the published evidence.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo '== local unit tests =='
-python3 -m unittest discover -s tests
+mode="${1-}"
+if (( $# > 1 )) || [[ "$mode" != "" && "$mode" != --local && "$mode" != --build-only ]]; then
+    echo "Usage: bash scripts/verify.sh [--local | --build-only]" >&2
+    exit 2
+fi
 
-if [[ "${1:-}" == "--local" ]]; then
-    echo 'local only: skipping the build and the device check'
+if [[ "$mode" != --build-only ]]; then
+    echo "== local unit tests =="
+    python3 -m unittest discover -s tests
+fi
+if [[ "$mode" == --local ]]; then
     exit 0
 fi
 
-echo '== stage, package and build the HAP =='
-python3 tools/stage_chimerax_python.py
-python3 tools/build_all_bundle_cmodules.py
-python3 tools/package_app_runtime.py
+echo "== build HAP with checked-in runtime =="
 python3 tools/build_hap.py
-
-echo '== device assertions =='
-python3 tools/device_app_check.py
+if [[ "$mode" != --build-only ]]; then
+    echo "== device assertions =="
+    python3 tools/device_app_check.py
+fi
