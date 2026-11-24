@@ -133,6 +133,23 @@ def main() -> int:
     for extra in (bundle_root / 'src/include', bundle_root / 'src'):
         if extra.is_dir():
             flags.append(f'-I{extra}')
+    # HarmonyOS has no usable GLU tessellator at run time, so replace the cap triangulation in
+    # _surface with an inlined ear-clipping implementation before compiling.
+    if args.bundle == 'surface':
+        patch = ROOT / 'vendor/surface_glu/cap_triangulate.inc'
+        target = bundle_root / '_surface' / 'triangulate.cpp'
+        if patch.is_file() and target.is_file():
+            text = target.read_text()
+            if 'CX_EARCUT' not in text:
+                start_marker = ('static void triangulate_polygon(Loops &loops, float normal[3],\n'
+                                '\t\t\t\tPolygon_Data &polygon_data)\n{\n')
+                end_marker = '  gluTessEndPolygon(tess);\n  gluDeleteTess(tess);\n}\n'
+                try:
+                    start = text.index(start_marker)
+                    end = text.index(end_marker, start) + len(end_marker)
+                    target.write_text(text[:start] + patch.read_text() + '\n' + text[end:])
+                except ValueError:
+                    pass
     glu_stub = ROOT / 'vendor/surface_glu'
     if (glu_stub / 'GL/glu.h').is_file():
         # HarmonyOS has no desktop GLU; the stub keeps _surface linkable.

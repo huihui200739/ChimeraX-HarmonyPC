@@ -51,7 +51,7 @@
 |---|---|
 | Qt 原生窗口 | 运行时拒绝对 Qt 插件所需的 JS 表达式求值（四条路径有日志，见 `docs/qt-status-2026-11-18-final.md`） |
 | `save` 结构导出 | `_pdbio` 捕获 `pyinstance::PyAttrError`，实际抛 `NoPyAttrError`（C++ 异常层级不一致），进程 abort |
-| `_surface` 耳切 | 同一份 `.cpp` 在主机上通过（正方形 → 2 三角形），设备端 `triangulate_polygon` 仍返回 0 |
+| ~~`_surface` 耳切~~ | **已修复**：构建时用内联耳切实现替换 `gluTess*`，设备实测正方形 → 2 个三角形（`tess=2`） |
 | 更多工具面板 | Sequence / Rotamers 尚未实现 |
 
 ## 五、可复现命令

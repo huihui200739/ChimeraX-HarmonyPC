@@ -105,12 +105,16 @@ def main() -> int:
             if values.get('cx-status') in ('运行环境就绪', '失败'):
                 break
             time.sleep(5)
-        # Top-of-page first: the command bar lives there, and clicking needs its rect.
-        for _ in range(3):
+        # Top-of-page first: the command bar lives there, and clicking needs its rect. Several
+        # panels push it off-screen, so scroll until the button is actually in the dump.
+        ui_command = None
+        for _ in range(12):
             run(hdc + ['shell', 'uitest', 'uiInput', 'swipe', '1000', '600', '1000', '1500', '200'])
-            time.sleep(0.5)
-        dump()
-        ui_command = _rect_from_dump('cx-cmd-run')
+            time.sleep(0.4)
+            dump()
+            ui_command = _rect_from_dump('cx-cmd-run')
+            if ui_command:
+                break
         ui_python = _rect_from_dump('cx-cmd-py')
         ui_output = ''
         if ui_command:
@@ -282,6 +286,12 @@ def main() -> int:
         record('Selecting atoms updates the selection manager',
                select_match is not None and int(select_match.group(1)) > 0,
                selection_text[:80])
+
+        # Tessellator: the cap triangulation must produce triangles on device.
+        tess_match = re.search(r'tess=(\d+)', values.get('cx-builtin', ''))
+        record('Cap triangulation produces triangles on device',
+               tess_match is not None and int(tess_match.group(1)) >= 2,
+               'tess=%s' % (tess_match.group(1) if tess_match else 'none'))
 
         # Compiled-extension matrix: at least six bundle C modules must import on device.
         match = re.search(r'cmods=(\d+)/(\d+)', values.get('cx-builtin', ''))

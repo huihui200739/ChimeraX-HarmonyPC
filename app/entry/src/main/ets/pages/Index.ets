@@ -10,7 +10,7 @@ import native, { RuntimeReport, ExpressionReport, ExtractReport, ScriptReport, G
 const ARCHIVE = 'cx-runtime.zip';
 // Rewritten by tools/package_app_runtime.py: the payload hash names the extraction directory,
 // so changed Python code is always unpacked instead of reusing a stale tree.
-const RUNTIME_TAG = 'e4c84868dafa';
+const RUNTIME_TAG = 'f416370e0258';
 const RUNTIME_DIR = 'cx-generic-runtime';
 // v5: forces a fresh extraction so a stale payload is never reused.
 // The store name carries the packaged archive size, so a new payload always
@@ -106,7 +106,14 @@ try:
                        dtype=_np.float32)
     _normal = _np.array([0.0, 0.0, 1.0], dtype=_np.float32)
     _tris = _surf.triangulate_polygon(_loops, _normal, _verts)
-    summary.append("tess=%d" % (len(_tris) // 3))
+    # triangulate_polygon returns an (n, 3) array: len() is the triangle count.
+    try:
+        _tshape = getattr(_tris, "shape", None)
+        _tlist = _tris.tolist() if hasattr(_tris, "tolist") else _tris
+    except Exception:
+        _tshape, _tlist = None, None
+    summary.append("tess=%d|tshape=%s|tfirst=%s" % (
+        len(_tris), _tshape, _tlist[:2] if _tlist else _tlist))
 except Exception as error:
     summary.append("tess:" + type(error).__name__ + ":" + str(error)[:40])
 print("|".join(summary) + "|tools=%s|toolshed=%s|state=%s|notes=%s" % (

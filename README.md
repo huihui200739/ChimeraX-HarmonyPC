@@ -3,7 +3,7 @@
 UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarch64 上的移植工程。
 应用内嵌私有 CPython 3.11.18 运行 ChimeraX 的 Python 引擎，ArkUI 外壳复刻原版外观。
 
-**一键验收**：`python3 tools/device_app_check.py` → **49 项设备断言全部通过**（收据在 `reports/device-app-*.json`）
+**一键验收**：`python3 tools/device_app_check.py` → **50 项设备断言全部通过**（收据在 `reports/device-app-*.json`）
 **一键复现**：`bash scripts/verify.sh`（本地测试 + 构建 + 设备断言）
 
 ## 现在能做什么（都在模拟器上验证过）
@@ -31,6 +31,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 | **完整界面 + 蛋白 + 密度面** | 主图候选 `reports/viewport-protein-density-v2-2026-11-24.jpeg`：结构信息面板（1322 原子/1322 残基）、体积/表面面板（`maps=2\|surfaces=0`）、日志面板、模型面板、视口内**蛋白卡通 + 密度等值面**（`lit=36498/589824`）同框 |
 | **密度等值面进入渲染帧** | 体积/等值面在捕获前创建，官方渲染帧像素数 34777 → **36498**（`cached=36498/589824`），说明表面模型参与渲染 |
 | **体积数据 → 等值面链路可用** | 程序化生成 16³ 密度图（`ArrayGridData` → `volume_from_grid_data`），再用 `volume level 0.5` 生成等值面，设备读数 `vol=2;surf=2`（marching cubes 全流程） |
+| **表面封盖三角化（`_surface`）** | 构建时用内联耳切实现替换 `gluTess*`，设备实测正方形多边形 → **2 个三角形**（`tess=2`，`tshape=(2, 3)`） |
 | **链/序列面板** | 按链汇总残基数（`1\|chains=1\|A:4`、`3\|chains=1\|-:1322`），对应序列查看器的头部信息 |
 | **体积/表面面板** | 正确分类体积与表面（设备读数 `maps=1\|surfaces=1\|other=0\|6\|cx_density;6\|surface`），空态有提示 |
 | **结构信息面板** | 列出每个模型的原子数/残基数/链数/二级结构统计（设备读数 `1\|cx_probe.pdb\|atoms=4\|residues=4\|chains=1\|ss=?:4` …） |
@@ -52,7 +53,7 @@ UCSF ChimeraX v1.11.1（上游 `60235d3`）在 OpenHarmony 6.1.1 / API 24 / aarc
 
 ### 当前数字
 
-- 设备断言 **49/49 全部通过**（`app_runtime_verified`），本地测试 **137** 个用例；
+- 设备断言 **50/50 全部通过**（`app_runtime_verified`），本地测试 **137** 个用例；
   覆盖：官方渲染出几何、模型/结构信息/体积表面/日志四个面板、命令行补全、选择管理器与可见高亮、
   显示切换、PNG 导出、mmCIF 读取、体积等值面、mlp/coulombic/morph/rmsd/align/zone 命令
 - bundle C 扩展 **15** 个：`_map`、`_mask`、`_stl`、`_morph`、`_esp`、`_mlp`、`_segment`、

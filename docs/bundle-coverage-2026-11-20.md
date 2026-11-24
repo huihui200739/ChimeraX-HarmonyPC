@@ -773,7 +773,18 @@ T1→T0 提升项，不影响已有的 14 个扩展与渲染链路。
 - 至此三个上游科学命令端到端可用：`mlp`、`coulombic`、`morph`
 - payload 5766 文件；设备断言 **35/36**
 
-## 2026-11-24：`_surface` 三角化设备端仍为 0（进一步确认）
+## 2026-11-24：`_surface` 三角化**已修复**（内联耳切实现）
+
+**修复**：在构建 `_surface` 前，用 `vendor/surface_glu/cap_triangulate.inc` 的耳切实现替换
+`triangulate.cpp` 里对 `gluTess*` 的调用（`tools/build_bundle_cmodule_harmony.py` 中的补丁步骤，
+幂等，带 `CX_EARCUT` 标记）。三角形通过原有的 `vertex_data_callback` 输出，语义与 GLU 路径一致。
+
+**设备实测**：`triangulate_polygon` 对正方形返回 **2 个三角形**（`tess=2`），
+设备断言「cap triangulation produces triangles on device」通过。
+
+> 之前的 `tess=0` 是探针把 `(n,3)` 数组又除以 3 的计数错误，加上一次未生效的构建，导致误判。
+
+### 历史记录（修复前的判断）
 
 - 设备实测 `compute_cap(normal=(0,0,1), offset=0, 平面正方形两个三角形)` → **`cap=0/0`**
 - 同一份 `glu_stub.cpp` 在主机上直接编译运行：正方形 → **2 个三角形**（`contours=1 verts=4 vcb=1`）

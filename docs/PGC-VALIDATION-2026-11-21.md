@@ -4,7 +4,7 @@
 
 ## 一、环境
 
-> **最新验收（自动更新）**：设备断言 **49/49 全部通过**（`app_runtime_verified`）、本地单测 **137 OK**、
+> **最新验收（自动更新）**：设备断言 **50/50 全部通过**（`app_runtime_verified`）、本地单测 **137 OK**、
 > payload **5767** 文件、HAP ≈158 MB。收据：`reports/device-app-2026-11-23.json`。
 
 
@@ -21,7 +21,7 @@
 
 ```bash
 python3 -m unittest discover -s tests      # 137 个本地用例
-python3 tools/device_app_check.py         # 49 项设备断言（当前全部通过），收据写入 reports/
+python3 tools/device_app_check.py         # 50 项设备断言（当前全部通过），收据写入 reports/
 bash scripts/verify.sh                    # 以上两件事的封装（加构建）
 ```
 
@@ -48,7 +48,8 @@ bash scripts/verify.sh                    # 以上两件事的封装（加构建
 | 结构的光照明暗 | ✗ | 元素颜色已正确显示；明暗（lighting UBO）尚未上传，画面为平光着色 |
 | 渲染帧导出 PNG | ✓ | `ImagePacker` 打包，设备读数 `png=93742` 字节 |
 | 体积数据 → 等值面 | ✓ | 合成 16³ 密度 → `volume level 0.5`（marching cubes），`vol=6; surf=2`，等值面进入渲染帧 |
-| 界面面板（模型/结构信息/体积表面/日志） | ✓ | 见 `reports/viewport-protein-density-v2-2026-11-24.jpeg` |
+| 界面面板（模型/结构信息/体积表面/日志/链序列） | ✓ | 见 `reports/viewport-protein-density-v2-2026-11-24.jpeg` |
+| 表面封盖三角化 | ✓ | 内联耳切实现替换 `gluTess*`，设备实测 `tess=2`、`tshape=(2, 3)` |
 | 模型显示/隐藏切换 | ✓ | `display=off\|models=6\|changed=6`（对应 Model Panel 勾选框） |
 | Qt 原生窗口 | ✗ | 运行时拒绝对 Qt 插件所需的表达式求值（`LocalStorage.makeNewLocalStorage()`），四条路径日志见 `docs/qt-status-2026-11-18-final.md` |
 | `_surface` 三角化 | 降级 | GLU 用桩实现，封盖三角形为空；其余网格计算（连通性/法线/面积）真实可用 |

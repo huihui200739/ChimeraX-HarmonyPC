@@ -1,0 +1,15 @@
+{
+  "created_at_utc": "2026-11-24T00:44:05.013080+00:00",
+  "runtime_tag": "f416370e0258",
+  "runtime": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime",
+  "files": 5768,
+  "archive": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app/entry/src/main/resources/rawfile/cx-runtime.zip",
+  "archive_bytes": 31116242,
+  "archive_sha256": "f416370e02582842589a2034ca3abdd0fb923614e76fc41b1a41b188533f199d",
+  "extensions_in_libs": 54,
+  "chimerax_python": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python",
+  "numpy_files_in_libs": 19,
+  "package_modules_in_libs": 21,
+  "libpython": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app/entry/libs/arm64-v8a/libpython3.11.so.1.0",
+  "libpython_sha256": "4963de40524dc74f5346ec47dc60839b25566033e2ad8fd2d9f0adb0aeb25aab"
+}
