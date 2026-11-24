@@ -1,0 +1,773 @@
+{
+  "upstream_commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "bundle_count": 190,
+  "counts": {
+    "has_python_package": 188,
+    "has_cpp_extension": 32,
+    "imports_qt": 90,
+    "imports_opengl": 3,
+    "imports_numpy": 104,
+    "pure_python": 78,
+    "import_clean_python": 153,
+    "needs_qt_at_import": 5,
+    "needs_qt_at_import_hard": 4,
+    "needs_gl_at_import": 0,
+    "needs_codegen": 4
+  },
+  "pure_python": [
+    "amber_info",
+    "axes_planes",
+    "bild",
+    "bogus",
+    "bond_rot",
+    "bumps",
+    "cellpack",
+    "centroids",
+    "cluster",
+    "color_globe",
+    "crosslinks",
+    "crystal",
+    "crystal_contacts",
+    "diffplot",
+    "dist_monitor",
+    "emdb_sff",
+    "esmfold",
+    "exp_cmd",
+    "file_history",
+    "gltf",
+    "hkcage",
+    "ihm",
+    "imod",
+    "io",
+    "items_inspection",
+    "linux_support",
+    "list_info",
+    "map_data",
+    "mcopy",
+    "mcp_server",
+    "medical_toolbar",
+    "model_archive",
+    "model_series",
+    "mol2",
+    "mole",
+    "movie",
+    "neuron",
+    "nifti",
+    "nih_presets",
+    "nmrstar",
+    "nrrd",
+    "nucleotides",
+    "orthopick",
+    "pdb_bio",
+    "pdb_images",
+    "pdb_matrices",
+    "positions",
+    "preset_mgr",
+    "read_pbonds",
+    "registration",
+    "remote_control",
+    "residue_fit",
+    "rest_server",
+    "rna_layout",
+    "rotamer_libs",
+    "scheme_mgr",
+    "sdf",
+    "segger",
+    "shape",
+    "signal_viewer",
+    "sim_matrices",
+    "smooth_lines",
+    "storm",
+    "struts",
+    "swapaa",
+    "tape_measure",
+    "topography",
+    "tug",
+    "tug_ligands",
+    "umap",
+    "uniprot",
+    "viperdb",
+    "volume_menu",
+    "vrml",
+    "vtk",
+    "wavefront_obj",
+    "webservices",
+    "zone"
+  ],
+  "needs_cpp": [
+    {
+      "name": "atomic_lib",
+      "cpp_source_count": 38,
+      "cpp_header_count": 48,
+      "cython_source_count": 0,
+      "components": [
+        "atomic_cpp"
+      ]
+    },
+    {
+      "name": "map",
+      "cpp_source_count": 20,
+      "cpp_header_count": 20,
+      "cython_source_count": 0,
+      "components": [
+        "_map"
+      ]
+    },
+    {
+      "name": "surface",
+      "cpp_source_count": 16,
+      "cpp_header_count": 14,
+      "cython_source_count": 0,
+      "components": [
+        "_surface"
+      ]
+    },
+    {
+      "name": "atomic",
+      "cpp_source_count": 6,
+      "cpp_header_count": 5,
+      "cython_source_count": 8,
+      "components": [
+        "atomic_cpp",
+        "ribbon_cpp"
+      ]
+    },
+    {
+      "name": "geometry",
+      "cpp_source_count": 12,
+      "cpp_header_count": 11,
+      "cython_source_count": 0,
+      "components": [
+        "_geometry"
+      ]
+    },
+    {
+      "name": "core",
+      "cpp_source_count": 10,
+      "cpp_header_count": 17,
+      "cython_source_count": 1,
+      "components": [
+        "core_cpp",
+        "src"
+      ]
+    },
+    {
+      "name": "mmcif",
+      "cpp_source_count": 8,
+      "cpp_header_count": 5,
+      "cython_source_count": 2,
+      "components": [
+        "mmcif_cpp",
+        "src"
+      ]
+    },
+    {
+      "name": "pdb",
+      "cpp_source_count": 8,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "pdb_cpp",
+        "pdbio_cpp"
+      ]
+    },
+    {
+      "name": "segment",
+      "cpp_source_count": 7,
+      "cpp_header_count": 7,
+      "cython_source_count": 0,
+      "components": [
+        "_segment"
+      ]
+    },
+    {
+      "name": "graphics",
+      "cpp_source_count": 6,
+      "cpp_header_count": 5,
+      "cython_source_count": 0,
+      "components": [
+        "_graphics"
+      ]
+    },
+    {
+      "name": "arrays",
+      "cpp_source_count": 4,
+      "cpp_header_count": 4,
+      "cython_source_count": 0,
+      "components": [
+        "_arrays"
+      ]
+    },
+    {
+      "name": "alignment_algs",
+      "cpp_source_count": 3,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "_nw",
+        "_sw",
+        "src"
+      ]
+    },
+    {
+      "name": "atom_search",
+      "cpp_source_count": 0,
+      "cpp_header_count": 0,
+      "cython_source_count": 2,
+      "components": [
+        "search_cpp"
+      ]
+    },
+    {
+      "name": "bundle_builder",
+      "cpp_source_count": 2,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "tests"
+      ]
+    },
+    {
+      "name": "pdb_lib",
+      "cpp_source_count": 2,
+      "cpp_header_count": 2,
+      "cython_source_count": 0,
+      "components": [
+        "connect_cpp"
+      ]
+    },
+    {
+      "name": "chem_group",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_cg"
+      ]
+    },
+    {
+      "name": "connect_structure",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "connect_cpp"
+      ]
+    },
+    {
+      "name": "coulombic",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "esp_cpp"
+      ]
+    },
+    {
+      "name": "dssp",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "dssp_cpp"
+      ]
+    },
+    {
+      "name": "leap_motion",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_leap"
+      ]
+    },
+    {
+      "name": "mask",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_mask"
+      ]
+    },
+    {
+      "name": "match_align",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "msa3d_cpp"
+      ]
+    },
+    {
+      "name": "md_crds",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "gromacs"
+      ]
+    },
+    {
+      "name": "mlp",
+      "cpp_source_count": 1,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "_mlp"
+      ]
+    },
+    {
+      "name": "mmtf",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_mmtf"
+      ]
+    },
+    {
+      "name": "morph",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_morph"
+      ]
+    },
+    {
+      "name": "profile_grids",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "_pg"
+      ]
+    },
+    {
+      "name": "realsense",
+      "cpp_source_count": 1,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "_depthvideo"
+      ]
+    },
+    {
+      "name": "spacenavigator",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "<root>"
+      ]
+    },
+    {
+      "name": "stl",
+      "cpp_source_count": 1,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "_stl"
+      ]
+    },
+    {
+      "name": "test",
+      "cpp_source_count": 1,
+      "cpp_header_count": 0,
+      "cython_source_count": 0,
+      "components": [
+        "exectest"
+      ]
+    },
+    {
+      "name": "webcam",
+      "cpp_source_count": 1,
+      "cpp_header_count": 1,
+      "cython_source_count": 0,
+      "components": [
+        "_webcam"
+      ]
+    }
+  ],
+  "needs_qt": [
+    "add_charge",
+    "addh",
+    "alignment_headers",
+    "alphafold",
+    "altloc_explorer",
+    "animations",
+    "aniso",
+    "atomic",
+    "basic_actions",
+    "blastprotein",
+    "boltz",
+    "bug_reporter",
+    "build_structure",
+    "buttons",
+    "cage_builder",
+    "change_chains",
+    "check_waters",
+    "clashes",
+    "cmd_line",
+    "color_actions",
+    "color_key",
+    "core",
+    "core_formats",
+    "data_formats",
+    "dicom",
+    "dock_prep",
+    "function_key",
+    "graphics",
+    "hbonds",
+    "help_viewer",
+    "image_formats",
+    "interfaces",
+    "iupac",
+    "kvfinder",
+    "label",
+    "lighting_gui",
+    "log",
+    "looking_glass",
+    "maestro",
+    "map",
+    "map_eraser",
+    "map_filter",
+    "map_fit",
+    "map_series",
+    "markers",
+    "match_maker",
+    "md_crds",
+    "meeting",
+    "minimize",
+    "mmcif",
+    "model_panel",
+    "modeller",
+    "mouse_modes",
+    "mutation_scores",
+    "open_command",
+    "pdb",
+    "phenix_ui",
+    "pick_blobs",
+    "profile_grids",
+    "pubchem",
+    "render_by_attr",
+    "renumber_residues",
+    "rotamers",
+    "save_command",
+    "scenes",
+    "segmentations",
+    "sel_inspector",
+    "seq_view",
+    "seqalign",
+    "shell",
+    "shortcuts",
+    "show_sequences",
+    "sideview",
+    "similarstructures",
+    "smiles",
+    "speech",
+    "std_commands",
+    "struct_measure",
+    "surface",
+    "swap_res",
+    "task_manager",
+    "to_quest",
+    "toolbar",
+    "toolshed_utils",
+    "ui",
+    "unit_cell",
+    "viewdock",
+    "viewdockx",
+    "vive",
+    "webcam"
+  ],
+  "needs_gl": [
+    "graphics",
+    "looking_glass",
+    "vive"
+  ],
+  "import_clean_python": [
+    "add_charge",
+    "addh",
+    "alignment_headers",
+    "alphafold",
+    "altloc_explorer",
+    "amber_info",
+    "aniso",
+    "axes_planes",
+    "basic_actions",
+    "bild",
+    "bogus",
+    "boltz",
+    "bond_rot",
+    "bug_reporter",
+    "build_structure",
+    "bumps",
+    "buttons",
+    "cage_builder",
+    "cellpack",
+    "centroids",
+    "change_chains",
+    "check_waters",
+    "clashes",
+    "cluster",
+    "cmd_line",
+    "color_actions",
+    "color_globe",
+    "color_key",
+    "core_formats",
+    "crosslinks",
+    "crystal",
+    "crystal_contacts",
+    "data_formats",
+    "dicom",
+    "diffplot",
+    "dist_monitor",
+    "dock_prep",
+    "emdb_sff",
+    "esmfold",
+    "exp_cmd",
+    "file_history",
+    "function_key",
+    "gltf",
+    "hbonds",
+    "help_viewer",
+    "hkcage",
+    "ihm",
+    "image_formats",
+    "imod",
+    "interfaces",
+    "io",
+    "items_inspection",
+    "iupac",
+    "kvfinder",
+    "label",
+    "linux_support",
+    "list_info",
+    "log",
+    "looking_glass",
+    "maestro",
+    "map_data",
+    "map_eraser",
+    "map_filter",
+    "map_fit",
+    "map_series",
+    "markers",
+    "match_maker",
+    "mcopy",
+    "mcp_server",
+    "medical_toolbar",
+    "meeting",
+    "minimize",
+    "model_archive",
+    "model_panel",
+    "model_series",
+    "modeller",
+    "mol2",
+    "mole",
+    "mouse_modes",
+    "movie",
+    "mutation_scores",
+    "neuron",
+    "nifti",
+    "nih_presets",
+    "nmrstar",
+    "nrrd",
+    "nucleotides",
+    "orthopick",
+    "pdb_bio",
+    "pdb_images",
+    "pdb_matrices",
+    "phenix_ui",
+    "pick_blobs",
+    "positions",
+    "preset_mgr",
+    "pubchem",
+    "read_pbonds",
+    "registration",
+    "remote_control",
+    "render_by_attr",
+    "renumber_residues",
+    "residue_fit",
+    "rest_server",
+    "rna_layout",
+    "rotamer_libs",
+    "rotamers",
+    "save_command",
+    "scenes",
+    "scheme_mgr",
+    "sdf",
+    "segger",
+    "segmentations",
+    "sel_inspector",
+    "seq_view",
+    "seqalign",
+    "shape",
+    "shell",
+    "shortcuts",
+    "show_sequences",
+    "sideview",
+    "signal_viewer",
+    "sim_matrices",
+    "similarstructures",
+    "smiles",
+    "smooth_lines",
+    "speech",
+    "std_commands",
+    "storm",
+    "struct_measure",
+    "struts",
+    "swap_res",
+    "swapaa",
+    "tape_measure",
+    "task_manager",
+    "to_quest",
+    "toolbar",
+    "toolshed_utils",
+    "topography",
+    "tug",
+    "tug_ligands",
+    "umap",
+    "uniprot",
+    "unit_cell",
+    "viewdock",
+    "viewdockx",
+    "viperdb",
+    "vive",
+    "volume_menu",
+    "vrml",
+    "vtk",
+    "wavefront_obj",
+    "webservices",
+    "zone"
+  ],
+  "needs_qt_at_import": [
+    "animations",
+    "blastprotein",
+    "lighting_gui",
+    "open_command",
+    "ui"
+  ],
+  "needs_qt_at_import_hard": [
+    "animations",
+    "blastprotein",
+    "lighting_gui",
+    "ui"
+  ],
+  "needs_gl_at_import": [],
+  "needs_gl_at_import_hard": [],
+  "needs_codegen": [
+    "atom_search",
+    "atomic",
+    "core",
+    "mmcif"
+  ],
+  "no_python_package": [
+    "rotamer_libs",
+    "segger"
+  ],
+  "third_party_rollup": [
+    "CGLtk",
+    "Commands",
+    "Cython",
+    "FitMap",
+    "IPython",
+    "Matrix",
+    "Midas",
+    "Molecule",
+    "MultiScale",
+    "PIL",
+    "SimpleSession",
+    "StringIO",
+    "Surface",
+    "SurfaceCap",
+    "SurfaceZone",
+    "Symmetry",
+    "Tkinter",
+    "VolumeData",
+    "VolumeFilter",
+    "VolumePath",
+    "VolumeViewer",
+    "_interpolate",
+    "_pyKVFinder",
+    "_surface",
+    "_volume",
+    "aiohttp",
+    "alphafold",
+    "appdirs",
+    "boltz",
+    "certifi",
+    "chimera",
+    "clip",
+    "colabfold",
+    "colorama",
+    "comtypes",
+    "cxservices",
+    "dateutil",
+    "distro",
+    "distutils",
+    "docutils",
+    "filelock",
+    "gdcm",
+    "google",
+    "gor",
+    "grako",
+    "html2text",
+    "imp",
+    "ipykernel",
+    "jax",
+    "line_profiler",
+    "lxml",
+    "lz4",
+    "matplotlib",
+    "mcp",
+    "modeller",
+    "msgpack",
+    "netCDF4",
+    "networkx",
+    "nibabel",
+    "numpy",
+    "openmm",
+    "openvr",
+    "osmesa",
+    "packaging",
+    "pkginfo",
+    "prettyprinter",
+    "psutil",
+    "pyKVFinder",
+    "pybind11",
+    "pydicom",
+    "pynmrstar",
+    "pyrealsense2",
+    "pytest",
+    "qtconsole",
+    "qtpy",
+    "rdkit",
+    "replyobj",
+    "requests",
+    "scipy",
+    "selectregion",
+    "setuptools",
+    "sfftkrw",
+    "shiboken6",
+    "simtk",
+    "sortedcontainers",
+    "speech_recognition",
+    "subdivide",
+    "subsample",
+    "superqt",
+    "tables",
+    "tcia_utils",
+    "tifffile",
+    "tinyarray",
+    "tomli",
+    "urllib3",
+    "wheel_filename",
+    "win32",
+    "win32api",
+    "wmi",
+    "wx",
+    "xmlrpclib"
+  ]
+}

@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-23T23:52:19.673635+00:00",
+  "scope": "harmony_app_entry_with_embedded_runtime",
+  "target": "127.0.0.1:5555",
+  "hap": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
+    "bytes": 158173150,
+    "sha256": "e254bce17968c8e0d0f9fb0dab4eb25015aea69b6a5f29e71e8f800332f69a7d"
+  },
+  "checks": [
+    {
+      "name": "HAP installs",
+      "passed": true,
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
+    },
+    {
+      "name": "Application starts",
+      "passed": true,
+      "detail": "start ability successfully.\n"
+    },
+    {
+      "name": "Runtime reports a ready state",
+      "passed": true,
+      "detail": "运行环境就绪"
+    },
+    {
+      "name": "Embedded CPython reports its version",
+      "passed": true,
+      "detail": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]"
+    },
+    {
+      "name": "math.sqrt evaluates inside the app",
+      "passed": true,
+      "detail": "4.0"
+    },
+    {
+      "name": "ctypes reaches libc through libffi",
+      "passed": true,
+      "detail": "19"
+    },
+    {
+      "name": "Standard library probe matches",
+      "passed": true,
+      "detail": "2c1179ae"
+    },
+    {
+      "name": "Genuine ChimeraX version module loads",
+      "passed": true,
+      "detail": "v1.11.1"
+    },
+    {
+      "name": "numpy imports and computes in the app",
+      "passed": true,
+      "detail": "1.26.4|4.0|10"
+    },
+    {
+      "name": "numpy extension loads from the application native library directory",
+      "passed": true,
+      "detail": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so"
+    },
+    {
+      "name": "A minimal ChimeraX Session can be constructed in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX command subsystem imports in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX trigger dispatch runs in the app",
+      "passed": true,
+      "detail": "cx_app_probe|fired"
+    },
+    {
+      "name": "ChimeraX core modules import in the app",
+      "passed": true,
+      "detail": "chimerax.core.errors|UserError|Logger"
+    },
+    {
+      "name": "An EGL/GLES surface is created inside the app",
+      "passed": true,
+      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684"
+    },
+    {
+      "name": "A real PDB file is opened by the C++ reader in the app",
+      "passed": true,
+      "detail": "models=1|atoms=4|residues=1"
+    },
+    {
+      "name": "A real AtomicStructure with atoms is built in the app",
+      "passed": true,
+      "detail": "atoms=2|residues=1|names=C1,N1"
+    },
+    {
+      "name": "ChimeraX adopts the native EGL context and GLES answers on it",
+      "passed": true,
+      "detail": "stats=none;gltype=_GlesProxy;created=[2, 3, 4, 5];links=p2:?,p3:?,p4:?,p5:?;calls=glAttachShader:8,glBindBuffer:158,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:22,glBufferData:26,glBufferSubData:17,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:8,glCreateProgram:4,glCreateShader:8;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=6/0;recompiled=7/block=0/s13:1:,s14:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|r"
+    },
+    {
+      "name": "ChimeraX own renderer draws geometry into the captured frame",
+      "passed": true,
+      "detail": "cached=cached=36498/589824"
+    },
+    {
+      "name": "Model Panel lists the open models",
+      "passed": true,
+      "detail": "1   /data/storage/el2/base/haps/entry/files/cx_probe.pdb   4   4   ;   3   /data"
+    },
+    {
+      "name": "The command line offers completion from the registered commands",
+      "passed": true,
+      "detail": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   c"
+    },
+    {
+      "name": "The Log panel records executed commands",
+      "passed": true,
+      "detail": "> select: sel=120|models=2  ·  > toggle display: display=on|models=6|changed=2  "
+    },
+    {
+      "name": "mmCIF files open into structures",
+      "passed": true,
+      "detail": "cif=4"
+    },
+    {
+      "name": "The rendered frame can be saved as a PNG",
+      "passed": true,
+      "detail": "图像: png=96005"
+    },
+    {
+      "name": "Model display can be toggled from the shell",
+      "passed": true,
+      "detail": "显示: display=off|models=6|changed=6"
+    },
+    {
+      "name": "A synthetic density map can be built and surfaced",
+      "passed": true,
+      "detail": "vol=6;surf=2;cached=36498/589824;cif=4;log=info:<table surf=2"
+    },
+    {
+      "name": "The model information panel summarises the structure",
+      "passed": true,
+      "detail": "1|cx_probe.pdb|atoms=4|residues=4|chains=1|ss=?:4  ·  3|cx_demo.pdb|atoms=1322|r"
+    },
+    {
+      "name": "The volume/surface panel reports its inventory",
+      "passed": true,
+      "detail": "maps=1|surfaces=1|other=0|6|cx_density;6|surface"
+    },
+    {
+      "name": "The chain/sequence panel lists chains with residue counts",
+      "passed": true,
+      "detail": "1|chains=1|A:4 | 3|chains=1|-:1322 | 3|chains=1|-:1322"
+    },
+    {
+      "name": "The Actions menu commands run (colour by element + orient)",
+      "passed": true,
+      "detail": "menu=ok"
+    },
+    {
+      "name": "Selected atoms are painted in the rendered frame",
+      "passed": true,
+      "detail": "selpaint=120"
+    },
+    {
+      "name": "Selection reaches the highlight channel of the drawings",
+      "passed": true,
+      "detail": "hl=1"
+    },
+    {
+      "name": "Selecting atoms updates the selection manager",
+      "passed": true,
+      "detail": "选中: sel=120|models=2"
+    },
+    {
+      "name": "Compiled bundle extensions import on device",
+      "passed": true,
+      "detail": "cmods=8/8"
+    },
+    {
+      "name": "Bundle subcommands parse and reach their implementation",
+      "passed": true,
+      "detail": "segmentation subcommand reached its body"
+    },
+    {
+      "name": "RMSD, align and zone commands compute on device",
+      "passed": true,
+      "detail": "rmsd/align/zone=ok"
+    },
+    {
+      "name": "The core command set executes on device",
+      "passed": true,
+      "detail": "color/select/view/turn/zoom/dssp=ok"
+    },
+    {
+      "name": "The morph bundle command interpolates between two structures",
+      "passed": true,
+      "detail": "morph=ok"
+    },
+    {
+      "name": "The coulombic bundle command assigns charges and colours the surface",
+      "passed": true,
+      "detail": "coulombic=ok"
+    },
+    {
+      "name": "The mlp bundle command computes a lipophilicity map",
+      "passed": true,
+      "detail": "mlp=ok"
+    },
+    {
+      "name": "A GLSL program renders on the device GPU",
+      "passed": true,
+      "detail": "triangle:242,140,38,255"
+    },
+    {
+      "name": "PyOpenGL and the graphics Python layer load in the app",
+      "passed": true,
+      "detail": "3.1.10|chimerax.graphics.opengl|True"
+    },
+    {
+      "name": "The ChimeraX atomic layer imports in the app",
+      "passed": true,
+      "detail": "chimerax.atomic|Atom|AtomicStructure"
+    },
+    {
+      "name": "The graphics C++ extension loads and runs in the app",
+      "passed": true,
+      "detail": "chimerax.graphics._graphics|3"
+    },
+    {
+      "name": "Core built-in commands run in the app",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
+    },
+    {
+      "name": "The persistent session keeps its tools and toolshed",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
+    },
+    {
+      "name": "ChimeraX command syntax runs from the UI",
+      "passed": true,
+      "detail": "cxprobe:ui-command"
+    },
+    {
+      "name": "The Python sample runs from the UI",
+      "passed": true,
+      "detail": "ChimeraX 31"
+    },
+    {
+      "name": "Bundle commands run against the opened protein",
+      "passed": true,
+      "detail": "render notes: mlp/coulombic/morph=ok"
+    }
+  ],
+  "ui": {
+    "enhanceAppLabel": "ChimeraX",
+    "cx-menu-file": "File",
+    "cx-menu-tools": "Tools",
+    "cx-menu-actions": "Actions",
+    "cx-menu-presets": "Presets",
+    "cx-menu-help": "Help",
+    "cx-tool-open": "Open",
+    "cx-tool-save": "Save",
+    "cx-tool-undo": "Undo",
+    "cx-tool-redo": "Redo",
+    "cx-tool-rotate": "Rotate",
+    "cx-tool-zoom": "Zoom",
+    "cx-tool-center": "Center",
+    "cx-cmd-input": "cxprobe ui-command",
+    "cx-cmd-run": "执行命令",
+    "cx-cmd-py": "Python",
+    "cx-cmd-output": "ChimeraX 31",
+    "cx-status": "运行环境就绪",
+    "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16",
+    "cx-trigger": "cx_app_probe|fired",
+    "cx-version": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]",
+    "cx-math": "4.0",
+    "cx-ctypes": "19",
+    "cx-stdlib": "2c1179ae",
+    "cx-chimerax": "v1.11.1",
+    "cx-core": "chimerax.core.errors|UserError|Logger",
+    "cx-numpy": "1.26.4|4.0|10",
+    "cx-numpyc": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so",
+    "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
+    "cx-qt-mode": "启用 Qt 窗口模式",
+    "cx-demo2-run": "双螺旋示例",
+    "cx-demo3-run": "三螺旋束",
+    "cx-demo4-run": "大结构(448)",
+    "cx-real-run": "Ras 蛋白",
+    "cx-sdf-run": "打开 SDF",
+    "cx-info-run": "模型信息",
+    "cx-list-run": "沙箱结构文件",
+    "cx-demo-run": "示例螺旋",
+    "cx-viewer-run": "显示结构",
+    "cx-viewer-status": "handles=547510628216/545434960960/545432206656",
+    "cx-cmd-suggest": "补全: alias   alias delete   alias list   alias usage   align   angle   camera   cartoon",
+    "cx-cmd-list": "命令清单",
+    "cx-cmdchip-alias": "alias",
+    "cx-cmdchip-alias delete": "alias delete",
+    "cx-cmdchip-alias list": "alias list",
+    "cx-cmdchip-alias usage": "alias usage",
+    "cx-cmdchip-align": "align",
+    "cx-cmdchip-angle": "angle",
+    "cx-cmdchip-camera": "camera",
+    "cx-cmdchip-cartoon": "cartoon",
+    "cx-cmdchip-cartoon byattribute": "cartoon byattribute",
+    "cx-cmdchip-cartoon byattribute off": "cartoon byattribute off",
+    "cx-cmdchip-cartoon byattribute on": "cartoon byattribute on",
+    "cx-cmdchip-cartoon hide": "cartoon hide",
+    "cx-cmdchip-cartoon style": "cartoon style",
+    "cx-status-model": "模型: 1",
+    "cx-status-atoms": "原子: 4",
+    "cx-status-view": "视图: handles=547510628216/545434960960/545432206656",
+    "cx-view-reset": "重置视角",
+    "cx-info-refresh": "刷新",
+    "cx-model-info": "1|cx_probe.pdb|atoms=4|residues=4|chains=1|ss=?:4  ·  3|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  3|cx_demo.pdb_  SES surface|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  4|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  5|cx_demo.pdb|atoms=1322|residues=1322|chains=1|ss=?:1322  ·  2|cx_probe.cif|atoms=4|residues=4|chains=1|ss=?:4",
+    "cx-map-refresh": "刷新",
+    "cx-map-panel": "maps=1|surfaces=1|other=0|6|cx_density;6|surface",
+    "cx-seq-refresh": "刷新",
+    "cx-sequence-panel": "1|chains=1|A:4 | 3|chains=1|-:1322 | 3|chains=1|-:1322",
+    "cx-log-clear": "清空",
+    "cx-log-rows": "> select: sel=120|models=2  ·  > toggle display: display=on|models=6|changed=2  ·  > toggle display: display=off|models=6|changed=6  ·  > save image: png=96005  ·  > cxprobe ui-command  ·  cxprobe:ui-command  ·  > python: ChimeraX 31",
+    "cx-select-sample": "选择示例原子",
+    "cx-model-refresh": "刷新",
+    "cx-display-state": "显示: display=off|models=6|changed=6",
+    "cx-image-saved": "图像: png=96005",
+    "cx-selection-state": "选中: sel=120|models=2",
+    "cx-model-rows": "1   /data/storage/el2/base/haps/entry/files/cx_probe.pdb   4   4   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   3   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb_  SES surface   1322   1322   ;   4   /data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   5   Morph - /data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python3.11/chimerax/demo_data/cx_demo.pdb   1322   1322   ;   6   cx_density   0   0   ;   6   surface   0   0   ;   2   cx_probe.cif   4   4",
+    "cx-toggle-display": "隐藏/显示",
+    "cx-save-image": "保存图像",
+    "cx-official-render": "官方渲染",
+    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
+    "cx-render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4, 5];links=p2:?,p3:?,p4:?,p5:?;calls=glAttachShader:8,glBindBuffer:158,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:22,glBufferData:26,glBufferSubData:17,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:8,glCreateProgram:4,glCreateShader:8;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=6/0;recompiled=7/block=0/s13:1:,s14:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;menu=ok;hl=1;selpaint=120;reg:mask=False,surf=True,n=94;mask-reg=ok;seg-reg=ok;second=4;coulombic=ok;morph=ok;color=ok;select=ok;view=ok;turn=ok;zoom=ok;dssp=ok;rmsd=ok;align=ok;zone=ok;volume:UserError:Missing or invalid \\\"volumes\\\" argument: empty a;volume:UserError:Missing or invalid \\\"surfaces\\\" argument: empty ;segmentation:UserError:No segmentations specified;vol=6;surf=2;cached=36498/589824;cif=4;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python|info:Executing: color #3 byelement|info:Executing: view orient|info:FYI: command is replacing existing command: \\\"volume mask\\\";calls=13;top=glGenVertexArrays:7:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
+    "cx-open": "models=1|atoms=4|residues=1",
+    "cx-model": "atoms=2|residues=1|names=C1,N1",
+    "cx-gl-render": "triangle:242,140,38,255",
+    "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
+    "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
+    "cx-graphics": "chimerax.graphics._graphics|3",
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81"
+  },
+  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x684",
+  "chimerax_render": "stats=none;gltype=_GlesProxy;created=[2, 3, 4, 5];links=p2:?,p3:?,p4:?,p5:?;calls=glAttachShader:8,glBindBuffer:158,glBindBufferBase:4,glBindFramebuffer:8,glBindRenderbuffer:6,glBindVertexArray:22,glBufferData:26,glBufferSubData:17,glCheckFramebufferStatus:2,glClear:4,glClearColor:5,glCompileShader:8,glCreateProgram:4,glCreateShader:8;block=0;glerr=0;link=1;skip=True;rawblock=0;rawerr=0;gllen=s3=5844,s4=14575;blocks=1;aftercurrent=0;mini=6/0;recompiled=7/block=0/s13:1:,s14:1:;src=GL_VERTEX_SHADER (GL_VERTEX_SHADER):5830|GL_FRAGMENT_SHADER (GL_FRAGMENT_SHADER):14561;context=EGLContext-adopted|raw=OpenGL ES 3.0 (4.1 Metal - 91.7)|gl=OpenGL ES 3.0 (4.1 Metal - 91.7)|facade:table=True,sigs=82,batch=0;enums=GL_FRAMEBUFFER (GL_FRAMEBUFFER),GL_FRAMEBUFFER_COMPLETE (GL_FRAMEBUFFER_COMPLETE);triangle=3186/4096;buffers:vb=4,eb=ok,ninst=1;geom:disp=True,empty=False,verts=3,tris=1,oc=True,tc=False;drawcalls=glGetUniformLocation:12,glUniformMatrix4fv:6,glUseProgram:3;light:buf=2,block=1,caps=4,shadows=False,amb=?;drawings=10;vc=2/10;types=Model:none,AtomicStructur:none,AtomsDrawing:none,RibbonsDrawing:none,BondsDrawing:none,Model:3,AtomicStructur:none,AtomsDrawing:none;colored=1326;pushed=2;mlp=ok;menu=ok;hl=1;selpaint=120;reg:mask=False,surf=True,n=94;mask-reg=ok;seg-reg=ok;second=4;coulombic=ok;morph=ok;color=ok;select=ok;view=ok;turn=ok;zoom=ok;dssp=ok;rmsd=ok;align=ok;zone=ok;volume:UserError:Missing or invalid \\\"volumes\\\" argument: empty a;volume:UserError:Missing or invalid \\\"surfaces\\\" argument: empty ;segmentation:UserError:No segmentations specified;vol=6;surf=2;cached=36498/589824;cif=4;log=info:<table border=1 cellpadding=4 cellspacing=0>\\n  <thead>\\n    <tr>\\n      <th colspan=\\\"2\\\">Chain information for /data/storag|info:Executing: mlp #3|info:Map values for surface \\\"/data/storage/el2/base/haps/entry/files/cx-runtime-v6-e4c84868dafa/cx-generic-runtime/lib/python|info:Executing: color #3 byelement|info:Executing: view orient|info:FYI: command is replacing existing command: \\\"volume mask\\\";calls=13;top=glGenVertexArrays:7:int,glGetString:3:IntConstant,glGetFramebufferAttachmentParameteriv:1:IntConstant/IntConstant/IntConstant,glGetIntegerv:1:IntConstant",
+  "selection_output": "选中: sel=120|models=2",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|map-ext:ok|list-models:ok|cmods=8/8:+_arrays,ctypes_support,_geometry,_graphics,_pdbio,_mmcif,_profile_grids,_map|tess=0|tools=True|toolshed=True|state=session-ready|notes=std-commands=81",
+  "command_output": "cxprobe:ui-command",
+  "python_output": "ChimeraX 31",
+  "info_probe_output": "handles=547510628216/545439457952/545437572288",
+  "result": {
+    "passed": 49,
+    "failed": 0
+  },
+  "status": "app_runtime_verified"
+}

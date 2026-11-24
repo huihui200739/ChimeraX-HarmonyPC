@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-17T09:17:05.363797+00:00",
+  "version": "1.26.4",
+  "target": "aarch64-linux-ohos",
+  "builder": "meson",
+  "host_executed": false,
+  "target_executed": false,
+  "log": "/var/folders/30/m2_9v5cx4qj17vzs1vfzn0cc0000gn/T/numpy-meson-obocfmg3/numpy-build.log",
+  "wheel": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/numpy-1.26.4-ohos-wheel/numpy-1.26.4-cp311-cp311-macosx_27_0_arm64.whl",
+  "wheel_sha256": "6379238d752e6442356ce8d4f48f1068b80576cbba2ba163bfd8dca6bfae268a",
+  "cross_file": "[binaries]\nc = '/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang'\ncpp = '/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++'\nar = '/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-ar'\nstrip = '/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-strip'\nranlib = '/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-ranlib'\npkg-config = 'false'\npkgconfig = 'false'\nexe_wrapper = '/tmp/cx-meson-device-run.sh'\n\n[host_machine]\nsystem = 'linux'\ncpu_family = 'aarch64'\ncpu = 'aarch64'\nendian = 'little'\n\n[properties]\nneeds_exe_wrapper = true\n# aarch64 Linux/OHOS uses IEEE binary128 long double; the probe cannot run here.\nlongdouble_format = 'IEEE_QUAD_LE'\n\n[built-in options]\nc_args = ['--target=aarch64-linux-ohos', '--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot', '-O2', '-fPIC']\ncpp_args = ['--target=aarch64-linux-ohos', '--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot', '-O2', '-fPIC']\nc_link_args = ['--target=aarch64-linux-ohos', '--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot', '-shared',\n               '-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime/lib', '-l:libpython3.11.so.1.0',\n               '-Wl,-rpath,$ORIGIN/../../../lib']\ncpp_link_args = ['--target=aarch64-linux-ohos', '--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot', '-shared',\n                 '-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime/lib', '-l:libpython3.11.so.1.0',\n                 '-Wl,-rpath,$ORIGIN/../../../lib']\n",
+  "status": "numpy_cross_compiled_not_target_tested"
+}

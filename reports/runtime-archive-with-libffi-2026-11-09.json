@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-09T13:50:58.956630+00:00",
+  "scope": "generic_runtime_archive_not_HAP_or_application",
+  "packager_source_sha256": "ef60f70ca248658839dcf202f701cbac99a0955fec542886d88b1310c53ddf79",
+  "device_contacted": false,
+  "target_executed": false,
+  "target_python_validated": false,
+  "target_ui_validated": false,
+  "application_included": false,
+  "port_validated": false,
+  "archive": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/runtime-payload/cx-generic-runtime-3.11.18-with-libffi-aarch64-ohos.tar.gz",
+  "archive_sha256": "9c1d61293846bb3153853037e56abb3731f7927239aaee002419c7eab6ae2271",
+  "archive_bytes": 17190473,
+  "file_count": 916,
+  "symlink_count": 1,
+  "runtime_manifest_sha256": "bb9a799d4b7fca7b532280fceae98b974de8c3379fb657258afc8b2f570f52a7",
+  "python_version": "3.11.18",
+  "source_commit": "26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "contents_verified": true,
+  "status": "generic_archive_verified_locally"
+}

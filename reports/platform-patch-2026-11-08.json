@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scope": "generic_platform_detection_and_cross_build_metadata_only",
+  "device_contacted": false,
+  "source_root": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/upstream-local-adapted",
+  "source_commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "apply_requested": true,
+  "upstream_app_built": false,
+  "port_validated": false,
+  "status": "patch_applied"
+}

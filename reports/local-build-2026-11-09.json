@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-09T13:00:54.727265+00:00",
+  "scope": "generic_startup_adapter_cross_compile_only",
+  "device_contacted": false,
+  "upstream_app_launched": false,
+  "target_python_validated": false,
+  "target_ui_validated": false,
+  "port_validated": false,
+  "artifacts": [
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/ChimeraX",
+      "bytes": 22608,
+      "sha256": "98b43a9e8282677101cbea2436fdc1e5e85d9a2f8842690f71fc711de99349b0",
+      "kind": "native_startup_adapter_not_complete_application"
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/libcx_harmony_bootstrap.so",
+      "bytes": 19304,
+      "sha256": "fab8c789eecce42936582ec762d148b0d5dffe81ea456dc66bfa35ff9476fa18",
+      "kind": "native_startup_adapter_not_complete_application"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+        "--target=aarch64-linux-ohos",
+        "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-O2",
+        "-fPIC",
+        "-fvisibility=hidden",
+        "-fstack-protector-strong",
+        "-Wl,-z,relro,-z,now",
+        "-Wl,--no-undefined",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/harmony/bootstrap.c",
+        "-ldl",
+        "-Wl,-rpath,$ORIGIN/../lib",
+        "-o",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/ChimeraX.new"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--program-headers",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/ChimeraX.new"
+      ],
+      "returncode": 0,
+      "stdout": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x24BC\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          20176 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         11\n  Size of section headers:           64 (bytes)\n  Number of section headers:         38\n  Section header string table index: 36\n\nElf file type is DYN (Shared object file)\nEntry point 0x24bc\nThere are 11 program headers, starting at offset 64\n\nProgram Headers:\n  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align\n  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x000268 0x000268 R   0x8\n  INTERP         0x0002a8 0x00000000000002a8 0x00000000000002a8 0x00001a 0x00001a R   0x1\n      [Requesting program interpreter: /lib/ld-musl-aarch64.so.1]\n  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x0014bc 0x0014bc R   0x1000\n  LOAD           0x0014bc 0x00000000000024bc 0x00000000000024bc 0x0012f4 0x0012f4 R E 0x1000\n  LOAD           0x0027b0 0x00000000000047b0 0x00000000000047b0 0x000340 0x000340 RW  0x1000\n  LOAD           0x002af0 0x0000000000005af0 0x0000000000005af0 0x000008 0x000078 RW  0x1000\n  DYNAMIC        0x002828 0x0000000000004828 0x0000000000004828 0x0001a0 0x0001a0 RW  0x8\n  GNU_RELRO      0x0027b0 0x00000000000047b0 0x00000000000047b0 0x000340 0x000850 R   0x1\n  GNU_EH_FRAME   0x0013ec 0x00000000000013ec 0x00000000000013ec 0x000024 0x000024 R   0x4\n  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x0\n  NOTE           0x0002c8 0x00000000000002c8 0x00000000000002c8 0x00001c 0x00001c R   0x8\n\n Section to Segment mapping:\n  Segment Sections...\n   00     \n   01     .interp \n   02     .interp .note.ohos.ident .dynsym .gnu.hash .hash .dynstr .rela.dyn .rela.plt .rodata .eh_frame_hdr .eh_frame \n   03     .text .init .fini .plt \n   04     .init_array .fini_array .data.rel.ro .dynamic .got .got.plt \n   05     .data .bss \n   06     .dynamic \n   07     .init_array .fini_array .data.rel.ro .dynamic .got .got.plt \n   08     .eh_frame_hdr \n   09     \n   10     .note.ohos.ident \n   None   .debug_abbrev .debug_info .debug_str_offsets .debug_str .debug_addr .comment .debug_line .debug_line_str .debug_aranges .debug_rnglists .debug_frame .symtab .shstrtab .strtab \nDynamic section at offset 0x2828 contains 26 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [$ORIGIN/../lib]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x808\n  0x0000000000000008 (RELASZ)       600 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    19\n  0x0000000000000017 (JMPREL)       0xa60\n  0x0000000000000002 (PLTRELSZ)     600 (bytes)\n  0x0000000000000003 (PLTGOT)       0x4a10\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x2e8\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x6d4\n  0x000000000000000a (STRSZ)        306 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x5b8\n  0x0000000000000004 (HASH)         0x5dc\n  0x0000000000000019 (INIT_ARRAY)   0x47b0\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x47b8\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x35d8\n  0x000000000000000d (FINI)         0x35ec\n  0x0000000000000000 (NULL)         0x0\n\nSymbol table '.dynsym' contains 30 entries:\n   Num:    Value          Size Type    Bind   Vis       Ndx Name\n     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT   UND \n     1: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND __libc_start_main\n     2: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __register_frame_info\n     3: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __at_fini\n     4: 0000000000000000     0 FUNC    WEAK   DEFAULT   UND __cxa_finalize\n     5: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __deregister_frame_info\n     6: 0000000000000000     0 OBJECT  GLOBAL DEFAULT   UND __stack_chk_guard\n     7: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND realpath\n     8: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND stat\n     9: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND snprintf\n    10: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND access\n    11: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlopen\n    12: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlerror\n    13: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlsym\n    14: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strncmp\n    15: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND setlocale\n    16: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strcmp\n    17: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND calloc\n    18: 0000000000000000     0 OBJECT  GLOBAL DEFAULT   UND stderr\n    19: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND free\n    20: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND fprintf\n    21: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND __stack_chk_fail\n    22: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strlen\n    23: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND setenv\n    24: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND readlink\n    25: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strrchr\n    26: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strcpy\n    27: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND puts\n    28: 00000000000035d8     0 FUNC    GLOBAL DEFAULT    13 _init\n    29: 00000000000035ec     0 FUNC    GLOBAL DEFAULT    14 _fini\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+        "--target=aarch64-linux-ohos",
+        "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-O2",
+        "-fPIC",
+        "-fvisibility=hidden",
+        "-fstack-protector-strong",
+        "-Wl,-z,relro,-z,now",
+        "-Wl,--no-undefined",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/harmony/bootstrap.c",
+        "-ldl",
+        "-shared",
+        "-DCX_BOOTSTRAP_LIBRARY",
+        "-Wl,-soname,libcx_harmony_bootstrap.so",
+        "-Wl,-rpath,$ORIGIN",
+        "-o",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/libcx_harmony_bootstrap.so.new"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--program-headers",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/harmony-local/libcx_harmony_bootstrap.so.new"
+      ],
+      "returncode": 0,
+      "stdout": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00\n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Shared object file)\n  Machine:                           AArch64\n  Version:                           0x1\n  Entry point address:               0x0\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          16936 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         10\n  Size of section headers:           64 (bytes)\n  Number of section headers:         37\n  Section header string table index: 35\n\nElf file type is DYN (Shared object file)\nEntry point 0x0\nThere are 10 program headers, starting at offset 64\n\nProgram Headers:\n  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align\n  PHDR           0x000040 0x0000000000000040 0x0000000000000040 0x000230 0x000230 R   0x8\n  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x00118c 0x00118c R   0x1000\n  LOAD           0x00118c 0x000000000000218c 0x000000000000218c 0x000eb4 0x000eb4 R E 0x1000\n  LOAD           0x002040 0x0000000000004040 0x0000000000004040 0x000300 0x000300 RW  0x1000\n  LOAD           0x002340 0x0000000000005340 0x0000000000005340 0x000008 0x000078 RW  0x1000\n  DYNAMIC        0x0020b8 0x00000000000040b8 0x00000000000040b8 0x0001a0 0x0001a0 RW  0x8\n  GNU_RELRO      0x002040 0x0000000000004040 0x0000000000004040 0x000300 0x000fc0 R   0x1\n  GNU_EH_FRAME   0x0010f0 0x00000000000010f0 0x00000000000010f0 0x00001c 0x00001c R   0x4\n  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x0\n  NOTE           0x000270 0x0000000000000270 0x0000000000000270 0x00001c 0x00001c R   0x8\n\n Section to Segment mapping:\n  Segment Sections...\n   00     \n   01     .note.ohos.ident .dynsym .gnu.hash .hash .dynstr .rela.dyn .rela.plt .rodata .eh_frame_hdr .eh_frame \n   02     .text .init .fini .plt \n   03     .init_array .fini_array .data.rel.ro .dynamic .got .got.plt \n   04     .data .bss \n   05     .dynamic \n   06     .init_array .fini_array .data.rel.ro .dynamic .got .got.plt \n   07     .eh_frame_hdr \n   08     \n   09     .note.ohos.ident \n   None   .debug_info .debug_abbrev .debug_aranges .debug_rnglists .debug_line .debug_line_str .debug_str_offsets .debug_str .debug_addr .comment .debug_frame .symtab .shstrtab .strtab \nDynamic section at offset 0x20b8 contains 26 entries:\n  Tag                Type           Name/Value\n  0x000000000000001d (RUNPATH)      Library runpath: [$ORIGIN]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000000e (SONAME)       Library soname: [libcx_harmony_bootstrap.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW \n  0x0000000000000007 (RELA)         0x730\n  0x0000000000000008 (RELASZ)       528 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    16\n  0x0000000000000017 (JMPREL)       0x940\n  0x0000000000000002 (PLTRELSZ)     480 (bytes)\n  0x0000000000000003 (PLTGOT)       0x4288\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x290\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x600\n  0x000000000000000a (STRSZ)        300 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x500\n  0x0000000000000004 (HASH)         0x528\n  0x0000000000000019 (INIT_ARRAY)   0x4040\n  0x000000000000001b (INIT_ARRAYSZ) 8 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x4048\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x2eb8\n  0x000000000000000d (FINI)         0x2ecc\n  0x0000000000000000 (NULL)         0x0\n\nSymbol table '.dynsym' contains 26 entries:\n   Num:    Value          Size Type    Bind   Vis       Ndx Name\n     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT   UND \n     1: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __register_frame_info\n     2: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __at_fini\n     3: 0000000000000000     0 FUNC    WEAK   DEFAULT   UND __cxa_finalize\n     4: 0000000000000000     0 NOTYPE  WEAK   DEFAULT   UND __deregister_frame_info\n     5: 0000000000000000     0 OBJECT  GLOBAL DEFAULT   UND __stack_chk_guard\n     6: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND realpath\n     7: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND stat\n     8: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND snprintf\n     9: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND access\n    10: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlopen\n    11: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlerror\n    12: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND dlsym\n    13: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strncmp\n    14: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND setlocale\n    15: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strcmp\n    16: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND calloc\n    17: 0000000000000000     0 OBJECT  GLOBAL DEFAULT   UND stderr\n    18: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND free\n    19: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND fprintf\n    20: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND __stack_chk_fail\n    21: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND strlen\n    22: 0000000000000000     0 FUNC    GLOBAL DEFAULT   UND setenv\n    23: 0000000000002eb8     0 FUNC    GLOBAL DEFAULT    12 _init\n    24: 0000000000002ecc     0 FUNC    GLOBAL DEFAULT    13 _fini\n    25: 00000000000022c4  2240 FUNC    GLOBAL DEFAULT    11 cx_harmony_bootstrap\n",
+      "stderr": ""
+    }
+  ],
+  "source_sha256": "a5fac1ad1e622e4849c2c31b135eebb62ffb2283184fc36692f689cf95b52e0e",
+  "header_sha256": "14ab9e5c9d0277a373dc87d428c484f12eb5a98960aafdfca2a649a00d3c1440",
+  "status": "local_cross_compile_passed",
+  "missing_components": [
+    "target CPython integration and target-side validation (not inspected by this adapter-only build)",
+    "target Qt and Python bindings",
+    "Qt HarmonyOS Ability/lifecycle integration",
+    "application contents and installable signed package"
+  ]
+}

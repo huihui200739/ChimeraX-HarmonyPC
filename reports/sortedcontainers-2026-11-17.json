@@ -1,0 +1,12 @@
+{
+  "wheel": "sortedcontainers-2.4.0-py2.py3-none-any.whl",
+  "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+  "version": "2.4.0",
+  "modules": [
+    "sortedcontainers/__init__.py",
+    "sortedcontainers/sorteddict.py",
+    "sortedcontainers/sortedlist.py",
+    "sortedcontainers/sortedset.py"
+  ],
+  "purpose": "pure-Python runtime dependency of chimerax.core.colors/commands"
+}

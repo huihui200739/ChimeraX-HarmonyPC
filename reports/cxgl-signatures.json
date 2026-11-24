@@ -1,0 +1,19 @@
+{
+  "functions_used": 89,
+  "functions_covered": 79,
+  "signatures_emitted": 82,
+  "missing": [
+    "glClearDepth",
+    "glDepthRange",
+    "glDrawBuffer",
+    "glGetBoolean",
+    "glGetDebugMessageLog",
+    "glGetInteger",
+    "glGetTexImage",
+    "glLogicOp",
+    "glTexImage1D",
+    "glTexSubImage1D"
+  ],
+  "header": "[PosixPath('/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/GLES3/gl3.h'), PosixPath('/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/include/GLES2/gl2.h')]",
+  "output": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/vendor/graphics/_cxgl_sigs.py"
+}

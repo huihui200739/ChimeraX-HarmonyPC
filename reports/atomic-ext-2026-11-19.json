@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-19T12:46:16.118006+00:00",
+  "tool": "tools/build_atomic_ext_harmony.py",
+  "target": "aarch64-linux-ohos",
+  "host_executed": false,
+  "device_tooling_used": false,
+  "bundle": "ChimeraX-Atomic",
+  "upstream_commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "inputs": {
+    "clang": {
+      "path": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang++",
+      "exists": true
+    },
+    "llvm_readelf": {
+      "path": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+      "exists": true
+    },
+    "sysroot": {
+      "path": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+      "exists": true
+    },
+    "python_include": {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/source/Include/Python.h",
+      "exists": true
+    },
+    "pyconfig": {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/objects/pyconfig.h",
+      "exists": true
+    },
+    "numpy_include": {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/numpy/core/include/numpy/arrayobject.h",
+      "exists": true
+    },
+    "libpython": {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime/lib/libpython3.11.so.1.0",
+      "exists": true
+    },
+    "sources": {
+      "count": 18,
+      "missing": []
+    }
+  },
+  "include_root": {
+    "arrays": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/arrays",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/arrays/_arrays",
+      "ok": true
+    },
+    "atomstruct": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/atomstruct",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/atomic_lib/atomic_cpp/atomstruct_cpp",
+      "ok": true
+    },
+    "element": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/element",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/atomic_lib/atomic_cpp/element_cpp",
+      "ok": true
+    },
+    "pyinstance": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/pyinstance",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/atomic_lib/atomic_cpp/pyinstance_cpp",
+      "ok": true
+    },
+    "pysupport": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/pysupport",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/core/core_cpp/pysupport",
+      "ok": true
+    },
+    "logger": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/logger",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/core/core_cpp/logger",
+      "ok": true
+    },
+    "chutil": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/chutil",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/core/core_cpp/chutil",
+      "ok": true
+    },
+    "ioutil": {
+      "link": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include/ioutil",
+      "target": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/core/core_cpp/ioutil",
+      "ok": true
+    }
+  },
+  "products": [
+    {
+      "name": "_ribbons",
+      "bundle": "atomic",
+      "kind": "cpython_extension",
+      "module_init": "PyInit__ribbons",
+      "staged_path": "chimerax/atomic/_ribbons.cpython-311-aarch64-linux-ohos.so",
+      "source_count": 5,
+      "compile_seconds": 0.0,
+      "status": "built",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/out/_ribbons.cpython-311-aarch64-linux-ohos.so",
+      "staged": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/_ribbons.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 120968,
+      "sha256": "78eff99117fa7b7406bb19bf3416e3d9103e491d4046cb09fada6684aa085612",
+      "verify_ok": false
+    },
+    {
+      "name": "libmolc",
+      "bundle": "atomic",
+      "kind": "shared_library",
+      "module_init": null,
+      "staged_path": "chimerax/atomic/libmolc.so",
+      "source_count": 1,
+      "compile_seconds": 0.0,
+      "status": "built",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/out/libmolc.so",
+      "staged": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/libmolc.so",
+      "bytes": 442480,
+      "sha256": "9936bc653db9d5332dbf0c71eacb1c266e4fbf18fe199f8601e109ea6bd3177d",
+      "verify_ok": false
+    },
+    {
+      "name": "_geometry",
+      "bundle": "geometry",
+      "kind": "cpython_extension",
+      "module_init": "PyInit__geometry",
+      "staged_path": "chimerax/geometry/_geometry.cpython-311-aarch64-linux-ohos.so",
+      "source_count": 12,
+      "compile_seconds": 0.0,
+      "status": "built",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/out/_geometry.cpython-311-aarch64-linux-ohos.so",
+      "staged": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/geometry/_geometry.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 171192,
+      "sha256": "9e75c84e4c2db845facc6201a173e778324856db052627a10ece397b264d8c58",
+      "verify_ok": false
+    }
+  ],
+  "skipped": [
+    {
+      "extension": "cymol",
+      "bundle": "atomic",
+      "declaration": "CModule name=\"cymol\" (atomic_cpp/cymol.pyx, usesNumpy)",
+      "reason": "Cython source: no generated C++ checked in and no Cython interpreter available offline on this host (import Cython fails, no local wheel, network installs are out of scope).",
+      "unblocks_with": "Cython >= 3.0 (cython --cplus atomic_cpp/cymol.pyx) then the same clang cross-compile + atomstruct stack link as _ribbons."
+    },
+    {
+      "extension": "cytmpl",
+      "bundle": "atomic",
+      "declaration": "CModule name=\"cytmpl\" (atomic_cpp/cytmpl.pyx, usesNumpy)",
+      "reason": "Cython source: same blocker as cymol (no Cython code generation offline).",
+      "unblocks_with": "Cython >= 3.0 code generation, then cross-compile like _ribbons."
+    },
+    {
+      "extension": "connect",
+      "bundle": "atomic",
+      "declaration": "CModule name=\"connect\" (atomic_cpp/connect.pyx) + Library pdbconnect",
+      "reason": "Cython source; additionally links the ChimeraX-PDBLibrary pdbconnect library, which is not cross-compiled in this workspace either.",
+      "unblocks_with": "Cython code generation plus a cross-compiled libpdbconnect.so."
+    },
+    {
+      "extension": "_load_libs",
+      "bundle": "atomic_lib",
+      "declaration": "CModule name=\"_load_libs\" (atomic_lib/atomic_cpp/load_libs.cpp)",
+      "reason": "Not part of chimerax.atomic; it is only useful once libatomstruct.so / libelement.so exist as separate shared libraries. Here the atomic stack is compiled directly into each atomic artifact, so no dynamic loader shim is needed yet.",
+      "unblocks_with": "Split the stack into chimerax/atomic_lib/lib/*.so and build _load_libs afterwards."
+    }
+  ],
+  "compile_failures": [],
+  "link_failures": [],
+  "verification": [
+    {
+      "module": "_ribbons",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/_ribbons.cpython-311-aarch64-linux-ohos.so",
+      "readelf_returncode": 0,
+      "machine": "AArch64",
+      "machine_is_aarch64": true,
+      "needed_libpython": true,
+      "runpath": "$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib",
+      "runpath_ok": false,
+      "elf_type_shared": true,
+      "ok": false
+    },
+    {
+      "module": "libmolc",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/atomic/libmolc.so",
+      "readelf_returncode": 0,
+      "machine": "AArch64",
+      "machine_is_aarch64": true,
+      "needed_libpython": true,
+      "runpath": "$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib",
+      "runpath_ok": false,
+      "elf_type_shared": true,
+      "ok": false
+    },
+    {
+      "module": "_geometry",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/geometry/_geometry.cpython-311-aarch64-linux-ohos.so",
+      "readelf_returncode": 0,
+      "machine": "AArch64",
+      "machine_is_aarch64": true,
+      "needed_libpython": true,
+      "runpath": "$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib",
+      "runpath_ok": false,
+      "elf_type_shared": true,
+      "ok": false
+    }
+  ],
+  "symbol_audit": [
+    {
+      "table_source": "src/bundles/atomic/ribbon_cpp/ribbons.cpp",
+      "declared": 25,
+      "referenced": 25,
+      "missing": [],
+      "ok": true
+    },
+    {
+      "artifact": "libmolc.so",
+      "references": 335,
+      "exact_matches": 332,
+      "prefix_matches": [
+        "pseudobond_global_manager_session_",
+        "set_",
+        "structure_session_"
+      ],
+      "missing": [],
+      "ok": true
+    },
+    {
+      "table_source": "src/bundles/geometry/_geometry/geometry.cpp",
+      "declared": 40,
+      "referenced": 37,
+      "missing": [],
+      "ok": true
+    }
+  ],
+  "compile_flags": [
+    "--target=aarch64-linux-ohos",
+    "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+    "-std=c++11",
+    "-O2",
+    "-fPIC",
+    "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/source/Include",
+    "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/objects",
+    "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/atomic-ext/include",
+    "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/numpy/core/include"
+  ],
+  "link_flags": [
+    "-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/lib",
+    "-lcxatomstruct",
+    "-L/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi-linked/runtime/lib",
+    "-l:libpython3.11.so.1.0",
+    "-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/chimerax/lib",
+    "-Wl,--no-undefined"
+  ],
+  "status": "atomic_extensions_built_with_verification_gaps"
+}

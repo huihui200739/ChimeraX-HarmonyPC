@@ -1,0 +1,977 @@
+{
+ "generated": "2026-11-18T01:56:25.337859+00:00",
+ "mode": "dry-run",
+ "python_root": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python",
+ "libs_root": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs",
+ "manifest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/out/deploy-manifest.json",
+ "sdk_root": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony",
+ "entries": [
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Core.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Core.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Gui.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Gui.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Widgets.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Widgets.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Network.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Network.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6OpenGL.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6OpenGL.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6OpenGLWidgets.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6OpenGLWidgets.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6PrintSupport.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6PrintSupport.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Sql.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Sql.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Xml.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Xml.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Concurrent.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Concurrent.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Test.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/lib/libQt6Test.so",
+   "note": "official Qt 6.12.0 HarmonyOS prebuilt"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libqohos.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/plugins/platforms/libqohos.so",
+   "note": "QPA plugin: without it QApplication cannot be created"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/platforms/libqohos.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt/prebuilt/harmonyos-arm64/plugins/platforms/libqohos.so",
+   "note": "QPA plugin location (QT_PLUGIN_PATH=<libs-root>)"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libc++_shared.so",
+   "source": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/aarch64-linux-ohos/libc++_shared.so",
+   "note": "NOT in sysroot - must be copied from the SDK clang runtime"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libshiboken6.abi3.so.6.12",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/libshiboken6.abi3.so.6.12",
+   "note": "shiboken6 runtime, cross-built"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libpyside6.abi3.so.6.12",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/PySide6/libpyside6.abi3.so.6.12",
+   "note": "PySide6 runtime, cross-built"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtCore.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtCore.abi3.so",
+   "note": "QtCore.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtGui.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtGui.abi3.so",
+   "note": "QtGui.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtNetwork.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtNetwork.abi3.so",
+   "note": "QtNetwork.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtOpenGL.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGL.abi3.so",
+   "note": "QtOpenGL.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtOpenGLWidgets.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtOpenGLWidgets.abi3.so",
+   "note": "QtOpenGLWidgets.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python-ext",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtWidgets.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtWidgets.abi3.so",
+   "note": "QtWidgets.abi3 binding (.abi3: loadable by CPython 3.11)"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/__init__.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/__init__.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/_config.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/_config.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/_git_pyside_version.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/_git_pyside_version.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/support/__init__.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support/__init__.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/support/auto_property_helper.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support/auto_property_helper.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/support/deprecated.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support/deprecated.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/support/generate_pyi.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support/generate_pyi.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/support/qml_component_helper.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/support/qml_component_helper.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtAsyncio/__init__.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/__init__.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtAsyncio/events.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/events.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtAsyncio/futures.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/futures.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtAsyncio/tasks.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/pyside6-qtcoreguiwidgetsnetworkopenglopenglwidgets-install/lib/python3.11/site-packages/PySide6/QtAsyncio/tasks.py",
+   "note": ""
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/Shiboken.abi3.so",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/Shiboken.abi3.so",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/Shiboken.pyi",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/Shiboken.pyi",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/__init__.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/__init__.py",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/_config.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/_config.py",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/_git_shiboken_module_version.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/_git_shiboken_module_version.py",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "python",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/py.typed",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/shiboken6/py.typed",
+   "note": "gap: PySide6/__init__.py imports shiboken6.Shiboken"
+  },
+  {
+   "kind": "native",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6/libshiboken6.abi3.so.6.12",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qtbind/build/shiboken6-target-install/lib/python3.11/site-packages/../../lib/libshiboken6.abi3.so.6.12",
+   "note": "gap: shiboken6/{Shiboken.abi3.so} has RUNPATH $ORIGIN/, so the runtime lib must sit next to it"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtCore.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtCore.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtGui.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtGui.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtMultimedia.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtMultimedia.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtNetwork.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtNetwork.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtWebEngineCore.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtWebEngineCore.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtWebEngineWidgets.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtWebEngineWidgets.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/QtWidgets.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/QtWidgets.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/__init__.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/__init__.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/promote_enums.py",
+   "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt/promote_enums.py",
+   "note": "from patch 0004-qt-ohos-pyside6-shim.patch"
+  },
+  {
+   "kind": "shim",
+   "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt/ohos.py",
+   "source": "<generated by 0004-qt-ohos-pyside6-shim.patch>",
+   "note": "new module added by the patch"
+  }
+ ],
+ "symlinks": [
+  {
+   "path": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/lib",
+   "target": "../qt-deploy/libs",
+   "note": "RUNPATH $ORIGIN/../lib of every PySide6 extension"
+  }
+ ],
+ "qtshim": {
+  "source": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/prereqs/qtshim/Qt",
+  "patch": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/patches/0004-qt-ohos-pyside6-shim.patch",
+  "needs_patch": true,
+  "target": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/Qt"
+ },
+ "gaps": [
+  "shiboken6/Shiboken.abi3.so",
+  "shiboken6/Shiboken.pyi",
+  "shiboken6/__init__.py",
+  "shiboken6/_config.py",
+  "shiboken6/_git_shiboken_module_version.py",
+  "shiboken6/py.typed",
+  "shiboken6/libshiboken6.abi3.so.6.12",
+  "Qt/ohos.py (added by 0004-qt-ohos-pyside6-shim.patch)"
+ ],
+ "hand_off_to_app_libs": [
+  "libQt6Core.so",
+  "libQt6Gui.so",
+  "libQt6Widgets.so",
+  "libQt6Network.so",
+  "libQt6OpenGL.so",
+  "libQt6OpenGLWidgets.so",
+  "libQt6PrintSupport.so",
+  "libQt6Sql.so",
+  "libQt6Xml.so",
+  "libQt6Concurrent.so",
+  "libQt6Test.so",
+  "libqohos.so",
+  "libc++_shared.so",
+  "libshiboken6.abi3.so.6.12",
+  "libpyside6.abi3.so.6.12"
+ ],
+ "warnings": [],
+ "elf_closure": {
+  "available": true,
+  "readelf": "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+  "search_path": [
+   [
+    "deployed-libs",
+    "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs"
+   ],
+   [
+    "python-root/PySide6",
+    "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6"
+   ],
+   [
+    "python-root/shiboken6",
+    "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/shiboken6"
+   ],
+   [
+    "python-root/lib",
+    "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/lib"
+   ],
+   [
+    "app-libs",
+    "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/app/entry/libs/arm64-v8a"
+   ],
+   [
+    "sdk-sysroot",
+    "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot/usr/lib/aarch64-linux-ohos"
+   ],
+   [
+    "sdk-clang-runtime",
+    "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/lib/aarch64-linux-ohos"
+   ]
+  ],
+  "libs_checked": 22,
+  "provided_sonames": [
+   "QtCore.abi3.so",
+   "QtGui.abi3.so",
+   "QtNetwork.abi3.so",
+   "QtOpenGL.abi3.so",
+   "QtOpenGLWidgets.abi3.so",
+   "QtWidgets.abi3.so",
+   "libQt6Concurrent.so",
+   "libQt6Core.so",
+   "libQt6Gui.so",
+   "libQt6Network.so",
+   "libQt6OpenGL.so",
+   "libQt6OpenGLWidgets.so",
+   "libQt6PrintSupport.so",
+   "libQt6Sql.so",
+   "libQt6Test.so",
+   "libQt6Widgets.so",
+   "libQt6Xml.so",
+   "libc++_shared.so",
+   "libpyside6.abi3.so.6.12",
+   "libqohos.so",
+   "libshiboken6.abi3.so.6.12"
+  ],
+  "unresolved": [],
+  "complete": true,
+  "details": [
+   {
+    "lib": "libQt6Core.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Core.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libtime_service_ndk.so",
+     "libace_napi.z.so",
+     "libdeviceinfo_ndk.z.so",
+     "libhilog_ndk.z.so",
+     "libohenvironment.so",
+     "libohfileuri.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libtime_service_ndk.so": "sdk-sysroot",
+     "libace_napi.z.so": "sdk-sysroot",
+     "libdeviceinfo_ndk.z.so": "sdk-sysroot",
+     "libhilog_ndk.z.so": "sdk-sysroot",
+     "libohenvironment.so": "sdk-sysroot",
+     "libohfileuri.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Gui.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Gui.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libGLESv3.so",
+     "libace_napi.z.so",
+     "libhilog_ndk.z.so",
+     "libpixelmap.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libGLESv3.so": "sdk-sysroot",
+     "libace_napi.z.so": "sdk-sysroot",
+     "libhilog_ndk.z.so": "sdk-sysroot",
+     "libpixelmap.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Widgets.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Widgets.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Gui.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Gui.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Network.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Network.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6OpenGL.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6OpenGL.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Gui.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Gui.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6OpenGLWidgets.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6OpenGLWidgets.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6OpenGL.so",
+     "libQt6Widgets.so",
+     "libQt6Gui.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6OpenGL.so": "staged-set",
+     "libQt6Widgets.so": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6PrintSupport.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6PrintSupport.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Widgets.so",
+     "libQt6Gui.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Widgets.so": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Sql.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Sql.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Xml.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Xml.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Concurrent.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Concurrent.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libQt6Test.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libQt6Test.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libhilog_ndk.z.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libhilog_ndk.z.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libqohos.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libqohos.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libEGL.so",
+     "libace_napi.z.so",
+     "libace_ndk.z.so",
+     "libhiappevent_ndk.z.so",
+     "libhilog_ndk.z.so",
+     "libnative_display_manager.so",
+     "libnative_vsync.so",
+     "libnative_window.so",
+     "libnative_window_manager.so",
+     "libohfileshare.so",
+     "libohfileuri.so",
+     "libohhicollie.so",
+     "libohinput.so",
+     "libpasteboard.so",
+     "libpixelmap.so",
+     "libqos.so",
+     "libudmf.so",
+     "libohinputmethod.so",
+     "libQt6OpenGL.so",
+     "libQt6Gui.so",
+     "libQt6Core.so",
+     "libGLESv3.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libEGL.so": "sdk-sysroot",
+     "libace_napi.z.so": "sdk-sysroot",
+     "libace_ndk.z.so": "sdk-sysroot",
+     "libhiappevent_ndk.z.so": "sdk-sysroot",
+     "libhilog_ndk.z.so": "sdk-sysroot",
+     "libnative_display_manager.so": "sdk-sysroot",
+     "libnative_vsync.so": "sdk-sysroot",
+     "libnative_window.so": "sdk-sysroot",
+     "libnative_window_manager.so": "sdk-sysroot",
+     "libohfileshare.so": "sdk-sysroot",
+     "libohfileuri.so": "sdk-sysroot",
+     "libohhicollie.so": "sdk-sysroot",
+     "libohinput.so": "sdk-sysroot",
+     "libpasteboard.so": "sdk-sysroot",
+     "libpixelmap.so": "sdk-sysroot",
+     "libqos.so": "sdk-sysroot",
+     "libudmf.so": "sdk-sysroot",
+     "libohinputmethod.so": "sdk-sysroot",
+     "libQt6OpenGL.so": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libqohos.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/platforms/libqohos.so",
+    "runpath": "/usr/local/Qt-6.12.0/lib",
+    "needed": [
+     "libEGL.so",
+     "libace_napi.z.so",
+     "libace_ndk.z.so",
+     "libhiappevent_ndk.z.so",
+     "libhilog_ndk.z.so",
+     "libnative_display_manager.so",
+     "libnative_vsync.so",
+     "libnative_window.so",
+     "libnative_window_manager.so",
+     "libohfileshare.so",
+     "libohfileuri.so",
+     "libohhicollie.so",
+     "libohinput.so",
+     "libpasteboard.so",
+     "libpixelmap.so",
+     "libqos.so",
+     "libudmf.so",
+     "libohinputmethod.so",
+     "libQt6OpenGL.so",
+     "libQt6Gui.so",
+     "libQt6Core.so",
+     "libGLESv3.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libEGL.so": "sdk-sysroot",
+     "libace_napi.z.so": "sdk-sysroot",
+     "libace_ndk.z.so": "sdk-sysroot",
+     "libhiappevent_ndk.z.so": "sdk-sysroot",
+     "libhilog_ndk.z.so": "sdk-sysroot",
+     "libnative_display_manager.so": "sdk-sysroot",
+     "libnative_vsync.so": "sdk-sysroot",
+     "libnative_window.so": "sdk-sysroot",
+     "libnative_window_manager.so": "sdk-sysroot",
+     "libohfileshare.so": "sdk-sysroot",
+     "libohfileuri.so": "sdk-sysroot",
+     "libohhicollie.so": "sdk-sysroot",
+     "libohinput.so": "sdk-sysroot",
+     "libpasteboard.so": "sdk-sysroot",
+     "libpixelmap.so": "sdk-sysroot",
+     "libqos.so": "sdk-sysroot",
+     "libudmf.so": "sdk-sysroot",
+     "libohinputmethod.so": "sdk-sysroot",
+     "libQt6OpenGL.so": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libc++_shared.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libc++_shared.so",
+    "runpath": null,
+    "needed": [
+     "libc.so"
+    ],
+    "resolved": {
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libshiboken6.abi3.so.6.12",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libshiboken6.abi3.so.6.12",
+    "runpath": "$ORIGIN/",
+    "needed": [
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "libpyside6.abi3.so.6.12",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/qt-deploy/libs/libpyside6.abi3.so.6.12",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtCore.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtCore.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtGui.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtGui.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Gui.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtNetwork.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtNetwork.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libQt6Network.so",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Core.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libQt6Network.so": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtOpenGL.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtOpenGL.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libQt6OpenGL.so",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Gui.so",
+     "libQt6Core.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libQt6OpenGL.so": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtOpenGLWidgets.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtOpenGLWidgets.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libQt6OpenGLWidgets.so",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6OpenGL.so",
+     "libQt6Widgets.so",
+     "libQt6Gui.so",
+     "libQt6Core.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libQt6OpenGLWidgets.so": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6OpenGL.so": "staged-set",
+     "libQt6Widgets.so": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   },
+   {
+    "lib": "QtWidgets.abi3.so",
+    "dest": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/PySide6/QtWidgets.abi3.so",
+    "runpath": "$ORIGIN/../lib",
+    "needed": [
+     "libpython3.11.so.1.0",
+     "libpyside6.abi3.so.6.12",
+     "libQt6Widgets.so",
+     "libshiboken6.abi3.so.6.12",
+     "libQt6Gui.so",
+     "libQt6Core.so",
+     "libGLESv3.so",
+     "libEGL.so",
+     "libc++_shared.so",
+     "libc.so"
+    ],
+    "resolved": {
+     "libpython3.11.so.1.0": "app-libs",
+     "libpyside6.abi3.so.6.12": "staged-set",
+     "libQt6Widgets.so": "staged-set",
+     "libshiboken6.abi3.so.6.12": "staged-set",
+     "libQt6Gui.so": "staged-set",
+     "libQt6Core.so": "staged-set",
+     "libGLESv3.so": "sdk-sysroot",
+     "libEGL.so": "sdk-sysroot",
+     "libc++_shared.so": "staged-set",
+     "libc.so": "sdk-sysroot"
+    },
+    "unresolved": []
+   }
+  ]
+ }
+}

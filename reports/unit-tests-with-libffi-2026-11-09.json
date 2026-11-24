@@ -1,0 +1,28 @@
+{
+  "audit_date": "2026-11-09",
+  "started_at_utc": "2026-11-09T13:54:06.309675+00:00",
+  "finished_at_utc": "2026-11-09T13:54:09.681784+00:00",
+  "scope": "local_generic_compatibility_and_isolated_synthetic_fixture_tests_only",
+  "tests_run": 89,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "resource_warnings": [],
+  "passed": true,
+  "device_contacted": false,
+  "target_executed": false,
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "synthetic_fixture_output_is_not_device_observation": true,
+  "source_sha256": {
+    "tests/test_cpython_runtime.py": "a12936abfb322d39742cf734c809463328e2e62e56b1f466e64afba502c3c0a7",
+    "tests/test_harmony_adapter.py": "d3a1052e4c03663a37477b6f72326a165c466a2e8d5bbeb103ed31295569f004",
+    "tests/test_libffi_runtime.py": "0c916a29a794699a305f705c3a4cb08c15f5dd7ee33cdbdc0b2197f6676317d7",
+    "tests/test_runtime_archive.py": "f914a22f6c82c3d2f9f66998030c6834cfcbe2a70ec177573cb746dfb9ae5165",
+    "tests/test_tools.py": "60f2fb0afd0f08c7d77b73239c4d0aaf67ca95453d07fdd10cacaa2bbe8dc1c7",
+    "tools/build_cpython_harmony.py": "c25f3e7a4af397e58da8004285073c0adabe57e27a44873243ec19402afc9340",
+    "tools/build_libffi_harmony.py": "828c04c00dc711eddda41ef479d81eb707d2e190b90ffeed5f78874f2b9db6a3",
+    "tools/package_generic_runtime.py": "ef60f70ca248658839dcf202f701cbac99a0955fec542886d88b1310c53ddf79"
+  },
+  "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/reports/unit-tests-with-libffi-2026-11-09.txt"
+}

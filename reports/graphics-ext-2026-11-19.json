@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-19T12:45:26.186855+00:00",
+  "target": "aarch64-linux-ohos",
+  "host_executed": false,
+  "modules": [
+    {
+      "module": "_arrays",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/arrays/_arrays.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 588104,
+      "sha256": "32e96fb4531a0c660ed2b80f06340fe1141361ff86ea2249832ee1e6939eb848"
+    },
+    {
+      "module": "_graphics",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/graphics/_graphics.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 607704,
+      "sha256": "04e6c7d71bba97fc51f74e99d98c0ff734ef30a75a66d976ae0ce0e16a553a5f"
+    }
+  ],
+  "status": "graphics_extensions_cross_compiled_not_target_tested"
+}

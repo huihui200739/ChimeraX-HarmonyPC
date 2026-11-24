@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-09T13:46:07.375975+00:00",
+  "scope": "generic_libffi_dependency_cross_compile_only",
+  "version": "3.8.0",
+  "builder_source_sha256": "2cc756eb2410a3b45d5abe7721439e2c34df8c10c2feb9ff45cc8891d7eaf0f4",
+  "device_contacted": false,
+  "target_executed": false,
+  "application_included": false,
+  "commands": [
+    {
+      "name": "host-triple",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/config.guess"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/host-triple.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "configure",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/configure",
+        "--build=aarch64-apple-darwin27.2.0",
+        "--host=aarch64-unknown-linux-ohos",
+        "--prefix=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/prefix",
+        "--with-pic",
+        "--disable-shared",
+        "--enable-static",
+        "--disable-docs"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/configure.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 1
+    }
+  ],
+  "source_archive_sha256": "7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4",
+  "status": "local_dependency_build_incomplete",
+  "error": "configure failed (1):\nchecking build system type... aarch64-apple-darwin27.2.0\nchecking host system type... Invalid configuration `aarch64-unknown-linux-ohos': OS `ohos' not recognized\nconfigure: error: /bin/sh /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/config.sub aarch64-unknown-linux-ohos failed",
+  "finished_at_utc": "2026-11-09T13:46:07.712181+00:00"
+}

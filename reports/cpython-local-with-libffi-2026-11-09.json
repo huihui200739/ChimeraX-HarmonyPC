@@ -1,0 +1,2681 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-09T13:50:24.473871+00:00",
+  "scope": "generic_CPython_private_runtime_cross_compile_only",
+  "builder_source_sha256": "c25f3e7a4af397e58da8004285073c0adabe57e27a44873243ec19402afc9340",
+  "device_contacted": false,
+  "target_executed": false,
+  "target_python_validated": false,
+  "target_ui_validated": false,
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "commands": [
+    {
+      "name": "host-python",
+      "argv": [
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11",
+        "-I",
+        "-c",
+        "import json,sys; print(json.dumps(dict(version=list(sys.version_info[:3]),platform=sys.platform)))"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/host-python.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "host-triple",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/source/config.guess"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/host-triple.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "libintl-header-check",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+        "--target=aarch64-linux-ohos",
+        "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+        "-std=c11",
+        "-Werror=implicit-function-declaration",
+        "-Werror=int-conversion",
+        "-c",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/libintl-compile-probe.c",
+        "-o",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/libintl-compile-probe.o"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/libintl-header-check.txt",
+      "failure_allowed_for_feature_detection": true,
+      "returncode": 1
+    },
+    {
+      "name": "configure",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/source/configure",
+        "--build=aarch64-apple-darwin27.2.0",
+        "--host=aarch64-unknown-linux-ohos",
+        "--with-build-python=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/host-python/cpython-3.11.17-macos-aarch64-none/bin/python3.11",
+        "--prefix=/data/storage/el2/base/files/cx-generic-runtime",
+        "--enable-shared",
+        "--without-static-libpython",
+        "--without-ensurepip",
+        "--disable-test-modules",
+        "--with-pkg-config=no",
+        "--enable-ipv6"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/configure.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "make",
+      "argv": [
+        "/usr/bin/make",
+        "-j2",
+        "all"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/make.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-libpython",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/libpython3.11.so.1.0"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-libpython.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_asyncio.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_asyncio.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_asyncio.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_bisect.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_bisect.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_bisect.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_blake2.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_blake2.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_blake2.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_cn.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_cn.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_cn.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_hk.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_hk.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_hk.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_iso2022.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_iso2022.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_iso2022.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_jp.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_jp.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_jp.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_kr.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_kr.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_kr.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_codecs_tw.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_tw.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_codecs_tw.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_contextvars.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_contextvars.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_contextvars.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_crypt.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_crypt.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_crypt.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_csv.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_csv.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_csv.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_ctypes.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_ctypes.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_ctypes.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_datetime.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_datetime.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_datetime.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_decimal.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_decimal.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_decimal.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_elementtree.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_elementtree.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_elementtree.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_heapq.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_heapq.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_heapq.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_json.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_json.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_json.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_lsprof.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_lsprof.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_lsprof.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_md5.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_md5.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_md5.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_multibytecodec.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_multibytecodec.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_multibytecodec.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_multiprocessing.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_multiprocessing.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_multiprocessing.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_opcode.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_opcode.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_opcode.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_pickle.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_pickle.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_pickle.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_posixshmem.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_posixshmem.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_posixshmem.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_posixsubprocess.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_posixsubprocess.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_posixsubprocess.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_queue.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_queue.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_queue.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_random.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_random.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_random.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_sha1.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha1.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_sha1.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_sha256.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha256.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_sha256.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_sha3.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha3.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_sha3.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_sha512.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha512.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_sha512.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_socket.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_socket.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_socket.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_statistics.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_statistics.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_statistics.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_struct.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_struct.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_struct.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_typing.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_typing.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_typing.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-_zoneinfo.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_zoneinfo.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-_zoneinfo.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-array.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/array.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-array.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-audioop.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/audioop.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-audioop.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-binascii.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/binascii.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-binascii.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-cmath.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/cmath.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-cmath.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-fcntl.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/fcntl.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-fcntl.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-grp.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/grp.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-grp.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-math.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/math.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-math.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-mmap.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/mmap.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-mmap.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-ossaudiodev.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/ossaudiodev.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-ossaudiodev.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-pyexpat.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/pyexpat.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-pyexpat.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-resource.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/resource.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-resource.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-select.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/select.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-select.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-syslog.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/syslog.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-syslog.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-termios.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/termios.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-termios.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-unicodedata.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/unicodedata.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-unicodedata.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-module-zlib.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/zlib.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-module-zlib.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "staged-ctypes-linkage",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_ctypes.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/staged-ctypes-linkage.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-libpython",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/libpython3.11.so.1.0"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-libpython.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_asyncio.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_asyncio.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_asyncio.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_bisect.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_bisect.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_bisect.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_blake2.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_blake2.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_blake2.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_cn.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_cn.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_cn.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_hk.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_hk.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_hk.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_iso2022.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_iso2022.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_iso2022.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_jp.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_jp.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_jp.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_kr.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_kr.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_kr.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_codecs_tw.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_tw.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_codecs_tw.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_contextvars.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_contextvars.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_contextvars.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_crypt.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_crypt.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_crypt.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_csv.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_csv.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_csv.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_ctypes.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_ctypes.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_ctypes.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_datetime.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_datetime.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_datetime.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_decimal.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_decimal.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_decimal.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_elementtree.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_elementtree.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_elementtree.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_heapq.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_heapq.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_heapq.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_json.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_json.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_json.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_lsprof.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_lsprof.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_lsprof.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_md5.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_md5.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_md5.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_multibytecodec.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_multibytecodec.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_multibytecodec.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_multiprocessing.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_multiprocessing.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_multiprocessing.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_opcode.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_opcode.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_opcode.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_pickle.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_pickle.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_pickle.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_posixshmem.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_posixshmem.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_posixshmem.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_posixsubprocess.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_posixsubprocess.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_posixsubprocess.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_queue.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_queue.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_queue.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_random.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_random.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_random.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_sha1.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha1.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_sha1.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_sha256.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha256.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_sha256.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_sha3.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha3.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_sha3.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_sha512.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha512.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_sha512.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_socket.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_socket.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_socket.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_statistics.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_statistics.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_statistics.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_struct.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_struct.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_struct.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_typing.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_typing.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_typing.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-_zoneinfo.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_zoneinfo.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-_zoneinfo.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-array.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/array.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-array.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-audioop.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/audioop.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-audioop.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-binascii.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/binascii.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-binascii.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-cmath.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/cmath.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-cmath.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-fcntl.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/fcntl.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-fcntl.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-grp.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/grp.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-grp.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-math.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/math.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-math.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-mmap.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/mmap.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-mmap.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-ossaudiodev.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/ossaudiodev.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-ossaudiodev.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-pyexpat.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/pyexpat.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-pyexpat.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-resource.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/resource.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-resource.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-select.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/select.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-select.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-syslog.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/syslog.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-syslog.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-termios.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/termios.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-termios.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-unicodedata.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/unicodedata.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-unicodedata.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "elf-staged-module-zlib.cpython-311-aarch64-linux-ohos.so",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "--dyn-syms",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/zlib.cpython-311-aarch64-linux-ohos.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/logs/elf-staged-module-zlib.cpython-311-aarch64-linux-ohos.so.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    }
+  ],
+  "runtime_profile": "with-libffi",
+  "source_commit": "26badd80b6dc7786cd8fb63c3608a31f04754219",
+  "source_archive_sha256": "0c4539f499dcab2fd1441ccf3ec0912a47fbf2bb6bfa10fc43d4a9cd29f8207b",
+  "patch_sha256": "32b82968d6f3ffa1eed0b586637d9c47049b71a8bc1d84a217e0a46d5f78d165",
+  "build_python": {
+    "version": [
+      3,
+      11,
+      17
+    ],
+    "platform": "darwin"
+  },
+  "private_libffi": {
+    "version": "3.8.0",
+    "prefix": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/prefix",
+    "manifest_sha256": "1e11e90469ebf561d636010738ba822ecf4fa16762b1a5517890e64b71f8799a",
+    "library_kind": "static_PIC",
+    "target_executed": false
+  },
+  "native_gettext": "disabled_after_SDK_declaration_compile_check_failed",
+  "cross_configuration": {
+    "cross_compiling": true,
+    "target_triplet": "aarch64-linux-ohos",
+    "pseudoterminals": "conservatively_disabled_not_device_verified",
+    "ipv6": "enabled_using_upstream_cross_configuration_not_device_verified",
+    "make_jobs": 2,
+    "target_executed": false
+  },
+  "extension_build_summary": {
+    "not_found": [
+      "_bz2",
+      "_curses",
+      "_curses_panel",
+      "_dbm",
+      "_gdbm",
+      "_hashlib",
+      "_lzma",
+      "_ssl",
+      "_tkinter",
+      "_uuid",
+      "nis",
+      "readline",
+      "spwd"
+    ],
+    "failed": [],
+    "disabled": [
+      "_ctypes_test",
+      "_sqlite3",
+      "_testbuffer",
+      "_testcapi",
+      "_testclinic",
+      "_testimportmultiple",
+      "_testinternalcapi",
+      "_testmultiphase",
+      "_xxtestfuzz"
+    ]
+  },
+  "object_python_library": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/libpython3.11.so.1.0",
+    "bytes": 15962152,
+    "sha256": "cf0a1652196e33c0bbe75d41bc888a5278c6d6b8c2f94f9e0c580545621a90bd",
+    "needed_libraries": [
+      "libc.so"
+    ]
+  },
+  "known_missing_optional_extensions": [
+    "_bz2",
+    "_curses",
+    "_curses_panel",
+    "_dbm",
+    "_gdbm",
+    "_hashlib",
+    "_lzma",
+    "_sqlite3",
+    "_ssl",
+    "_tkinter",
+    "_uuid",
+    "nis",
+    "readline",
+    "spwd"
+  ],
+  "ctypes_linkage": {
+    "static_ffi_symbols_defined": [
+      "ffi_call",
+      "ffi_closure_alloc",
+      "ffi_closure_free",
+      "ffi_prep_cif",
+      "ffi_prep_closure_loc"
+    ],
+    "needed_libraries": [
+      "libc.so"
+    ],
+    "target_executed": false,
+    "callbacks_validated_on_target": false
+  },
+  "python_library": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/libpython3.11.so.1.0",
+    "bytes": 15962152,
+    "sha256": "00ad04824157b50c5b5b2207205b973a47bf038bb44cacfdb337e7037c96b6fe",
+    "needed_libraries": [
+      "libc.so"
+    ]
+  },
+  "object_extension_elfs": [
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_asyncio.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 215040,
+      "sha256": "5ee7b4a80ec07b6e12e1bd439fa64c5b22f9d23b489386f485b7476b549903b7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_bisect.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45192,
+      "sha256": "becbd23ed8cc73dcc2f6d5b7d8d08def246ac1cbfc3053a9c1c560ed1c3966d1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_blake2.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 260208,
+      "sha256": "8a109991f8bf7a0438e55b72092a4d34e0e55dccc251f423a948c803c40de2f7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_cn.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 176200,
+      "sha256": "e641ec1aca99de16e1a17394dc2c188fa383355985aa947dd7eb1d203cd6311b",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_hk.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 182840,
+      "sha256": "b6ac1e3719fe5f27c136e04140709039fcd5f66c3b55a0ae0d7c025d97ff918c",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_iso2022.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 61128,
+      "sha256": "b3d1b028a24c895f0bd08ee0cf68d602297c209620ed3d4c8a90eb23a8d85358",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_jp.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 298432,
+      "sha256": "8ffd91a275ae1ba8f1329d61a103bec224a02e9ae3d77ea087accde1cdfb89ed",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_kr.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 161744,
+      "sha256": "57a69eaab390890025241d90b63ec27b1d62d0be7035c0197087dff1e5e44cae",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_codecs_tw.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 133392,
+      "sha256": "912ad6879a227252abcec45711f19cb1506446e1aa63a7081cac471cb0fe51a1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_contextvars.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 22512,
+      "sha256": "d53eb0636db961a1fcaae3279b2fa818e2bdccb3cfa57daa21f12429b3e139b3",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_crypt.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 25080,
+      "sha256": "3a27d22cba6fdabd02a6a0488b04d8b2259339e456ec40a33d8e610fe2e5381b",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_csv.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 98248,
+      "sha256": "87712d11611bf6d3e5c3b618a94e390baa2c0665c189a7d9c2923ee0aca7545c",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_ctypes.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 537712,
+      "sha256": "f8a317063543b3400d5338bfd728d3d503e971cc4836404d3cf26324c583e37f",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_datetime.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 304464,
+      "sha256": "4a498e53862b11768065e548d943c4e56eb039b92bbb2632e96de04d4fb36447",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_decimal.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 1069560,
+      "sha256": "af53536fad1d41d1668de65db14c1f05f8718c051277c9de88a6dfc53362de13",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_elementtree.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 221152,
+      "sha256": "2214b8aeb3cea5f3604478e566c862ff0240b977a73021077c40f9325ca324a0",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_heapq.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 48392,
+      "sha256": "0b5dab5d67b6032dfbe2631df5429339ea4841e5655cfbf0fee59fa36126d05e",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_json.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 155048,
+      "sha256": "c6322b0b999df4eaea18859292df7f34774fb9993bc25cc7bd05d18bdc2789a8",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_lsprof.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 102672,
+      "sha256": "80198bdbc3473a0abefd613fe98dd2e1bea40d762580e275009b72527f83e4ca",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_md5.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45848,
+      "sha256": "f7e4df886c8e1b7bfd04aac2dae71ec52d62ac778026c0a4693f3103a602285a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_multibytecodec.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 121656,
+      "sha256": "1443649685478d8d9cddbc0b99fe05b3c2a83153cd193c201ab8185de2f160ee",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_multiprocessing.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 61960,
+      "sha256": "1221b4a4c44e23e23570a1a5123a6451bd755b145f80f70be067cc8a920f3800",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_opcode.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 27400,
+      "sha256": "4a35e2dab7cdf444d03191ce2a54b5c4286294467f07721d0facceed9e0c34c7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_pickle.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 382824,
+      "sha256": "c974780164617c8cce35abd71b32eb966c482419813088c42bee69e60424dae9",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_posixshmem.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 34528,
+      "sha256": "50761354d23911526892e7f0e3c1573131c05493fd3b16728a41792407e381b2",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_posixsubprocess.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 62656,
+      "sha256": "1f22278c3210c3354ef00021c21f18050602533b0bec40c7e93fca5eaf386c41",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_queue.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 52464,
+      "sha256": "1dc89b7d867f4a558b1cc0d9555b00cca4a578fc8284e4b1198f1484e5e48bdf",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_random.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 47200,
+      "sha256": "b30bfeba4373aad149a5d22b5a0743bb160b714b2bd089f13225f8de3c1682a1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha1.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 43600,
+      "sha256": "1c6d2b65607b1381ad7890431f92b85344ed14ac83819141bbdf7a9885889f07",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha256.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 59024,
+      "sha256": "5184e1b715193d40425a05377ecdcef008358a0412cec582d0ce0489e10544c3",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha3.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 62784,
+      "sha256": "d9c1b2f51bc51e4162e0ab36a83382095ae26bc95abf47be14c05cf06a1b2303",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_sha512.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 64488,
+      "sha256": "5a5116bf6d2d2379094ed3c0b4def9d3faf4880e444846e16609eb316d6d0e0a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_socket.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 225992,
+      "sha256": "e1f2b1b9fc6ee5c245db9a0b8da11ae35186ef80a6d33922878f368a5f9f6cf9",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_statistics.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 26160,
+      "sha256": "66043658f8fbbd98e0ca3965e9c6955565e4cf82836e92494044dfeb4385e3fb",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_struct.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 127344,
+      "sha256": "9d7dc285fe592aa91b9230aa6b0b2e4f76fab9b283268d762569605967a0a681",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_typing.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 21208,
+      "sha256": "e380a9f787822c1181618b5cc204c3c0732daaf5ce20f47a41742e3a0f06eede",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 145944,
+      "sha256": "303fac60dd8a26ab413817b62101b4e149156ce5bd5c7c076b9cc9f7975a4a9e",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/_zoneinfo.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 100624,
+      "sha256": "f5f6fddf7e1bbd7cd3638e6eaf02836a23c96607045313a89782e38894e01ca7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/array.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 160648,
+      "sha256": "bc8e95d71c8f4f3cb4924821e9146afcd5e1053b715ab4592dded3f8b0d1a958",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/audioop.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 110056,
+      "sha256": "b1edbe284c707d96028607e9e07052b93b9f7bc84c54c8775f582608dd6e7fb5",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/binascii.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 111184,
+      "sha256": "822f57df570aa6bc97401e3d9001a1ec353ca05432f32a1dbc1316674db4ed4e",
+      "needed_libraries": [
+        "libz.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/cmath.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 83440,
+      "sha256": "96d187b3baf0bec8439792843bf84be9b25c45811d9689c03535b7d120514b4a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/fcntl.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 51104,
+      "sha256": "d85fb48fd398d0e56fb778387609e4c9be0e5fc3b61f67fb7c672727c9ba5655",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/grp.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 44736,
+      "sha256": "7f4f58186c4065fd29bc6b703e481d487609f5bd0b3c8e4408b2bef87afb00ab",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/math.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 194776,
+      "sha256": "14ae762d7543eb69e73d354ac439c2b9f42c27444d4cc7cf1222e6655481c4f1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/mmap.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 73792,
+      "sha256": "b5b657ea287626c8050cded99910a78b6a5e6f9fa2288f4d4ec7dc388e60d0b8",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/ossaudiodev.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 82320,
+      "sha256": "a97d354191db80fd2da2268134be6748b715fe3432104873bb49b99f3ef54717",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/pyexpat.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 719176,
+      "sha256": "c8f0c31d27b1ad9d02e4a392f51ddd09b35b8e2c7bebed2abd30e32ddc946947",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/resource.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45448,
+      "sha256": "c954364a09f214b9ebb8c779a7159c693492510f3de1b5c96f72363ff66f1fbb",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/select.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 88408,
+      "sha256": "955b99b5f6e0b53a72036eeff0e8f6c575621c2345ddd4a47f8fdcce9a892c86",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/syslog.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 39536,
+      "sha256": "c88cedfcb9680df2f9980b3fb28e0c9b7a73700eaa0cb05b07b2c8343773a793",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/termios.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 70816,
+      "sha256": "4f624ec4543762c0679e0962053c070f8dfe21a3cd4252f0baf66715c61d55ae",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/unicodedata.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 1199824,
+      "sha256": "764b4d66006e5584aa329007fdd1f62579b57e580005ae5ea5ef80e3b230a17a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/objects/build/lib.linux-aarch64-3.11/zlib.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 118784,
+      "sha256": "6b60cae4fd7a90410d694bc53c887c222084c709544aa16670cb6befbe10cc1c",
+      "needed_libraries": [
+        "libz.so",
+        "libc.so"
+      ]
+    }
+  ],
+  "runtime_directory": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime",
+  "extension_modules": [
+    "_asyncio",
+    "_bisect",
+    "_blake2",
+    "_codecs_cn",
+    "_codecs_hk",
+    "_codecs_iso2022",
+    "_codecs_jp",
+    "_codecs_kr",
+    "_codecs_tw",
+    "_contextvars",
+    "_crypt",
+    "_csv",
+    "_ctypes",
+    "_datetime",
+    "_decimal",
+    "_elementtree",
+    "_heapq",
+    "_json",
+    "_lsprof",
+    "_md5",
+    "_multibytecodec",
+    "_multiprocessing",
+    "_opcode",
+    "_pickle",
+    "_posixshmem",
+    "_posixsubprocess",
+    "_queue",
+    "_random",
+    "_sha1",
+    "_sha256",
+    "_sha3",
+    "_sha512",
+    "_socket",
+    "_statistics",
+    "_struct",
+    "_typing",
+    "_xxsubinterpreters",
+    "_zoneinfo",
+    "array",
+    "audioop",
+    "binascii",
+    "cmath",
+    "fcntl",
+    "grp",
+    "math",
+    "mmap",
+    "ossaudiodev",
+    "pyexpat",
+    "resource",
+    "select",
+    "syslog",
+    "termios",
+    "unicodedata",
+    "zlib"
+  ],
+  "extension_elfs": [
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_asyncio.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 215040,
+      "sha256": "5ee7b4a80ec07b6e12e1bd439fa64c5b22f9d23b489386f485b7476b549903b7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_bisect.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45192,
+      "sha256": "becbd23ed8cc73dcc2f6d5b7d8d08def246ac1cbfc3053a9c1c560ed1c3966d1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_blake2.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 260208,
+      "sha256": "8a109991f8bf7a0438e55b72092a4d34e0e55dccc251f423a948c803c40de2f7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_cn.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 176200,
+      "sha256": "e641ec1aca99de16e1a17394dc2c188fa383355985aa947dd7eb1d203cd6311b",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_hk.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 182840,
+      "sha256": "b6ac1e3719fe5f27c136e04140709039fcd5f66c3b55a0ae0d7c025d97ff918c",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_iso2022.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 61128,
+      "sha256": "b3d1b028a24c895f0bd08ee0cf68d602297c209620ed3d4c8a90eb23a8d85358",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_jp.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 298432,
+      "sha256": "8ffd91a275ae1ba8f1329d61a103bec224a02e9ae3d77ea087accde1cdfb89ed",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_kr.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 161744,
+      "sha256": "57a69eaab390890025241d90b63ec27b1d62d0be7035c0197087dff1e5e44cae",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_codecs_tw.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 133392,
+      "sha256": "912ad6879a227252abcec45711f19cb1506446e1aa63a7081cac471cb0fe51a1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_contextvars.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 22512,
+      "sha256": "d53eb0636db961a1fcaae3279b2fa818e2bdccb3cfa57daa21f12429b3e139b3",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_crypt.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 25080,
+      "sha256": "3a27d22cba6fdabd02a6a0488b04d8b2259339e456ec40a33d8e610fe2e5381b",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_csv.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 98248,
+      "sha256": "87712d11611bf6d3e5c3b618a94e390baa2c0665c189a7d9c2923ee0aca7545c",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_ctypes.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 537712,
+      "sha256": "f8a317063543b3400d5338bfd728d3d503e971cc4836404d3cf26324c583e37f",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_datetime.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 304464,
+      "sha256": "4a498e53862b11768065e548d943c4e56eb039b92bbb2632e96de04d4fb36447",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_decimal.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 1069560,
+      "sha256": "af53536fad1d41d1668de65db14c1f05f8718c051277c9de88a6dfc53362de13",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_elementtree.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 221152,
+      "sha256": "2214b8aeb3cea5f3604478e566c862ff0240b977a73021077c40f9325ca324a0",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_heapq.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 48392,
+      "sha256": "0b5dab5d67b6032dfbe2631df5429339ea4841e5655cfbf0fee59fa36126d05e",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_json.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 155048,
+      "sha256": "c6322b0b999df4eaea18859292df7f34774fb9993bc25cc7bd05d18bdc2789a8",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_lsprof.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 102672,
+      "sha256": "80198bdbc3473a0abefd613fe98dd2e1bea40d762580e275009b72527f83e4ca",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_md5.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45848,
+      "sha256": "f7e4df886c8e1b7bfd04aac2dae71ec52d62ac778026c0a4693f3103a602285a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_multibytecodec.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 121656,
+      "sha256": "1443649685478d8d9cddbc0b99fe05b3c2a83153cd193c201ab8185de2f160ee",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_multiprocessing.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 61960,
+      "sha256": "1221b4a4c44e23e23570a1a5123a6451bd755b145f80f70be067cc8a920f3800",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_opcode.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 27400,
+      "sha256": "4a35e2dab7cdf444d03191ce2a54b5c4286294467f07721d0facceed9e0c34c7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_pickle.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 382824,
+      "sha256": "c974780164617c8cce35abd71b32eb966c482419813088c42bee69e60424dae9",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_posixshmem.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 34528,
+      "sha256": "50761354d23911526892e7f0e3c1573131c05493fd3b16728a41792407e381b2",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_posixsubprocess.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 62656,
+      "sha256": "1f22278c3210c3354ef00021c21f18050602533b0bec40c7e93fca5eaf386c41",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_queue.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 52464,
+      "sha256": "1dc89b7d867f4a558b1cc0d9555b00cca4a578fc8284e4b1198f1484e5e48bdf",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_random.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 47200,
+      "sha256": "b30bfeba4373aad149a5d22b5a0743bb160b714b2bd089f13225f8de3c1682a1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha1.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 43600,
+      "sha256": "1c6d2b65607b1381ad7890431f92b85344ed14ac83819141bbdf7a9885889f07",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha256.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 59024,
+      "sha256": "5184e1b715193d40425a05377ecdcef008358a0412cec582d0ce0489e10544c3",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha3.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 62784,
+      "sha256": "d9c1b2f51bc51e4162e0ab36a83382095ae26bc95abf47be14c05cf06a1b2303",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_sha512.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 64488,
+      "sha256": "5a5116bf6d2d2379094ed3c0b4def9d3faf4880e444846e16609eb316d6d0e0a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_socket.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 225992,
+      "sha256": "e1f2b1b9fc6ee5c245db9a0b8da11ae35186ef80a6d33922878f368a5f9f6cf9",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_statistics.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 26160,
+      "sha256": "66043658f8fbbd98e0ca3965e9c6955565e4cf82836e92494044dfeb4385e3fb",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_struct.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 127344,
+      "sha256": "9d7dc285fe592aa91b9230aa6b0b2e4f76fab9b283268d762569605967a0a681",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_typing.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 21208,
+      "sha256": "e380a9f787822c1181618b5cc204c3c0732daaf5ce20f47a41742e3a0f06eede",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_xxsubinterpreters.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 145944,
+      "sha256": "303fac60dd8a26ab413817b62101b4e149156ce5bd5c7c076b9cc9f7975a4a9e",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/_zoneinfo.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 100624,
+      "sha256": "f5f6fddf7e1bbd7cd3638e6eaf02836a23c96607045313a89782e38894e01ca7",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/array.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 160648,
+      "sha256": "bc8e95d71c8f4f3cb4924821e9146afcd5e1053b715ab4592dded3f8b0d1a958",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/audioop.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 110056,
+      "sha256": "b1edbe284c707d96028607e9e07052b93b9f7bc84c54c8775f582608dd6e7fb5",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/binascii.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 111184,
+      "sha256": "822f57df570aa6bc97401e3d9001a1ec353ca05432f32a1dbc1316674db4ed4e",
+      "needed_libraries": [
+        "libz.so",
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/cmath.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 83440,
+      "sha256": "96d187b3baf0bec8439792843bf84be9b25c45811d9689c03535b7d120514b4a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/fcntl.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 51104,
+      "sha256": "d85fb48fd398d0e56fb778387609e4c9be0e5fc3b61f67fb7c672727c9ba5655",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/grp.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 44736,
+      "sha256": "7f4f58186c4065fd29bc6b703e481d487609f5bd0b3c8e4408b2bef87afb00ab",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/math.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 194776,
+      "sha256": "14ae762d7543eb69e73d354ac439c2b9f42c27444d4cc7cf1222e6655481c4f1",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/mmap.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 73792,
+      "sha256": "b5b657ea287626c8050cded99910a78b6a5e6f9fa2288f4d4ec7dc388e60d0b8",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/ossaudiodev.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 82320,
+      "sha256": "a97d354191db80fd2da2268134be6748b715fe3432104873bb49b99f3ef54717",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/pyexpat.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 719176,
+      "sha256": "c8f0c31d27b1ad9d02e4a392f51ddd09b35b8e2c7bebed2abd30e32ddc946947",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/resource.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 45448,
+      "sha256": "c954364a09f214b9ebb8c779a7159c693492510f3de1b5c96f72363ff66f1fbb",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/select.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 88408,
+      "sha256": "955b99b5f6e0b53a72036eeff0e8f6c575621c2345ddd4a47f8fdcce9a892c86",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/syslog.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 39536,
+      "sha256": "c88cedfcb9680df2f9980b3fb28e0c9b7a73700eaa0cb05b07b2c8343773a793",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/termios.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 70816,
+      "sha256": "4f624ec4543762c0679e0962053c070f8dfe21a3cd4252f0baf66715c61d55ae",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/unicodedata.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 1199824,
+      "sha256": "764b4d66006e5584aa329007fdd1f62579b57e580005ae5ea5ef80e3b230a17a",
+      "needed_libraries": [
+        "libc.so"
+      ]
+    },
+    {
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/cpython-3.11.18/ohos-aarch64-with-libffi/runtime/lib/python3.11/lib-dynload/zlib.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 118784,
+      "sha256": "6b60cae4fd7a90410d694bc53c887c222084c709544aa16670cb6befbe10cc1c",
+      "needed_libraries": [
+        "libz.so",
+        "libc.so"
+      ]
+    }
+  ],
+  "staged_file_count": 915,
+  "staged_bytes": 41676537,
+  "existing_runtime_reused": true,
+  "standard_library_complete": false,
+  "status": "local_generic_runtime_cross_compile_passed_not_target_tested",
+  "finished_at_utc": "2026-11-09T13:50:58.912244+00:00"
+}

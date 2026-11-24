@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-09T13:50:18.878051+00:00",
+  "scope": "generic_libffi_dependency_cross_compile_only",
+  "version": "3.8.0",
+  "builder_source_sha256": "828c04c00dc711eddda41ef479d81eb707d2e190b90ffeed5f78874f2b9db6a3",
+  "device_contacted": false,
+  "target_executed": false,
+  "application_included": false,
+  "commands": [
+    {
+      "name": "host-triple",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/config.guess"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/host-triple.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "configure",
+      "argv": [
+        "/bin/sh",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/configure",
+        "--build=aarch64-apple-darwin27.2.0",
+        "--host=aarch64-unknown-linux-ohos",
+        "--prefix=/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/prefix",
+        "--with-pic",
+        "--disable-shared",
+        "--enable-static",
+        "--disable-docs"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/configure.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "make",
+      "argv": [
+        "/usr/bin/make",
+        "-j2",
+        "all"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/make.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "archive-elf",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects/.libs/libffi.a"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/archive-elf.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "link-only",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/clang",
+        "--target=aarch64-linux-ohos",
+        "--sysroot=/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/sysroot",
+        "-shared",
+        "-fPIC",
+        "-fstack-protector-strong",
+        "-Wl,--no-undefined",
+        "-Wl,-z,relro,-z,now",
+        "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects/include",
+        "-I/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/source/include",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/ffi-link-only.c",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/objects/.libs/libffi.a",
+        "-ldl",
+        "-o",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/ffi-link-only.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/link-only.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    },
+    {
+      "name": "link-only-elf",
+      "argv": [
+        "/Applications/DevEco-Studio.app/Contents/sdk/default/openharmony/native/llvm/bin/llvm-readelf",
+        "--file-header",
+        "--dynamic",
+        "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/ffi-link-only.so"
+      ],
+      "cwd": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64",
+      "log": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/logs/link-only-elf.txt",
+      "failure_allowed_for_feature_detection": false,
+      "returncode": 0
+    }
+  ],
+  "source_archive_sha256": "7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4",
+  "patch_sha256": "0208e82516156e906b0a76c77c4bb780e6a383eb1501cd30f30d1bf93f642e51",
+  "archive_object_count": 8,
+  "archive_sha256": "4e37b0d34da0dca2ccdeef2065eb97d8a07eab90d4fe89b6b44a8862f17a3c02",
+  "link_only_check": {
+    "passed": true,
+    "executed": false,
+    "sha256": "8c95a029f087e0d14677dbc5aef7c571e0d1986f3e8f9c4c704325ca37e901e0",
+    "needed_libraries": [
+      "libc.so"
+    ]
+  },
+  "existing_prefix_reused": true,
+  "status": "local_libffi_static_cross_compile_passed_not_target_tested",
+  "prefix": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/libffi-3.8.0/ohos-aarch64/prefix",
+  "staged_archive_sha256": "4e37b0d34da0dca2ccdeef2065eb97d8a07eab90d4fe89b6b44a8862f17a3c02",
+  "dependency_manifest_sha256": "1e11e90469ebf561d636010738ba822ecf4fa16762b1a5517890e64b71f8799a",
+  "finished_at_utc": "2026-11-09T13:50:24.429512+00:00"
+}

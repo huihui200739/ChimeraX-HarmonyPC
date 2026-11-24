@@ -1,0 +1,159 @@
+{
+  "report": "render-plan",
+  "date": "2026-11-18",
+  "project": "ChimeraX-HarmonyPC",
+  "upstream": {
+    "repo": "UCSF-ChimeraX/ChimeraX",
+    "commit": "60235d30",
+    "tree": "build/downloads/ChimeraX-src",
+    "read_only": true
+  },
+  "recommendation": {
+    "primary": "A",
+    "name": "PyOpenGL OpenGL.EGL 上下文（先沿用 native 已 current 的 EGLContext，再退化到自建 pbuffer）",
+    "why": [
+      "Python 与 native 同进程（chimerax_native.cpp:runChimeraCommand 在 native 内调 CPython），eglGetCurrentContext() 可直接捡到 gl_surface.cpp 已 make current 的上下文，无需句柄传递",
+      "无需修改 app/ native/，符合硬约束；方案 B 必须改 native 并重编 HAP",
+      "与上游已有的 OffScreenRenderingContext 同构（duck-typed），Render/Framebuffer/View 全部复用",
+      "图形代码几乎不用 GLES 缺失特性（glPolygonMode/GL_QUADS/glLineWidth/几何着色器 均为 0 处）",
+      "GLSL 只有 vertexShader.txt / fragmentShader.txt 两份且都经过 Shader.insert_define_macros 单一咽喉，改造点集中",
+      "失败路径可诊断：adopt 失败 -> pbuffer 失败 -> 明确 OpenGLError('EGL: no display')"
+    ],
+    "rejected": {
+      "B": "同进程下无净收益，线程语义最脆，且需改 app/entry/src/main/cpp + 重编 HAP",
+      "C": "OSMesa 需交叉编译 LLVM+Mesa（本轮禁止联网编译大型依赖）；纯软件光栅需重写整条绘制管线"
+    }
+  },
+  "code_facts": [
+    {"fact": "OpenGLContext 全方法依赖 Qt QOpenGLContext/QWindow/QSurfaceFormat", "file": "src/bundles/graphics/src/opengl.py", "lines": "50-337"},
+    {"fact": "模块内唯一平台分支在 wait_for_vsync（platform=='linux' -> _graphics.set_linux_swap_interval）", "file": "src/bundles/graphics/src/opengl.py", "lines": "254-278"},
+    {"fact": "已有 duck-typed 离屏上下文 OffScreenRenderingContext（OSMesa），可作 EGL 上下文模板", "file": "src/bundles/graphics/src/opengl.py", "lines": "3430-3486"},
+    {"fact": "Framebuffer 仅从 context 读取 _framebuffer_color_bits 与 default_draw_target", "file": "src/bundles/graphics/src/opengl.py", "lines": "2173-2215"},
+    {"fact": "View 构造签名 View(drawing, *, window_size=(256,256), trigger_set=None)，不需要 GUI/session", "file": "src/bundles/graphics/src/view.py", "lines": "35-56"},
+    {"fact": "Session 自行构造 View(scene_root_model, window_size=(256,256), trigger_set=triggers)，不存在 View(session, size=...) 用法", "file": "chimerax/core/session.py", "lines": "562-566"},
+    {"fact": "渲染延迟到首次 draw：draw -> _use_opengl -> render.make_current -> _initialize_opengl", "file": "src/bundles/graphics/src/view.py", "lines": "124-145,157-205"},
+    {"fact": "View.image_rgba() 自带 Framebuffer + draw(swap_buffers=False) + frame_buffer_image，是现成离屏取像素路径", "file": "src/bundles/graphics/src/view.py", "lines": "462-521"},
+    {"fact": "Render.check_opengl_version 硬编码 3.3，需改为读 context.required_opengl_version", "file": "src/bundles/graphics/src/opengl.py", "lines": "1119-1126"},
+    {"fact": "opengl_version_number 用 split()[0]，对 'OpenGL ES 3.2 ...' 会抛 ValueError", "file": "src/bundles/graphics/src/opengl.py", "lines": "1105-1109"},
+    {"fact": "GLSL 仅两份文件且均为 #version 330 core，统一经 Shader.insert_define_macros", "file": "src/bundles/graphics/src/opengl.py", "lines": "2932-2952,2995-3007"},
+    {"fact": "native 持有 g_display/g_surface/g_context 但无对外 getter，仅导出 ChimeraXGLStatus/ChimeraXGLRender", "file": "app/entry/src/main/cpp/gl_surface.cpp", "lines": "106-108,215-233", "note": "只读引用，本任务不改"},
+    {"fact": "native 以 EGL_OPENGL_ES3_BIT + EGL_CONTEXT_CLIENT_VERSION=3 建窗口表面", "file": "app/entry/src/main/cpp/gl_surface.cpp", "lines": "127-158", "note": "只读引用"},
+    {"fact": "runChimeraCommand 等 N-API 导出表明 Python 在应用进程内执行", "file": "app/entry/src/main/cpp/chimerax_native.cpp", "lines": "584-643", "note": "只读引用"}
+  ],
+  "files_changed": {
+    "patch": "patches/0005-render-ohos-egl-context.patch",
+    "patch_targets": ["src/bundles/graphics/src/opengl.py"],
+    "hunks": 8,
+    "touched_functions": [
+      "module level: running_on_ohos, _detect_ohos, ohos_glsl_version, _pin_ohos_egl_libraries",
+      "_initialize_pyopengl",
+      "remember_current_opengl_context",
+      "restore_current_opengl_context",
+      "Render.opengl_version_number",
+      "Render.check_opengl_version",
+      "Shader.insert_define_macros",
+      "new: EGLContext, translate_shader_to_gles, _egl_remember_current, _egl_restore_current, module-tail OpenGLContext rebinding"
+    ],
+    "new_tool": "tools/render_probe.py",
+    "upstream_tree_modified": false
+  },
+  "plans": {
+    "A": {
+      "summary": "Python 侧 PyOpenGL OpenGL.EGL：A1 沿用 native current 上下文，A2 自建 pbuffer（ES 3.2/3.1/3.0 逐级退化）",
+      "egl_calls": ["eglGetDisplay", "eglInitialize", "eglChooseConfig", "eglCreatePbufferSurface", "eglCreateContext", "eglMakeCurrent", "eglGetCurrentContext", "eglGetCurrentDisplay", "eglGetCurrentSurface", "eglSwapBuffers", "eglDestroyContext", "eglDestroySurface", "eglGetProcAddress"],
+      "config_attrs": "EGL_SURFACE_TYPE=EGL_PBUFFER_BIT|EGL_WINDOW_BIT, EGL_RENDERABLE_TYPE=EGL_OPENGL_ES3_BIT, RGBA=8/8/8/8, EGL_DEPTH_SIZE=24",
+      "display_on_ohos": "应用进程 eglGetDisplay(EGL_DEFAULT_DISPLAY) 可用（native 已证明）；纯 CLI 进程通常返回 EGL_NO_DISPLAY，这是 A2 只能作为应用内兜底的原因",
+      "offscreen_path": "View.image_rgba() -> Framebuffer('image capture') -> glReadPixels；pbuffer 本身作为 FBO 0 亦可直接读回",
+      "change_points": [
+        "src/bundles/graphics/src/opengl.py: 新增 EGLContext 与 OHOS 探测/库加载",
+        "src/bundles/graphics/src/opengl.py: 模块尾 OpenGLContext = EGLContext 重绑定",
+        "src/bundles/graphics/src/opengl.py: check_opengl_version / opengl_version_number / insert_define_macros 的 OHOS 分支"
+      ],
+      "risks": [
+        "线程归属：EGL 上下文仅在其创建线程有效，native 回调线程与 CPython 执行线程可能不同",
+        "GLSL ES 与桌面 GL 语义差异（gl_FragDepth/textureLod 等）",
+        "EGL_DEPTH_SIZE=24 未满足时自动走 offscreen_outline（可接受降级）",
+        "eglGetCurrentDisplay 在多 display 场景下可能不是预期对象（本工程只有一个）"
+      ],
+      "criteria": [
+        "context_class == EGLContext",
+        "GL_VERSION 含 'OpenGL ES 3.'",
+        "FBO 1x1 读回 [64,128,191,255] 容差 4",
+        "Drawing 中心像素红>60 且 >绿，角落<20，红色像素占比 0.15-0.75",
+        "两份 shader 无 '#version 330' 且含 precision 限定符"
+      ],
+      "hours": "6-9",
+      "needs_native_change": false,
+      "status": "implemented-as-patch-draft"
+    },
+    "B": {
+      "summary": "native 经 N-API 暴露 EGLDisplay/EGLContext/EGLSurface，Python 只 eglMakeCurrent",
+      "handles_needed": ["EGLDisplay", "EGLContext", "EGLSurface", "width", "height", "owner_thread_id"],
+      "notes": [
+        "句柄以整数（BigInt/safe int）过桥，Python 用 ctypes.c_void_p 复原",
+        "跨线程 eglMakeCurrent 不可用；需 napi_threadsafe_function 回投到 GL 线程",
+        "共享 GL 对象需 createContext 时传 share_context",
+        "OnSurfaceDestroyedCB 会销毁 context，Python 侧必须把句柄当可失效"
+      ],
+      "change_points": [
+        "app/entry/src/main/cpp/gl_surface.cpp: 暴露 g_config 与 getter 符号",
+        "app/entry/src/main/cpp/chimerax_native.cpp: napi_define_properties 增 getEglHandles",
+        "src/bundles/graphics/src/opengl.py: EGLContext 增加 _from_handles 分支"
+      ],
+      "risks": ["违反不改 app/native 的约束", "线程模型改动牵动 runChimeraCommand 调用约定", "裸指针转 int 的 ABI 依赖"],
+      "criteria": ["getEglHandles 返回 context != 0", "Python eglGetCurrentContext() == 传入 context", "后续像素判据与方案 A 相同"],
+      "hours": "8-12",
+      "needs_native_change": true,
+      "status": "not-recommended"
+    },
+    "C": {
+      "summary": "完全离屏：OSMesa（Mesa gallium osmesa）或纯软件光栅",
+      "feasibility": "本轮不可行：需交叉编译 LLVM+Mesa 到 aarch64-linux-ohos（禁止联网编译大型依赖）；纯软件光栅需重写 Drawing.draw 全管线",
+      "existing_support": "上游已有 _configure_pyopengl_to_use_osmesa + OffScreenRenderingContext，Python 侧零改动",
+      "risks": ["llvmpipe 性能不可用于分子场景", "包体增加 80-150MB", "交叉编译链与 musl 兼容性"],
+      "criteria": ["与 GLES 渲染同场景的 SSIM/像素差回归作为基线"],
+      "hours": "40-80",
+      "needs_native_change": false,
+      "status": "backlog-baseline-only"
+    }
+  },
+  "verification": {
+    "probe": "tools/render_probe.py",
+    "stages": ["environment", "context", "fbo", "drawing (Drawing+View.image_rgba)", "shader-translation", "atomic (optional)"],
+    "exit_codes": {"0": "全部必过阶段通过", "1": "有阶段失败", "2": "连 chimerax.graphics 都导入不了"},
+    "device_commands": [
+      "export PYOPENGL_PLATFORM=egl CHIMERAX_OHOS=1",
+      "python3 tools/render_probe.py --size 256x256 --out /data/local/tmp/render-probe.json",
+      "python3 tools/render_probe.py --atomic --size 512x512"
+    ],
+    "patch_apply_check": "cd build/downloads/ChimeraX-src && git apply --check ../../../patches/0005-render-ohos-egl-context.patch -> OK",
+    "host_offline_checks": [
+      "python3 -c ast.parse(patched opengl.py) -> syntax OK",
+      "CHIMERAX_OHOS=1 加载补丁后 opengl.py：OpenGLContext is EGLContext, required_opengl_version=(3,0), core_profile=False",
+      "CHIMERAX_OHOS=0 加载补丁后 opengl.py：OpenGLContext 仍为 Qt 实现 (3,3)，非 OHOS 行为不变",
+      "translate_shader_to_gles 作用于真实 vertexShader.txt/fragmentShader.txt -> '#version 300 es' + 3 处 precision，无 330 残留",
+      "tools/render_probe.py 在 macOS 上运行 -> 退出码 2 且输出结构化 JSON（预期：ohos 扩展无法加载）"
+    ]
+  },
+  "risks_top": [
+    {"risk": "Python 与 native 不在同一 GL 线程", "severity": "high", "mitigation": "探针报告 adopted_existing_context；false 时走 pbuffer 并通知主线把绘制投到 GL 线程"},
+    {"risk": "GLSL ES 编译失败", "severity": "medium", "mitigation": "CHIMERAX_OHOS_GLSL_VERSION 逐级 300/310/320 es；OpenGLError 原样抛出编译日志"},
+    {"risk": "深度缓冲非 24 位", "severity": "low", "mitigation": "上游自动 offscreen_outline 降级"},
+    {"risk": "高分屏 pixel ratio", "severity": "low", "mitigation": "CHIMERAX_PIXEL_SCALE 覆盖"},
+    {"risk": "surface 销毁后上下文失效", "severity": "medium", "mitigation": "EGLContext.created 反映失效状态，重建上下文"}
+  ],
+  "constraints_respected": {
+    "modified_forbidden_paths": false,
+    "forbidden": ["app/", "native/", "harmony/", "build/downloads/ChimeraX-src", "tools/build_*.py", "tools/package_app_runtime.py", "tools/stage_chimerax_python.py", "tools/device_app_check.py"],
+    "git_commit": false,
+    "git_push": false,
+    "device_used": false,
+    "network_build": false
+  },
+  "artifacts": [
+    "docs/render-integration-2026-11-18.md",
+    "patches/0005-render-ohos-egl-context.patch",
+    "tools/render_probe.py",
+    "reports/render-plan-2026-11-18.json"
+  ]
+}

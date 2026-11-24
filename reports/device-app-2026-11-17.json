@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-17T18:13:01.624107+00:00",
+  "scope": "harmony_app_entry_with_embedded_runtime",
+  "target": "127.0.0.1:5555",
+  "hap": {
+    "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap",
+    "bytes": 82983240,
+    "sha256": "1c043e5bdb7957ef7a573f2df29f240e54ed0a987f6f2a0507aedfc9d9d25995"
+  },
+  "checks": [
+    {
+      "name": "HAP installs",
+      "passed": true,
+      "detail": "[Info]App install path:/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/hap/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"
+    },
+    {
+      "name": "Application starts",
+      "passed": true,
+      "detail": "start ability successfully.\n"
+    },
+    {
+      "name": "Runtime reports a ready state",
+      "passed": true,
+      "detail": "运行环境就绪"
+    },
+    {
+      "name": "Embedded CPython reports its version",
+      "passed": true,
+      "detail": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]"
+    },
+    {
+      "name": "math.sqrt evaluates inside the app",
+      "passed": true,
+      "detail": "4.0"
+    },
+    {
+      "name": "ctypes reaches libc through libffi",
+      "passed": true,
+      "detail": "19"
+    },
+    {
+      "name": "Standard library probe matches",
+      "passed": true,
+      "detail": "2c1179ae"
+    },
+    {
+      "name": "Genuine ChimeraX version module loads",
+      "passed": true,
+      "detail": "v1.11.1"
+    },
+    {
+      "name": "numpy imports and computes in the app",
+      "passed": true,
+      "detail": "1.26.4|4.0|10"
+    },
+    {
+      "name": "numpy extension loads from the application native library directory",
+      "passed": true,
+      "detail": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so"
+    },
+    {
+      "name": "A minimal ChimeraX Session can be constructed in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX command subsystem imports in the app",
+      "passed": true,
+      "detail": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+    },
+    {
+      "name": "ChimeraX trigger dispatch runs in the app",
+      "passed": true,
+      "detail": "cx_app_probe|fired"
+    },
+    {
+      "name": "ChimeraX core modules import in the app",
+      "passed": true,
+      "detail": "chimerax.core.errors|UserError|Logger"
+    },
+    {
+      "name": "An EGL/GLES surface is created inside the app",
+      "passed": true,
+      "detail": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285"
+    },
+    {
+      "name": "PyOpenGL and the graphics Python layer load in the app",
+      "passed": true,
+      "detail": "3.1.10|chimerax.graphics.opengl|True"
+    },
+    {
+      "name": "The ChimeraX atomic layer imports in the app",
+      "passed": true,
+      "detail": "chimerax.atomic|Atom|AtomicStructure"
+    },
+    {
+      "name": "The graphics C++ extension loads and runs in the app",
+      "passed": true,
+      "detail": "chimerax.graphics._graphics|3"
+    },
+    {
+      "name": "Core built-in commands run in the app",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
+    },
+    {
+      "name": "The persistent session keeps its tools and toolshed",
+      "passed": true,
+      "detail": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready"
+    },
+    {
+      "name": "ChimeraX command syntax runs from the UI",
+      "passed": true,
+      "detail": "cxprobe:ui-command"
+    },
+    {
+      "name": "The Python sample runs from the UI",
+      "passed": true,
+      "detail": "ChimeraX 16"
+    }
+  ],
+  "ui": {
+    "enhanceAppLabel": "ChimeraX",
+    "cx-status": "运行环境就绪",
+    "cx-trigger": "cx_app_probe|fired",
+    "cx-version": "3.11.18 (main, Nov 17 2026, 04:56:20) [Clang 15.0.4 (llvm-project 99548401bd80576251755b185ab95945e5fe7884)]",
+    "cx-math": "4.0",
+    "cx-ctypes": "19",
+    "cx-stdlib": "2c1179ae",
+    "cx-chimerax": "v1.11.1",
+    "cx-core": "chimerax.core.errors|UserError|Logger",
+    "cx-numpy": "1.26.4|4.0|10",
+    "cx-numpyc": "/data/storage/el1/bundle/libs/arm64/numpy/core/_multiarray_umath.cpython-311-aarch64-linux-ohos.so",
+    "cx-cmd-input": "cxprobe ui-command",
+    "cx-cmd-run": "执行命令",
+    "cx-cmd-py": "Python",
+    "cx-cmd-output": "（输出）",
+    "cx-command-run": "cxprobe:hello-harmony|1|hello-harmony",
+    "cx-gl-status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
+    "cx-glstack": "3.1.10|chimerax.graphics.opengl|True",
+    "cx-atomic": "chimerax.atomic|Atom|AtomicStructure",
+    "cx-graphics": "chimerax.graphics._graphics|3",
+    "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
+    "cx-commands": "chimerax.core.colors|chimerax.core.session|chimerax.core.commands | Session|True|16"
+  },
+  "gl_status": "ready:OpenGL ES 3.0 (4.1 Metal - 91.7):Mali-G77:2014x285",
+  "cx-builtin": "toolshed-list:ok|devel-dump:Missing or invalid \\\"path\\\" argument|tools=True|toolshed=True|state=session-ready",
+  "command_output": "cxprobe:ui-command",
+  "python_output": "ChimeraX 16",
+  "error": "AttributeError: 'NoneType' object has no attribute 'parent'",
+  "result": {
+    "passed": 22,
+    "failed": 0
+  },
+  "status": "app_runtime_verified"
+}

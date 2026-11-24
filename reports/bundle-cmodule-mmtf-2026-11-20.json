@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-20T14:19:03.629516+00:00",
+  "bundle": "mmtf",
+  "modules": [
+    "_mmtf"
+  ],
+  "products": [],
+  "failures": [
+    {
+      "module": "_mmtf",
+      "source": "_mmtf/mmtf.cpp",
+      "stderr": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmtf/_mmtf/mmtf.cpp:32:10: fatal error: 'mmtf.hpp' file not found\n#include <mmtf.hpp>\n         ^~~~~~~~~~\n1 error generated.\n"
+    }
+  ]
+}

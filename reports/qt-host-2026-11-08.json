@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "status": "blocked_missing_runtime",
+  "binding": "PyQt6",
+  "host_system": "Darwin",
+  "architecture": "arm64",
+  "upstream_app_launched": false,
+  "port_validated": false,
+  "automatic_checks": {},
+  "manual_checks_pending": [
+    "Chinese IME",
+    "high-DPI and multi-monitor behavior",
+    "file-dialog selection and cancel",
+    "keyboard and mouse",
+    "real HarmonyOS PC packaging and launch"
+  ],
+  "error": "No module named 'PyQt6'"
+}

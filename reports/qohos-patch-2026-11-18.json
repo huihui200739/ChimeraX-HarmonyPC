@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-18T06:58:03.227893+00:00",
+  "library": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app/entry/libs/arm64-v8a/libqohos.so",
+  "occurrences": 1,
+  "patched": true,
+  "sha256": "93a08e085918d55de26fc64cef70a0f229a3c3a87452f2562976dbc8d98e3e8d",
+  "bytes": 3989552,
+  "status": "qohos_localstorage_patched"
+}

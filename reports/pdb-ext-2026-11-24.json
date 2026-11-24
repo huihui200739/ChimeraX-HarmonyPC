@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-24T05:10:09.767556+00:00",
+  "target": "aarch64-linux-ohos",
+  "modules": [
+    {
+      "module": "pdb/_pdbio",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/pdb/_pdbio.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 284328,
+      "sha256": "bfe75b3d790d79cf7ab0d364aad4b793ab3b95adee662c98683e3f99fdd6a2eb",
+      "sources": 8
+    },
+    {
+      "module": "mmcif/_mmcif",
+      "path": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/mmcif/_mmcif.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 859424,
+      "sha256": "ff15ce9d754a19866b6a370c38451e78a907fd211f0c1638c56249fde1a4b18d",
+      "sources": 4
+    }
+  ],
+  "status": "reader_extensions_cross_compiled_not_target_tested"
+}

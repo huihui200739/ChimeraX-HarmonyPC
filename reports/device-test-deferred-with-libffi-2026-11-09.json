@@ -1,0 +1,14 @@
+{
+  "audit_date": "2026-11-09",
+  "checked_at_utc": "2026-11-09T13:52:01.405172+00:00",
+  "scope": "generic_runtime_with_libffi_device_test_deferred",
+  "reason": "other_project_active_and_no_emulator_release_confirmed",
+  "other_thread_id": "01a1baff-596c-7122-9775-8e1bf5e56100",
+  "other_thread_status": "active_inProgress",
+  "observed_cursor": "678f3e09-f93d-4e4d-b234-9e99fcf63574:6",
+  "device_contacted": false,
+  "target_executed": false,
+  "hdc_invoked": false,
+  "upstream_app_launched": false,
+  "port_validated": false
+}

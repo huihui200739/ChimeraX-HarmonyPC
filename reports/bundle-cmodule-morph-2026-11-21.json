@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-21T07:39:27.478006+00:00",
+  "bundle": "morph",
+  "modules": [
+    "_morph"
+  ],
+  "products": [
+    {
+      "module": "_morph",
+      "path": "/Users/huihui/Documents/\u9e3f\u8499pc\u9002\u914d/ChimeraX-HarmonyPC/build/chimerax-python/chimerax/morph/_morph.cpython-311-aarch64-linux-ohos.so",
+      "bytes": 595160
+    }
+  ],
+  "failures": []
+}

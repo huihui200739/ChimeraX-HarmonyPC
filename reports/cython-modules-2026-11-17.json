@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-11-17T18:28:55.595950+00:00",
+  "target": "aarch64-linux-ohos",
+  "modules": [
+    {
+      "module": "atomic/cymol",
+      "status": "compile-failed",
+      "error": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/corecif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/mmcif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/template.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/pdb/pdbio_cpp/PDBio.cpp:50:10: fatal error: 'PDB.h' file not found\n#include <PDB.h>\n         ^~~~~~~\n1 error generated.\n"
+    },
+    {
+      "module": "atomic/cytmpl",
+      "status": "compile-failed",
+      "error": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/corecif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/mmcif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/template.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/pdb/pdbio_cpp/PDBio.cpp:50:10: fatal error: 'PDB.h' file not found\n#include <PDB.h>\n         ^~~~~~~\n1 error generated.\n"
+    },
+    {
+      "module": "mmcif/mmcif",
+      "status": "compile-failed",
+      "error": "/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/corecif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/mmcif.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/mmcif/mmcif_cpp/template.cpp:40:10: fatal error: 'readcif.h' file not found\n#include <readcif.h>\n         ^~~~~~~~~~~\n1 error generated.\n/Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/build/downloads/ChimeraX-src/src/bundles/pdb/pdbio_cpp/PDBio.cpp:50:10: fatal error: 'PDB.h' file not found\n#include <PDB.h>\n         ^~~~~~~\n1 error generated.\n"
+    },
+    {
+      "module": "pdb/_pdbio",
+      "status": "missing-source"
+    }
+  ],
+  "status": "cython_modules_build_failed"
+}
