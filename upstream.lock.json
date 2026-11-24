@@ -1,0 +1,58 @@
+{
+  "audit_date": "2026-11-08",
+  "repository": "https://github.com/RBVI/ChimeraX",
+  "selected_tag": "v1.11.1",
+  "commit": "60235d303c18f72c6ebd45a620b540ba84825994",
+  "selection_note": "Existing versioned baseline; no assertion that this is the newest available distribution.",
+  "scope": "Generic build metadata only; no project research modules or datasets downloaded.",
+  "files": [
+    {
+      "path": "README.md",
+      "git_blob_sha": "5598c25463a4b7e1faf31eda6ca5a1e010a0f79e",
+      "sha256": "2e62fed527983e3def2eb3cc9dfc43e24ed94a5224a0f0436ebb87a6c3c0d0fa",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/README.md"
+    },
+    {
+      "path": "License.md",
+      "git_blob_sha": "b21ae34b3de3de584ef524d0435fe3ec1d7657ea",
+      "sha256": "baeb1699321cc9559b2271271c394337cd8d788be331f54541e52e455dd64d23",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/License.md"
+    },
+    {
+      "path": "Makefile",
+      "git_blob_sha": "bc55d9d3ad5315480d9a52f28c5ce50646e25931",
+      "sha256": "bdbb7a2906e859a8bf75966e1bda681084761df709e511e5fe34c6eb960f528c",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/Makefile"
+    },
+    {
+      "path": "mk/detectOS.make",
+      "git_blob_sha": "a877c8b8fb3894c3f4097eddd744e51916cefd76",
+      "sha256": "d793a6c1275b1d24fc57a08c4093bc3511c60a5b1855e4b2277ddb8f530a23e1",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/mk/detectOS.make"
+    },
+    {
+      "path": "mk/config.make",
+      "git_blob_sha": "9196849d0989753dcda2b85b5298a067864a95f8",
+      "sha256": "03751d1dff7625894a78678fbda6a338b06411c911ef7090eb5d833d2f48f013",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/mk/config.make"
+    },
+    {
+      "path": "prereqs/PyQt/Makefile",
+      "git_blob_sha": "15c1e11640fecb56c85de8e6324cc0a8c3506ceb",
+      "sha256": "81f60e56c5e5f555a516cd8a341694ae93a01b5a5de24c286cb7d4d25b0b082f",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/prereqs/PyQt/Makefile"
+    },
+    {
+      "path": "prereqs/PyQt/Makefile.wheel.qt6",
+      "git_blob_sha": "b37d3f3bdb64adaf4442021ca9e4d7d4a307a1a3",
+      "sha256": "c9a11525286ddbbab40456d2171e8168d8adbfacd5c45d06b45774d1625819fc",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/prereqs/PyQt/Makefile.wheel.qt6"
+    },
+    {
+      "path": "src/apps/ChimeraX/Makefile",
+      "git_blob_sha": "d8dd34135be39c3bf0742bef872cb97167921fe9",
+      "sha256": "7d9fee7f0d72b1c00148af43de66cd333abc44c3d7728c84129acae8191f7367",
+      "source_url": "https://github.com/RBVI/ChimeraX/blob/60235d303c18f72c6ebd45a620b540ba84825994/src/apps/ChimeraX/Makefile"
+    }
+  ]
+}
