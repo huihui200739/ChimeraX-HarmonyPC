@@ -1,0 +1,13 @@
+# Reproducible output, tool caches and local packaging artifacts.
+/build/
+/out/
+**/.hvigor/
+**/oh_modules/
+**/.cxx/
+/app/entry/build/
+*.hap
+
+# Keep published evidence in reports/ and packaged runtime inputs in app/ tracked.
+.DS_Store
+__pycache__/
+*.py[cod]
