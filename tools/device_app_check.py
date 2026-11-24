@@ -122,7 +122,7 @@ def main() -> int:
             run(hdc + ['shell', 'uitest', 'uiInput', 'click', str(ui_python[0]), str(ui_python[1])])
             time.sleep(4)
             ui_python_output = dump()[1].get('cx-cmd-output', '')
-        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-display-state', 'cx-model-info', 'cx-map-panel', 'cx-builtin', 'cx-graphics'])
+        values = dump_scrolling(['cx-status', 'cx-command-run', 'cx-builtin', 'cx-graphics', 'cx-atomic', 'cx-glstack', 'cx-render', 'cx-gl-render', 'cx-model', 'cx-open', 'cx-trigger', 'cx-commands', 'cx-model-rows', 'cx-cmd-suggest', 'cx-log-rows', 'cx-selection-state', 'cx-image-saved', 'cx-display-state', 'cx-model-info', 'cx-map-panel', 'cx-sequence-panel', 'cx-builtin', 'cx-graphics'])
         report['ui'] = values
         record('Runtime reports a ready state', values.get('cx-status') == '运行环境就绪',
                values.get('cx-status', 'no status'))
@@ -257,6 +257,12 @@ def main() -> int:
                volume_count is not None and surface_count is not None
                and int(volume_count.group(1)) >= 1 and int(surface_count.group(1)) >= 1,
                map_text[:70])
+
+        # Chain panel: at least one chain with a residue count must be reported.
+        seq_text = values.get('cx-sequence-panel', '')
+        record('The chain/sequence panel lists chains with residue counts',
+               'chains=' in seq_text and re.search(r'[A-Za-z?_-]:\d+', seq_text) is not None,
+               seq_text[:70])
 
         record('The Actions menu commands run (colour by element + orient)', 'menu=ok' in cx_render,
                'menu=%s' % ('ok' if 'menu=ok' in cx_render else 'failed'))

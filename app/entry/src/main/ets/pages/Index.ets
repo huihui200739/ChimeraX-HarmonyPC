@@ -253,6 +253,41 @@ for model in session.models.list():
 print(";".join(rows))
 `;
 
+// Chain/sequence summary, the information a sequence viewer lists per chain.
+const SEQUENCE_SCRIPT = `
+rows = []
+for model in session.models.list():
+    atoms = getattr(model, "atoms", None)
+    if atoms is None or len(atoms) == 0:
+        continue
+    try:
+        residues = atoms.residues
+        per_chain = {}
+        for res in residues:
+            try:
+                chain = res.chain_id
+            except Exception:
+                chain = "?"
+            try:
+                ptype = str(res.polymer_type)[:1]
+            except Exception:
+                ptype = "?"
+            key = (chain, ptype)
+            per_chain[key] = per_chain.get(key, 0) + 1
+        parts = ["%s:%d" % (chain if chain != " " else "-", count)
+                 for (chain, _ptype), count in sorted(per_chain.items())]
+        model_id = model.id
+        if isinstance(model_id, (tuple, list)):
+            model_id = model_id[0] if model_id else "?"
+        rows.append("%s|chains=%d|%s" % (model_id, len(set(c for c, _ in per_chain)),
+                                         ",".join(parts)[:80]))
+    except Exception as error:
+        rows.append("%s|error:%s" % (getattr(model, "id", "?"), type(error).__name__))
+    if len(rows) >= 3:
+        break
+print(" | ".join(rows))
+`;
+
 // Volume/surface inventory, mirroring ChimeraX's volume and surface panel content.
 const MAP_PANEL_SCRIPT = `
 volumes = []
@@ -1713,6 +1748,7 @@ struct Index {
   @State displayState: string = '';
   @State modelInfoState: string = '';
   @State mapPanelState: string = '';
+  @State sequenceState: string = '';
   @State logLines: string[] = [];
   @State officialImage: image.PixelMap | undefined = undefined;
   @State officialInfo: string = '';
@@ -1843,6 +1879,16 @@ struct Index {
 
   // Refresh the structural summary shown in the model information panel.
   // Refresh the volume/surface inventory panel.
+  // Refresh the chain summary (a lightweight sequence viewer).
+  private refreshSequencePanel(): void {
+    try {
+      const report: ScriptReport = native.runScript(SEQUENCE_SCRIPT);
+      this.sequenceState = (report.ok ? report.output : report.error).trim();
+    } catch (error) {
+      this.sequenceState = 'sequence-failed';
+    }
+  }
+
   private refreshMapPanel(): void {
     try {
       const report: ScriptReport = native.runScript(MAP_PANEL_SCRIPT);
@@ -2157,6 +2203,7 @@ struct Index {
             this.refreshModelPanel();
             this.refreshModelInfo();
             this.refreshMapPanel();
+            this.refreshSequencePanel();
             this.selectSampleAtoms();
             // Exercise the display toggle twice so the molecule ends up visible again.
             this.toggleDisplay().then(() => {
@@ -2513,6 +2560,20 @@ struct Index {
         Text(this.mapPanelState.length > 0 ? this.mapPanelState : '（暂无体积/表面数据）')
           .id('cx-map-panel').fontSize(10).fontColor('#DDE7F3').width('100%')
           .maxLines(2).margin({ top: 4 })
+      }.width('100%').padding(8).margin({ top: 6 })
+      .backgroundColor('#16212F').borderRadius(6)
+
+      // Chain / sequence panel: per-chain residue counts like a sequence viewer's header.
+      Column() {
+        Row() {
+          Text('链 / 序列').fontSize(12).fontColor('#9FB4C8').layoutWeight(1)
+          Button('刷新').id('cx-seq-refresh').fontSize(10).height(24)
+            .backgroundColor('#1F3A5C').fontColor('#DDE7F3')
+            .onClick(() => { this.refreshSequencePanel(); })
+        }.width('100%')
+        Text(this.sequenceState.length > 0 ? this.sequenceState : '（无链信息）')
+          .id('cx-sequence-panel').fontSize(10).fontColor('#DDE7F3').width('100%')
+          .maxLines(3).margin({ top: 4 })
       }.width('100%').padding(8).margin({ top: 6 })
       .backgroundColor('#16212F').borderRadius(6)
 
