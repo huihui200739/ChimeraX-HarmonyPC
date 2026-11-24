@@ -1,0 +1,5 @@
+{ "name": "entry", "version": "1.0.0", "description": "ChimeraX Harmony entry module", "main": "", "author": "", "license": "",
+  "devDependencies": {
+    "@types/libqohos.so": "file:./src/main/qt"
+  },
+  "dependencies": {} }

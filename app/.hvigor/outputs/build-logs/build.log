@@ -1,0 +1,100 @@
+[2026-11-17T05:04:10.100] [DEBUG] debug-file - env: nodejsVersion=v18.20.1
+[2026-11-17T05:04:10.217] [DEBUG] debug-file - Hvigor init with startParameters:{
+  hvigorfileTypeCheck: false,
+  parallelExecution: true,
+  incrementalExecution: true,
+  printStackTrace: false,
+  daemon: false,
+  analyze: 0,
+  logLevel: Level { level: 20000, levelStr: 'INFO', colour: 'green' },
+  optimizationStrategy: 'memory',
+  hotCompile: undefined,
+  hotReloadBuild: undefined,
+  customizedParam: undefined
+}
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - hvigorfile, require result:  { default: { system: [Function: appTasks], plugins: [] } }
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - Starting plugin build process
+[2026-11-17T05:04:10.862] [DEBUG] debug-file - hvigor build process will be closed with an error.
+[2026-11-17T05:04:10.101] [DEBUG] debug-file - env: hvigor-config.json5 content = {
+  modelVersion: '6.0.0',
+  dependencies: {},
+  execution: { daemon: false },
+  logging: { level: 'info' }
+}
+[2026-11-17T05:04:10.217] [DEBUG] debug-file - Since current hvigor version 6.24.4 differs from last hvigor version 
+      undefined, delete file-cache.json and task-cache.json.
+[2026-11-17T05:04:10.874] [DEBUG] debug-file - Create  resident worker with id: 0.
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - hvigorfile, binding system plugins [Function: appTasks]
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - App plugin prepare start...
+[2026-11-17T05:04:10.870] [ERROR] debug-file - [31m00306003 Specification Limit Violation
+Error Message: Invalid project path. Current path does not match: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app
+
+* Try the following:
+  > Please modify the project path to ensure that it only contains letters, digits, hyphens (-), underscores (_), periods (.), english parentheses (()), spaces, or the @ symbol
+[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[2026-11-17T05:04:10.101] [DEBUG] debug-file - env: daemon=false
+[2026-11-17T05:04:10.217] [DEBUG] debug-file - Cache service initialization finished in 1 ms 
+[2026-11-17T05:04:10.874] [DEBUG] debug-file - Create  resident worker with id: 1.
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - App plugin prepare end...
+[2026-11-17T05:04:10.870] [DEBUG] debug-file - ERROR: stacktrace = AdaptorError: [31m00306003 Specification Limit Violation
+Error Message: Invalid project path. Current path does not match: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app
+
+* Try the following:
+  > Please modify the project path to ensure that it only contains letters, digits, hyphens (-), underscores (_), periods (.), english parentheses (()), spaces, or the @ symbol
+[39m
+    at OhosLogger.printErrorExit (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/src/base/log/hvigor-log.js:1:5087)
+    at ProjectInspection.projectPathInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/tasks/inspection/project-inspection.js:1:550)
+    at ProjectInspection.doInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/tasks/inspection/project-inspection.js:1:348)
+    at AppPlugin.doProjectInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/common/abstract-project-plugin.js:1:1608)
+    at StageInitializationStrategy.createAppPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/strategy/stage-init-strategy.js:1:991)
+    at AppPluginBuilder.createPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/builder/app-plugin-builder.js:1:1610)
+    at AppPluginBuilder.build (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/builder/abstract-plugin-builder.js:1:756)
+    at PluginFactory.getAppPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/factory/plugin-factory.js:1:481)
+    at appTasks (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/index.js:1:652)
+    at bindSystemPlugins (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/src/base/internal/lifecycle/configuration.js:1:6298)
+[2026-11-17T05:04:10.101] [DEBUG] debug-file - no-daemon, use the parent process.execArgv --max-old-space-size=8192,--max-semi-space-size=16,--expose-gc
+[2026-11-17T05:04:10.218] [DEBUG] debug-file - hvigorfile, resolving /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app/hvigorfile.ts
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Current worker pool is stopped or closed.
+[2026-11-17T05:04:10.795] [DEBUG] debug-file - App plugin creating...
+[2026-11-17T05:04:10.870] [ERROR] debug-file - AdaptorError: [31m00306003 Specification Limit Violation
+Error Message: Invalid project path. Current path does not match: /Users/huihui/Documents/鸿蒙pc适配/ChimeraX-HarmonyPC/app
+
+* Try the following:
+  > Please modify the project path to ensure that it only contains letters, digits, hyphens (-), underscores (_), periods (.), english parentheses (()), spaces, or the @ symbol
+[39m
+    at OhosLogger.printErrorExit (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/src/base/log/hvigor-log.js:1:5087)
+    at ProjectInspection.projectPathInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/tasks/inspection/project-inspection.js:1:550)
+    at ProjectInspection.doInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/tasks/inspection/project-inspection.js:1:348)
+    at AppPlugin.doProjectInspection (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/common/abstract-project-plugin.js:1:1608)
+    at StageInitializationStrategy.createAppPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/strategy/stage-init-strategy.js:1:991)
+    at AppPluginBuilder.createPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/builder/app-plugin-builder.js:1:1610)
+    at AppPluginBuilder.build (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/builder/abstract-plugin-builder.js:1:756)
+    at PluginFactory.getAppPlugin (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/src/plugin/factory/plugin-factory.js:1:481)
+    at appTasks (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor-ohos-plugin/index.js:1:652)
+    at bindSystemPlugins (/Applications/DevEco-Studio.app/Contents/tools/hvigor/hvigor/src/base/internal/lifecycle/configuration.js:1:6298)
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Clear worker 0.
+[2026-11-17T05:04:10.870] [ERROR] debug-file - BUILD FAILED in 656 ms 
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Worker 0 has been cleared.
+[2026-11-17T05:04:10.873] [DEBUG] debug-file - Since there is no instance or instance is terminated, create a new worker pool.
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Current idle worker size: 1.
+[2026-11-17T05:04:10.873] [DEBUG] debug-file - Worker pool is initialized with config:  {
+  minPoolNum: 2,
+  maxPoolNum: undefined,
+  maxCoreSize: undefined,
+  cacheCapacity: undefined,
+  cacheTtl: undefined
+}
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Current busy worker size: 0.
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Clear worker 1.
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Worker 1 has been cleared.
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Current idle worker size: 0.
+[2026-11-17T05:04:10.875] [DEBUG] debug-file - Current busy worker size: 0.
+[2026-11-17T05:04:10.878] [DEBUG] debug-file - hvigor build process will be closed.
+[2026-11-17T05:04:10.879] [DEBUG] debug-file - worker[0] exits with exit code 0.
+[2026-11-17T05:04:10.879] [DEBUG] debug-file - worker[1] exits with exit code 0.
+[2026-11-17T05:04:10.880] [DEBUG] debug-file - Current worker pool is terminated.
